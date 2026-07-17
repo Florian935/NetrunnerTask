@@ -1,0 +1,95 @@
+/* NIGHTWIRE — base resets & a small set of brand utility classes.
+   Components use CSS custom properties directly; these helpers cover the
+   repeating brand motifs (grid backdrop, hatch stripes, corner brackets,
+   chromatic display text, custom scrollbars). */
+
+*,*::before,*::after{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:var(--bg-app);
+  color:var(--text-primary);
+  font-family:var(--font-body);
+  font-size:var(--text-md);
+  line-height:var(--leading-normal);
+  -webkit-font-smoothing:antialiased;
+}
+
+h1,h2,h3,h4,h5,h6{font-family:var(--font-display);font-weight:var(--weight-bold);line-height:var(--leading-tight);margin:0}
+
+/* Links */
+a{color:var(--cyan-500);text-decoration:none;transition:color var(--dur-fast) var(--ease-out),text-shadow var(--dur-fast) var(--ease-out)}
+a:hover{color:var(--cyan-400);text-shadow:var(--text-glow-cyan)}
+
+::selection{background:var(--magenta-500);color:var(--void-900)}
+
+/* Custom neon scrollbars */
+*::-webkit-scrollbar{width:10px;height:10px}
+*::-webkit-scrollbar-track{background:var(--void-800)}
+*::-webkit-scrollbar-thumb{background:var(--void-300);border:2px solid var(--void-800);border-radius:999px}
+*::-webkit-scrollbar-thumb:hover{background:var(--cyan-600)}
+
+/* ---- Brand utility classes ---- */
+.nw-grid-bg{background-image:var(--grid-lines);background-size:var(--grid-size)}
+.nw-scanlines{position:relative}
+.nw-scanlines::after{content:"";position:absolute;inset:0;background:var(--scanlines);pointer-events:none;mix-blend-mode:overlay}
+
+.nw-hatch{background-image:var(--hatch-cyan)}
+
+.nw-chroma{color:var(--frost-100);text-shadow:var(--text-chroma);font-family:var(--font-display);letter-spacing:var(--tracking-wide)}
+
+.nw-neon-cyan{color:var(--cyan-500);text-shadow:var(--text-glow-cyan)}
+.nw-neon-magenta{color:var(--magenta-500);text-shadow:var(--text-glow-magenta)}
+.nw-neon-mint{color:var(--mint-500);text-shadow:var(--text-glow-mint)}
+
+/* HUD panel: beveled corners + neon hairline. Combine with a color var. */
+.nw-hud{
+  background:var(--bg-panel);
+  clip-path:var(--clip-bevel-md);
+  box-shadow:inset 0 0 0 1px var(--border);
+  position:relative;
+}
+
+/* L-shaped corner brackets — wrap any positioned element */
+.nw-brackets::before,.nw-brackets::after{
+  content:"";position:absolute;width:14px;height:14px;pointer-events:none;
+  border-color:var(--cyan-500);border-style:solid;
+}
+.nw-brackets::before{top:0;left:0;border-width:2px 0 0 2px}
+.nw-brackets::after{bottom:0;right:0;border-width:0 2px 2px 0}
+
+/* =========================================================
+   V3 — Motion: pulsing glow, CRT flicker/scanlines, glitch
+   ========================================================= */
+@keyframes nw-pulse-cyan{0%,100%{box-shadow:var(--glow-cyan)}50%{box-shadow:var(--glow-cyan-lg)}}
+@keyframes nw-pulse-magenta{0%,100%{box-shadow:var(--glow-magenta)}50%{box-shadow:var(--glow-magenta-lg)}}
+@keyframes nw-pulse-mint{0%,100%{box-shadow:var(--glow-mint)}50%{box-shadow:var(--glow-mint-lg)}}
+@keyframes nw-pulse-violet{0%,100%{box-shadow:var(--glow-violet)}50%{box-shadow:var(--glow-violet-lg)}}
+@keyframes nw-text-pulse-cyan{0%,100%{text-shadow:var(--text-glow-cyan)}50%{text-shadow:var(--text-glow-cyan-lg)}}
+@keyframes nw-text-pulse-magenta{0%,100%{text-shadow:var(--text-glow-magenta)}50%{text-shadow:var(--text-glow-magenta-lg)}}
+
+/* CRT brightness flicker (subtle, irregular) */
+@keyframes nw-flicker{0%,100%{opacity:1}92%{opacity:1}93%{opacity:.82}94%{opacity:1}97%{opacity:.9}98%{opacity:1}}
+/* Scanline vertical drift */
+@keyframes nw-scan-drift{from{background-position:0 0}to{background-position:0 6px}}
+/* Chromatic-aberration glitch on display text */
+@keyframes nw-glitch{0%,100%{text-shadow:2px 0 rgba(255,45,149,.75),-2px 0 rgba(0,240,255,.75);transform:translate(0,0)}20%{text-shadow:4px 0 rgba(255,45,149,.85),-3px 0 rgba(0,240,255,.85);transform:translate(-1px,0)}40%{text-shadow:-3px 0 rgba(255,45,149,.8),3px 0 rgba(0,240,255,.8);transform:translate(1px,0)}60%{text-shadow:2px 0 rgba(255,45,149,.75),-2px 0 rgba(0,240,255,.75);transform:translate(0,1px)}80%{text-shadow:5px 0 rgba(255,45,149,.9),-4px 0 rgba(0,240,255,.9);transform:translate(-1px,-1px)}}
+
+/* ---- V3 utility classes ---- */
+/* Animated pulsing glow — put on active/selected/hero elements */
+.nw-pulse-cyan{animation:nw-pulse-cyan 2.4s var(--ease-in-out) infinite}
+.nw-pulse-magenta{animation:nw-pulse-magenta 2.4s var(--ease-in-out) infinite}
+.nw-pulse-mint{animation:nw-pulse-mint 2.4s var(--ease-in-out) infinite}
+.nw-pulse-violet{animation:nw-pulse-violet 2.4s var(--ease-in-out) infinite}
+
+/* Glitching display text (RGB split jitter) */
+.nw-glitch{font-family:var(--font-display);color:var(--frost-100);animation:nw-glitch 3.2s steps(1) infinite;will-change:transform,text-shadow}
+
+/* CRT surface: drifting scanlines + irregular flicker. Add to any surface. */
+.nw-crt{position:relative;isolation:isolate}
+.nw-crt::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:var(--scanlines);background-size:100% 3px;animation:nw-scan-drift 1.1s linear infinite,nw-flicker 6s linear infinite;mix-blend-mode:overlay;opacity:.55}
+
+@media (prefers-reduced-motion:reduce){
+  .nw-pulse-cyan,.nw-pulse-magenta,.nw-pulse-mint,.nw-pulse-violet,.nw-glitch{animation:none}
+  .nw-crt::after{animation:none}
+}

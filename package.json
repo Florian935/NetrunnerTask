@@ -14,13 +14,14 @@
     "format:check": "prettier --check ."
   },
   "dependencies": {
+    "@fontsource/chakra-petch": "^5.2.5",
+    "@fontsource/rajdhani": "^5.2.7",
+    "@fontsource/share-tech-mono": "^5.2.7",
     "dexie": "^4.0.11",
+    "lucide-react": "^1.25.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "zustand": "^5.0.2",
-    "@fontsource/chakra-petch": "^5.2.5",
-    "@fontsource/space-grotesk": "^5.2.5",
-    "@fontsource/jetbrains-mono": "^5.2.5"
+    "zustand": "^5.0.2"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.0.0",

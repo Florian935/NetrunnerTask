@@ -22,6 +22,15 @@ Les US-005 à US-007 enrichissent le to-do.
 | US-009 | Progression joueur (XP, niveau netrunner, solde crédits) | 1 | haute | à faire |
 | US-010 | Tableau de bord / HUD (contrats du jour, niveau, solde) | 1 | moyenne | à faire |
 
+> **Dette design system (suite migration NIGHTWIRE, décision #008)** : les
+> composants « game » et la rampe de rareté n'existent pas dans NIGHTWIRE et ont
+> été retirés avec l'ancien design system. À **reconstruire sur NIGHTWIRE** dans
+> l'US qui les consomme en premier :
+> - `ContractCard` → US-004 (liste des contrats).
+> - `FactionBadge` → US-007 (factions & filtrage).
+> - Rampe de rareté `--rarity-*` + `RarityBadge` + `CosmeticCard` → MVP 2/3
+>   (caisses, inventaire cosmétiques).
+
 ## MVP 2 — Progression & tension
 
 > À découper en US à l'approche du MVP 2 (voir `docs/roadmap.md`).

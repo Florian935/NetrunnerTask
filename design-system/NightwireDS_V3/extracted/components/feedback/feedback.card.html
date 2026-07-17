@@ -1,0 +1,56 @@
+<!-- @dsCard group="Components" viewport="700x340" name="Feedback" subtitle="Badges, tags, alerts, toasts, progress, tooltip" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>body{margin:0;background:var(--bg-app);padding:22px}#root{max-width:660px}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}.lbl{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);width:100%;margin-bottom:-6px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { Badge, Tag, Alert, Toast, Tooltip, ProgressBar, IconButton } = window.NightwireDesignSystem_f7f010;
+function Demo(){
+  return <div>
+    <div className="lbl">Badges</div>
+    <div className="row">
+      <Badge tone="cyan">NEW</Badge>
+      <Badge tone="magenta" solid glow>HOT</Badge>
+      <Badge tone="mint" solid>ONLINE</Badge>
+      <Badge tone="violet">BETA</Badge>
+      <Badge tone="amber">v3.0</Badge>
+      <Badge tone="red" glow>ALERT</Badge>
+    </div>
+    <div className="lbl">Tags</div>
+    <div className="row">
+      <Tag tone="cyan" icon="cpu">netrunner</Tag>
+      <Tag tone="magenta" onRemove={()=>{}}>#eddies</Tag>
+      <Tag tone="mint">encrypted</Tag>
+      <Tag tone="neutral" icon="map-pin">night-city</Tag>
+    </div>
+    <div className="lbl">Progress</div>
+    <div className="row" style={{display:'block'}}>
+      <ProgressBar value={72} label="CPU LOAD" showValue accent="magenta" style={{marginBottom:10}}/>
+      <ProgressBar value={40} accent="gradient"/>
+    </div>
+    <div className="lbl">Alerts & toast</div>
+    <div className="grid2">
+      <Alert kind="success" title="Access granted">Deck synced to the grid.</Alert>
+      <Alert kind="danger" title="Intrusion detected" onClose={()=>{}}>ICE tripped on node 0x4F.</Alert>
+    </div>
+    <div className="row" style={{marginTop:14}}>
+      <Toast kind="warning" title="Low charge" onClose={()=>{}}>Cyberdeck at 12%.</Toast>
+      <Tooltip label="Synced 3s ago"><IconButton name="refresh-cw" variant="outline"/></Tooltip>
+    </div>
+  </div>;
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo/>);
+setTimeout(()=>window.lucide&&window.lucide.createIcons(),100);
+</script>
+</body>
+</html>
