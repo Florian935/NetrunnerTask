@@ -22,6 +22,16 @@
 .ctr-row:hover {
   box-shadow: inset 3px 0 0 var(--cyan-500);
 }
+/* Halos transitoires (US-008). Déclarés après `:hover` pour l'emporter à
+   spécificité égale : édition = cyan (tant que l'édition dure), flash « hack
+   réussi » = mint (retiré après ~720 ms côté vue). Au repos, aucune des deux
+   classes n'est posée → le liseré au survol reprend la main. */
+.ctr-row.ctr-row--editing {
+  box-shadow: var(--glow-cyan);
+}
+.ctr-row.ctr-row--flashing {
+  box-shadow: var(--glow-mint);
+}
 .ctr-tools {
   opacity: 0;
   transition: opacity var(--dur-fast) var(--ease-out);

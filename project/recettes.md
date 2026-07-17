@@ -103,3 +103,32 @@ confirmée par le PO (dont pluriel des compteurs et animations).
 | C9 | `build` + `lint` + typecheck passent | validé | 17/07/2026 |
 
 **Verdict : recette US-004 validée (9/9 critères).**
+
+## US-008 — Difficulté & calcul de récompense (XP + crédits)
+
+Recette du 17/07/2026. Vérifs automatiques (tsc/lint/build) + recette navigateur
+(sélecteur, octroi, persistance, anti-farm, migration, i18n) confirmée par le PO.
+
+| # | Critère (action → résultat attendu) | Statut | Date |
+|---|-------------------------------------|--------|------|
+| C1 | Sélecteur de difficulté (5 niveaux) ; création sans choix → contrat `trivial` ; règle des 2 s préservée | validé | 17/07/2026 |
+| C2 | Édition de la difficulté d'un contrat → nouvelle valeur persistée après F5 | validé | 17/07/2026 |
+| C3 | Contrat ouvert affiche sa récompense potentielle (`+X XP · +Y ¢`) conforme au barème | validé | 17/07/2026 |
+| C4 | Terminer un `medium` → `player.xp` +25 & `player.credits` +20, persistés après F5 | validé | 17/07/2026 |
+| C5 | Retour de gain : compteur « GAINS · SESSION » +gain **+** toast « HACK RÉUSSI » **+** flash mint transitoire | validé | 17/07/2026 |
+| C6 | Cumul : deux `easy` d'affilée → +20 XP / +20 ¢ au total | validé | 17/07/2026 |
+| C7 | Anti-farm : décocher/re-terminer n'octroie plus rien (marqueur `rewardGranted`) | validé | 17/07/2026 |
+| C8 | `player.level` inchangé par les gains (montée de niveau = US-009) | validé | 17/07/2026 |
+| C9 | i18n FR/EN : difficultés, « GAINS · SESSION », récompenses, toast ; aucune chaîne en dur | validé | 17/07/2026 |
+
+### Ajustement issu de la recette (résolu dans l'US)
+
+- **Halos figés sur la ligne de contrat** : le halo d'édition (cyan) et le flash
+  « hack réussi » (mint) restaient affichés indéfiniment. Cause : `motion.div`
+  (Framer Motion) applique les styles de façon impérative et **ne retire pas** une
+  clé `boxShadow` disparue du style inline entre deux rendus. Correctif : halo
+  déplacé du style inline vers des **classes CSS** (`ctr-row--editing` /
+  `ctr-row--flashing`), déclarées après `:hover` ; le liseré au survol est
+  préservé au repos. Validé PO.
+
+**Verdict : recette US-008 validée (9/9 critères).**

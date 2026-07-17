@@ -45,6 +45,7 @@ export const contractsRepo = {
       status: 'open',
       createdAt: Date.now(),
       completedAt: null,
+      rewardGranted: false,
     }
     await db.contracts.add(contract)
     return contract
@@ -55,8 +56,9 @@ export const contractsRepo = {
   },
 
   /**
-   * Marque un contrat comme terminé. Ne calcule **aucune** récompense
-   * (XP/crédits) : cette logique arrive en US-008. Couche « données pures ».
+   * Marque un contrat comme terminé (statut + date). Couche « données pures » :
+   * l'octroi de la récompense (XP/crédits) et le marqueur anti-farm
+   * `rewardGranted` sont pilotés par le store contrats (US-008).
    */
   async complete(id: string): Promise<void> {
     await db.contracts.update(id, { status: 'done', completedAt: Date.now() })

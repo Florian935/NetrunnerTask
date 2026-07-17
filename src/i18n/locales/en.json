@@ -5,7 +5,7 @@
     "activeTotal": "ACTIVE · TOTAL",
     "placeholder": "Enter a contract…  e.g. purge the ICE on node 0x4F",
     "addButton": "⏎  ADD",
-    "hint": "> ENTER to confirm — the field stays live to keep going.",
+    "hint": "> ENTER to create — default difficulty: TRIVIAL (optional).",
     "queueTitle": "QUEUE",
     "activeCount_one": "{{count}} ACTIVE",
     "activeCount_other": "{{count}} ACTIVE",
@@ -15,6 +15,17 @@
     "emptyBody": "No contracts left, runner. Type one above to light the queue back up.",
     "toastCreated": "CONTRACT CREATED",
     "toastPurged": "CONTRACT PURGED",
+    "toastReward": "HACK SUCCESSFUL",
+    "sessionGains": "GAINS · SESSION",
+    "reward": "+{{xp}} XP · +{{credits}} ¢",
+    "difficultyLabel": "DIFFICULTY",
+    "difficulty": {
+      "trivial": "TRIVIAL",
+      "easy": "EASY",
+      "medium": "MEDIUM",
+      "hard": "HARD",
+      "legendary": "LEGENDARY"
+    },
     "item": {
       "codePrefix": "CTR",
       "done": "DONE",

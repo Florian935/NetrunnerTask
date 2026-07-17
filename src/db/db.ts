@@ -33,6 +33,25 @@ export class NetrunnerDB extends Dexie {
       player: 'id',
       demoKV: 'key',
     })
+    // v3 (US-008) : marqueur anti-farm `rewardGranted` sur les contrats. Pas
+    // d'index nouveau (champ non interrogé) → on recopie le schéma v2 et on
+    // rétro-remplit les contrats existants : un contrat déjà `done` est réputé
+    // « déjà récompensé » (pas de paiement rétroactif), un `open` reste à payer.
+    this.version(3)
+      .stores({
+        contracts: 'id, factionId, status, dueDate, createdAt',
+        factions: 'id, name',
+        player: 'id',
+        demoKV: 'key',
+      })
+      .upgrade((tx) =>
+        tx
+          .table<Contract>('contracts')
+          .toCollection()
+          .modify((c) => {
+            c.rewardGranted = c.status === 'done'
+          }),
+      )
   }
 }
 
