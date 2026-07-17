@@ -49,3 +49,21 @@ par le PO.
 | C8 | Pas de régression : `build` + `lint` OK, l'app démarre (démo fonctionnelle) | validé | 17/07/2026 |
 
 **Verdict : recette US-002 validée (8/8 critères).**
+
+## US-003 — Création rapide de contrat (règle des 2 s)
+
+Recette du 17/07/2026. Vérifs automatiques (tsc/lint/build) + recette navigateur
+(interaction clavier/souris + persistance) confirmée par le PO.
+
+| # | Critère (action → résultat attendu) | Statut | Date |
+|---|-------------------------------------|--------|------|
+| C1 | Barre de saisie visible et **focalisée au chargement** (saisie directe au clavier) | validé | 17/07/2026 |
+| C2 | Titre + Entrée → contrat `open` créé et **persistant** (présent après F5 via `contractsRepo`/IndexedDB) | validé | 17/07/2026 |
+| C3 | Après validation, champ **vidé + focus conservé** → 2ᵉ création au clavier sans souris | validé | 17/07/2026 |
+| C4 | Titre vide/espaces → **flash rouge**, aucun contrat créé (compteur inchangé) | validé | 17/07/2026 |
+| C5 | Création avec **valeurs par défaut** (difficulté trivial, sans faction/échéance) ; bouton « ⏎ AJOUTER » opérationnel | validé | 17/07/2026 |
+| C6 | **Feedback immédiat** : compteur « CRÉÉS · SESSION » +1 (pop) + toast « CONTRAT CRÉÉ » ; état vide → buffer | validé | 17/07/2026 |
+| C7 | `npm run build` réussit | validé | 17/07/2026 |
+| C8 | TypeScript strict + lint passent sans erreur | validé | 17/07/2026 |
+
+**Verdict : recette US-003 validée (8/8 critères).**
