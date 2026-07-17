@@ -1,0 +1,37 @@
+import React from 'react';
+import { injectCSS } from '../styleUtil.jsx';
+
+const CSS = `
+.nt-iconbtn{display:inline-flex;align-items:center;justify-content:center;border:1px solid transparent;border-radius:var(--radius-sm);background:transparent;color:var(--text-muted);cursor:pointer;transition:background var(--dur-fast) var(--ease-out),color var(--dur-fast),box-shadow var(--dur-base) var(--ease-out),border-color var(--dur-fast);}
+.nt-iconbtn:hover:not([disabled]){color:var(--nt-cyan-400);background:var(--surface-elevated);}
+.nt-iconbtn:focus-visible{outline:none;box-shadow:var(--focus-ring);color:var(--nt-cyan-400);}
+.nt-iconbtn:active:not([disabled]){transform:translateY(1px);}
+.nt-iconbtn[disabled]{cursor:not-allowed;opacity:.4;}
+.nt-iconbtn__sz-sm{width:30px;height:30px;}
+.nt-iconbtn__sz-md{width:38px;height:38px;}
+.nt-iconbtn__sz-lg{width:46px;height:46px;}
+.nt-iconbtn__solid{background:var(--surface-elevated);border-color:var(--border-subtle);color:var(--text-body);}
+.nt-iconbtn__solid:hover:not([disabled]){border-color:var(--accent);color:var(--nt-cyan-500);box-shadow:var(--glow-cyan-soft);}
+.nt-iconbtn__accent{color:var(--accent);}
+.nt-iconbtn__accent:hover:not([disabled]){background:var(--tint-accent);box-shadow:var(--glow-cyan-soft);}
+`;
+
+/** Square, label-less button for a single icon. */
+export function IconButton({
+  variant = 'ghost',
+  size = 'md',
+  disabled = false,
+  label,
+  children,
+  className = '',
+  ...rest
+}) {
+  injectCSS('nt-iconbtn', CSS);
+  const cls = ['nt-iconbtn', `nt-iconbtn__${variant}`, `nt-iconbtn__sz-${size}`, className]
+    .filter(Boolean).join(' ');
+  return (
+    <button className={cls} disabled={disabled} aria-label={label} title={label} {...rest}>
+      {children}
+    </button>
+  );
+}

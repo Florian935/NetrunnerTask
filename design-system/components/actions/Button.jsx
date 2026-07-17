@@ -1,0 +1,62 @@
+import React from 'react';
+import { injectCSS } from '../styleUtil.jsx';
+
+const CSS = `
+.nt-btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:var(--sp-2);font-family:var(--font-display);font-weight:var(--fw-semibold);letter-spacing:var(--ls-wide);text-transform:uppercase;border:1px solid transparent;border-radius:var(--radius-sm);cursor:pointer;white-space:nowrap;user-select:none;transition:background var(--dur-fast) var(--ease-out),box-shadow var(--dur-base) var(--ease-out),color var(--dur-fast),transform var(--dur-fast) var(--ease-out),border-color var(--dur-fast);}
+.nt-btn:focus-visible{outline:none;box-shadow:var(--focus-ring);}
+.nt-btn:active{transform:translateY(1px);}
+.nt-btn[disabled]{cursor:not-allowed;opacity:.42;box-shadow:none;transform:none;filter:grayscale(.5);}
+.nt-btn__sz-sm{height:30px;padding:0 var(--sp-3);font-size:var(--fs-2xs);}
+.nt-btn__sz-md{height:38px;padding:0 var(--sp-4);font-size:var(--fs-xs);}
+.nt-btn__sz-lg{height:46px;padding:0 var(--sp-5);font-size:var(--fs-sm);}
+/* primary — cyan */
+.nt-btn__primary{background:var(--accent);color:var(--text-on-accent);box-shadow:0 0 0 1px rgba(0,229,255,.4),0 0 14px rgba(0,229,255,.22);}
+.nt-btn__primary:hover:not([disabled]){background:var(--accent-hover);box-shadow:var(--glow-cyan);}
+.nt-btn__primary:active:not([disabled]){background:var(--accent-press);}
+/* secondary — outline */
+.nt-btn__secondary{background:transparent;color:var(--nt-cyan-400);border-color:var(--border-strong);}
+.nt-btn__secondary:hover:not([disabled]){border-color:var(--accent);color:var(--nt-cyan-500);box-shadow:var(--glow-cyan-soft);}
+/* ghost */
+.nt-btn__ghost{background:transparent;color:var(--text-muted);}
+.nt-btn__ghost:hover:not([disabled]){background:var(--surface-elevated);color:var(--text-strong);}
+/* danger */
+.nt-btn__danger{background:transparent;color:var(--status-danger);border-color:rgba(255,77,94,.5);}
+.nt-btn__danger:hover:not([disabled]){background:var(--tint-danger);border-color:var(--status-danger);box-shadow:0 0 14px rgba(255,77,94,.3);}
+/* complete — "HACK SUCCESSFUL", phosphor lime */
+.nt-btn__complete{background:transparent;color:var(--status-success);border-color:rgba(157,255,60,.5);}
+.nt-btn__complete:hover:not([disabled]){background:var(--tint-success);border-color:var(--status-success);box-shadow:var(--glow-lime);}
+.nt-btn__complete:active:not([disabled]){background:rgba(157,255,60,.2);}
+.nt-btn__block{width:100%;}
+`;
+
+/**
+ * Primary action button. Uppercase display type, neon glow on hover.
+ * variant="complete" is the signature "hack successful" task-completion action.
+ */
+export function Button({
+  variant = 'primary',
+  size = 'md',
+  block = false,
+  disabled = false,
+  leadingIcon = null,
+  trailingIcon = null,
+  children,
+  className = '',
+  ...rest
+}) {
+  injectCSS('nt-btn', CSS);
+  const cls = [
+    'nt-btn',
+    `nt-btn__${variant}`,
+    `nt-btn__sz-${size}`,
+    block ? 'nt-btn__block' : '',
+    className,
+  ].filter(Boolean).join(' ');
+  return (
+    <button className={cls} disabled={disabled} {...rest}>
+      {leadingIcon}
+      {children != null && <span>{children}</span>}
+      {trailingIcon}
+    </button>
+  );
+}

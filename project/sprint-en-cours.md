@@ -9,18 +9,19 @@ _Aucune US active._
 
 ## Étape du cycle de vie
 
-Gouvernance en place. En attente du cahier des charges pour construire la
-roadmap et le backlog, puis lancer la première US.
+Cadrage projet. Cahier des charges et design system intégrés. Prochaine étape :
+construire ensemble la roadmap (MVP 1/2/3), puis le backlog du MVP 1.
 
 ## Avancement
 
 - [x] Gouvernance initialisée (arborescence de pilotage, `CLAUDE.md`, skills).
-- [ ] Cahier des charges intégré dans `docs/cahier-des-charges.md`.
+- [x] Cahier des charges intégré dans `docs/cahier-des-charges.md`.
+- [x] Design system intégré et nettoyé (`design-system/`, source-only).
 - [ ] Roadmap MVP 1/2/3 remplie.
 - [ ] Backlog MVP 1 rempli.
 - [ ] Première US lancée.
 
 ## Prochaine action
 
-Recevoir le cahier des charges, puis construire ensemble la roadmap et le
+Construire ensemble la roadmap (découpage MVP 1/2/3 avec objectifs), puis le
 backlog du MVP 1.
