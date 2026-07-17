@@ -5,23 +5,28 @@
 
 ## US active
 
-_Aucune US active._
+_Aucune US active._ Dernière US clôturée : **US-001** (archivée dans
+`us/archive/`).
 
 ## Étape du cycle de vie
 
-Cadrage projet. Cahier des charges et design system intégrés. Prochaine étape :
-construire ensemble la roadmap (MVP 1/2/3), puis le backlog du MVP 1.
+US-001 terminée : cycle complet déroulé (cadrages → plan → implémentation →
+recette 8/8 → commit/merge). Prêt à démarrer la prochaine US du MVP 1.
 
-## Avancement
+## Avancement global
 
-- [x] Gouvernance initialisée (arborescence de pilotage, `CLAUDE.md`, skills).
-- [x] Cahier des charges intégré dans `docs/cahier-des-charges.md`.
-- [x] Design system intégré et nettoyé (`design-system/`, source-only).
-- [ ] Roadmap MVP 1/2/3 remplie.
-- [ ] Backlog MVP 1 rempli.
-- [ ] Première US lancée.
+- [x] Gouvernance, CDC, design system (source-only), roadmap, backlog MVP 1.
+- [x] US-001 — Initialisation technique + design system (**fait**).
+- [ ] US-002 — Modèle de données & persistance locale (Dexie) — prochaine.
 
 ## Prochaine action
 
-Construire ensemble la roadmap (découpage MVP 1/2/3 avec objectifs), puis le
-backlog du MVP 1.
+Démarrer **US-002 — Modèle de données & persistance locale (Dexie)** via le
+skill `nouvelle-us` (branche `feature/US-002-...` depuis `develop`, puis cadrage
+fonctionnel → STOP validation).
+
+## Comment lancer l'app
+
+- Dev : `npm run dev` (port 5173 parfois pris par une autre app → Vite bascule,
+  ou forcer `npm run dev -- --port 5180`).
+- Build + test PWA/hors-ligne : `npm run build` puis `npm run preview`.

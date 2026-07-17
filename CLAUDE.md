@@ -26,6 +26,9 @@ tu cadres, tu planifies, tu tiens le suivi à jour, et tu fais valider aux
 
 ## 3. Cycle de vie d'une US — Parcours complet (fonctionnalités)
 
+> Le skill `nouvelle-us` orchestre les étapes 1 à 3 ci-dessous (sélection,
+> branche, démarrage du cadrage fonctionnel). Invoque-le pour démarrer une US.
+
 À respecter strictement, dans l'ordre :
 
 1. **Sélection** — choisir la prochaine US prioritaire du MVP courant dans

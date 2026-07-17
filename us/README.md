@@ -9,6 +9,15 @@ Chaque fichier suit le cycle de vie défini dans `CLAUDE.md` §3 :
 3. **Design** (si impact UI significatif) — écrans concernés, lien maquette.
 4. **Plan d'implémentation** — étapes concrètes.
 
+## Devenir d'une US terminée — Archivage
+
+Les fichiers à la racine de `us/` sont les US **à faire** ou **en cours**.
+
+Quand une US est clôturée (statut `fait`), son fichier est **déplacé dans
+`us/archive/`** — c'est fait automatiquement par le skill `commit`. La racine ne
+contient donc que le travail vivant ; l'archive conserve la trace du cadrage
+(quoi / pourquoi / comment) et reste consultable sans repasser par Git.
+
 ## Gabarit d'une US
 
 ```markdown

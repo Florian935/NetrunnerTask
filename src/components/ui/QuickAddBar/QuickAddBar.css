@@ -1,0 +1,63 @@
+.nt-cap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 12px;
+  border-radius: 16px;
+  background: var(--surface-glass);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--glass-shadow);
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+.nt-cap:focus-within {
+  border-color: var(--accent);
+  box-shadow: var(--glow-cyan-soft);
+}
+.nt-cap__btn {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  border: none;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--accent), var(--accent-press));
+  color: var(--text-on-accent);
+  box-shadow: 0 0 16px var(--nt-teal-glow);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.nt-cap__btn:hover {
+  transform: scale(1.05);
+}
+.nt-cap__btn:active {
+  transform: scale(0.95);
+}
+.nt-cap__input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  outline: none;
+  color: var(--text-strong);
+  font: 500 15px var(--font-body);
+}
+.nt-cap__input::placeholder {
+  color: var(--text-muted);
+}
+.nt-cap__kbd {
+  flex: none;
+  font: 600 11px var(--font-mono);
+  letter-spacing: 0.05em;
+  color: var(--text-faint);
+  border: 1px solid var(--border-subtle);
+  border-radius: 7px;
+  padding: 5px 8px;
+}

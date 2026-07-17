@@ -1,0 +1,76 @@
+/* Netrunner Tasks — point d'entrée du thème.
+   Ordre : Tailwind, puis les tokens du design system (variables CSS = source
+   unique), puis le pont Tailwind ↔ tokens, puis les styles de base. */
+@import 'tailwindcss';
+@import './tokens/colors.css';
+@import './tokens/typography.css';
+@import './tokens/spacing.css';
+@import './tokens/effects.css';
+
+/* ---- Pont Tailwind ↔ tokens ----
+   Expose les tokens du design system comme utilitaires Tailwind
+   (ex. text-accent, bg-surface-card, font-mono). On référence les variables CSS
+   des tokens : pas de duplication de valeurs, bascule de thème automatique. */
+@theme {
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-violet: var(--nt-violet-500);
+  --color-magenta: var(--nt-magenta-500);
+  --color-surface-card: var(--surface-card);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-surface-inset: var(--surface-inset);
+  --color-bg-app: var(--bg-app);
+  --color-text-strong: var(--text-strong);
+  --color-text-body: var(--text-body);
+  --color-text-muted: var(--text-muted);
+  --color-text-faint: var(--text-faint);
+  --color-success: var(--status-success);
+  --color-warning: var(--status-warning);
+  --color-danger: var(--status-danger);
+
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-mono: var(--font-mono);
+}
+
+/* ---- Styles de base ---- */
+:root {
+  color-scheme: dark;
+}
+.theme-light {
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--bg-app);
+  /* Fond ambiant : halos aurora + maille + scanlines (voir tokens/effects.css) */
+  background-image: var(--aurora), var(--mesh), var(--scanlines);
+  background-size:
+    auto,
+    var(--grid-size) var(--grid-size),
+    auto;
+  background-attachment: fixed;
+  color: var(--text-body);
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  line-height: var(--lh-normal);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+#root {
+  min-height: 100vh;
+}
