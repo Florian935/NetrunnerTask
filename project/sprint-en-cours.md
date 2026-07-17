@@ -5,16 +5,17 @@
 
 ## US active
 
-_Aucune US active._ Dernière US clôturée : **US-003** (archivée dans
-`us/archive/`).
+_Aucune US active._ Dernier travail clôturé : **chantier i18n FR/EN** (archivé
+dans `us/archive/`).
 
 ## Étape du cycle de vie
 
-US-003 terminée : cycle complet (cadrages → maquette → plan → implémentation →
-recette 8/8 → commit/merge). Prêt à démarrer US-004.
+Chantier i18n terminé : cadrage → implémentation → recette 7/7 → commit/merge.
+Prêt à démarrer US-004.
 
 Reports actés à réintégrer le moment venu : **store contrats Zustand** (US-004),
-**app-shell** — rail de nav + barre de statut (US-010).
+**app-shell** — rail de nav + barre de statut (US-010), **i18n des noms de
+factions** (US-007).
 
 ## Avancement global
 

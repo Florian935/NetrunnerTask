@@ -67,3 +67,20 @@ Recette du 17/07/2026. Vérifs automatiques (tsc/lint/build) + recette navigateu
 | C8 | TypeScript strict + lint passent sans erreur | validé | 17/07/2026 |
 
 **Verdict : recette US-003 validée (8/8 critères).**
+
+## Chantier — Internationalisation FR/EN
+
+Recette du 17/07/2026. Vérifs automatiques (tsc/lint/build) + recette navigateur
+(bascule FR↔EN, persistance, pluriels) confirmée par le PO.
+
+| # | Critère (action → résultat attendu) | Statut | Date |
+|---|-------------------------------------|--------|------|
+| C1 | Sélecteur FR/EN visible ; le changer bascule **toute** l'UI Contrats à chaud | validé | 17/07/2026 |
+| C2 | Choix de langue **persistant** après F5 | validé | 17/07/2026 |
+| C3 | **Pluriels** corrects (1 CONTRAT/2 CONTRATS ↔ 1 CONTRACT/2 CONTRACTS) | validé | 17/07/2026 |
+| C4 | **Aucune chaîne d'UI en dur** dans ContractsView / QuickAddContract | validé | 17/07/2026 |
+| C5 | Catalogues **FR et EN complets** pour l'existant (EN in-world, pas mot-à-mot) | validé | 17/07/2026 |
+| C6 | Langue initiale détectée (navigateur) sinon **repli FR** | validé | 17/07/2026 |
+| C7 | `typecheck` + `lint` + `build` passent | validé | 17/07/2026 |
+
+**Verdict : recette chantier i18n validée (7/7 critères).**

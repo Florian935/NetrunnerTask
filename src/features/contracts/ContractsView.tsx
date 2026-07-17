@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Icon, Toast } from '../../components/ui'
 import { contractsRepo } from '../../db'
+import { LanguageSwitcher } from '../common/LanguageSwitcher'
 import { QuickAddContract } from './QuickAddContract'
 import './contracts.css'
 
@@ -16,11 +18,12 @@ interface ToastItem {
  * en US-010 / US-004 — cet écran est pensé pour les accueillir.
  */
 export function ContractsView() {
+  const { t } = useTranslation()
   const [count, setCount] = useState(0)
   const [toasts, setToasts] = useState<ToastItem[]>([])
 
   const dismiss = (id: string) =>
-    setToasts((ts) => ts.filter((t) => t.id !== id))
+    setToasts((ts) => ts.filter((item) => item.id !== id))
 
   const handleCreate = async (title: string) => {
     await contractsRepo.create({ title })
@@ -43,7 +46,7 @@ export function ContractsView() {
           padding: '32px 30px 40px',
         }}
       >
-        {/* En-tête + compteur de session */}
+        {/* En-tête : titre + sélecteur de langue + compteur de session */}
         <div
           style={{
             display: 'flex',
@@ -63,7 +66,7 @@ export function ContractsView() {
                 marginBottom: 8,
               }}
             >
-              NIGHTWIRE // OPS
+              {t('contracts.overline')}
             </div>
             <h1
               className="nw-neon-cyan"
@@ -75,33 +78,44 @@ export function ContractsView() {
                 margin: 0,
               }}
             >
-              CONTRATS
+              {t('contracts.title')}
             </h1>
           </div>
-          <div style={{ textAlign: 'right', flex: 'none' }}>
-            <div
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: 'var(--text-2xs)',
-                letterSpacing: '0.16em',
-                color: 'var(--steel-400)',
-                marginBottom: 2,
-              }}
-            >
-              CRÉÉS · SESSION
-            </div>
-            <div
-              key={count}
-              className="nw-count"
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: 'var(--text-2xl)',
-                lineHeight: 1,
-                color: 'var(--mint-500)',
-                textShadow: 'var(--text-glow-mint)',
-              }}
-            >
-              {String(count).padStart(2, '0')}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-end',
+              gap: 12,
+              flex: 'none',
+            }}
+          >
+            <LanguageSwitcher />
+            <div style={{ textAlign: 'right' }}>
+              <div
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: 'var(--text-2xs)',
+                  letterSpacing: '0.16em',
+                  color: 'var(--steel-400)',
+                  marginBottom: 2,
+                }}
+              >
+                {t('contracts.sessionCounter')}
+              </div>
+              <div
+                key={count}
+                className="nw-count"
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: 'var(--text-2xl)',
+                  lineHeight: 1,
+                  color: 'var(--mint-500)',
+                  textShadow: 'var(--text-glow-mint)',
+                }}
+              >
+                {String(count).padStart(2, '0')}
+              </div>
             </div>
           </div>
         </div>
@@ -147,7 +161,7 @@ export function ContractsView() {
                   color: 'var(--steel-200)',
                 }}
               >
-                AUCUN CONTRAT ACTIF
+                {t('contracts.emptyTitle')}
               </div>
               <p
                 style={{
@@ -159,8 +173,7 @@ export function ContractsView() {
                   color: 'var(--steel-400)',
                 }}
               >
-                Le réseau est calme, runner. Ton premier contrat commence par une
-                ligne — saisis-le ci-dessus et jacke-toi dedans.
+                {t('contracts.emptyBody')}
               </p>
             </>
           ) : (
@@ -188,7 +201,7 @@ export function ContractsView() {
                   letterSpacing: '0.12em',
                 }}
               >
-                {count} CONTRAT{count > 1 ? 'S' : ''} EN BUFFER
+                {t('contracts.buffer', { count })}
               </div>
               <p
                 style={{
@@ -200,9 +213,7 @@ export function ContractsView() {
                   color: 'var(--steel-400)',
                 }}
               >
-                Signal reçu — tes contrats sont chargés dans le grid. Le tableau
-                des missions arrive dans un prochain module. Continue à empiler,
-                ou jacke-toi dedans.
+                {t('contracts.bufferBody')}
               </p>
             </>
           )}
@@ -222,10 +233,14 @@ export function ContractsView() {
             zIndex: 1000,
           }}
         >
-          {toasts.map((t) => (
-            <div key={t.id} className="nw-toast-in" style={{ pointerEvents: 'auto' }}>
-              <Toast kind="success" title="CONTRAT CRÉÉ" onClose={() => dismiss(t.id)}>
-                {t.label}
+          {toasts.map((item) => (
+            <div key={item.id} className="nw-toast-in" style={{ pointerEvents: 'auto' }}>
+              <Toast
+                kind="success"
+                title={t('contracts.toastTitle')}
+                onClose={() => dismiss(item.id)}
+              >
+                {item.label}
               </Toast>
             </div>
           ))}
