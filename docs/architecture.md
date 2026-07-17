@@ -13,13 +13,42 @@
 
 ## Arborescence du code applicatif
 
-_À définir lors de la première US technique._
+- `src/theme/` — design system NIGHTWIRE (tokens + pont Tailwind + polices).
+- `src/components/ui/` — composants du design system (core / forms / feedback /
+  surfaces / navigation).
+- `src/db/` — **couche de données** : `types.ts`, `db.ts` (Dexie), `seed.ts`,
+  `repositories/`, `index.ts` (barrel). Point d'accès unique aux données.
+- `src/stores/` — état applicatif (Zustand).
 
 ## Modèle de données
 
-_À définir. Décrire ici les entités (contrats/tâches, habitudes, joueur, XP,
-crédits, réputation, cosmétiques…), leurs champs et leurs relations, ainsi que
-le schéma des tables Dexie et sa versioning._
+App locale (IndexedDB via Dexie, base `netrunner-tasks`). **Aucun accès Dexie
+hors de `src/db/`** : tout passe par les repositories typés.
+
+### Entités (MVP 1)
+
+- **Contract** — la tâche gamifiée : `id`, `title`, `factionId` (`null` = aucune),
+  `difficulty` (`trivial | easy | medium | hard | legendary`), `priority`
+  (`low | normal | high`), `dueDate` (epoch ms | `null`), `status`
+  (`open | done`), `createdAt`, `completedAt` (epoch ms | `null`).
+- **Faction** — catégorie de vie : `id`, `name`, `color` (accent NIGHTWIRE),
+  `createdAt`. Semées par défaut au 1ᵉʳ lancement (Boulot, Sport, Perso, Santé,
+  Apprentissage).
+- **Player** — singleton de progression (clé fixe `id: 'me'`) : `xp`, `level`,
+  `credits`.
+
+Conventions : dates en **epoch ms**, IDs via `crypto.randomUUID()` (sauf player,
+clé fixe). Seeding **idempotent** (`ensureSeeded()`, test d'existence).
+
+### Schéma Dexie & versioning
+
+- **v1** (US-001) : `demoKV: 'key'` (démo jetable).
+- **v2** (US-002) : `contracts: 'id, factionId, status, dueDate, createdAt'`,
+  `factions: 'id, name'`, `player: 'id'`, `demoKV: 'key'`.
+
+Les évolutions (sous-tâches & récurrence, récompense, réputation, streaks,
+cosmétiques, caisses) se feront par **nouvelles versions** Dexie, sans perte de
+données.
 
 ## Décisions techniques
 

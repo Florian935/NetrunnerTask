@@ -12,7 +12,7 @@ Les US-005 à US-007 enrichissent le to-do.
 | ID | Titre | MVP | Priorité | Statut |
 |----|-------|-----|----------|--------|
 | US-001 | Initialisation technique + design system | 1 | haute | fait |
-| US-002 | Modèle de données & persistance locale (Dexie) | 1 | haute | à faire |
+| US-002 | Modèle de données & persistance locale (Dexie) | 1 | haute | fait |
 | US-003 | Création rapide de contrat (règle des 2 s) | 1 | haute | à faire |
 | US-004 | Liste des contrats & complétion (voir / terminer / éditer / supprimer) | 1 | haute | à faire |
 | US-005 | Attributs de contrat (priorité, échéance, sous-tâches) | 1 | moyenne | à faire |

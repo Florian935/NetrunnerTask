@@ -30,3 +30,22 @@ visuelle navigateur confirmée par le PO.
   la référence `design-system/`.
 
 **Verdict : recette US-001 validée (8/8 critères).**
+
+## US-002 — Modèle de données & persistance locale (Dexie)
+
+Recette du 17/07/2026. Vérifs automatiques (tsc/lint/build) + recette
+comportementale en console navigateur (repositories exposés en dev), confirmée
+par le PO.
+
+| # | Critère (action → résultat attendu) | Statut | Date |
+|---|-------------------------------------|--------|------|
+| C1 | Base `netrunner-tasks` expose les tables `contracts` / `factions` / `player` (DevTools → IndexedDB) | validé | 17/07/2026 |
+| C2 | Contrat créé via la couche d'accès → toujours présent après F5, champs inchangés | validé | 17/07/2026 |
+| C3 | Modèle Contrat complet (id, title, factionId, difficulty, priority, dueDate, status, createdAt, completedAt) | validé | 17/07/2026 |
+| C4 | Factions par défaut semées (5), aucun re-seed ni doublon après relances | validé | 17/07/2026 |
+| C5 | Joueur singleton créé (`id:'me'`, xp 0 / level 1 / credits 0), lisible & modifiable | validé | 17/07/2026 |
+| C6 | Couche d'accès typée (CRUD contrats/factions + get/update player) ; aucun Dexie hors de `src/db/` | validé | 17/07/2026 |
+| C7 | Schéma versionné (`db.version(2)`), extensible sans perte | validé | 17/07/2026 |
+| C8 | Pas de régression : `build` + `lint` OK, l'app démarre (démo fonctionnelle) | validé | 17/07/2026 |
+
+**Verdict : recette US-002 validée (8/8 critères).**

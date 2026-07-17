@@ -12,6 +12,7 @@
 | 005 | 17/07/2026 | Choix techniques US-001 : **Tailwind v4** (config CSS-first sur variables CSS), polices **auto-hébergées via @fontsource**, tokens copiés dans `src/theme/` (source unique en variables CSS, wirés à Tailwind), composants du DS portés en `.tsx` avec **CSS co-localisé** (fin de l'injection runtime), périmètre limité aux primitives génériques (composants `game/` reportés). | Init technique du projet + intégration du design system. | Hors-ligne fiable (fonts locales), rendu bundlé propre, alignement tokens↔Tailwind sans duplication, respect de la règle anti-dérapage. |
 | 006 | 17/07/2026 | **Archivage des US terminées** : à la clôture d'une US (statut `fait`), son fichier de cadrage est déplacé de `us/` vers `us/archive/`, automatisé dans le skill `commit`. | Le dossier `us/` mélangeait sinon US à faire, en cours et terminées ; devenu illisible à mesure que le backlog avance. | Racine `us/` = travail vivant uniquement ; l'archive conserve la trace du cadrage sans repasser par l'historique Git. |
 | 007 | 17/07/2026 | **Base visuelle des surfaces** : cartes en verre très translucides (fill `~0.10`, blur `24px`) avec halo néon en **liseré de bord** (pas de lavage de couleur), sheen + scanlines internes ; badges & chips avec **halo néon fort** coloré ; tags `#` laissés sobres. _(Remplacée par #008.)_ | Recette US-001 : le rendu par défaut du DS était trop opaque / peu « glassmorphism » ; calage de l'identité visuelle dès le socle. | Fixer les bases du look cyberpunk « écran de HUD » tout de suite, appliqué globalement (thème + référence DS) pour éviter les divergences. |
+| 009 | 17/07/2026 | **Modèle de données MVP 1 & couche d'accès Dexie** (US-002) : entités `Contract` / `Faction` / `Player` (player singleton `id:'me'`), dates en **epoch ms**, IDs `crypto.randomUUID()`, **seeding idempotent** (factions par défaut + player), couche **`repositories/` typée** (aucun Dexie hors de `src/db/`), schéma **versionné** (`version(2)`). Code technique/tables/colonnes **en anglais**. | Première définition réelle du modèle, fondation du MVP 1. | Persistance locale fiable et extensible sans refonte ; logique métier (récompense, réputation) laissée aux US dédiées → couche « données pures ». |
 | 008 | 17/07/2026 | **Remplacement complet du design system par NIGHTWIRE V3** (neon-on-void, cadres HUD biseautés, 3 polices). Remplace l'ancien DS Claude Design (#004/#005/#007 obsolètes). Kit complet porté (21 composants → `.tsx`, styles inline), tokens NIGHTWIRE = source unique, **thème clair abandonné** (dark-only), polices auto-hébergées (Space Grotesk→Rajdhani, JetBrains Mono→Share Tech Mono), icônes `lucide-react` en **registre statique** (offline, pas de CDN). | Nouveau design system extrait de Claude Design, préféré à l'ancien après arbitrage. | Direction visuelle plus aboutie ; migration peu coûteuse tant que la surface applicative est minime (une page de démo, avant le vrai HUD d'US-010). |
 
 ## Détail des décisions
@@ -108,3 +109,26 @@ Voir `project/backlog.md`.
 
 Migration effectuée sur branche `feature/migration-ds-nightwire`. Vérif :
 typecheck + lint + build de production OK.
+
+### 009 — Modèle de données MVP 1 & couche d'accès Dexie (17/07/2026)
+
+Cadré et implémenté en US-002 (`us/US-002-modele-donnees.md`). Voir
+`docs/architecture.md` § « Modèle de données » pour le détail des entités.
+
+- **Entités** cœur MVP 1 : `Contract`, `Faction`, `Player`. Le joueur est un
+  **singleton** (clé fixe `id: 'me'`).
+- **Conventions de stockage** : dates en **epoch ms** (triables, indexables),
+  IDs via `crypto.randomUUID()`.
+- **Seeding idempotent** (`ensureSeeded()`, par test d'existence) plutôt que
+  `on('populate')` — ce dernier ne se déclenche pas lors d'une montée de version
+  d'une base déjà créée. Factions par défaut : Boulot, Sport, Perso, Santé,
+  Apprentissage.
+- **Couche `repositories/`** typée : unique point d'accès aux données, **aucun
+  Dexie hors de `src/db/`**. `complete()` bascule seulement le statut — pas de
+  calcul de récompense (US-008) : couche « données pures ».
+- **Versioning** : `version(2)` (v1 = `demoKV`). Extensible MVP 2/3 sans perte.
+- **Langue du code** : identifiants, tables et colonnes **en anglais**
+  (convention actée, voir `docs/conventions.md`).
+
+Périmètre reporté à leur US : sous-tâches & récurrence (US-005/006), récompense
+(US-008), réputation/streaks/cosmétiques/caisses (MVP 2/3).

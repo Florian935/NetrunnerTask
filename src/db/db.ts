@@ -1,24 +1,36 @@
 import Dexie from 'dexie'
 import type { Table } from 'dexie'
+import type { Contract, Faction, Player } from './types'
 
 /**
- * Base locale (IndexedDB via Dexie).
- *
- * ⚠️ US-001 : table de démonstration `demoKV` uniquement, destinée à prouver la
- * persistance. Le vrai modèle de données (contrats, factions, joueur) sera
- * défini en US-002 — cette table sera alors remplacée.
+ * Table de démonstration héritée d'US-001 (clé/valeur). Conservée uniquement
+ * pour la page de démo jetable ; supprimée avec elle en US-010.
  */
 export interface DemoKV {
   key: string
   value: string
 }
 
+/**
+ * Base locale (IndexedDB via Dexie). Point d'accès unique aux données : aucun
+ * composant n'interroge Dexie directement, tout passe par les repositories
+ * (`src/db/repositories/`).
+ */
 export class NetrunnerDB extends Dexie {
+  contracts!: Table<Contract, string>
+  factions!: Table<Faction, string>
+  player!: Table<Player, string>
   demoKV!: Table<DemoKV, string>
 
   constructor() {
     super('netrunner-tasks')
-    this.version(1).stores({
+    // v1 (US-001) : table de démonstration seule.
+    this.version(1).stores({ demoKV: 'key' })
+    // v2 (US-002) : modèle du cœur MVP 1. Index sur les champs interrogés/triés.
+    this.version(2).stores({
+      contracts: 'id, factionId, status, dueDate, createdAt',
+      factions: 'id, name',
+      player: 'id',
       demoKV: 'key',
     })
   }
@@ -26,16 +38,12 @@ export class NetrunnerDB extends Dexie {
 
 export const db = new NetrunnerDB()
 
-export async function readDemoValue(
-  key: string,
-): Promise<string | undefined> {
+// --- Helpers de démonstration (jetables, voir DemoKV) ---
+export async function readDemoValue(key: string): Promise<string | undefined> {
   const row = await db.demoKV.get(key)
   return row?.value
 }
 
-export async function writeDemoValue(
-  key: string,
-  value: string,
-): Promise<void> {
+export async function writeDemoValue(key: string, value: string): Promise<void> {
   await db.demoKV.put({ key, value })
 }
