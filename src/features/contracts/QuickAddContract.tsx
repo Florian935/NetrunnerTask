@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import type { KeyboardEvent } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Button, Input } from '../../components/ui'
 
 export interface QuickAddContractProps {
@@ -13,6 +14,7 @@ export interface QuickAddContractProps {
  * enchaîner. Titre vide → flash rouge, aucune création.
  */
 export function QuickAddContract({ onCreate }: QuickAddContractProps) {
+  const { t } = useTranslation()
   const [draft, setDraft] = useState('')
   const [error, setError] = useState(false)
   const errorTimer = useRef<number | undefined>(undefined)
@@ -46,7 +48,7 @@ export function QuickAddContract({ onCreate }: QuickAddContractProps) {
           icon="terminal"
           autoFocus
           error={error}
-          placeholder="Saisis un contrat…  ex. purger l'ICE du nœud 0x4F"
+          placeholder={t('contracts.placeholder')}
           value={draft}
           onChange={(e) => {
             setDraft(e.target.value)
@@ -56,7 +58,7 @@ export function QuickAddContract({ onCreate }: QuickAddContractProps) {
           style={{ flex: 1 }}
         />
         <Button variant="secondary" size="lg" hud onClick={submit}>
-          {'⏎  AJOUTER'}
+          {t('contracts.addButton')}
         </Button>
       </div>
       <div
@@ -67,7 +69,7 @@ export function QuickAddContract({ onCreate }: QuickAddContractProps) {
           color: 'var(--steel-600)',
         }}
       >
-        &gt; ENTRÉE pour valider — le champ reste actif pour enchaîner.
+        {t('contracts.hint')}
       </div>
     </div>
   )

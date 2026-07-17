@@ -19,7 +19,10 @@
 - `src/db/` — **couche de données** : `types.ts`, `db.ts` (Dexie), `seed.ts`,
   `repositories/`, `index.ts` (barrel). Point d'accès unique aux données.
 - `src/features/` — code par fonctionnalité (ex. `contracts/` : `ContractsView`,
-  `QuickAddContract`). Consomme la couche `src/db/` et les composants `ui/`.
+  `QuickAddContract` ; `common/` : `LanguageSwitcher`). Consomme la couche
+  `src/db/` et les composants `ui/`.
+- `src/i18n/` — internationalisation (config react-i18next + catalogues
+  `locales/{fr,en}.json`). Aucune chaîne d'UI en dur (voir #010).
 - `src/stores/` — état applicatif (Zustand).
 
 ## Modèle de données

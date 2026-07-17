@@ -5,10 +5,14 @@
 - **Commentaires et documentation** : **français**.
 - **Tout le code technique s'écrit en anglais** : identifiants (variables,
   fonctions, types, interfaces, hooks, stores), **noms de tables et de colonnes**
-  de la base, clés d'objets, valeurs d'énumérations. Pas de franglais dans le
-  code — le français reste pour les commentaires, la doc et les textes affichés
-  à l'utilisateur (UI en français).
-- Dates dans la documentation : **JJ/MM/AAAA**.
+  de la base, clés d'objets, valeurs d'énumérations, **clés de traduction i18n**.
+  Pas de franglais dans le code.
+- **UI bilingue FR/EN via i18n** : **aucune chaîne d'UI en dur** — tout passe par
+  `t()` (react-i18next) et les catalogues `src/i18n/locales/{fr,en}.json`. Les
+  clés sont en anglais (ex. `contracts.title`), les valeurs sont les traductions.
+  Toute US ajoute ses libellés dans les **deux** catalogues. Voir décision #010.
+- Dates : documentation en **JJ/MM/AAAA** ; dans l'UI, format **localisé** selon
+  la langue (FR JJ/MM/AAAA, EN format local).
 
 ## Nommage
 
