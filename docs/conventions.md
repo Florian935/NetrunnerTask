@@ -2,8 +2,12 @@
 
 ## Langue
 
-- Code, commentaires et documentation : **français** (identifiants techniques en
-  anglais tolérés quand c'est l'usage : `id`, `createdAt`, noms de types React…).
+- **Commentaires et documentation** : **français**.
+- **Tout le code technique s'écrit en anglais** : identifiants (variables,
+  fonctions, types, interfaces, hooks, stores), **noms de tables et de colonnes**
+  de la base, clés d'objets, valeurs d'énumérations. Pas de franglais dans le
+  code — le français reste pour les commentaires, la doc et les textes affichés
+  à l'utilisateur (UI en français).
 - Dates dans la documentation : **JJ/MM/AAAA**.
 
 ## Nommage

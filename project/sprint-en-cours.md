@@ -3,32 +3,30 @@
 > Reflète l'état réel du projet à tout instant. Mis à jour après **chaque**
 > étape franchie du cycle de vie (voir `CLAUDE.md` §5).
 
-## Travail en cours
+## US active
 
-**Migration du design system → NIGHTWIRE V3** (hors cycle US classique, décision
-#008). Branche `feature/migration-ds-nightwire` depuis `develop`.
+_Aucune US active._ Dernière US clôturée : **US-002** (archivée dans
+`us/archive/`).
 
 ## Étape du cycle de vie
 
-Migration réalisée : tokens NIGHTWIRE en source unique, pont Tailwind recâblé,
-polices auto-hébergées (Rajdhani + Share Tech Mono), icônes `lucide-react`
-(registre statique), **kit complet porté** (21 composants `.tsx`), page de démo
-réécrite, ancien design system + junk supprimés. Vérif **typecheck + lint +
-build OK**. → **En attente de validation visuelle** avant commit/merge.
+US-002 terminée : cycle complet déroulé (cadrages fonctionnel + technique → plan
+→ implémentation → recette 8/8 → commit/merge). Prêt à démarrer US-003.
 
 ## Avancement global
 
 - [x] Gouvernance, CDC, roadmap, backlog MVP 1.
 - [x] US-001 — Initialisation technique + design system (**fait**).
-- [~] Migration design system → NIGHTWIRE V3 (impl. faite, validation visuelle en attente).
-- [ ] US-002 — Modèle de données & persistance locale (Dexie) — prochaine US.
+- [x] Migration design system → NIGHTWIRE V3 (**fait**, mergée dans `develop`, décision #008).
+- [x] US-002 — Modèle de données & persistance locale (Dexie) (**fait**, décision #009).
+- [ ] US-003 — Création rapide de contrat (règle des 2 s) — prochaine.
 
 ## Prochaine action
 
-1. **Validation visuelle** de la démo (`npm run dev`) puis **commit/merge** via le
-   skill `commit`.
-2. Ensuite : démarrer **US-002 — Modèle de données & persistance locale (Dexie)**
-   via `nouvelle-us`.
+Démarrer **US-003 — Création rapide de contrat (règle des 2 s)** via le skill
+`nouvelle-us` (branche `feature/US-003-...` depuis `develop`, cadrage fonctionnel
+→ STOP validation). Première US avec **impact UI** → prévoir l'étape design
+(maquette).
 
 > À reconstruire sur NIGHTWIRE dans leur US métier : composants `game/`
 > (ContractCard, RarityBadge, CosmeticCard, FactionBadge) + rampe de rareté
