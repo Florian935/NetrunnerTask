@@ -5,30 +5,34 @@
 
 ## US active
 
-_Aucune US active._ Dernier travail clôturé : **chantier i18n FR/EN** (archivé
-dans `us/archive/`).
+_Aucune US active._ Dernière US clôturée : **US-004** (archivée dans
+`us/archive/`).
 
 ## Étape du cycle de vie
 
-Chantier i18n terminé : cadrage → implémentation → recette 7/7 → commit/merge.
-Prêt à démarrer US-004.
+US-004 terminée : cycle complet (cadrages → maquette → plan → implémentation →
+recette 9/9 → commit/merge). Introduit le **store contrats Zustand** et
+**Framer Motion** (animations). Prêt à démarrer US-005.
 
-Reports actés à réintégrer le moment venu : **store contrats Zustand** (US-004),
-**app-shell** — rail de nav + barre de statut (US-010), **i18n des noms de
-factions** (US-007).
+Reports encore ouverts : **app-shell** — rail de nav + barre de statut (US-010),
+**i18n des noms de factions** (US-007).
 
 ## Avancement global
 
 - [x] Gouvernance, CDC, roadmap, backlog MVP 1.
 - [x] US-001 — Initialisation technique + design system (**fait**).
-- [x] Migration design system → NIGHTWIRE V3 (**fait**, mergée dans `develop`, décision #008).
+- [x] Migration design system → NIGHTWIRE V3 (**fait**, décision #008).
 - [x] US-002 — Modèle de données & persistance locale (Dexie) (**fait**, décision #009).
-- [~] US-003 — Création rapide de contrat (règle des 2 s) — **en cours** (cadrage fonctionnel).
+- [x] Chantier i18n FR/EN (**fait**, décision #010).
+- [x] US-003 — Création rapide de contrat (règle des 2 s) (**fait**).
+- [x] US-004 — Liste des contrats & complétion (**fait**, décision #011).
+- [ ] US-005 — Attributs de contrat (priorité, échéance, sous-tâches) — prochaine.
 
 ## Prochaine action
 
-Valider (ou amender) le **cadrage fonctionnel d'US-003**, puis passer au cadrage
-technique, puis à l'étape **design** (maquette Claude Design) avant le plan.
+Démarrer **US-005 — Attributs de contrat (priorité, échéance, sous-tâches)** via
+le skill `nouvelle-us`. Impact UI → étape design prévue ; libellés à ajouter aux
+catalogues i18n ; probables évolutions du modèle Dexie (montée de version).
 
 > À reconstruire sur NIGHTWIRE dans leur US métier : composants `game/`
 > (ContractCard, RarityBadge, CosmeticCard, FactionBadge) + rampe de rareté

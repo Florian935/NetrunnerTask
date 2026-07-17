@@ -1,21 +1,4 @@
-/* Animations propres à l'écran Contrats (US-003). */
-
-/* Pop du compteur de session à chaque création (re-déclenché via key). */
-.nw-count {
-  animation: nw-count-pop 480ms var(--ease-out);
-}
-@keyframes nw-count-pop {
-  0% {
-    transform: scale(1);
-  }
-  40% {
-    transform: scale(1.22);
-    color: var(--mint-400);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
+/* Animations et états propres à l'écran Contrats. */
 
 /* Entrée du toast de confirmation. */
 .nw-toast-in {
@@ -32,9 +15,52 @@
   }
 }
 
+/* Ligne de contrat : liseré néon interne au survol + révélation des outils. */
+.ctr-row {
+  transition: box-shadow var(--dur-fast) var(--ease-out);
+}
+.ctr-row:hover {
+  box-shadow: inset 3px 0 0 var(--cyan-500);
+}
+.ctr-tools {
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+.ctr-row:hover .ctr-tools,
+.ctr-row:focus-within .ctr-tools {
+  opacity: 1;
+}
+
+/* Popup de confirmation (overlay + modal). */
+.nw-overlay-in {
+  animation: nw-overlay-in 130ms var(--ease-out);
+}
+@keyframes nw-overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.nw-modal-in {
+  animation: nw-modal-in 180ms var(--ease-out);
+}
+@keyframes nw-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .nw-count,
-  .nw-toast-in {
+  .nw-toast-in,
+  .nw-overlay-in,
+  .nw-modal-in {
     animation: none;
   }
 }

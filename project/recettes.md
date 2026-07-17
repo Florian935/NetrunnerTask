@@ -84,3 +84,22 @@ Recette du 17/07/2026. Vérifs automatiques (tsc/lint/build) + recette navigateu
 | C7 | `typecheck` + `lint` + `build` passent | validé | 17/07/2026 |
 
 **Verdict : recette chantier i18n validée (7/7 critères).**
+
+## US-004 — Liste des contrats & complétion
+
+Recette du 17/07/2026. Vérifs automatiques (tsc/lint/build) + recette navigateur
+confirmée par le PO (dont pluriel des compteurs et animations).
+
+| # | Critère (action → résultat attendu) | Statut | Date |
+|---|-------------------------------------|--------|------|
+| C1 | Liste des contrats (ouverts d'abord, récent en haut) + en-tête ACTIFS/TOTAL + barre de progression ; persistante après F5 | validé | 17/07/2026 |
+| C2 | Réactivité : créer via la barre ajoute le contrat immédiatement à la liste | validé | 17/07/2026 |
+| C3 | Terminer → `done` (barré + badge, descend en bas) ; ré-ouvrir → remonte ; persiste | validé | 17/07/2026 |
+| C4 | Éditer le titre en place (Entrée = enregistrer, Échap = annuler) ; persiste | validé | 17/07/2026 |
+| C5 | Supprimer → popup de confirmation HUD ; annuler ne fait rien, confirmer retire (liste + base) + toast | validé | 17/07/2026 |
+| C6 | État vide « GRID VIDE » quand aucun contrat | validé | 17/07/2026 |
+| C7 | i18n FR/EN sur tout l'écran (dont pluriel « ACTIF(S) / TERMINÉ(S) ») | validé | 17/07/2026 |
+| C8 | Réordonnancement animé (Framer Motion : déplacement / ajout / suppression), respecte reduced-motion | validé | 17/07/2026 |
+| C9 | `build` + `lint` + typecheck passent | validé | 17/07/2026 |
+
+**Verdict : recette US-004 validée (9/9 critères).**

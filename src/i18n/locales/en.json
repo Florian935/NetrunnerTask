@@ -2,15 +2,33 @@
   "contracts": {
     "overline": "NIGHTWIRE // OPS",
     "title": "CONTRACTS",
-    "sessionCounter": "CREATED · SESSION",
+    "activeTotal": "ACTIVE · TOTAL",
     "placeholder": "Enter a contract…  e.g. purge the ICE on node 0x4F",
     "addButton": "⏎  ADD",
     "hint": "> ENTER to confirm — the field stays live to keep going.",
-    "emptyTitle": "NO ACTIVE CONTRACT",
-    "emptyBody": "The grid is quiet, runner. Your first contract starts with a single line — type it above and jack in.",
-    "buffer_one": "{{count}} CONTRACT IN BUFFER",
-    "buffer_other": "{{count}} CONTRACTS IN BUFFER",
-    "bufferBody": "Signal received — your contracts are loaded into the grid. The mission board ships in a coming module. Keep stacking, or jack in.",
-    "toastTitle": "CONTRACT CREATED"
+    "queueTitle": "QUEUE",
+    "activeCount_one": "{{count}} ACTIVE",
+    "activeCount_other": "{{count}} ACTIVE",
+    "doneCount_one": "{{count}} DONE",
+    "doneCount_other": "{{count}} DONE",
+    "emptyTitle": "EMPTY GRID",
+    "emptyBody": "No contracts left, runner. Type one above to light the queue back up.",
+    "toastCreated": "CONTRACT CREATED",
+    "toastPurged": "CONTRACT PURGED",
+    "item": {
+      "codePrefix": "CTR",
+      "done": "DONE",
+      "edit": "Edit title",
+      "delete": "Delete",
+      "save": "Save (Enter)",
+      "cancel": "Cancel (Esc)"
+    },
+    "delete": {
+      "title": "DELETE CONTRACT",
+      "message": "You're about to purge this contract from the grid. No trace, no undo — it's final, runner.",
+      "itemCaption": "CONTRACT",
+      "cancel": "CANCEL",
+      "confirm": "DELETE"
+    }
   }
 }
