@@ -25,6 +25,12 @@ export interface Contract {
   createdAt: number
   /** Date de complétion (epoch ms) ; `null` tant qu'ouvert. */
   completedAt: number | null
+  /**
+   * Récompense (XP + crédits) déjà versée pour ce contrat ? Anti-farm (US-008) :
+   * un contrat ne paie qu'à sa **première** complétion ; rouvrir puis re-terminer
+   * ne reverse rien. `false` à la création.
+   */
+  rewardGranted: boolean
 }
 
 /** Catégorie de vie regroupant des contrats. */

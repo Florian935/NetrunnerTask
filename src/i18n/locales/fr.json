@@ -5,7 +5,7 @@
     "activeTotal": "ACTIFS · TOTAL",
     "placeholder": "Saisis un contrat…  ex. purger l'ICE du nœud 0x4F",
     "addButton": "⏎  AJOUTER",
-    "hint": "> ENTRÉE pour valider — le champ reste actif pour enchaîner.",
+    "hint": "> ENTRÉE pour créer — difficulté par défaut : TRIVIAL (optionnelle).",
     "queueTitle": "FILE D'ATTENTE",
     "activeCount_one": "{{count}} ACTIF",
     "activeCount_other": "{{count}} ACTIFS",
@@ -15,6 +15,17 @@
     "emptyBody": "Plus aucun contrat, runner. Saisis-en un ci-dessus pour rallumer la file.",
     "toastCreated": "CONTRAT CRÉÉ",
     "toastPurged": "CONTRAT PURGÉ",
+    "toastReward": "HACK RÉUSSI",
+    "sessionGains": "GAINS · SESSION",
+    "reward": "+{{xp}} XP · +{{credits}} ¢",
+    "difficultyLabel": "DIFFICULTÉ",
+    "difficulty": {
+      "trivial": "TRIVIAL",
+      "easy": "FACILE",
+      "medium": "MOYEN",
+      "hard": "DIFFICILE",
+      "legendary": "LÉGENDAIRE"
+    },
     "item": {
       "codePrefix": "CTR",
       "done": "TERMINÉ",

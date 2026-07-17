@@ -1,13 +1,16 @@
 import { AnimatePresence } from 'motion/react'
 import { useTranslation } from 'react-i18next'
-import type { Contract } from '../../db'
+import type { Contract, Difficulty } from '../../db'
 import { ContractItem } from './ContractItem'
 
 export interface ContractListProps {
   contracts: Contract[]
   onToggle: (id: string) => void
   onRename: (id: string, title: string) => void
+  onSetDifficulty: (id: string, difficulty: Difficulty) => void
   onDelete: (contract: Contract) => void
+  /** Id du contrat qui vient d'être récompensé (flash « hack réussi »). */
+  flashingId: string | null
 }
 
 /** La file d'attente : en-tête de section + compteurs + lignes de contrats. */
@@ -15,7 +18,9 @@ export function ContractList({
   contracts,
   onToggle,
   onRename,
+  onSetDifficulty,
   onDelete,
+  flashingId,
 }: ContractListProps) {
   const { t } = useTranslation()
   const active = contracts.filter((c) => c.status === 'open').length
@@ -57,7 +62,9 @@ export function ContractList({
               contract={c}
               onToggle={onToggle}
               onRename={onRename}
+              onSetDifficulty={onSetDifficulty}
               onDelete={onDelete}
+              flashing={c.id === flashingId}
             />
           ))}
         </AnimatePresence>

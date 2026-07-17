@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Icon, ProgressBar, Toast } from '../../components/ui'
 import { useContractsStore } from '../../stores/useContractsStore'
-import type { Contract } from '../../db'
+import { usePlayerStore } from '../../stores/usePlayerStore'
+import type { Contract, Difficulty } from '../../db'
 import { ConfirmDialog } from '../common/ConfirmDialog'
 import { LanguageSwitcher } from '../common/LanguageSwitcher'
 import { ContractList } from './ContractList'
@@ -30,14 +31,22 @@ export function ContractsView() {
   const complete = useContractsStore((s) => s.complete)
   const reopen = useContractsStore((s) => s.reopen)
   const rename = useContractsStore((s) => s.rename)
+  const setDifficulty = useContractsStore((s) => s.setDifficulty)
   const remove = useContractsStore((s) => s.remove)
+  const loadPlayer = usePlayerStore((s) => s.load)
+  const grantReward = usePlayerStore((s) => s.grantReward)
 
   const [toasts, setToasts] = useState<ToastItem[]>([])
   const [target, setTarget] = useState<Contract | null>(null)
+  // Cumul des gains de la session (en mémoire, remis à zéro au rechargement).
+  const [sessionGains, setSessionGains] = useState({ xp: 0, credits: 0 })
+  // Contrat qui vient d'encaisser sa récompense → flash « hack réussi ».
+  const [flashingId, setFlashingId] = useState<string | null>(null)
 
   useEffect(() => {
     void load()
-  }, [load])
+    void loadPlayer()
+  }, [load, loadPlayer])
 
   const dismiss = (id: string) =>
     setToasts((ts) => ts.filter((item) => item.id !== id))
@@ -49,15 +58,32 @@ export function ContractsView() {
     window.setTimeout(() => dismiss(id), 2600)
   }
 
-  const handleCreate = async (title: string) => {
-    await createContract(title)
+  const handleCreate = async (title: string, difficulty: Difficulty) => {
+    await createContract(title, difficulty)
     pushToast('success', t('contracts.toastCreated'), title)
   }
 
   const toggle = (id: string) => {
     const c = contracts.find((x) => x.id === id)
     if (!c) return
-    void (c.status === 'done' ? reopen(id) : complete(id))
+    if (c.status === 'done') {
+      void reopen(id)
+      return
+    }
+    void complete(id).then((reward) => {
+      // `reward` non nul = première complétion → on verse au joueur, on cumule
+      // les gains de session, et on déclenche le retour visuel (toast + flash).
+      if (!reward) return
+      void grantReward(reward)
+      setSessionGains((g) => ({ xp: g.xp + reward.xp, credits: g.credits + reward.credits }))
+      pushToast(
+        'success',
+        t('contracts.toastReward'),
+        t('contracts.reward', { xp: reward.xp, credits: reward.credits }),
+      )
+      setFlashingId(id)
+      window.setTimeout(() => setFlashingId((cur) => (cur === id ? null : cur)), 720)
+    })
   }
 
   const confirmDelete = () => {
@@ -141,7 +167,74 @@ export function ContractsView() {
             }}
           >
             <LanguageSwitcher />
-            <div style={{ width: '100%', textAlign: 'right' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-end', gap: 22, flex: 'none' }}>
+              {/* GAINS · SESSION — cumul en mémoire des récompenses encaissées */}
+              <div style={{ textAlign: 'right' }}>
+                <div
+                  style={{
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: 'var(--text-2xs)',
+                    letterSpacing: '0.16em',
+                    color: 'var(--steel-400)',
+                    marginBottom: 5,
+                  }}
+                >
+                  {t('contracts.sessionGains')}
+                </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'baseline',
+                    justifyContent: 'flex-end',
+                    gap: 6,
+                  }}
+                >
+                  <span
+                    className="nw-neon-mint"
+                    style={{
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: 'var(--text-xl)',
+                      lineHeight: 1,
+                    }}
+                  >
+                    +{sessionGains.xp}
+                  </span>
+                  <span
+                    style={{
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: 'var(--text-2xs)',
+                      letterSpacing: '0.14em',
+                      color: 'var(--mint-500)',
+                    }}
+                  >
+                    XP
+                  </span>
+                  <span style={{ color: 'var(--steel-600)', margin: '0 3px' }}>·</span>
+                  <span
+                    style={{
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: 'var(--text-xl)',
+                      lineHeight: 1,
+                      color: 'var(--amber-500)',
+                      textShadow: '0 0 8px rgba(255,176,32,.4)',
+                    }}
+                  >
+                    +{sessionGains.credits}
+                  </span>
+                  <span
+                    style={{
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: 'var(--text-2xs)',
+                      letterSpacing: '0.14em',
+                      color: 'var(--amber-500)',
+                    }}
+                  >
+                    ¢
+                  </span>
+                </div>
+              </div>
+              <div style={{ width: 1, height: 42, background: 'var(--border)' }} />
+              <div style={{ textAlign: 'right', minWidth: 150 }}>
               <div
                 style={{
                   fontFamily: 'var(--font-mono)',
@@ -193,6 +286,7 @@ export function ContractsView() {
                 </span>
               </div>
               <ProgressBar value={pct} max={100} accent="mint" height={5} />
+              </div>
             </div>
           </div>
         </div>
@@ -257,7 +351,9 @@ export function ContractsView() {
               contracts={sortedContracts}
               onToggle={toggle}
               onRename={rename}
+              onSetDifficulty={setDifficulty}
               onDelete={setTarget}
+              flashingId={flashingId}
             />
           )}
         </div>

@@ -5,17 +5,23 @@
 
 ## US active
 
-_Aucune US active._ Dernière US clôturée : **US-004** (archivée dans
+_Aucune US active._ Dernière US clôturée : **US-008** (archivée dans
 `us/archive/`).
 
 ## Étape du cycle de vie
 
-US-004 terminée : cycle complet (cadrages → maquette → plan → implémentation →
-recette 9/9 → commit/merge). Introduit le **store contrats Zustand** et
-**Framer Motion** (animations). Prêt à démarrer US-005.
+US-008 terminée : cycle complet (cadrages → maquette → plan → implémentation →
+recette **9/9** → commit/merge). Introduit la couche **`src/game/`** (règles de
+jeu, barème), le **store joueur** (`usePlayerStore`), le marqueur anti-farm
+`rewardGranted` (**Dexie v3**), le sélecteur de difficulté, l'affichage de la
+récompense potentielle et le retour de gain (compteur **GAINS · SESSION** +
+toast + flash mint). Ajustement de recette : halos figés (Framer Motion) →
+pilotés par classes CSS. Prêt à démarrer **US-005**.
 
-Reports encore ouverts : **app-shell** — rail de nav + barre de statut (US-010),
-**i18n des noms de factions** (US-007).
+Reports encore ouverts : **US-005** (attributs de contrat) ; **app-shell** — rail
+de nav + barre de statut (US-010) ; **i18n des noms de factions** (US-007) ;
+**progression de niveau** (dérivation `xp → level`, montée de niveau) et
+**affichage permanent solde/niveau** → US-009 / US-010.
 
 ## Avancement global
 
@@ -26,13 +32,14 @@ Reports encore ouverts : **app-shell** — rail de nav + barre de statut (US-010
 - [x] Chantier i18n FR/EN (**fait**, décision #010).
 - [x] US-003 — Création rapide de contrat (règle des 2 s) (**fait**).
 - [x] US-004 — Liste des contrats & complétion (**fait**, décision #011).
+- [x] US-008 — Difficulté & calcul de récompense (**fait**, décision #012).
 - [ ] US-005 — Attributs de contrat (priorité, échéance, sous-tâches) — prochaine.
 
 ## Prochaine action
 
 Démarrer **US-005 — Attributs de contrat (priorité, échéance, sous-tâches)** via
-le skill `nouvelle-us`. Impact UI → étape design prévue ; libellés à ajouter aux
-catalogues i18n ; probables évolutions du modèle Dexie (montée de version).
+le skill `nouvelle-us`. Impact UI → étape design probable ; libellés i18n ;
+probables évolutions du modèle Dexie (montée de version).
 
 > À reconstruire sur NIGHTWIRE dans leur US métier : composants `game/`
 > (ContractCard, RarityBadge, CosmeticCard, FactionBadge) + rampe de rareté
