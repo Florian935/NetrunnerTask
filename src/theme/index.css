@@ -1,32 +1,44 @@
-/* Netrunner Tasks — point d'entrée du thème.
-   Ordre : Tailwind, puis les tokens du design system (variables CSS = source
-   unique), puis le pont Tailwind ↔ tokens, puis les styles de base. */
+/* Netrunner Tasks — point d'entrée du thème (design system NIGHTWIRE V3).
+   Ordre : Tailwind, puis les tokens NIGHTWIRE (variables CSS = source unique),
+   puis le pont Tailwind ↔ tokens.
+   Les polices sont chargées en local via ./fonts.ts (@fontsource) — pas de CDN,
+   pour préserver le fonctionnement hors-ligne de la PWA. */
 @import 'tailwindcss';
 @import './tokens/colors.css';
 @import './tokens/typography.css';
 @import './tokens/spacing.css';
 @import './tokens/effects.css';
+@import './tokens/base.css';
 
-/* ---- Pont Tailwind ↔ tokens ----
-   Expose les tokens du design system comme utilitaires Tailwind
-   (ex. text-accent, bg-surface-card, font-mono). On référence les variables CSS
-   des tokens : pas de duplication de valeurs, bascule de thème automatique. */
+/* ---- Pont Tailwind ↔ tokens NIGHTWIRE ----
+   Expose les alias sémantiques du design system comme utilitaires Tailwind
+   (ex. text-accent, bg-bg-panel, font-mono). On référence les variables CSS :
+   pas de duplication de valeurs. */
 @theme {
   --color-accent: var(--accent);
   --color-accent-2: var(--accent-2);
-  --color-violet: var(--nt-violet-500);
-  --color-magenta: var(--nt-magenta-500);
-  --color-surface-card: var(--surface-card);
-  --color-surface-elevated: var(--surface-elevated);
-  --color-surface-inset: var(--surface-inset);
+  --color-accent-3: var(--accent-3);
+  --color-accent-4: var(--accent-4);
+
   --color-bg-app: var(--bg-app);
-  --color-text-strong: var(--text-strong);
-  --color-text-body: var(--text-body);
+  --color-bg-panel: var(--bg-panel);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-hover: var(--bg-hover);
+  --color-bg-inset: var(--bg-inset);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
   --color-text-muted: var(--text-muted);
-  --color-text-faint: var(--text-faint);
-  --color-success: var(--status-success);
-  --color-warning: var(--status-warning);
-  --color-danger: var(--status-danger);
+  --color-text-label: var(--text-label);
+
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-border-neon: var(--border-neon);
+
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
 
   --font-display: var(--font-display);
   --font-body: var(--font-body);
@@ -34,41 +46,9 @@
 }
 
 /* ---- Styles de base ---- */
+/* NIGHTWIRE V3 est un thème sombre unique (pas de thème clair pour l'instant). */
 :root {
   color-scheme: dark;
-}
-.theme-light {
-  color-scheme: light;
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html,
-body {
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  min-height: 100vh;
-  background-color: var(--bg-app);
-  /* Fond ambiant : halos aurora + maille + scanlines (voir tokens/effects.css) */
-  background-image: var(--aurora), var(--mesh), var(--scanlines);
-  background-size:
-    auto,
-    var(--grid-size) var(--grid-size),
-    auto;
-  background-attachment: fixed;
-  color: var(--text-body);
-  font-family: var(--font-body);
-  font-size: var(--fs-base);
-  line-height: var(--lh-normal);
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
 }
 
 #root {

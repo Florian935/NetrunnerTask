@@ -11,7 +11,8 @@
 | 004 | 17/07/2026 | Design system intégré dans `design-system/` comme référence visuelle, nettoyé en version **source-only** (tokens + composants + doc ; retrait des specimens renderables et fichiers générés du canvas). | Design system fourni via Claude Design ; base non figée, ajustements à venir à l'implémentation. | Dépôt propre, sources exploitables directement ; les rendus de référence se regénèrent via Claude Design. |
 | 005 | 17/07/2026 | Choix techniques US-001 : **Tailwind v4** (config CSS-first sur variables CSS), polices **auto-hébergées via @fontsource**, tokens copiés dans `src/theme/` (source unique en variables CSS, wirés à Tailwind), composants du DS portés en `.tsx` avec **CSS co-localisé** (fin de l'injection runtime), périmètre limité aux primitives génériques (composants `game/` reportés). | Init technique du projet + intégration du design system. | Hors-ligne fiable (fonts locales), rendu bundlé propre, alignement tokens↔Tailwind sans duplication, respect de la règle anti-dérapage. |
 | 006 | 17/07/2026 | **Archivage des US terminées** : à la clôture d'une US (statut `fait`), son fichier de cadrage est déplacé de `us/` vers `us/archive/`, automatisé dans le skill `commit`. | Le dossier `us/` mélangeait sinon US à faire, en cours et terminées ; devenu illisible à mesure que le backlog avance. | Racine `us/` = travail vivant uniquement ; l'archive conserve la trace du cadrage sans repasser par l'historique Git. |
-| 007 | 17/07/2026 | **Base visuelle des surfaces** : cartes en verre très translucides (fill `~0.10`, blur `24px`) avec halo néon en **liseré de bord** (pas de lavage de couleur), sheen + scanlines internes ; badges & chips avec **halo néon fort** coloré ; tags `#` laissés sobres. | Recette US-001 : le rendu par défaut du DS était trop opaque / peu « glassmorphism » ; calage de l'identité visuelle dès le socle. | Fixer les bases du look cyberpunk « écran de HUD » tout de suite, appliqué globalement (thème + référence DS) pour éviter les divergences. |
+| 007 | 17/07/2026 | **Base visuelle des surfaces** : cartes en verre très translucides (fill `~0.10`, blur `24px`) avec halo néon en **liseré de bord** (pas de lavage de couleur), sheen + scanlines internes ; badges & chips avec **halo néon fort** coloré ; tags `#` laissés sobres. _(Remplacée par #008.)_ | Recette US-001 : le rendu par défaut du DS était trop opaque / peu « glassmorphism » ; calage de l'identité visuelle dès le socle. | Fixer les bases du look cyberpunk « écran de HUD » tout de suite, appliqué globalement (thème + référence DS) pour éviter les divergences. |
+| 008 | 17/07/2026 | **Remplacement complet du design system par NIGHTWIRE V3** (neon-on-void, cadres HUD biseautés, 3 polices). Remplace l'ancien DS Claude Design (#004/#005/#007 obsolètes). Kit complet porté (21 composants → `.tsx`, styles inline), tokens NIGHTWIRE = source unique, **thème clair abandonné** (dark-only), polices auto-hébergées (Space Grotesk→Rajdhani, JetBrains Mono→Share Tech Mono), icônes `lucide-react` en **registre statique** (offline, pas de CDN). | Nouveau design system extrait de Claude Design, préféré à l'ancien après arbitrage. | Direction visuelle plus aboutie ; migration peu coûteuse tant que la surface applicative est minime (une page de démo, avant le vrai HUD d'US-010). |
 
 ## Détail des décisions
 
@@ -28,7 +29,7 @@ React + TypeScript + Vite + Tailwind + Zustand + Dexie. Voir `docs/architecture.
 
 Conventional Commits en français. Voir `docs/conventions.md`.
 
-### 004 — Design system source-only (17/07/2026)
+### 004 — Design system source-only (17/07/2026) — _obsolète, voir #008_
 
 Le design system Claude Design est la référence visuelle de l'app (`design-system/`,
 voir `design-system/HANDOFF.md`). Nettoyé pour ne garder que les sources
@@ -38,7 +39,7 @@ exploitables : `styles.css`, `tokens/`, `components/` (`.jsx` + `.d.ts` +
 `_adherence.oxlintrc.json`, `thumbnail.html`) ont été retirés. Base non figée :
 ajustements visuels attendus à l'implémentation des maquettes.
 
-### 005 — Choix techniques US-001 (17/07/2026)
+### 005 — Choix techniques US-001 (17/07/2026) — _partiellement obsolète, voir #008_
 
 Validés dans le cadrage d'US-001 (`us/US-001-init-technique.md`) :
 - **Tailwind v4** (config CSS-first `@theme` référençant les variables CSS).
@@ -70,4 +71,40 @@ référence `design-system/`) :
 - **Tags `#`** : laissés sobres (principe du DS : le néon est un signal, pas une
   décoration omniprésente).
 
-Base non figée : ajustable aux prochaines maquettes.
+Base non figée : ajustable aux prochaines maquettes. _(Obsolète : surfaces
+redéfinies par le design system NIGHTWIRE, voir #008.)_
+
+### 008 — Remplacement du design system par NIGHTWIRE V3 (17/07/2026)
+
+Bascule complète de l'ancien design system (Claude Design, décisions #004/#005/#007)
+vers **NIGHTWIRE V3** — cyberpunk « neon-on-void » : surfaces bleu-nuit,
+accents néon saturés (cyan primaire, magenta, mint, violet), cadres HUD
+biseautés (`clip-path`), hachures, readouts mono, halos généreux.
+
+Kit fourni via Claude Design (`design-system/NightwireDS_V3/extracted/`, conservé
+comme référence : `readme.md`, `SKILL.md`, `tokens/`, `guidelines/`, `ui_kits/`,
+`components/`).
+
+**Ce qui change :**
+- **Tokens** NIGHTWIRE (`src/theme/tokens/` : colors, typography, spacing,
+  effects, base) = nouvelle source unique. Noms d'alias différents de l'ancien
+  DS (`--bg-panel`, `--text-primary`, `--space-*`, `--text-md`…). Pont Tailwind
+  (`src/theme/index.css`) recâblé.
+- **Composants** : kit complet porté (21 primitives, `.jsx`+`.d.ts` → `.tsx`
+  typés, **styles inline** — plus de CSS co-localisé), rangés par famille dans
+  `src/components/ui/{core,forms,feedback,surfaces,navigation}/`.
+- **Thème clair abandonné** : NIGHTWIRE V3 est dark-only (plus de `.theme-light`).
+- **Polices** auto-hébergées (offline préservé) : Chakra Petch conservée,
+  Space Grotesk → **Rajdhani**, JetBrains Mono → **Share Tech Mono**.
+- **Icônes** : `lucide-react` en **registre statique** (`src/components/ui/core/Icon.tsx`)
+  — pas de CDN, pas de chargement dynamique (qui précacherait ~1600 icônes) ;
+  seules les icônes utilisées sont bundlées → précache PWA léger.
+
+**Reporté (à reconstruire sur NIGHTWIRE dans leur US métier) :** les composants
+`game/` de l'ancien export (ContractCard, RarityBadge, CosmeticCard,
+FactionBadge) et la **rampe de rareté** (`--rarity-*`) — absents de NIGHTWIRE,
+supprimés avec l'ancien export car bâtis sur des tokens/primitives disparus.
+Voir `project/backlog.md`.
+
+Migration effectuée sur branche `feature/migration-ds-nightwire`. Vérif :
+typecheck + lint + build de production OK.

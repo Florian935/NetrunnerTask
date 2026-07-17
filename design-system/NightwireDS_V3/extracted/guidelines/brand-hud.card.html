@@ -1,0 +1,21 @@
+<!-- @dsCard group="Brand" viewport="700x220" name="HUD Frame Motif" subtitle="Bevel + neon edge + hatch + corner brackets" -->
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../styles.css">
+<style>body{margin:0;background:var(--void-900);padding:24px}
+.frame{position:relative;clip-path:var(--clip-bevel-md);background:var(--magenta-500);padding:1px;max-width:620px;box-shadow:0 0 22px -4px rgba(255,45,149,.4)}
+.inner{clip-path:var(--clip-bevel-md);background:var(--void-700)}
+.bar{display:flex;align-items:center;gap:10px;padding:9px 16px;border-bottom:1px solid rgba(255,45,149,.3);background:rgba(255,45,149,.07)}
+.hatch{width:26px;height:11px;background:var(--hatch-magenta)}
+.title{font-family:var(--font-display);font-weight:700;font-size:13px;letter-spacing:.28em;text-transform:uppercase;color:var(--magenta-400);text-shadow:0 0 8px rgba(255,45,149,.4)}
+.status{margin-left:auto;font-family:var(--font-mono);font-size:10px;color:var(--text-muted)}
+.body{padding:16px;font-family:var(--font-mono);font-size:12px;color:var(--text-secondary)}
+.brk{position:absolute;width:12px;height:12px;border:2px solid var(--cyan-500)}
+.tl{top:6px;left:6px;border-width:2px 0 0 2px}.br{bottom:6px;right:6px;border-width:0 2px 2px 0}</style></head>
+<body>
+<div class="frame">
+  <div class="inner">
+    <div class="bar"><span class="hatch"></span><span class="title">Neon District</span><span class="status">NCPD/0023 · +++++</span></div>
+    <div class="body">Two-layer clip creates the neon edge along the chamfer. Hatch stripe, wide-tracked display title, and mono status readout complete the HUD.</div>
+  </div>
+  <span class="brk tl"></span><span class="brk br"></span>
+</div>
+</body></html>

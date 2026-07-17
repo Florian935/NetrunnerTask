@@ -1,0 +1,19 @@
+<!-- @dsCard group="Brand" viewport="700x220" name="Motion & Glow (V3)" subtitle="Pulsing glow · glitch text · CRT scanlines" -->
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../styles.css">
+<style>body{margin:0;background:var(--void-900);padding:22px;display:flex;gap:16px;align-items:stretch}
+.cell{flex:1;background:var(--bg-inset);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:18px;position:relative;overflow:hidden}
+.lbl{font-family:var(--font-mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-muted);position:absolute;top:8px;left:10px}
+.dot{width:74px;height:46px;border-radius:var(--radius-md);background:var(--void-600)}
+.glitch{font-family:var(--font-display);font-weight:700;font-size:26px;letter-spacing:.06em}</style></head>
+<body>
+<div class="cell"><span class="lbl">nw-pulse-*</span>
+  <div class="dot nw-pulse-cyan"></div>
+  <div class="dot nw-pulse-magenta"></div>
+</div>
+<div class="cell"><span class="lbl">nw-glitch</span>
+  <div class="glitch nw-glitch">BREACH</div>
+</div>
+<div class="cell nw-crt"><span class="lbl">nw-crt</span>
+  <div style="font-family:var(--font-mono);font-size:12px;line-height:1.7;color:var(--mint-500)">&gt; scanlines + flicker<br>&gt; CRT surface overlay<br>&gt; <span style="color:var(--cyan-400)">status OK</span></div>
+</div>
+</body></html>

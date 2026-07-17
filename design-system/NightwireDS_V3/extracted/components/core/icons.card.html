@@ -1,0 +1,27 @@
+<!-- @dsCard group="Components" viewport="700x230" name="Iconography (Lucide)" subtitle="Thin-line icon system via Lucide" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+body{margin:0;background:var(--bg-app);padding:22px;font-family:var(--font-body)}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;max-width:660px}
+.ic{display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--cyan-400)}
+.ic i{width:22px;height:22px}
+.ic span{font-family:var(--font-mono);font-size:9px;letter-spacing:.06em;color:var(--text-muted);text-align:center}
+.note{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin:0 0 14px}
+</style>
+</head>
+<body>
+<p class="note">Lucide · 1.75px–2px stroke · currentColor tint · kebab-case names</p>
+<div class="grid" id="g"></div>
+<script>
+const names=['activity','cpu','shield','shield-alert','radar','wifi','terminal','zap','power','database','server','radio','satellite-dish','fingerprint','lock','unlock','eye','crosshair','bell','settings','search','user','users','map-pin','battery-charging','signal','bar-chart-3','trending-up','globe','skull','triangle-alert','circle-check'];
+const g=document.getElementById('g');
+names.forEach(n=>{const d=document.createElement('div');d.className='ic';d.innerHTML=`<i data-lucide="${n}"></i><span>${n}</span>`;g.appendChild(d);});
+lucide.createIcons();
+</script>
+</body>
+</html>

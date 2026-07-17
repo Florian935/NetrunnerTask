@@ -3,27 +3,36 @@
 > Reflète l'état réel du projet à tout instant. Mis à jour après **chaque**
 > étape franchie du cycle de vie (voir `CLAUDE.md` §5).
 
-## US active
+## Travail en cours
 
-_Aucune US active._ Dernière US clôturée : **US-001** (archivée dans
-`us/archive/`).
+**Migration du design system → NIGHTWIRE V3** (hors cycle US classique, décision
+#008). Branche `feature/migration-ds-nightwire` depuis `develop`.
 
 ## Étape du cycle de vie
 
-US-001 terminée : cycle complet déroulé (cadrages → plan → implémentation →
-recette 8/8 → commit/merge). Prêt à démarrer la prochaine US du MVP 1.
+Migration réalisée : tokens NIGHTWIRE en source unique, pont Tailwind recâblé,
+polices auto-hébergées (Rajdhani + Share Tech Mono), icônes `lucide-react`
+(registre statique), **kit complet porté** (21 composants `.tsx`), page de démo
+réécrite, ancien design system + junk supprimés. Vérif **typecheck + lint +
+build OK**. → **En attente de validation visuelle** avant commit/merge.
 
 ## Avancement global
 
-- [x] Gouvernance, CDC, design system (source-only), roadmap, backlog MVP 1.
+- [x] Gouvernance, CDC, roadmap, backlog MVP 1.
 - [x] US-001 — Initialisation technique + design system (**fait**).
-- [ ] US-002 — Modèle de données & persistance locale (Dexie) — prochaine.
+- [~] Migration design system → NIGHTWIRE V3 (impl. faite, validation visuelle en attente).
+- [ ] US-002 — Modèle de données & persistance locale (Dexie) — prochaine US.
 
 ## Prochaine action
 
-Démarrer **US-002 — Modèle de données & persistance locale (Dexie)** via le
-skill `nouvelle-us` (branche `feature/US-002-...` depuis `develop`, puis cadrage
-fonctionnel → STOP validation).
+1. **Validation visuelle** de la démo (`npm run dev`) puis **commit/merge** via le
+   skill `commit`.
+2. Ensuite : démarrer **US-002 — Modèle de données & persistance locale (Dexie)**
+   via `nouvelle-us`.
+
+> À reconstruire sur NIGHTWIRE dans leur US métier : composants `game/`
+> (ContractCard, RarityBadge, CosmeticCard, FactionBadge) + rampe de rareté
+> `--rarity-*`, supprimés avec l'ancien design system (voir #008, backlog).
 
 ## Comment lancer l'app
 

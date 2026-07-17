@@ -1,7 +1,0 @@
-/* Netrunner Task — webfonts
-   SUBSTITUTION: no brand fonts provided. Google Fonts nearest matches:
-   - Chakra Petch   — display / titles / greeting (angular techno, cyberpunk)
-   - Space Grotesk  — body / task content (clean modern grotesk)
-   - JetBrains Mono — HUD labels, numbers, times, system readouts
-   Swap for licensed brand binaries when available. */
-@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
