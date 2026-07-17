@@ -19,11 +19,19 @@
 - `src/db/` — **couche de données** : `types.ts`, `db.ts` (Dexie), `seed.ts`,
   `repositories/`, `index.ts` (barrel). Point d'accès unique aux données.
 - `src/features/` — code par fonctionnalité (ex. `contracts/` : `ContractsView`,
-  `QuickAddContract` ; `common/` : `LanguageSwitcher`). Consomme la couche
-  `src/db/` et les composants `ui/`.
+  `ContractList`, `ContractItem`, `QuickAddContract` ; `common/` :
+  `LanguageSwitcher`, `ConfirmDialog`). Consomme `src/db/`, `src/stores/` et `ui/`.
 - `src/i18n/` — internationalisation (config react-i18next + catalogues
   `locales/{fr,en}.json`). Aucune chaîne d'UI en dur (voir #010).
-- `src/stores/` — état applicatif (Zustand).
+- `src/stores/` — état applicatif (Zustand) : `useContractsStore` (liste réactive
+  au-dessus de `contractsRepo`).
+
+## Animations
+
+**Framer Motion** (`motion`) est la bibliothèque d'animation du projet
+(réordonnancement `layout`, entrée/sortie `AnimatePresence`) ;
+`MotionConfig reducedMotion="user"` (dans `App`) respecte `prefers-reduced-motion`.
+Voir décision #011.
 
 ## Modèle de données
 

@@ -2,15 +2,33 @@
   "contracts": {
     "overline": "NIGHTWIRE // OPS",
     "title": "CONTRATS",
-    "sessionCounter": "CRÉÉS · SESSION",
+    "activeTotal": "ACTIFS · TOTAL",
     "placeholder": "Saisis un contrat…  ex. purger l'ICE du nœud 0x4F",
     "addButton": "⏎  AJOUTER",
     "hint": "> ENTRÉE pour valider — le champ reste actif pour enchaîner.",
-    "emptyTitle": "AUCUN CONTRAT ACTIF",
-    "emptyBody": "Le réseau est calme, runner. Ton premier contrat commence par une ligne — saisis-le ci-dessus et jacke-toi dedans.",
-    "buffer_one": "{{count}} CONTRAT EN BUFFER",
-    "buffer_other": "{{count}} CONTRATS EN BUFFER",
-    "bufferBody": "Signal reçu — tes contrats sont chargés dans le grid. Le tableau des missions arrive dans un prochain module. Continue à empiler, ou jacke-toi dedans.",
-    "toastTitle": "CONTRAT CRÉÉ"
+    "queueTitle": "FILE D'ATTENTE",
+    "activeCount_one": "{{count}} ACTIF",
+    "activeCount_other": "{{count}} ACTIFS",
+    "doneCount_one": "{{count}} TERMINÉ",
+    "doneCount_other": "{{count}} TERMINÉS",
+    "emptyTitle": "GRID VIDE",
+    "emptyBody": "Plus aucun contrat, runner. Saisis-en un ci-dessus pour rallumer la file.",
+    "toastCreated": "CONTRAT CRÉÉ",
+    "toastPurged": "CONTRAT PURGÉ",
+    "item": {
+      "codePrefix": "CTR",
+      "done": "TERMINÉ",
+      "edit": "Éditer le titre",
+      "delete": "Supprimer",
+      "save": "Enregistrer (Entrée)",
+      "cancel": "Annuler (Échap)"
+    },
+    "delete": {
+      "title": "SUPPRIMER LE CONTRAT",
+      "message": "Tu vas purger ce contrat du grid. Aucune trace, aucun retour — c'est définitif, runner.",
+      "itemCaption": "CONTRAT",
+      "cancel": "ANNULER",
+      "confirm": "SUPPRIMER"
+    }
   }
 }
