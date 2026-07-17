@@ -2,7 +2,7 @@ import React from 'react';
 import { injectCSS } from '../styleUtil.jsx';
 
 const CSS = `
-.nt-stat{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:var(--radius-sm);background:var(--surface-inset);border:1px solid var(--border-subtle);font-family:var(--font-mono);white-space:nowrap;}
+.nt-stat{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:var(--radius-sm);background:var(--surface-inset);border:1px solid color-mix(in srgb,var(--_c,var(--accent)) 40%,var(--border-subtle));box-shadow:0 0 0 1px color-mix(in srgb,var(--_c,var(--accent)) 22%,transparent),0 0 12px color-mix(in srgb,var(--_c,var(--accent)) 32%,transparent);font-family:var(--font-mono);white-space:nowrap;}
 .nt-stat__dot{width:7px;height:7px;border-radius:50%;background:var(--_c,var(--accent));box-shadow:0 0 8px var(--_c,var(--accent));flex:none;}
 .nt-stat__body{display:flex;flex-direction:column;line-height:1.05;}
 .nt-stat__label{font-size:8px;letter-spacing:var(--ls-wider);text-transform:uppercase;color:var(--text-faint);}

@@ -1,0 +1,68 @@
+.nt-prog {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+.nt-prog__top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+.nt-prog__label {
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--ls-wider);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.nt-prog__val {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--_c, var(--accent));
+}
+.nt-prog__track {
+  position: relative;
+  height: var(--_h, 8px);
+  border-radius: var(--radius-pill);
+  background: var(--surface-inset);
+  border: 1px solid var(--border-subtle);
+  overflow: hidden;
+}
+.nt-prog__fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--_c, var(--accent)) 70%, transparent),
+    var(--_c, var(--accent))
+  );
+  box-shadow:
+    0 0 12px var(--_g, var(--nt-cyan-glow)),
+    inset 0 0 6px rgba(255, 255, 255, 0.25);
+  transition: width var(--dur-slow) var(--ease-out);
+}
+.nt-prog__fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.14) 0,
+    rgba(255, 255, 255, 0.14) 2px,
+    transparent 2px,
+    transparent 8px
+  );
+  opacity: 0.5;
+}
+.nt-prog--tiers .nt-prog__track {
+  background: transparent;
+  border: none;
+  display: flex;
+  gap: 4px;
+}

@@ -1,0 +1,38 @@
+/* Netrunner Task — Typography
+   Chakra Petch (display/game) · Space Grotesk (content) · JetBrains Mono (data) */
+:root {
+  --font-display: 'Chakra Petch', 'Space Grotesk', system-ui, sans-serif;
+  --font-body: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  /* Weights */
+  --fw-regular: 400; /* @kind font */
+  --fw-medium: 500; /* @kind font */
+  --fw-semibold: 600; /* @kind font */
+  --fw-bold: 700; /* @kind font */
+
+  /* Type scale (1.25 major-third, base 15px) */
+  --fs-2xs: 10px;   /* micro labels, uppercase tags */
+  --fs-xs: 12px;    /* meta, captions, mono readouts */
+  --fs-sm: 13px;    /* dense UI, secondary */
+  --fs-base: 15px;  /* task/body content */
+  --fs-md: 17px;    /* lead body */
+  --fs-lg: 20px;    /* card titles */
+  --fs-xl: 25px;    /* section headings */
+  --fs-2xl: 31px;   /* view titles */
+  --fs-3xl: 39px;   /* page display */
+  --fs-4xl: 49px;   /* hero numerics / level */
+
+  /* Line heights */
+  --lh-tight: 1.1; /* @kind font */
+  --lh-snug: 1.28; /* @kind font */
+  --lh-normal: 1.5; /* @kind font */
+  --lh-relaxed: 1.65; /* @kind font */
+
+  /* Letter spacing — display & mono labels run wide + uppercase */
+  --ls-tight: -0.01em; /* @kind font */
+  --ls-normal: 0; /* @kind font */
+  --ls-wide: 0.06em; /* @kind font */
+  --ls-wider: 0.12em; /* @kind font */
+  --ls-widest: 0.22em; /* @kind font */
+}

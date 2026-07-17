@@ -22,6 +22,9 @@ dans l'ordre, sans sauter d'étape.
    - `project/recettes.md` : consigner les résultats de recette.
    - `project/bugs.md` : fermer les bugs corrigés (statut `corrigé`, US liée).
    - `docs/decisions.md` : ajouter une entrée si un choix structurant a été fait.
+   - **Archivage de l'US** (US uniquement, pas les fix) : mettre le statut du
+     fichier `us/US-XXX-*.md` à `fait`, puis le déplacer dans `us/archive/`
+     (`git mv`). Voir `us/README.md`.
 
 3. **Commit**
    - Message respectant la convention de `docs/conventions.md`
