@@ -1,0 +1,40 @@
+/* Animations propres à l'écran Contrats (US-003). */
+
+/* Pop du compteur de session à chaque création (re-déclenché via key). */
+.nw-count {
+  animation: nw-count-pop 480ms var(--ease-out);
+}
+@keyframes nw-count-pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.22);
+    color: var(--mint-400);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Entrée du toast de confirmation. */
+.nw-toast-in {
+  animation: nw-toast-in 180ms var(--ease-out);
+}
+@keyframes nw-toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nw-count,
+  .nw-toast-in {
+    animation: none;
+  }
+}

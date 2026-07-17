@@ -18,6 +18,8 @@
   surfaces / navigation).
 - `src/db/` — **couche de données** : `types.ts`, `db.ts` (Dexie), `seed.ts`,
   `repositories/`, `index.ts` (barrel). Point d'accès unique aux données.
+- `src/features/` — code par fonctionnalité (ex. `contracts/` : `ContractsView`,
+  `QuickAddContract`). Consomme la couche `src/db/` et les composants `ui/`.
 - `src/stores/` — état applicatif (Zustand).
 
 ## Modèle de données

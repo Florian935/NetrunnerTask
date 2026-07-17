@@ -5,13 +5,16 @@
 
 ## US active
 
-_Aucune US active._ Dernière US clôturée : **US-002** (archivée dans
+_Aucune US active._ Dernière US clôturée : **US-003** (archivée dans
 `us/archive/`).
 
 ## Étape du cycle de vie
 
-US-002 terminée : cycle complet déroulé (cadrages fonctionnel + technique → plan
-→ implémentation → recette 8/8 → commit/merge). Prêt à démarrer US-003.
+US-003 terminée : cycle complet (cadrages → maquette → plan → implémentation →
+recette 8/8 → commit/merge). Prêt à démarrer US-004.
+
+Reports actés à réintégrer le moment venu : **store contrats Zustand** (US-004),
+**app-shell** — rail de nav + barre de statut (US-010).
 
 ## Avancement global
 
@@ -19,14 +22,12 @@ US-002 terminée : cycle complet déroulé (cadrages fonctionnel + technique →
 - [x] US-001 — Initialisation technique + design system (**fait**).
 - [x] Migration design system → NIGHTWIRE V3 (**fait**, mergée dans `develop`, décision #008).
 - [x] US-002 — Modèle de données & persistance locale (Dexie) (**fait**, décision #009).
-- [ ] US-003 — Création rapide de contrat (règle des 2 s) — prochaine.
+- [~] US-003 — Création rapide de contrat (règle des 2 s) — **en cours** (cadrage fonctionnel).
 
 ## Prochaine action
 
-Démarrer **US-003 — Création rapide de contrat (règle des 2 s)** via le skill
-`nouvelle-us` (branche `feature/US-003-...` depuis `develop`, cadrage fonctionnel
-→ STOP validation). Première US avec **impact UI** → prévoir l'étape design
-(maquette).
+Valider (ou amender) le **cadrage fonctionnel d'US-003**, puis passer au cadrage
+technique, puis à l'étape **design** (maquette Claude Design) avant le plan.
 
 > À reconstruire sur NIGHTWIRE dans leur US métier : composants `game/`
 > (ContractCard, RarityBadge, CosmeticCard, FactionBadge) + rampe de rareté
