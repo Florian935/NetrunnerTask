@@ -42,6 +42,8 @@ export function ContractsView() {
     const c = contracts.find((x) => x.id === id)
     if (!c) return
     if (c.status === 'done') {
+      // Récurrent validé : verrouillé jusqu'à la réactivation (US-006).
+      if (c.recurrence) return
       void reopen(id)
       return
     }

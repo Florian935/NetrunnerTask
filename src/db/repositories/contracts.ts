@@ -4,6 +4,7 @@ import type {
   ContractStatus,
   Difficulty,
   Priority,
+  Recurrence,
   SubTask,
 } from '../types'
 
@@ -53,12 +54,16 @@ export const contractsRepo = {
       completedAt: null,
       rewardGranted: false,
       subtasks: [],
+      recurrence: null,
     }
     await db.contracts.add(contract)
     return contract
   },
 
-  async update(id: string, patch: Partial<Omit<Contract, 'id'>>): Promise<void> {
+  async update(
+    id: string,
+    patch: Partial<Omit<Contract, 'id'>>,
+  ): Promise<void> {
     await db.contracts.update(id, patch)
   },
 
@@ -71,6 +76,11 @@ export const contractsRepo = {
   /** Définit ou efface (`null`) l'échéance (epoch ms). */
   setDueDate(id: string, dueDate: number | null): Promise<void> {
     return this.update(id, { dueDate })
+  },
+
+  /** Définit ou efface (`null`) la récurrence (US-006). */
+  setRecurrence(id: string, recurrence: Recurrence | null): Promise<void> {
+    return this.update(id, { recurrence })
   },
 
   /** Ajoute une sous-tâche (titre déjà trimmé) en fin de liste. */

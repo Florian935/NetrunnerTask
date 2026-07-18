@@ -6,6 +6,7 @@ import type { Contract } from '../../db'
 import { DIFFICULTY_ACCENTS, rewardFor } from '../../game/rewards'
 import { contractCode } from './contractCode'
 import { PriorityBars } from './PriorityBars'
+import { RecurrenceChip } from './RecurrenceChip'
 import { DUE_COLORS, dueStatus, formatDueShort } from './dueDate'
 
 export interface ContractItemProps {
@@ -59,6 +60,10 @@ export function ContractItem({
   const subtotal = contract.subtasks.length
   const subdone = contract.subtasks.filter((s) => s.done).length
 
+  // Récurrent **validé** pour ce cycle (US-006) : case cochée mais **verrouillée**
+  // (anti-farm) jusqu'à la réactivation ; on montre « ⟳ revient le … ».
+  const recurringDone = done && contract.recurrence != null
+
   // Le halo (box-shadow) est piloté par CSS (classe `ctr-row--flashing`), pas en
   // style inline : Framer Motion ne retire pas une clé de style disparue entre
   // deux rendus → un box-shadow inline resterait figé.
@@ -84,14 +89,33 @@ export function ContractItem({
       transition={{ duration: 0.24, ease: 'easeOut' }}
       style={rowStyle}
     >
-      <Checkbox checked={done} onChange={() => onToggle(contract.id)} />
+      <Checkbox
+        checked={done}
+        disabled={recurringDone}
+        title={
+          recurringDone && contract.dueDate != null
+            ? t('contracts.recurrence.lockedTooltip', {
+                date: formatDueShort(contract.dueDate),
+              })
+            : undefined
+        }
+        onChange={() => onToggle(contract.id)}
+      />
       {!done && (
         <PriorityBars
           priority={contract.priority}
           label={`${t('contracts.priorityLabel')} ${t(`contracts.priority.${contract.priority}`)}`}
         />
       )}
-      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 4 }}>
+      <div
+        style={{
+          flex: 1,
+          minWidth: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 4,
+        }}
+      >
         <span
           style={{
             fontFamily: 'var(--font-body)',
@@ -107,7 +131,14 @@ export function ContractItem({
         >
           {contract.title}
         </span>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 9, flexWrap: 'wrap' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 9,
+            flexWrap: 'wrap',
+          }}
+        >
           <span
             style={{
               fontFamily: 'var(--font-mono)',
@@ -118,7 +149,9 @@ export function ContractItem({
           >
             {t('contracts.item.codePrefix')} · {contractCode(contract.id)}
           </span>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+          <span
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}
+          >
             <span
               style={{
                 width: 7,
@@ -150,8 +183,14 @@ export function ContractItem({
                 color: 'var(--steel-400)',
               }}
             >
-              {t('contracts.reward', { xp: reward.xp, credits: reward.credits })}
+              {t('contracts.reward', {
+                xp: reward.xp,
+                credits: reward.credits,
+              })}
             </span>
+          )}
+          {!done && contract.recurrence && (
+            <RecurrenceChip recurrence={contract.recurrence} />
           )}
           {due && (
             <span
@@ -181,17 +220,25 @@ export function ContractItem({
             </span>
           )}
           {subtotal > 0 && (
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+            <span
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
+            >
               <Icon name="list-checks" size={12} color="var(--steel-400)" />
               <span
                 style={{
                   fontFamily: 'var(--font-mono)',
                   fontSize: 'var(--text-2xs)',
                   letterSpacing: '0.08em',
-                  color: subdone === subtotal ? 'var(--mint-500)' : 'var(--steel-400)',
+                  color:
+                    subdone === subtotal
+                      ? 'var(--mint-500)'
+                      : 'var(--steel-400)',
                 }}
               >
-                {t('contracts.subtasks.progress', { done: subdone, total: subtotal })}
+                {t('contracts.subtasks.progress', {
+                  done: subdone,
+                  total: subtotal,
+                })}
               </span>
             </span>
           )}
@@ -207,16 +254,25 @@ export function ContractItem({
             fontSize: 'var(--text-2xs)',
             letterSpacing: '0.14em',
             color: 'var(--mint-500)',
-            background: 'color-mix(in srgb, var(--mint-500) 10%, var(--bg-inset))',
-            border: '1px solid color-mix(in srgb, var(--mint-500) 40%, transparent)',
+            background:
+              'color-mix(in srgb, var(--mint-500) 10%, var(--bg-inset))',
+            border:
+              '1px solid color-mix(in srgb, var(--mint-500) 40%, transparent)',
             clipPath: 'var(--clip-bevel-sm)',
             flex: 'none',
           }}
         >
-          {t('contracts.item.done')}
+          {recurringDone && contract.dueDate != null
+            ? t('contracts.recurrence.returns', {
+                date: formatDueShort(contract.dueDate),
+              })
+            : t('contracts.item.done')}
         </span>
       )}
-      <div className="ctr-tools" style={{ display: 'flex', gap: 3, flex: 'none' }}>
+      <div
+        className="ctr-tools"
+        style={{ display: 'flex', gap: 3, flex: 'none' }}
+      >
         <IconButton
           name="square-pen"
           size="sm"

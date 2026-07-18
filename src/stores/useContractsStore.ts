@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import { contractsRepo } from '../db'
-import type { Contract, Difficulty, Priority } from '../db'
+import type { Contract, Difficulty, Priority, Recurrence } from '../db'
+import { daysUntilDue } from '../features/contracts/dueDate'
+import { firstOccurrence, nextOccurrence } from '../game/recurrence'
 import { rewardFor } from '../game/rewards'
 import type { Reward } from '../game/rewards'
 
@@ -15,9 +17,11 @@ interface ContractsState {
   load: () => Promise<void>
   create: (title: string, difficulty?: Difficulty) => Promise<Contract>
   /**
-   * Termine un contrat. Renvoie la récompense **si elle est versée pour la
-   * première fois** (anti-farm : un contrat ne paie qu'une fois), sinon `null`.
-   * L'octroi au joueur et le retour visuel sont pilotés par la vue.
+   * Termine un contrat. Renvoie la récompense **si elle est versée** (sinon
+   * `null`). Anti-farm : un one-shot ne paie qu'une fois ; un **récurrent** ne
+   * paie que lorsqu'il est **dû** (sinon `null`) et se **reprogramme** à sa
+   * prochaine échéance (US-006). L'octroi au joueur et le retour visuel sont
+   * pilotés par la vue.
    */
   complete: (id: string) => Promise<Reward | null>
   reopen: (id: string) => Promise<void>
@@ -25,6 +29,7 @@ interface ContractsState {
   setDifficulty: (id: string, difficulty: Difficulty) => Promise<void>
   setPriority: (id: string, priority: Priority) => Promise<void>
   setDueDate: (id: string, dueDate: number | null) => Promise<void>
+  setRecurrence: (id: string, recurrence: Recurrence | null) => Promise<void>
   addSubtask: (id: string, title: string) => Promise<void>
   toggleSubtask: (id: string, subtaskId: string) => Promise<void>
   removeSubtask: (id: string, subtaskId: string) => Promise<void>
@@ -37,7 +42,29 @@ export const useContractsStore = create<ContractsState>((set, get) => ({
 
   load: async () => {
     const contracts = await contractsRepo.list()
-    set({ contracts, loaded: true })
+    // Réactivation (US-006) : un contrat récurrent **validé** dont la prochaine
+    // échéance est atteinte redevient « à faire » (au chargement de l'app).
+    const now = Date.now()
+    const reactivated = await Promise.all(
+      contracts.map(async (c) => {
+        if (
+          c.recurrence &&
+          c.status === 'done' &&
+          c.dueDate !== null &&
+          daysUntilDue(c.dueDate, now) <= 0
+        ) {
+          const patch = {
+            status: 'open' as const,
+            completedAt: null,
+            rewardGranted: false,
+          }
+          await contractsRepo.update(c.id, patch)
+          return { ...c, ...patch }
+        }
+        return c
+      }),
+    )
+    set({ contracts: reactivated, loaded: true })
   },
 
   create: async (title, difficulty) => {
@@ -49,6 +76,30 @@ export const useContractsStore = create<ContractsState>((set, get) => ({
   complete: async (id) => {
     const current = get().contracts.find((c) => c.id === id)
     if (!current) return null
+
+    // --- Contrat récurrent (US-006) : validé pour ce cycle, échéance avancée ---
+    // Il passe `done` (case cochée, verrouillé) et sa prochaine échéance est
+    // posée ; la **réactivation** au chargement le rouvrira le jour venu.
+    // Anti-farm : un récurrent déjà `done` ne repasse jamais ici (verrouillé).
+    if (current.recurrence) {
+      const now = Date.now()
+      const firstTime = !current.rewardGranted
+      const patch = {
+        status: 'done' as const,
+        completedAt: now,
+        rewardGranted: true,
+        dueDate: nextOccurrence(current.recurrence, current.dueDate, now),
+      }
+      await contractsRepo.update(id, patch)
+      set((s) => ({
+        contracts: s.contracts.map((c) =>
+          c.id === id ? { ...c, ...patch } : c,
+        ),
+      }))
+      return firstTime ? rewardFor(current.difficulty) : null
+    }
+
+    // --- Contrat one-shot (comportement historique US-008) ---
     const completedAt = Date.now()
     // Première complétion → on verse la récompense et on pose le marqueur
     // anti-farm. Contrat déjà récompensé (rouvert puis re-terminé) → aucun gain.
@@ -65,7 +116,12 @@ export const useContractsStore = create<ContractsState>((set, get) => ({
     set((s) => ({
       contracts: s.contracts.map((c) =>
         c.id === id
-          ? { ...c, status: 'done', completedAt, rewardGranted: c.rewardGranted || firstTime }
+          ? {
+              ...c,
+              status: 'done',
+              completedAt,
+              rewardGranted: c.rewardGranted || firstTime,
+            }
           : c,
       ),
     }))
@@ -92,7 +148,9 @@ export const useContractsStore = create<ContractsState>((set, get) => ({
   setDifficulty: async (id, difficulty) => {
     await contractsRepo.update(id, { difficulty })
     set((s) => ({
-      contracts: s.contracts.map((c) => (c.id === id ? { ...c, difficulty } : c)),
+      contracts: s.contracts.map((c) =>
+        c.id === id ? { ...c, difficulty } : c,
+      ),
     }))
   },
 
@@ -107,6 +165,32 @@ export const useContractsStore = create<ContractsState>((set, get) => ({
     await contractsRepo.setDueDate(id, dueDate)
     set((s) => ({
       contracts: s.contracts.map((c) => (c.id === id ? { ...c, dueDate } : c)),
+    }))
+  },
+
+  setRecurrence: async (id, recurrence) => {
+    const current = get().contracts.find((c) => c.id === id)
+    if (!current) return
+    // Échéance auto (US-006) : une récurrence implique toujours une prochaine
+    // date. On (re)pose la première occurrence quand il n'y a pas d'échéance,
+    // **ou** quand on bascule d'une récurrence à une autre (l'échéance
+    // auto-posée doit coller au nouveau choix — évite un résidu de l'ancien).
+    // Une échéance saisie à la main avant toute récurrence est respectée.
+    let dueDate = current.dueDate
+    if (recurrence !== null) {
+      const changed =
+        JSON.stringify(recurrence) !== JSON.stringify(current.recurrence)
+      const switching = current.recurrence !== null && changed
+      if (current.dueDate === null || switching) {
+        dueDate = firstOccurrence(recurrence, Date.now())
+      }
+    }
+    await contractsRepo.setRecurrence(id, recurrence)
+    if (dueDate !== current.dueDate) await contractsRepo.setDueDate(id, dueDate)
+    set((s) => ({
+      contracts: s.contracts.map((c) =>
+        c.id === id ? { ...c, recurrence, dueDate } : c,
+      ),
     }))
   },
 

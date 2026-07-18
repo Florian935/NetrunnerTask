@@ -2,13 +2,21 @@ import { useEffect, useState } from 'react'
 import type { CSSProperties, KeyboardEvent, MouseEvent } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useTranslation } from 'react-i18next'
-import { Button, Checkbox, HudPanel, IconButton, Input, ProgressBar } from '../../components/ui'
-import type { Contract, Difficulty, Priority } from '../../db'
+import {
+  Button,
+  Checkbox,
+  HudPanel,
+  IconButton,
+  Input,
+  ProgressBar,
+} from '../../components/ui'
+import type { Contract, Difficulty, Priority, Recurrence } from '../../db'
 import { DIFFICULTY_ACCENTS, rewardFor } from '../../game/rewards'
 import { PRIORITY_BARS, PRIORITY_ORDER } from '../../game/priority'
 import { contractCode } from './contractCode'
 import { DifficultyDots } from './DifficultyDots'
 import { fromDateInputValue, toDateInputValue } from './dueDate'
+import { RecurrenceControl } from './RecurrenceControl'
 
 export interface ContractDetailProps {
   contract: Contract
@@ -16,6 +24,7 @@ export interface ContractDetailProps {
   onSetDifficulty: (id: string, difficulty: Difficulty) => void
   onSetPriority: (id: string, priority: Priority) => void
   onSetDueDate: (id: string, dueDate: number | null) => void
+  onSetRecurrence: (id: string, recurrence: Recurrence | null) => void
   onAddSubtask: (id: string, title: string) => void
   onToggleSubtask: (id: string, subtaskId: string) => void
   onRemoveSubtask: (id: string, subtaskId: string) => void
@@ -34,6 +43,7 @@ export function ContractDetail({
   onSetDifficulty,
   onSetPriority,
   onSetDueDate,
+  onSetRecurrence,
   onAddSubtask,
   onToggleSubtask,
   onRemoveSubtask,
@@ -108,8 +118,16 @@ export function ContractDetail({
         WebkitBackdropFilter: 'blur(2px)',
       }}
     >
-      <div className="nw-modal-in" onClick={stop} style={{ width: 520, maxWidth: '100%' }}>
-        <HudPanel accent="cyan" title={t('contracts.detail.title')} status={contractCode(contract.id)}>
+      <div
+        className="nw-modal-in"
+        onClick={stop}
+        style={{ width: 520, maxWidth: '100%' }}
+      >
+        <HudPanel
+          accent="cyan"
+          title={t('contracts.detail.title')}
+          status={contractCode(contract.id)}
+        >
           <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
             {/* Intitulé + difficulté (éditables) */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -142,14 +160,24 @@ export function ContractDetail({
                   }}
                 >
                   {t(`contracts.difficulty.${contract.difficulty}`)} ·{' '}
-                  {t('contracts.reward', { xp: reward.xp, credits: reward.credits })}
+                  {t('contracts.reward', {
+                    xp: reward.xp,
+                    credits: reward.credits,
+                  })}
                 </span>
               </div>
             </div>
 
             {/* Priorité + échéance */}
             <div style={{ display: 'flex', gap: 16 }}>
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <div
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 6,
+                }}
+              >
                 <span style={labelStyle}>{t('contracts.priorityLabel')}</span>
                 <div
                   style={{
@@ -177,7 +205,10 @@ export function ContractDetail({
                           : 'var(--frost-100)'
                         : 'var(--steel-400)',
                       background: selected ? color : 'transparent',
-                      boxShadow: selected && key === 'high' ? `0 0 12px ${color}` : 'none',
+                      boxShadow:
+                        selected && key === 'high'
+                          ? `0 0 12px ${color}`
+                          : 'none',
                       transition: 'all var(--dur-fast) var(--ease-out)',
                     }
                     return (
@@ -193,14 +224,26 @@ export function ContractDetail({
                   })}
                 </div>
               </div>
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <div
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 6,
+                }}
+              >
                 <span style={labelStyle}>{t('contracts.dueDateLabel')}</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                   <input
                     type="date"
-                    value={hasDue ? toDateInputValue(contract.dueDate as number) : ''}
+                    value={
+                      hasDue ? toDateInputValue(contract.dueDate as number) : ''
+                    }
                     onChange={(e) =>
-                      onSetDueDate(contract.id, fromDateInputValue(e.target.value))
+                      onSetDueDate(
+                        contract.id,
+                        fromDateInputValue(e.target.value),
+                      )
                     }
                     style={{
                       flex: 1,
@@ -229,6 +272,12 @@ export function ContractDetail({
               </div>
             </div>
 
+            {/* Récurrence (US-006) */}
+            <RecurrenceControl
+              value={contract.recurrence}
+              onChange={(r) => onSetRecurrence(contract.id, r)}
+            />
+
             {/* Sous-tâches */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -243,10 +292,18 @@ export function ContractDetail({
                         color: 'var(--mint-500)',
                       }}
                     >
-                      {t('contracts.subtasks.progress', { done: subdone, total: subs.length })}
+                      {t('contracts.subtasks.progress', {
+                        done: subdone,
+                        total: subs.length,
+                      })}
                     </span>
                     <span style={{ flex: 1, maxWidth: 180 }}>
-                      <ProgressBar value={subpct} max={100} accent="mint" height={4} />
+                      <ProgressBar
+                        value={subpct}
+                        max={100}
+                        accent="mint"
+                        height={4}
+                      />
                     </span>
                   </>
                 )}
@@ -298,7 +355,9 @@ export function ContractDetail({
                         minWidth: 0,
                         fontFamily: 'var(--font-body)',
                         fontSize: 'var(--text-md)',
-                        color: sub.done ? 'var(--steel-600)' : 'var(--frost-100)',
+                        color: sub.done
+                          ? 'var(--steel-600)'
+                          : 'var(--frost-100)',
                         textDecoration: sub.done ? 'line-through' : 'none',
                         textDecorationColor: 'var(--mint-500)',
                       }}
@@ -337,7 +396,14 @@ export function ContractDetail({
               </div>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, paddingTop: 2 }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                gap: 10,
+                paddingTop: 2,
+              }}
+            >
               <Button variant="secondary" size="md" hud onClick={onClose}>
                 {t('contracts.detail.close')}
               </Button>

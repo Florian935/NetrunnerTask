@@ -10,6 +10,7 @@ export type {
   Faction,
   Player,
   Priority,
+  Recurrence,
   SubTask,
 } from './types'
 
@@ -18,5 +19,8 @@ export { DEFAULT_FACTIONS, ensureSeeded } from './seed'
 export { factionsRepo } from './repositories/factions'
 export type { CreateFactionInput } from './repositories/factions'
 export { contractsRepo } from './repositories/contracts'
-export type { ContractFilter, CreateContractInput } from './repositories/contracts'
+export type {
+  ContractFilter,
+  CreateContractInput,
+} from './repositories/contracts'
 export { playerRepo } from './repositories/player'
