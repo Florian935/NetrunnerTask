@@ -17,7 +17,7 @@ Les US-005 à US-007 enrichissent le to-do.
 | US-004 | Liste des contrats & complétion (voir / terminer / éditer / supprimer) | 1 | haute | fait |
 | US-005 | Attributs de contrat (priorité, échéance, sous-tâches) | 1 | moyenne | fait |
 | US-006 | Récurrence des contrats | 1 | moyenne | fait |
-| US-007 | Factions (catégories) & filtrage | 1 | moyenne | à faire |
+| US-007 | Factions (catégories) & filtrage | 1 | moyenne | fait |
 | US-008 | Difficulté & calcul de récompense (XP + crédits) | 1 | haute | fait |
 | US-009 | Progression joueur (XP, niveau netrunner, solde crédits) | 1 | haute | fait |
 | US-010 | Tableau de bord / HUD (contrats du jour, niveau, solde) | 1 | moyenne | fait |
@@ -27,7 +27,7 @@ Les US-005 à US-007 enrichissent le to-do.
 > été retirés avec l'ancien design system. À **reconstruire sur NIGHTWIRE** dans
 > l'US qui les consomme en premier :
 > - `ContractCard` → US-004 (liste des contrats).
-> - `FactionBadge` → US-007 (factions & filtrage).
+> - ~~`FactionBadge` → US-007~~ **fait** (reconstruit sur NIGHTWIRE en US-007).
 > - Rampe de rareté `--rarity-*` + `RarityBadge` + `CosmeticCard` → MVP 2/3
 >   (caisses, inventaire cosmétiques).
 
@@ -46,6 +46,11 @@ Les US-005 à US-007 enrichissent le to-do.
 > rappels / notifications PWA** — à traiter conjointement (une heure d'échéance
 > n'a de valeur qu'avec une alerte). Impacte la logique « en retard / du jour »
 > et la réactivation des récurrents.
+
+> **Amélioration identifiée (US-007, 18/07/2026)** : ajouter un **état vide dédié
+> « aucun contrat pour ce filtre »** sur l'écran Contrats quand le filtre de
+> faction actif ne renvoie aucun contrat (aujourd'hui la file s'affiche
+> simplement vide, sans message ni action pour réinitialiser le filtre).
 
 ## MVP 3 — Rétention profonde & identité
 

@@ -5,6 +5,7 @@ import { Checkbox, Icon, IconButton } from '../../components/ui'
 import type { Contract } from '../../db'
 import { DIFFICULTY_ACCENTS, rewardFor } from '../../game/rewards'
 import { contractCode } from './contractCode'
+import { FactionBadge } from './FactionBadge'
 import { PriorityBars } from './PriorityBars'
 import { RecurrenceChip } from './RecurrenceChip'
 import { DUE_COLORS, dueStatus, formatDueShort } from './dueDate'
@@ -139,6 +140,7 @@ export function ContractItem({
             flexWrap: 'wrap',
           }}
         >
+          <FactionBadge factionId={contract.factionId} />
           <span
             style={{
               fontFamily: 'var(--font-mono)',

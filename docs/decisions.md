@@ -202,3 +202,26 @@ L'EN est une réécriture in-world (ton netrunner), pas du mot-à-mot.
   (`/contracts`) hors-ligne et au rechargement.
 - **Sans impact modèle de données** : le HUD et l'app-shell sont des vues
   dérivées de l'état existant (contrats + joueur).
+
+### 016 — Factions & filtrage (US-007, 18/07/2026)
+
+- **Sans impact modèle de données / aucune migration Dexie** (reste **v5**) : le
+  socle faction existait déjà et inexploité côté UI — `Contract.factionId` +
+  **index `factionId` depuis v2**, `factionsRepo` (CRUD), `CreateContractInput.
+  factionId` / `ContractFilter.factionId`, 5 factions semées. US-007 = couche UI
+  + un store + i18n.
+- **Libellés des factions « système » via clé i18n** mappée sur le `name` stocké
+  (`factionLabel` + `DEFAULT_FACTION_KEYS`, `Boulot→work`, …). Le `name` en base
+  est un **identifiant interne** (jamais affiché tel quel) ; repli sur `name` pour
+  une faction hors table. Solde le report i18n des noms de factions.
+- **Pas de CRUD faction utilisateur en MVP 1** : on s'appuie sur les 5 factions
+  par défaut (`useFactionsStore` chargé une fois au montage dans l'app-shell).
+- **Faction réglée dans la surface de détail** (comme priorité/échéance, US-005),
+  optionnelle (« Aucune ») ; création rapide (2 s) inchangée.
+- **Filtre de faction mono-sélection, en mémoire, non persisté** (`FactionFilterBar`
+  + état local de `ContractsView`) : `Toutes` / une faction / `Sans faction`.
+  Non destructif, appliqué avant le tri (US-005). Compteur d'en-tête et état vide
+  restent **globaux**. Multi-sélection et persistance : hors périmètre.
+- **`FactionBadge` reconstruit sur NIGHTWIRE** (retiré à la migration DS, #008) :
+  composant autonome (résout la faction via le store), badge = pastille couleur +
+  libellé mono, en tête de la rangée méta.

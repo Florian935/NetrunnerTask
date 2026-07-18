@@ -5,6 +5,7 @@ import { NavRail } from '../components/layout/NavRail'
 import { StatusBar } from '../components/layout/StatusBar'
 import { LevelUpToast } from '../features/progression/LevelUpToast'
 import { useContractsStore } from '../stores/useContractsStore'
+import { useFactionsStore } from '../stores/useFactionsStore'
 import { usePlayerStore } from '../stores/usePlayerStore'
 import { useFeedbackStore } from '../stores/useFeedbackStore'
 import '../components/layout/appShell.css'
@@ -17,6 +18,7 @@ import '../components/layout/appShell.css'
  */
 export function AppShell() {
   const loadContracts = useContractsStore((s) => s.load)
+  const loadFactions = useFactionsStore((s) => s.load)
   const loadPlayer = usePlayerStore((s) => s.load)
   const toasts = useFeedbackStore((s) => s.toasts)
   const dismiss = useFeedbackStore((s) => s.dismiss)
@@ -25,8 +27,9 @@ export function AppShell() {
 
   useEffect(() => {
     void loadContracts()
+    void loadFactions()
     void loadPlayer()
-  }, [loadContracts, loadPlayer])
+  }, [loadContracts, loadFactions, loadPlayer])
 
   return (
     <div className="app-shell">

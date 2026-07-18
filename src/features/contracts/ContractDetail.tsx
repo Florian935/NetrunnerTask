@@ -10,18 +10,28 @@ import {
   Input,
   ProgressBar,
 } from '../../components/ui'
-import type { Contract, Difficulty, Priority, Recurrence } from '../../db'
+import type {
+  Contract,
+  Difficulty,
+  Faction,
+  Priority,
+  Recurrence,
+} from '../../db'
 import { DIFFICULTY_ACCENTS, rewardFor } from '../../game/rewards'
 import { PRIORITY_BARS, PRIORITY_ORDER } from '../../game/priority'
 import { contractCode } from './contractCode'
 import { DifficultyDots } from './DifficultyDots'
 import { fromDateInputValue, toDateInputValue } from './dueDate'
+import { factionLabel } from './factionLabel'
 import { RecurrenceControl } from './RecurrenceControl'
 
 export interface ContractDetailProps {
   contract: Contract
+  /** Factions disponibles pour le sélecteur (US-007). */
+  factions: Faction[]
   onRename: (id: string, title: string) => void
   onSetDifficulty: (id: string, difficulty: Difficulty) => void
+  onSetFaction: (id: string, factionId: string | null) => void
   onSetPriority: (id: string, priority: Priority) => void
   onSetDueDate: (id: string, dueDate: number | null) => void
   onSetRecurrence: (id: string, recurrence: Recurrence | null) => void
@@ -39,8 +49,10 @@ export interface ContractDetailProps {
  */
 export function ContractDetail({
   contract,
+  factions,
   onRename,
   onSetDifficulty,
+  onSetFaction,
   onSetPriority,
   onSetDueDate,
   onSetRecurrence,
@@ -165,6 +177,81 @@ export function ContractDetail({
                     credits: reward.credits,
                   })}
                 </span>
+              </div>
+            </div>
+
+            {/* Faction (US-007) */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <span style={labelStyle}>{t('contracts.faction.label')}</span>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
+                {/* Aucune faction */}
+                {(() => {
+                  const selected = contract.factionId == null
+                  return (
+                    <span
+                      role="button"
+                      onClick={() => onSetFaction(contract.id, null)}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        cursor: 'pointer',
+                        padding: '6px 11px',
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: 'var(--text-2xs)',
+                        letterSpacing: '0.12em',
+                        clipPath: 'var(--clip-bevel-sm)',
+                        color: selected
+                          ? 'var(--frost-100)'
+                          : 'var(--steel-400)',
+                        background: selected
+                          ? 'var(--steel-600)'
+                          : 'var(--bg-inset)',
+                        border: `1px solid ${selected ? 'var(--steel-400)' : 'var(--border)'}`,
+                        transition: 'all var(--dur-fast) var(--ease-out)',
+                      }}
+                    >
+                      {t('contracts.faction.none')}
+                    </span>
+                  )
+                })()}
+                {factions.map((faction) => {
+                  const selected = contract.factionId === faction.id
+                  const color = faction.color
+                  return (
+                    <span
+                      key={faction.id}
+                      role="button"
+                      onClick={() => onSetFaction(contract.id, faction.id)}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        cursor: 'pointer',
+                        padding: '6px 11px',
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: 'var(--text-2xs)',
+                        letterSpacing: '0.12em',
+                        clipPath: 'var(--clip-bevel-sm)',
+                        color: selected ? 'var(--void-900)' : 'var(--steel-400)',
+                        background: selected ? color : 'var(--bg-inset)',
+                        border: `1px solid ${selected ? color : 'var(--border)'}`,
+                        boxShadow: selected ? `0 0 12px -2px ${color}` : 'none',
+                        transition: 'all var(--dur-fast) var(--ease-out)',
+                      }}
+                    >
+                      <span
+                        style={{
+                          width: 7,
+                          height: 7,
+                          borderRadius: 999,
+                          background: selected ? 'var(--void-900)' : color,
+                          flex: 'none',
+                        }}
+                      />
+                      {factionLabel(faction, t)}
+                    </span>
+                  )
+                })}
               </div>
             </div>
 

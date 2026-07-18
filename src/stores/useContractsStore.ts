@@ -27,6 +27,7 @@ interface ContractsState {
   reopen: (id: string) => Promise<void>
   rename: (id: string, title: string) => Promise<void>
   setDifficulty: (id: string, difficulty: Difficulty) => Promise<void>
+  setFaction: (id: string, factionId: string | null) => Promise<void>
   setPriority: (id: string, priority: Priority) => Promise<void>
   setDueDate: (id: string, dueDate: number | null) => Promise<void>
   setRecurrence: (id: string, recurrence: Recurrence | null) => Promise<void>
@@ -151,6 +152,13 @@ export const useContractsStore = create<ContractsState>((set, get) => ({
       contracts: s.contracts.map((c) =>
         c.id === id ? { ...c, difficulty } : c,
       ),
+    }))
+  },
+
+  setFaction: async (id, factionId) => {
+    await contractsRepo.setFaction(id, factionId)
+    set((s) => ({
+      contracts: s.contracts.map((c) => (c.id === id ? { ...c, factionId } : c)),
     }))
   },
 

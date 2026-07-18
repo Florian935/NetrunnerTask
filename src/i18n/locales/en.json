@@ -19,6 +19,21 @@
     "sessionGains": "GAINS · SESSION",
     "sessionGainsEmpty": "— · —",
     "reward": "+{{xp}} XP · +{{credits}} ¢",
+    "factions": {
+      "work": "WORK",
+      "sport": "SPORT",
+      "personal": "PERSONAL",
+      "health": "HEALTH",
+      "learning": "LEARNING"
+    },
+    "faction": {
+      "label": "FACTION",
+      "none": "NONE"
+    },
+    "filter": {
+      "all": "ALL",
+      "none": "NO FACTION"
+    },
     "progression": {
       "levelShort": "LVL.",
       "nextLevel": "NEXT LVL.",

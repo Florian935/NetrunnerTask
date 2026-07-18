@@ -73,6 +73,11 @@ export const contractsRepo = {
     return this.update(id, { priority })
   },
 
+  /** Rattache le contrat à une faction, ou l'en détache (`null`) — US-007. */
+  setFaction(id: string, factionId: string | null): Promise<void> {
+    return this.update(id, { factionId })
+  },
+
   /** Définit ou efface (`null`) l'échéance (epoch ms). */
   setDueDate(id: string, dueDate: number | null): Promise<void> {
     return this.update(id, { dueDate })
