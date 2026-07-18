@@ -11,12 +11,21 @@ function startOfDay(ms: number): number {
 }
 
 /**
+ * Nombre de jours (calendaires, locaux) entre aujourd'hui et l'échéance :
+ * `< 0` = dépassée, `0` = aujourd'hui, `1` = demain, etc. Comparaison au
+ * **début de journée** local.
+ */
+export function daysUntilDue(dueDate: number, now: number): number {
+  return Math.round((startOfDay(dueDate) - startOfDay(now)) / 86_400_000)
+}
+
+/**
  * Statut d'une échéance par rapport à `now`, comparé au **début de journée**
  * local : dépassée (< aujourd'hui) → `overdue` ; aujourd'hui ou demain (≤ 1 j) →
  * `soon` ; au-delà → `neutral`.
  */
 export function dueStatus(dueDate: number, now: number): DueState {
-  const days = Math.round((startOfDay(dueDate) - startOfDay(now)) / 86_400_000)
+  const days = daysUntilDue(dueDate, now)
   if (days < 0) return 'overdue'
   if (days <= 1) return 'soon'
   return 'neutral'

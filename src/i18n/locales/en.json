@@ -44,6 +44,7 @@
     "due": {
       "overdue": "OVERDUE",
       "soon": "SOON",
+      "today": "TODAY",
       "clear": "Clear due date",
       "none": "— none —"
     },
@@ -73,5 +74,26 @@
       "cancel": "CANCEL",
       "confirm": "DELETE"
     }
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "dashboardCode": "HUD",
+    "contracts": "Contracts",
+    "contractsCode": "CTR",
+    "progression": "Progression",
+    "inventory": "Inventory",
+    "crates": "Crates",
+    "profile": "Profile",
+    "soon": "soon"
+  },
+  "dashboard": {
+    "eyebrow": "HUD // BRIEFING",
+    "title": "TODAY'S CONTRACTS",
+    "todayCount_one": "{{count}} CONTRACT TODAY",
+    "todayCount_other": "{{count}} CONTRACTS TODAY",
+    "sectionCount": "{{label}} · {{count}}",
+    "emptyTitle": "QUIET GRID",
+    "emptyBody": "No contracts due today, runner. Nothing's burning — hit the queue to get ahead.",
+    "emptyCta": "VIEW CONTRACTS"
   }
 }

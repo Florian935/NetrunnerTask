@@ -1,15 +1,18 @@
 import { MotionConfig } from 'motion/react'
-import { ContractsView } from './features/contracts'
+import { RouterProvider } from 'react-router'
+import { router } from './app/router'
 
 /**
- * Racine de l'app. Depuis US-003, affiche l'écran « Contrats ».
+ * Racine de l'app. Depuis US-010, monte le routeur (`react-router`, décision
+ * #015) sous `MotionConfig` : l'app-shell et ses vues (Tableau de bord /
+ * Contrats) sont rendus par le `RouterProvider`.
  * `MotionConfig reducedMotion="user"` : les animations Framer Motion respectent
  * la préférence système « réduire les animations ».
  */
 export default function App() {
   return (
     <MotionConfig reducedMotion="user">
-      <ContractsView />
+      <RouterProvider router={router} />
     </MotionConfig>
   )
 }

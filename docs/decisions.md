@@ -183,3 +183,22 @@ L'EN est une réécriture in-world (ton netrunner), pas du mot-à-mot.
   progression, priorité, récompenses), la plus rentable à tester unitairement.
   Premier jeu de tests : `src/game/progression.test.ts` (courbe XP → niveau).
 - **Convention** : fichier de test à côté de la source (`*.test.ts`).
+
+### 015 — Routeur & app-shell (US-010, 18/07/2026)
+
+- **`react-router` v7** = routeur de l'app. Choix assumé (et non une bascule de
+  vue ad hoc) en prévision des **nombreux écrans à venir** (progression,
+  inventaire, caisses, profil — CDC §8).
+- **App-shell** (`src/app/AppShell.tsx`) : chrome permanent = **rail de
+  navigation** (barre inférieure sur mobile) + **barre de statut** (indicateur de
+  niveau compact + gains de session + langue) + `<Outlet/>`. Route de layout avec
+  filles `index` → **Tableau de bord** (`/`) et `/contracts` → **Contrats**.
+- **Point d'entrée** : `/` = Tableau de bord (HUD).
+- **Couche feedback partagée** : toasts, gains de session, toast de palier et
+  flash sortent de `ContractsView` vers `useFeedbackStore` (Zustand) + hook
+  `useCompleteContract`, hébergés par l'app-shell → mêmes retours depuis le HUD
+  et la liste, sans duplication.
+- **PWA** : `workbox.navigateFallback: 'index.html'` pour les liens profonds
+  (`/contracts`) hors-ligne et au rechargement.
+- **Sans impact modèle de données** : le HUD et l'app-shell sont des vues
+  dérivées de l'état existant (contrats + joueur).

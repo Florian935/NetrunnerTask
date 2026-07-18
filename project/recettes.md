@@ -191,3 +191,30 @@ vérifié.
 | C12 | `typecheck` + `lint` + `build` + tests unitaires passent | exécution | validé | 18/07/2026 |
 
 **Verdict : recette US-009 validée (12/12 critères).**
+
+## US-010 — Tableau de bord / HUD
+
+Recette du 18/07/2026. **Vérifs automatiques** : tests unitaires
+`todayContracts` (`src/features/dashboard/todayContracts.test.ts`, **5/5** ;
+total suite **15/15**), `typecheck`, `lint`, `build` OK ; **smoke test dev**
+(Vite sert `/` et le lien profond `/contracts`, tous les modules se transforment
+sans erreur). **Recette visuelle/interactive navigateur confirmée par le PO :
+100 % conforme à l'attendu.**
+
+| # | Critère (action → résultat attendu) | Méthode | Statut | Date |
+|---|-------------------------------------|---------|--------|------|
+| C1 | Navigation : basculer Tableau de bord ↔ Contrats ; vue active indiquée | `NavRail`/`NavLink` + recette navigateur PO | validé | 18/07/2026 |
+| C2 | Au démarrage, la vue affichée est le **Tableau de bord** (`/`) | routeur (`index` → `DashboardView`) + PO | validé | 18/07/2026 |
+| C3 | Barre de statut permanente (niveau + solde) sur les 2 vues, maj immédiate à la complétion | `StatusBar` + `ProgressionIndicator` + `useFeedbackStore` + PO | validé | 18/07/2026 |
+| C4 | Contrats du jour : ouverts, échéance aujourd'hui/dépassée, **en retard d'abord** | test `todayContracts` (**5/5**) + PO | validé | 18/07/2026 |
+| C5 | HUD vide → message dédié (« GRID CALME »), pas de liste vide | `DashboardView` + PO | validé | 18/07/2026 |
+| C6 | Depuis une ligne du HUD, ouvrir le détail (`ContractDetail`) | `TodayContractRow` → `ContractDetailConnected` + PO | validé | 18/07/2026 |
+| C7 | Terminer un contrat du jour depuis le HUD → récompense + progression, il quitte la liste | `useCompleteContract` + `todayContracts` + PO | validé | 18/07/2026 |
+| C8 | Écran Contrats : compteur **ACTIFS · TOTAL** + barre réaffichés | `ContractsView` (en-tête) + PO | validé | 18/07/2026 |
+| C9 | i18n FR/EN sur nav + HUD ; aucune chaîne en dur | clés `nav.*` / `dashboard.*` FR+EN + PO | validé | 18/07/2026 |
+| C10 | Non-régression écran Contrats (création 2 s, liste, complétion, détail, toasts, palier) | refactor via hook/store partagés + PO | validé | 18/07/2026 |
+| C11 | PWA : lien profond `/contracts` servi (hors-ligne) | `navigateFallback` + smoke test + PO | validé | 18/07/2026 |
+| C12 | `typecheck` + `lint` + `test` (15/15) + `build` | exécution | validé | 18/07/2026 |
+| — | Responsive : rail latéral (desktop) ↔ barre inférieure (mobile PWA) | media query + PO | validé | 18/07/2026 |
+
+**Verdict : recette US-010 validée (12/12 critères + responsive).**

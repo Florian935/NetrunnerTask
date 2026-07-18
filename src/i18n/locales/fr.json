@@ -44,6 +44,7 @@
     "due": {
       "overdue": "EN RETARD",
       "soon": "BIENTÔT",
+      "today": "AUJOURD'HUI",
       "clear": "Effacer l'échéance",
       "none": "— aucune —"
     },
@@ -73,5 +74,26 @@
       "cancel": "ANNULER",
       "confirm": "SUPPRIMER"
     }
+  },
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "dashboardCode": "HUD",
+    "contracts": "Contrats",
+    "contractsCode": "CTR",
+    "progression": "Progression",
+    "inventory": "Inventaire",
+    "crates": "Caisses",
+    "profile": "Profil",
+    "soon": "bientôt"
+  },
+  "dashboard": {
+    "eyebrow": "HUD // BRIEFING",
+    "title": "CONTRATS DU JOUR",
+    "todayCount_one": "{{count}} CONTRAT AUJOURD'HUI",
+    "todayCount_other": "{{count}} CONTRATS AUJOURD'HUI",
+    "sectionCount": "{{label}} · {{count}}",
+    "emptyTitle": "GRID CALME",
+    "emptyBody": "Aucun contrat pour aujourd'hui, runner. Rien qui brûle — passe à la file pour prendre de l'avance.",
+    "emptyCta": "VOIR LES CONTRATS"
   }
 }
