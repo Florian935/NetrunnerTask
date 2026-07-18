@@ -17,7 +17,15 @@
     "toastPurged": "CONTRACT PURGED",
     "toastReward": "HACK SUCCESSFUL",
     "sessionGains": "GAINS · SESSION",
+    "sessionGainsEmpty": "— · —",
     "reward": "+{{xp}} XP · +{{credits}} ¢",
+    "progression": {
+      "levelShort": "LVL.",
+      "nextLevel": "NEXT LVL.",
+      "levelUpEyebrow": "TIER REACHED",
+      "levelUpTitle": "LEVEL {{level}} REACHED",
+      "levelUpSubline": "NETWORK EXTENDED · NEW TIER {{xp}} XP"
+    },
     "difficultyLabel": "DIFFICULTY",
     "difficulty": {
       "trivial": "TRIVIAL",

@@ -5,24 +5,31 @@
 
 ## US active
 
-_Aucune US active._ Dernière US clôturée : **US-005** (archivée dans
+_Aucune US active._ Dernière US clôturée : **US-009** (archivée dans
 `us/archive/`).
 
 ## Étape du cycle de vie
 
-US-005 terminée : cycle complet (cadrages → maquette → plan → implémentation →
-recette **15/15** → commit/merge). Introduit **`SubTask` + `Contract.subtasks`**
-(**Dexie v4**), la couche `src/game/priority.ts` et `features/contracts/dueDate.ts`,
-la **modale de détail** (`ContractDetail`, surface d'édition unique : titre +
-difficulté + priorité + échéance + sous-tâches), les **barres de priorité**, la
-**puce d'échéance** (en retard / bientôt), la **progression de sous-tâches** et
-leur **réordonnancement animé**. Édition inline d'US-008 supprimée (un seul
-bouton « modifier »). Prêt à démarrer **US-006** ou **US-009**.
+US-009 terminée : cycle complet (cadrages → maquette 5a/5b → plan →
+implémentation → recette **12/12** validée PO → commit/merge). A introduit
+**Vitest** (1er test du dépôt, décision #014) et la couche pure
+`src/game/progression.ts` (courbe `100 × n` : `xpToReachLevel`, `levelForXp`,
+`progressionFor`) + `progression.test.ts` (**10/10**). `usePlayerStore.grantReward`
+**dérive et persiste `level`** depuis l'XP totale et renvoie
+`{ leveledUp, previousLevel, newLevel }`. Nouveaux composants
+`src/features/progression/` : **`ProgressionIndicator`** (indicateur permanent en
+en-tête, autonome → réemployable dans le HUD US-010) et **`LevelUpToast`**
+(toast de palier sur-mesure, `prefers-reduced-motion`) + `progression.css`.
+Icônes `coins` / `chevrons-up` ajoutées au registre. i18n FR/EN.
+
+**Décision de périmètre (18/07/2026)** : le compteur « ACTIFS · TOTAL » (US-004)
+**a quitté l'en-tête** au profit de l'indicateur de niveau → **à réintégrer dans
+le HUD d'US-010**.
 
 Reports encore ouverts : **app-shell** — rail de nav + barre de statut (US-010) ;
-**i18n des noms de factions** (US-007) ; **progression de niveau**
-(dérivation `xp → level`, montée de niveau) et **affichage permanent solde/niveau**
-→ US-009 / US-010.
+**i18n des noms de factions** (US-007) ; **réintégration du compteur « ACTIFS ·
+TOTAL »** dans le HUD (US-010, retiré de l'en-tête en US-009). Bug doc ouvert :
+**DOC-001** (décisions #012/#013 référencées mais absentes de `decisions.md`).
 
 ## Avancement global
 
@@ -35,12 +42,13 @@ Reports encore ouverts : **app-shell** — rail de nav + barre de statut (US-010
 - [x] US-004 — Liste des contrats & complétion (**fait**, décision #011).
 - [x] US-008 — Difficulté & calcul de récompense (**fait**, décision #012).
 - [x] US-005 — Attributs de contrat (priorité, échéance, sous-tâches) (**fait**, décision #013).
+- [x] US-009 — Progression joueur (XP, niveau, crédits) (**fait**, décision #014 — Vitest).
 
 ## Prochaine action
 
-Choisir la prochaine US via le skill `nouvelle-us` : **US-006 — Récurrence des
-contrats** (enchaîne sur les attributs) ou **US-009 — Progression joueur** (boucle
-XP → niveau, chemin critique). Restent aussi US-007 (factions & filtrage).
+Choisir la prochaine US via le skill `nouvelle-us`. Restent en MVP 1 :
+**US-006** (récurrence), **US-007** (factions & filtrage), **US-010** (HUD —
+inclut la réintégration du compteur actifs/total).
 
 > À reconstruire sur NIGHTWIRE dans leur US métier : composants `game/`
 > (ContractCard, RarityBadge, CosmeticCard, FactionBadge) + rampe de rareté
