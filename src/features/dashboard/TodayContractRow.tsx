@@ -5,6 +5,7 @@ import { DIFFICULTY_ACCENTS } from '../../game/rewards'
 import { contractCode } from '../contracts/contractCode'
 import { formatDueShort } from '../contracts/dueDate'
 import { PriorityBars } from '../contracts/PriorityBars'
+import { RecurrenceChip } from '../contracts/RecurrenceChip'
 
 export interface TodayContractRowProps {
   contract: Contract
@@ -115,6 +116,9 @@ export function TodayContractRow({
               {t(`contracts.difficulty.${contract.difficulty}`)}
             </span>
           </span>
+          {contract.recurrence && (
+            <RecurrenceChip recurrence={contract.recurrence} />
+          )}
         </span>
       </button>
       <span

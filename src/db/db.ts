@@ -69,6 +69,24 @@ export class NetrunnerDB extends Dexie {
             if (!c.subtasks) c.subtasks = []
           }),
       )
+    // v5 (US-006) : récurrence embarquée sur les contrats. Pas d'index nouveau
+    // (`recurrence` non interrogé) → schéma v4 recopié + rétro-remplissage à
+    // `null` (contrats existants = one-shot).
+    this.version(5)
+      .stores({
+        contracts: 'id, factionId, status, dueDate, createdAt',
+        factions: 'id, name',
+        player: 'id',
+        demoKV: 'key',
+      })
+      .upgrade((tx) =>
+        tx
+          .table<Contract>('contracts')
+          .toCollection()
+          .modify((c) => {
+            if (c.recurrence === undefined) c.recurrence = null
+          }),
+      )
   }
 }
 
@@ -80,6 +98,9 @@ export async function readDemoValue(key: string): Promise<string | undefined> {
   return row?.value
 }
 
-export async function writeDemoValue(key: string, value: string): Promise<void> {
+export async function writeDemoValue(
+  key: string,
+  value: string,
+): Promise<void> {
   await db.demoKV.put({ key, value })
 }

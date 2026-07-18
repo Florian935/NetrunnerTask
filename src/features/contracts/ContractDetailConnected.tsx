@@ -21,6 +21,7 @@ export function ContractDetailConnected({
   const setDifficulty = useContractsStore((s) => s.setDifficulty)
   const setPriority = useContractsStore((s) => s.setPriority)
   const setDueDate = useContractsStore((s) => s.setDueDate)
+  const setRecurrence = useContractsStore((s) => s.setRecurrence)
   const addSubtask = useContractsStore((s) => s.addSubtask)
   const toggleSubtask = useContractsStore((s) => s.toggleSubtask)
   const removeSubtask = useContractsStore((s) => s.removeSubtask)
@@ -37,6 +38,7 @@ export function ContractDetailConnected({
       onSetDifficulty={setDifficulty}
       onSetPriority={setPriority}
       onSetDueDate={setDueDate}
+      onSetRecurrence={setRecurrence}
       onAddSubtask={addSubtask}
       onToggleSubtask={toggleSubtask}
       onRemoveSubtask={removeSubtask}

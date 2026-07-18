@@ -218,3 +218,44 @@ sans erreur). **Recette visuelle/interactive navigateur confirmée par le PO :
 | — | Responsive : rail latéral (desktop) ↔ barre inférieure (mobile PWA) | media query + PO | validé | 18/07/2026 |
 
 **Verdict : recette US-010 validée (12/12 critères + responsive).**
+
+## US-006 — Récurrence des contrats
+
+Recette du 18/07/2026. **Vérifs automatiques** : tests unitaires
+`recurrence.ts` (`nextOccurrence` + `firstOccurrence`, **12/12** ; total suite
+**27/27**), `typecheck`, `lint`, `build` OK. **Recette navigateur confirmée par
+le PO : 100 %** (après boucle d'ajustements ci-dessous ; pas de maquette).
+
+| # | Critère (action → résultat attendu) | Méthode | Statut | Date |
+|---|-------------------------------------|---------|--------|------|
+| C1 | Définir récurrence **intervalle** (N + unité), persistée F5 | `RecurrenceControl` + store/Dexie v5 + PO | validé | 18/07/2026 |
+| C2 | Définir récurrence **jour fixe** (ex. dimanche), persistée F5 | `RecurrenceControl` (mode weekday) + PO | validé | 18/07/2026 |
+| C3 | Retirer la récurrence (« aucune ») → one-shot ; persisté | `setRecurrence(null)` + PO | validé | 18/07/2026 |
+| C4 | Puce « ⟳ … » visible sur la ligne (liste & HUD) | `RecurrenceChip` + PO | validé | 18/07/2026 |
+| C5 | Compléter un récurrent → **VALIDÉ** (case cochée, « ⟳ revient le … ») + XP/crédits | `complete()` modèle validé + PO | validé | 18/07/2026 |
+| C6 | Avance par intervalle (+N j / +N sem. / +N mois, clamp) | test `nextOccurrence` (**12/12**) | validé | 18/07/2026 |
+| C7 | Avance par jour fixe (prochaine occurrence de ce jour) | test `nextOccurrence` + PO | validé | 18/07/2026 |
+| C8 | Jamais d'échéance passée (roll-forward si en retard) | test `nextOccurrence` | validé | 18/07/2026 |
+| C9 | Récompense **à chaque occurrence** (réactivation → repaie) | `load()` réactivation + `complete()` + PO | validé | 18/07/2026 |
+| C10 | Anti-farm : récurrent validé **verrouillé** (case inactive + info-bulle) jusqu'à réactivation | `complete()` (done) + `toggle` garde + `Checkbox disabled/title` + PO | validé | 18/07/2026 |
+| C11 | Synergie HUD : récurrent dû du jour y figure, le quitte après complétion | `todayContracts` + PO | validé | 18/07/2026 |
+| C12 | Non-récurrent inchangé (une complétion, reste `done`) | branche one-shot de `complete()` + PO | validé | 18/07/2026 |
+| C13 | i18n FR/EN (unités, jours, puce, info-bulle) ; aucune chaîne en dur | clés `contracts.recurrence.*` FR+EN + PO | validé | 18/07/2026 |
+| — | Échéance auto-posée à la définition, recalculée au changement de récurrence | `firstOccurrence` + `setRecurrence` + PO | validé | 18/07/2026 |
+| — | Réactivation « au chargement » (validé → à faire quand l'échéance est atteinte) | `load()` + PO (test échéance→aujourd'hui + F5) | validé | 18/07/2026 |
+| — | Migration Dexie v5 : contrats existants ouverts (`recurrence: null`) | upgrade v5 + PO | validé | 18/07/2026 |
+| C14 | `typecheck` + `lint` + `test` (27/27) + `build` | exécution | validé | 18/07/2026 |
+
+### Évolution du modèle en cours de recette (validée PO)
+
+- **Complétion d'un récurrent** : au lieu de « redevient *open* immédiatement »
+  (impression de non-validé + case grise ambiguë), le contrat passe **VALIDÉ**
+  (case cochée, « ⟳ revient le JJ.MM ») et **reste verrouillé** jusqu'à sa
+  prochaine échéance, où il est **réactivé au chargement** de l'app. Meilleur
+  ressenti + anti-farm plus clair.
+- **Échéance auto** : poser (ou changer) une récurrence pose/recalcule la
+  première échéance (`firstOccurrence`) — plus de résidu de l'ancien choix.
+- **Report backlog** : échéances horodatées (heure/minute) + rappels/notifications
+  PWA — hors périmètre, tracé au backlog MVP 2.
+
+**Verdict : recette US-006 validée (13/13 critères + ajustements).**

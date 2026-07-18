@@ -5,29 +5,27 @@
 
 ## US active
 
-_Aucune US active._ Dernière US clôturée : **US-010** (archivée dans
-`us/archive/`). **Chemin critique du MVP 1 terminé** (créer → terminer →
-récompense → niveau → HUD).
+_Aucune US active._ Dernière US clôturée : **US-006** (archivée dans
+`us/archive/`). Il ne reste qu'**US-007** en MVP 1.
 
 ## Étape du cycle de vie
 
-US-010 terminée : cycle complet (cadrages → maquette 6a–6d → plan →
-implémentation → recette **12/12** validée PO → commit/merge). A introduit
-**`react-router` + app-shell** (décision #015) : `app/AppShell` (rail de nav
-responsive + barre de statut permanente + hôte global des toasts/palier),
-routes `/` → **`DashboardView`** (HUD, point d'entrée) et `/contracts` →
-`ContractsView`. **Couche feedback partagée** (`useFeedbackStore` +
-`useCompleteContract`) sortie de `ContractsView`. HUD = contrats du jour groupés
-(EN RETARD / AUJOURD'HUI) via `dashboard/todayContracts.ts` (pur, testé 5/5) +
-`TodayContractRow` + état vide. `ProgressionIndicator` gagne une variante `bar`.
-`ContractsView` allégé, **ACTIFS · TOTAL réintégré**. PWA `navigateFallback`.
+US-006 terminée : cycle complet (cadrages → plan → implémentation → **boucle de
+recette** avec 2 ajustements validés PO → recette **13/13**). A introduit le type
+`Recurrence` (2 modes : intervalle `{every, unit}` | jour fixe `{weekday}`) +
+`Contract.recurrence` (**Dexie v5**), la couche pure `game/recurrence.ts`
+(`firstOccurrence` + `nextOccurrence`, testées **12/12**), le contrôle de
+récurrence (modale) + la puce `⟳`. **Modèle « validé jusqu'à réactivation »** :
+compléter un récurrent le passe VALIDÉ (verrouillé) ; `load()` le **réactive** au
+chargement quand l'échéance est atteinte. Échéance **auto-posée/recalculée** à la
+définition. Pas de maquette (aligné sur l'existant).
 
-> US-009 (avant) terminée : recette **12/12** PO. Vitest (#014),
-> `game/progression.ts` (courbe `100 × n`), `grantReward` persiste `level`,
-> composants `features/progression/`.
+> US-010 (avant) terminée : recette **12/12** PO. Routeur `react-router` +
+> app-shell (#015), HUD, couche feedback partagée, `ProgressionIndicator bar`.
 
 Reports encore ouverts : **i18n des noms de factions** (US-007). Bug doc ouvert :
 **DOC-001** (décisions #012/#013 référencées mais absentes de `decisions.md`).
+Backlog MVP 2 : échéances horodatées + rappels/notifications PWA (identifié en US-006).
 
 ## Avancement global
 
@@ -42,12 +40,13 @@ Reports encore ouverts : **i18n des noms de factions** (US-007). Bug doc ouvert 
 - [x] US-005 — Attributs de contrat (priorité, échéance, sous-tâches) (**fait**, décision #013).
 - [x] US-009 — Progression joueur (XP, niveau, crédits) (**fait**, décision #014 — Vitest).
 - [x] US-010 — Tableau de bord / HUD (**fait**, décision #015 — routeur & app-shell).
+- [x] US-006 — Récurrence des contrats (**fait** ; modèle « validé jusqu'à réactivation », Dexie v5).
 
 ## Prochaine action
 
-Chemin critique MVP 1 bouclé. Restent les **enrichissements** du to-do (priorité
-`moyenne`), à démarrer via le skill `nouvelle-us` : **US-006** (récurrence) et
-**US-007** (factions & filtrage). Ensuite : découpage du MVP 2.
+Dernière US du MVP 1 : **US-007 — Factions & filtrage** (démarrer via le skill
+`nouvelle-us`) — clôture les enrichissements + solde le report i18n des noms de
+factions. Ensuite : découpage du MVP 2.
 
 > À reconstruire sur NIGHTWIRE dans leur US métier : composants `game/`
 > (ContractCard, RarityBadge, CosmeticCard, FactionBadge) + rampe de rareté

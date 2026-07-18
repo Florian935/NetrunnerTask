@@ -17,6 +17,16 @@ export interface SubTask {
   done: boolean
 }
 
+/**
+ * Rythme de récurrence d'un contrat (US-006). Deux modes :
+ * - `interval` : tous les `every` jours / semaines / mois.
+ * - `weekday` : chaque semaine un jour fixe (ISO `weekday` : 1 = lundi … 7 = dimanche).
+ * `Contract.recurrence = null` ⇒ contrat one-shot (défaut).
+ */
+export type Recurrence =
+  | { mode: 'interval'; every: number; unit: 'day' | 'week' | 'month' }
+  | { mode: 'weekday'; weekday: number }
+
 /** La tâche gamifiée : l'objet central du to-do. */
 export interface Contract {
   id: string
@@ -43,6 +53,12 @@ export interface Contract {
    * récompense ni la complétion du contrat. `[]` par défaut.
    */
   subtasks: SubTask[]
+  /**
+   * Rythme de récurrence (US-006) ; `null` = one-shot. Un contrat récurrent
+   * complété est reprogrammé à sa prochaine échéance (il reste sur la même
+   * entrée, sans historique des occurrences).
+   */
+  recurrence: Recurrence | null
 }
 
 /** Catégorie de vie regroupant des contrats. */

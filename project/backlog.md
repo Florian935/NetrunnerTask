@@ -16,7 +16,7 @@ Les US-005 à US-007 enrichissent le to-do.
 | US-003 | Création rapide de contrat (règle des 2 s) | 1 | haute | fait |
 | US-004 | Liste des contrats & complétion (voir / terminer / éditer / supprimer) | 1 | haute | fait |
 | US-005 | Attributs de contrat (priorité, échéance, sous-tâches) | 1 | moyenne | fait |
-| US-006 | Récurrence des contrats | 1 | moyenne | à faire |
+| US-006 | Récurrence des contrats | 1 | moyenne | fait |
 | US-007 | Factions (catégories) & filtrage | 1 | moyenne | à faire |
 | US-008 | Difficulté & calcul de récompense (XP + crédits) | 1 | haute | fait |
 | US-009 | Progression joueur (XP, niveau netrunner, solde crédits) | 1 | haute | fait |
@@ -40,6 +40,12 @@ Les US-005 à US-007 enrichissent le to-do.
 | ID | Titre | MVP | Priorité | Statut |
 |----|-------|-----|----------|--------|
 | _—_ | _à détailler_ | 2 | _—_ | à faire |
+
+> **Évolution identifiée (US-006, 18/07/2026)** : les échéances sont gérées **au
+> jour** (pas d'heure/minute). À faire évoluer vers des **échéances horodatées +
+> rappels / notifications PWA** — à traiter conjointement (une heure d'échéance
+> n'a de valeur qu'avec une alerte). Impacte la logique « en retard / du jour »
+> et la réactivation des récurrents.
 
 ## MVP 3 — Rétention profonde & identité
 
