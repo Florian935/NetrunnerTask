@@ -19,6 +19,21 @@
     "sessionGains": "GAINS · SESSION",
     "sessionGainsEmpty": "— · —",
     "reward": "+{{xp}} XP · +{{credits}} ¢",
+    "factions": {
+      "work": "BOULOT",
+      "sport": "SPORT",
+      "personal": "PERSO",
+      "health": "SANTÉ",
+      "learning": "APPRENTISSAGE"
+    },
+    "faction": {
+      "label": "FACTION",
+      "none": "AUCUNE"
+    },
+    "filter": {
+      "all": "TOUTES",
+      "none": "SANS FACTION"
+    },
     "progression": {
       "levelShort": "NIV.",
       "nextLevel": "NIV. SUIVANT",

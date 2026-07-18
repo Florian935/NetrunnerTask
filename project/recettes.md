@@ -3,6 +3,28 @@
 > Tests de recette par US. Chaque test reprend un critère d'acceptation de l'US.
 > Statuts : `à faire` / `validé` / `échoué`.
 
+## US-007 — Factions (catégories) & filtrage
+
+Recette du 18/07/2026. Vérifs automatiques (typecheck / lint / build / tests
+Vitest 30/30, dont `factionLabel` 3/3) + recette visuelle & comportementale
+navigateur (`npm run dev`, port 5180) confirmée par le PO.
+
+| # | Critère (action → résultat attendu) | Statut | Date |
+|---|-------------------------------------|--------|------|
+| C1 | Affecter une faction dans le détail → persistée après F5 | validé | 18/07/2026 |
+| C2 | Repasser à « Aucune » → persisté (F5), plus de badge sur la ligne | validé | 18/07/2026 |
+| C3 | Ligne avec faction → badge (point coloré + nom) en tête de méta ; sans faction → aucun badge | validé | 18/07/2026 |
+| C4 | Filtre par faction → seuls les contrats de cette faction affichés | validé | 18/07/2026 |
+| C5 | Filtre « Toutes » (défaut) → liste complète restaurée | validé | 18/07/2026 |
+| C6 | Filtre « Sans faction » → seuls les contrats non rattachés | validé | 18/07/2026 |
+| C7 | Filtrer/dé-filtrer → aucun contrat modifié/supprimé, tri (priorité/récence) conservé | validé | 18/07/2026 |
+| C8 | Bascule FR/EN → factions, « Aucune/Toutes/Sans faction » traduits ; aucune chaîne en dur | validé | 18/07/2026 |
+| C9 | Création rapide au clavier → toujours ~2 s ; faction réglée après, dans le détail | validé | 18/07/2026 |
+
+**Verdict : recette US-007 validée (9/9 critères).** Aucune migration Dexie
+(socle faction déjà en place depuis v2). Amélioration renvoyée au backlog (MVP 2) :
+état vide dédié « aucun contrat pour ce filtre ».
+
 ## US-001 — Initialisation technique + design system
 
 Recette du 17/07/2026. Vérifs automatiques (dev/build/tsc/lint/PWA) + recette

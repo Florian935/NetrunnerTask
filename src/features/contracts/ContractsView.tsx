@@ -8,6 +8,8 @@ import { priorityRank } from '../../game/priority'
 import { ConfirmDialog } from '../common/ConfirmDialog'
 import { ContractDetailConnected } from './ContractDetailConnected'
 import { ContractList } from './ContractList'
+import { FactionFilterBar } from './FactionFilterBar'
+import type { FactionFilter } from './FactionFilterBar'
 import { QuickAddContract } from './QuickAddContract'
 import { contractCode } from './contractCode'
 import { useCompleteContract } from './useCompleteContract'
@@ -32,6 +34,10 @@ export function ContractsView() {
 
   const [target, setTarget] = useState<Contract | null>(null)
   const [detailId, setDetailId] = useState<string | null>(null)
+  // Filtre de faction (US-007) : local, non persisté entre sessions.
+  const [factionFilter, setFactionFilter] = useState<FactionFilter>({
+    mode: 'all',
+  })
 
   const handleCreate = async (title: string, difficulty: Difficulty) => {
     await createContract(title, difficulty)
@@ -63,10 +69,18 @@ export function ContractsView() {
   const active = total - doneCount
   const pct = total ? (doneCount / total) * 100 : 0
 
+  // Filtre de faction (US-007) : restreint l'affichage, en mémoire, avant le tri.
+  // Non destructif — l'ordre et le contenu du store sont inchangés.
+  const filteredContracts = contracts.filter((c) => {
+    if (factionFilter.mode === 'all') return true
+    if (factionFilter.mode === 'none') return c.factionId == null
+    return c.factionId === factionFilter.factionId
+  })
+
   // Tri d'affichage : ouverts d'abord, terminés en bas. Parmi les ouverts,
   // priorité (haute → basse) puis récence (US-005) ; les terminés restent triés
   // par récence. Tri dérivé — l'ordre du store est inchangé.
-  const sortedContracts = [...contracts].sort((a, b) => {
+  const sortedContracts = [...filteredContracts].sort((a, b) => {
     const aDone = a.status === 'done' ? 1 : 0
     const bDone = b.status === 'done' ? 1 : 0
     if (aDone !== bDone) return aDone - bDone
@@ -224,13 +238,19 @@ export function ContractsView() {
             </p>
           </div>
         ) : (
-          <ContractList
-            contracts={sortedContracts}
-            onToggle={toggle}
-            onOpenDetail={(c) => setDetailId(c.id)}
-            onDelete={setTarget}
-            flashingId={flashingId}
-          />
+          <>
+            <FactionFilterBar
+              value={factionFilter}
+              onChange={setFactionFilter}
+            />
+            <ContractList
+              contracts={sortedContracts}
+              onToggle={toggle}
+              onOpenDetail={(c) => setDetailId(c.id)}
+              onDelete={setTarget}
+              flashingId={flashingId}
+            />
+          </>
         )}
       </div>
 
