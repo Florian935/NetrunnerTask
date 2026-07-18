@@ -8,6 +8,26 @@
 _Aucune US active._ Dernière US clôturée : **US-007** (archivée dans
 `us/archive/`). **MVP 1 terminé** — toutes les US (US-001 → US-010) sont `fait`.
 
+## Chantier exploration figé (hors cycle US) — `test/fonds-halos` → `develop`
+
+Exploration visuelle avant MVP 2 (branche depuis `develop`, **hors cycle US**,
+validée PO en itération live). **Figée dans le produit** (décision **#017**) —
+l'outillage d'exploration (labo `/labo`, sélecteur, `useBgLab`, 8 fonds candidats
++ overlays) a été **retiré** ; seul le choix retenu subsiste.
+- **Fond signature** (`.nav-main`, `appShell.css`) : navy `#141a29` + quadrillage
+  (carrés 28 px + lignes fines 4 px, opacité 0.016) + **4 halos néon d'angle**
+  (HG cyan · BG violet · HD magenta · BD menthe). 100 % CSS (`::before`,
+  `z-index:-1`) — pas d'image, PWA/hors-ligne préservés.
+- **`<Card>` enrichie** (réutilisable) : props `halo` (halo permanent, `.nw-card-halo`
+  → `card.css`) et `brackets` (2 repères d'angle blancs, coins non biseautés).
+  `CardAccent` accepte `red`.
+- **Lignes de contrat** (`ContractItem`) : surface **HUD** à **halo permanent**
+  (couleur = accent de difficulté, mutée si terminé) + **2 brackets** ; survol
+  intensifie bordure/lueur ; le flash « hack réussi » prime toujours.
+- Vérifs vertes : **typecheck + lint + build + tests 30/30**.
+- **À suivre (MVP 2)** : adopter `StatCard`/`HudPanel` sur le tableau de bord ;
+  réserver le bouton plein `primary` à un CTA « héros ».
+
 ## Étape du cycle de vie
 
 **US-007 clôturée** (commit + merge sur `develop`, décision #016). Cycle complet :

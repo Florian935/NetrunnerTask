@@ -15,18 +15,62 @@
   }
 }
 
-/* Ligne de contrat : liseré néon interne au survol + révélation des outils. */
+/* Ligne de contrat — surface HUD à halo néon permanent (style card.png).
+   La couleur du halo vient de `--ctr-halo` (posée en inline = accent de
+   difficulté ; muté en gris sur un contrat terminé). Fond teinté + lueur AU
+   REPOS, intensifiés au survol. Coins biseautés + 2 repères d'angle (voir JSX). */
 .ctr-row {
-  transition: box-shadow var(--dur-fast) var(--ease-out);
+  position: relative;
+  clip-path: var(--clip-bevel-sm);
+  background:
+    radial-gradient(
+      130% 130% at 50% -30%,
+      color-mix(in srgb, var(--ctr-halo) 10%, transparent),
+      transparent 70%
+    ),
+    var(--void-700);
+  border: 1px solid color-mix(in srgb, var(--ctr-halo) 26%, var(--border));
+  box-shadow:
+    var(--shadow-1),
+    0 0 18px -10px color-mix(in srgb, var(--ctr-halo) 45%, transparent);
+  transition:
+    border-color var(--dur-med) var(--ease-out),
+    box-shadow var(--dur-med) var(--ease-out);
 }
 .ctr-row:hover {
-  box-shadow: inset 3px 0 0 var(--cyan-500);
+  border-color: color-mix(in srgb, var(--ctr-halo) 55%, var(--border));
+  box-shadow:
+    var(--shadow-1),
+    0 0 26px -6px color-mix(in srgb, var(--ctr-halo) 55%, transparent),
+    inset 3px 0 0 color-mix(in srgb, var(--ctr-halo) 55%, transparent);
 }
 /* Flash « hack réussi » (US-008). Déclaré après `:hover` pour l'emporter à
    spécificité égale ; mint retiré après ~720 ms côté vue. Au repos, la classe
-   n'est pas posée → le liseré au survol reprend la main. */
+   n'est pas posée → le halo reprend la main. */
 .ctr-row.ctr-row--flashing {
+  border-color: var(--mint-500);
   box-shadow: var(--glow-mint);
+}
+
+/* Repères d'angle HUD (blancs) — collés aux coins NON biseautés du chanfrein
+   (haut-droite + bas-gauche). */
+.ctr-row__bracket {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-color: rgba(230, 241, 255, 0.7);
+  border-style: solid;
+  pointer-events: none;
+}
+.ctr-row__bracket--tr {
+  top: 0;
+  right: 0;
+  border-width: 2px 2px 0 0;
+}
+.ctr-row__bracket--bl {
+  bottom: 0;
+  left: 0;
+  border-width: 0 0 2px 2px;
 }
 .ctr-tools {
   opacity: 0;

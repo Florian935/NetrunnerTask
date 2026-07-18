@@ -225,3 +225,33 @@ L'EN est une réécriture in-world (ton netrunner), pas du mot-à-mot.
 - **`FactionBadge` reconstruit sur NIGHTWIRE** (retiré à la migration DS, #008) :
   composant autonome (résout la faction via le store), badge = pastille couleur +
   libellé mono, en tête de la rangée méta.
+
+### 017 — Fond signature & cartes de contrat HUD à halo (exploration, 18/07/2026)
+
+- **Hors cycle US** : chantier d'exploration visuelle avant MVP 2 (branche
+  `test/fonds-halos`), validé PO en itération live puis **figé** dans le produit.
+  L'outillage d'exploration (labo `/labo`, sélecteur de fond, `useBgLab`, 8 fonds
+  candidats + overlays) a été **retiré** au moment de figer — seul le choix
+  retenu subsiste.
+- **Fond signature** (zone de contenu `.nav-main`) : **navy `#141a29` +
+  quadrillage** (carrés de 28 px et lignes horizontales fines tous les 4 px, tous
+  les traits au même style, opacité 0.016) surmonté de **4 halos néon d'angle**
+  (haut-gauche cyan · bas-gauche violet · haut-droite magenta · bas-droite menthe,
+  tailles/intensités inégales). Rendu 100 % CSS (couche `::before`, `z-index:-1`,
+  `isolation:isolate`) — pas d'image, PWA/hors-ligne préservés.
+- **Diagnostic des « divergences » maquettes** : le design system était **fidèle
+  mais sous-exploité** — surfaces riches (`Card`/`StatCard`/`HudPanel`) jamais
+  branchées, halo systématiquement « au survol » au lieu de « au repos renforcé
+  au survol », variant `primary` (bouton plein) utilisé sur **aucun** écran.
+- **`<Card>` enrichie (réutilisable)** : prop **`halo`** (fond teinté + lueur au
+  repos, intensifiés au survol ; classe `.nw-card-halo`, `./card.css`) et prop
+  **`brackets`** (2 repères d'angle blancs en diagonale, coins non biseautés du
+  chanfrein `hud`). `CardAccent` accepte désormais `red`.
+- **Lignes de contrat** (`ContractItem`) : surface **HUD** (coins biseautés
+  `clip-bevel-sm`) à **halo permanent** dont la couleur = **accent de difficulté**
+  (`--ctr-halo`, muté en gris si terminé) + **2 brackets** ; survol qui intensifie
+  bordure/lueur + liseré interne. Le flash « hack réussi » (mint) prime toujours.
+  Fond/bordure/lueur pilotés en CSS (pas d'inline) — Framer Motion `layout` ne
+  nettoie pas les clés de style disparues.
+- **À suivre (backlog MVP 2)** : adoption de `StatCard`/`HudPanel` sur le tableau
+  de bord ; réserver le bouton plein `primary` à un CTA « héros ».
