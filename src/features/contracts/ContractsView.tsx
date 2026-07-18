@@ -4,8 +4,10 @@ import { Icon, ProgressBar, Toast } from '../../components/ui'
 import { useContractsStore } from '../../stores/useContractsStore'
 import { usePlayerStore } from '../../stores/usePlayerStore'
 import type { Contract, Difficulty } from '../../db'
+import { priorityRank } from '../../game/priority'
 import { ConfirmDialog } from '../common/ConfirmDialog'
 import { LanguageSwitcher } from '../common/LanguageSwitcher'
+import { ContractDetail } from './ContractDetail'
 import { ContractList } from './ContractList'
 import { QuickAddContract } from './QuickAddContract'
 import { contractCode } from './contractCode'
@@ -32,12 +34,18 @@ export function ContractsView() {
   const reopen = useContractsStore((s) => s.reopen)
   const rename = useContractsStore((s) => s.rename)
   const setDifficulty = useContractsStore((s) => s.setDifficulty)
+  const setPriority = useContractsStore((s) => s.setPriority)
+  const setDueDate = useContractsStore((s) => s.setDueDate)
+  const addSubtask = useContractsStore((s) => s.addSubtask)
+  const toggleSubtask = useContractsStore((s) => s.toggleSubtask)
+  const removeSubtask = useContractsStore((s) => s.removeSubtask)
   const remove = useContractsStore((s) => s.remove)
   const loadPlayer = usePlayerStore((s) => s.load)
   const grantReward = usePlayerStore((s) => s.grantReward)
 
   const [toasts, setToasts] = useState<ToastItem[]>([])
   const [target, setTarget] = useState<Contract | null>(null)
+  const [detailId, setDetailId] = useState<string | null>(null)
   // Cumul des gains de la session (en mémoire, remis à zéro au rechargement).
   const [sessionGains, setSessionGains] = useState({ xp: 0, credits: 0 })
   // Contrat qui vient d'encaisser sa récompense → flash « hack réussi ».
@@ -99,15 +107,24 @@ export function ContractsView() {
   const active = total - doneCount
   const pct = total ? (doneCount / total) * 100 : 0
 
-  // Tri d'affichage : ouverts d'abord, terminés en bas ; dans chaque groupe, du
-  // plus récent au plus ancien. Cocher fait descendre le contrat, décocher le
-  // remonte à sa place chronologique. Tri dérivé — l'ordre du store est inchangé.
+  // Tri d'affichage : ouverts d'abord, terminés en bas. Parmi les ouverts,
+  // priorité (haute → basse) puis récence (US-005) ; les terminés restent triés
+  // par récence. Tri dérivé — l'ordre du store est inchangé.
   const sortedContracts = [...contracts].sort((a, b) => {
     const aDone = a.status === 'done' ? 1 : 0
     const bDone = b.status === 'done' ? 1 : 0
     if (aDone !== bDone) return aDone - bDone
+    if (aDone === 0) {
+      const byPriority = priorityRank(b.priority) - priorityRank(a.priority)
+      if (byPriority !== 0) return byPriority
+    }
     return b.createdAt - a.createdAt
   })
+
+  // Contrat affiché dans la modale de détail (live : reflète les maj du store).
+  const detailContract = detailId
+    ? (contracts.find((c) => c.id === detailId) ?? null)
+    : null
 
   return (
     <div className="nw-grid-bg" style={{ minHeight: '100vh' }}>
@@ -350,8 +367,7 @@ export function ContractsView() {
             <ContractList
               contracts={sortedContracts}
               onToggle={toggle}
-              onRename={rename}
-              onSetDifficulty={setDifficulty}
+              onOpenDetail={(c) => setDetailId(c.id)}
               onDelete={setTarget}
               flashingId={flashingId}
             />
@@ -394,6 +410,21 @@ export function ContractsView() {
           confirmLabel={t('contracts.delete.confirm')}
           onCancel={() => setTarget(null)}
           onConfirm={confirmDelete}
+        />
+      )}
+
+      {/* Surface de détail (priorité, échéance, sous-tâches) */}
+      {detailContract && (
+        <ContractDetail
+          contract={detailContract}
+          onRename={rename}
+          onSetDifficulty={setDifficulty}
+          onSetPriority={setPriority}
+          onSetDueDate={setDueDate}
+          onAddSubtask={addSubtask}
+          onToggleSubtask={toggleSubtask}
+          onRemoveSubtask={removeSubtask}
+          onClose={() => setDetailId(null)}
         />
       )}
     </div>

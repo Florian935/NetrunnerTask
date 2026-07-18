@@ -10,6 +10,7 @@ export type {
   Faction,
   Player,
   Priority,
+  SubTask,
 } from './types'
 
 export { DEFAULT_FACTIONS, ensureSeeded } from './seed'

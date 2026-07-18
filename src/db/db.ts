@@ -52,6 +52,23 @@ export class NetrunnerDB extends Dexie {
             c.rewardGranted = c.status === 'done'
           }),
       )
+    // v4 (US-005) : sous-tâches embarquées sur les contrats. Pas d'index nouveau
+    // (`subtasks` non interrogé) → schéma v3 recopié + rétro-remplissage à `[]`.
+    this.version(4)
+      .stores({
+        contracts: 'id, factionId, status, dueDate, createdAt',
+        factions: 'id, name',
+        player: 'id',
+        demoKV: 'key',
+      })
+      .upgrade((tx) =>
+        tx
+          .table<Contract>('contracts')
+          .toCollection()
+          .modify((c) => {
+            if (!c.subtasks) c.subtasks = []
+          }),
+      )
   }
 }
 

@@ -1,13 +1,12 @@
 import { AnimatePresence } from 'motion/react'
 import { useTranslation } from 'react-i18next'
-import type { Contract, Difficulty } from '../../db'
+import type { Contract } from '../../db'
 import { ContractItem } from './ContractItem'
 
 export interface ContractListProps {
   contracts: Contract[]
   onToggle: (id: string) => void
-  onRename: (id: string, title: string) => void
-  onSetDifficulty: (id: string, difficulty: Difficulty) => void
+  onOpenDetail: (contract: Contract) => void
   onDelete: (contract: Contract) => void
   /** Id du contrat qui vient d'être récompensé (flash « hack réussi »). */
   flashingId: string | null
@@ -17,8 +16,7 @@ export interface ContractListProps {
 export function ContractList({
   contracts,
   onToggle,
-  onRename,
-  onSetDifficulty,
+  onOpenDetail,
   onDelete,
   flashingId,
 }: ContractListProps) {
@@ -61,8 +59,7 @@ export function ContractList({
               key={c.id}
               contract={c}
               onToggle={onToggle}
-              onRename={onRename}
-              onSetDifficulty={onSetDifficulty}
+              onOpenDetail={onOpenDetail}
               onDelete={onDelete}
               flashing={c.id === flashingId}
             />

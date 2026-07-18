@@ -10,6 +10,13 @@ export type Priority = 'low' | 'normal' | 'high'
 /** État d'avancement d'un contrat. */
 export type ContractStatus = 'open' | 'done'
 
+/** Étape d'un contrat (checklist). Informative : n'octroie aucune récompense. */
+export interface SubTask {
+  id: string
+  title: string
+  done: boolean
+}
+
 /** La tâche gamifiée : l'objet central du to-do. */
 export interface Contract {
   id: string
@@ -31,6 +38,11 @@ export interface Contract {
    * ne reverse rien. `false` à la création.
    */
   rewardGranted: boolean
+  /**
+   * Sous-tâches (checklist, US-005). Informatives : n'influencent ni la
+   * récompense ni la complétion du contrat. `[]` par défaut.
+   */
+  subtasks: SubTask[]
 }
 
 /** Catégorie de vie regroupant des contrats. */

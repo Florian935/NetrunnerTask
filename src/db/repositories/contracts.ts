@@ -1,5 +1,11 @@
 import { db } from '../db'
-import type { Contract, ContractStatus, Difficulty, Priority } from '../types'
+import type {
+  Contract,
+  ContractStatus,
+  Difficulty,
+  Priority,
+  SubTask,
+} from '../types'
 
 export interface CreateContractInput {
   title: string
@@ -46,6 +52,7 @@ export const contractsRepo = {
       createdAt: Date.now(),
       completedAt: null,
       rewardGranted: false,
+      subtasks: [],
     }
     await db.contracts.add(contract)
     return contract
@@ -53,6 +60,42 @@ export const contractsRepo = {
 
   async update(id: string, patch: Partial<Omit<Contract, 'id'>>): Promise<void> {
     await db.contracts.update(id, patch)
+  },
+
+  // --- Attributs (US-005) ---
+
+  setPriority(id: string, priority: Priority): Promise<void> {
+    return this.update(id, { priority })
+  },
+
+  /** Définit ou efface (`null`) l'échéance (epoch ms). */
+  setDueDate(id: string, dueDate: number | null): Promise<void> {
+    return this.update(id, { dueDate })
+  },
+
+  /** Ajoute une sous-tâche (titre déjà trimmé) en fin de liste. */
+  async addSubtask(id: string, title: string): Promise<void> {
+    const contract = await db.contracts.get(id)
+    if (!contract) return
+    const subtask: SubTask = { id: crypto.randomUUID(), title, done: false }
+    await this.update(id, { subtasks: [...contract.subtasks, subtask] })
+  },
+
+  async toggleSubtask(id: string, subtaskId: string): Promise<void> {
+    const contract = await db.contracts.get(id)
+    if (!contract) return
+    const subtasks = contract.subtasks.map((s) =>
+      s.id === subtaskId ? { ...s, done: !s.done } : s,
+    )
+    await this.update(id, { subtasks })
+  },
+
+  async removeSubtask(id: string, subtaskId: string): Promise<void> {
+    const contract = await db.contracts.get(id)
+    if (!contract) return
+    await this.update(id, {
+      subtasks: contract.subtasks.filter((s) => s.id !== subtaskId),
+    })
   },
 
   /**
