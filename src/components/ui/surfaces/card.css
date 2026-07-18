@@ -1,0 +1,34 @@
+/* Carte à halo néon permanent — fond teinté + lueur AU REPOS, intensifiés au
+   survol. Activé par `<Card halo="…">` (pose la variable `--halo` en inline).
+   Séparé en CSS car le survol ne peut pas s'exprimer en style inline. */
+.nw-card-halo {
+  --halo-glow: color-mix(in srgb, var(--halo) 42%, transparent);
+  background:
+    radial-gradient(
+      140% 100% at 50% -25%,
+      color-mix(in srgb, var(--halo) 13%, transparent),
+      transparent 68%
+    ),
+    var(--bg-panel);
+  border: 1px solid color-mix(in srgb, var(--halo) 32%, var(--border));
+  box-shadow:
+    var(--shadow-2),
+    0 0 22px -10px var(--halo-glow);
+  transition:
+    box-shadow var(--dur-med) var(--ease-out),
+    border-color var(--dur-med) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+.nw-card-halo:hover {
+  border-color: color-mix(in srgb, var(--halo) 62%, var(--border));
+  box-shadow:
+    var(--shadow-2),
+    0 0 30px -6px var(--halo-glow),
+    inset 0 0 0 1px color-mix(in srgb, var(--halo) 24%, transparent);
+  transform: translateY(-2px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .nw-card-halo:hover {
+    transform: none;
+  }
+}

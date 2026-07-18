@@ -65,19 +65,18 @@ export function ContractItem({
   // (anti-farm) jusqu'à la réactivation ; on montre « ⟳ revient le … ».
   const recurringDone = done && contract.recurrence != null
 
-  // Le halo (box-shadow) est piloté par CSS (classe `ctr-row--flashing`), pas en
-  // style inline : Framer Motion ne retire pas une clé de style disparue entre
-  // deux rendus → un box-shadow inline resterait figé.
-  const rowStyle: CSSProperties = {
+  // Surface, halo (box-shadow), bordure et coins sont pilotés par CSS (classe
+  // `.ctr-row`, cf. contracts.css) — pas en style inline : Framer Motion ne
+  // retire pas une clé de style disparue entre deux rendus (un box-shadow/border
+  // inline resterait figé). L'inline ne porte que la mise en page + la couleur
+  // du halo `--ctr-halo` (accent de difficulté ; muté en gris si terminé).
+  const rowStyle = {
     display: 'flex',
     alignItems: 'center',
     gap: 13,
     padding: '11px 13px',
-    borderRadius: 'var(--radius-sm)',
-    background: 'var(--void-700)',
-    border: `1px solid ${flashing ? 'var(--mint-500)' : 'var(--border)'}`,
-    transition: 'border-color var(--dur-med) var(--ease-out)',
-  }
+    ['--ctr-halo']: done ? 'var(--steel-600)' : accent,
+  } as CSSProperties
   const rowClass = `ctr-row${flashing ? ' ctr-row--flashing' : ''}`
 
   return (
@@ -90,6 +89,8 @@ export function ContractItem({
       transition={{ duration: 0.24, ease: 'easeOut' }}
       style={rowStyle}
     >
+      <span className="ctr-row__bracket ctr-row__bracket--tr" aria-hidden />
+      <span className="ctr-row__bracket ctr-row__bracket--bl" aria-hidden />
       <Checkbox
         checked={done}
         disabled={recurringDone}

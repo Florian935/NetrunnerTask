@@ -80,14 +80,48 @@
   flex: 1;
 }
 
+/* Zone de contenu — fond signature : navy + quadrillage fin (carrés de 28px
+   avec lignes horizontales fines tous les 4px, tous les traits au même style)
+   surmonté de 4 halos néon d'angle (couche `::before`, sous le contenu).
+   `isolation:isolate` crée le contexte d'empilement ; le contenu passe au-dessus
+   du halo via `.nav-main > * { z-index: 1 }`. */
 .nav-main {
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  background: var(--void-900);
-  background-image: var(--grid-lines);
-  background-size: 32px 32px;
+  position: relative;
+  isolation: isolate;
+  background-color: #141a29;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      rgba(150, 170, 205, 0.016) 0 1px,
+      transparent 1px 4px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(150, 170, 205, 0.016) 0 1px,
+      transparent 1px 28px
+    );
+}
+/* Halos d'angle : haut-gauche cyan · bas-gauche violet · haut-droite magenta ·
+   bas-droite menthe. Tailles/intensités inégales (rendu moins symétrique). */
+.nav-main::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(58vw 50vw at 4% 6%, rgba(0, 240, 255, 0.12), transparent 62%),
+    radial-gradient(38vw 42vw at 12% 96%, rgba(168, 85, 247, 0.13), transparent 58%),
+    radial-gradient(52vw 46vw at 96% 4%, rgba(255, 45, 149, 0.08), transparent 60%),
+    radial-gradient(44vw 40vw at 88% 90%, rgba(46, 255, 194, 0.1), transparent 60%);
+}
+.nav-main > * {
+  position: relative;
+  z-index: 1;
 }
 
 .app-content {
