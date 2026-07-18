@@ -35,6 +35,9 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,woff,woff2}'],
+        // SPA multi-routes (react-router, US-010) : servir index.html pour les
+        // navigations vers des liens profonds (ex. /contracts) hors-ligne.
+        navigateFallback: 'index.html',
       },
       devOptions: {
         // Le service worker n'est actif qu'en build/preview (test hors-ligne

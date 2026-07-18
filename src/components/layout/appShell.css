@@ -1,0 +1,162 @@
+/* App-shell (US-010) — rail de navigation (desktop) ↔ barre inférieure (mobile).
+   Le chrome (rail + barre de statut) est permanent ; la vue active est rendue
+   dans `.app-content`. */
+
+.app-shell {
+  display: flex;
+  flex-direction: row;
+  min-height: 100vh;
+  background: var(--void-900);
+}
+
+/* Rail latéral (desktop) */
+.nav-rail {
+  width: 66px;
+  flex: none;
+  background: var(--void-800);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px 0;
+  gap: 4px;
+}
+
+.nav-brand {
+  margin-bottom: 12px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: var(--cyan-500);
+  writing-mode: vertical-rl;
+  text-shadow: var(--text-glow-cyan);
+}
+
+.nav-item {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--steel-400);
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.nav-item:hover {
+  color: var(--frost-100);
+}
+.nav-item span {
+  font-family: var(--font-mono);
+  font-size: 7px;
+  letter-spacing: 0.06em;
+}
+.nav-item--active {
+  color: var(--cyan-500);
+  background: rgba(0, 240, 255, 0.1);
+  border-color: rgba(0, 240, 255, 0.4);
+  box-shadow:
+    inset 2px 0 0 var(--cyan-500),
+    0 0 14px -6px var(--cyan-500);
+}
+.nav-item--future {
+  height: 36px;
+  color: var(--steel-600);
+  opacity: 0.4;
+  cursor: default;
+}
+
+.nav-sep {
+  width: 34px;
+  height: 1px;
+  background: var(--border);
+  margin: 6px 0;
+}
+.nav-spacer {
+  flex: 1;
+}
+
+.nav-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--void-900);
+  background-image: var(--grid-lines);
+  background-size: 32px 32px;
+}
+
+.app-content {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+/* Barre inférieure (mobile PWA) */
+@media (max-width: 720px) {
+  .app-shell {
+    flex-direction: column;
+  }
+  .nav-rail {
+    order: 2;
+    width: 100%;
+    height: 60px;
+    flex-direction: row;
+    align-items: stretch;
+    border-right: none;
+    border-top: 1px solid var(--border);
+    padding: 0;
+    gap: 0;
+  }
+  .nav-main {
+    order: 1;
+    min-height: 0;
+  }
+  .nav-brand,
+  .nav-sep,
+  .nav-spacer {
+    display: none;
+  }
+  .nav-item {
+    flex: 1;
+    width: auto;
+    height: 100%;
+    border: none;
+    border-radius: 0;
+  }
+  .nav-item span {
+    font-size: 8px;
+  }
+  .nav-item--active {
+    background: none;
+    box-shadow: inset 0 2px 0 var(--cyan-500);
+  }
+  /* Trop de destinations pour une barre étroite : on masque les caisses/inventaire. */
+  .nav-item--future.nav-hide-mobile {
+    display: none;
+  }
+}
+
+/* Hôte des toasts (déplacé depuis l'écran Contrats — désormais global). */
+.nw-toast-in {
+  animation: nw-toast-in 180ms var(--ease-out);
+}
+@keyframes nw-toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nw-toast-in {
+    animation: none !important;
+  }
+}
