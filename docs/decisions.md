@@ -172,3 +172,14 @@ L'EN est une réécriture in-world (ton netrunner), pas du mot-à-mot.
   « reste en place » de la maquette.
 - **Suppression** : confirmation par popup (modal HUD composé sur `HudPanel`),
   pas d'annulation par toast.
+
+### 014 — Outillage de test : Vitest (US-009, 18/07/2026)
+
+- **Vitest** = framework de test unitaire du projet (premier test du dépôt).
+  Config dédiée `vitest.config.ts` (environnement `node`, `include:
+  src/**/*.test.ts`), sans les plugins de build (React/Tailwind/PWA).
+- **Scripts** : `npm test` (`vitest run`, one-shot CI) et `npm run test:watch`.
+- **Cible prioritaire** : la couche `src/game/` (logique de jeu pure —
+  progression, priorité, récompenses), la plus rentable à tester unitairement.
+  Premier jeu de tests : `src/game/progression.test.ts` (courbe XP → niveau).
+- **Convention** : fichier de test à côté de la source (`*.test.ts`).

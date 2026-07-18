@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Icon, ProgressBar, Toast } from '../../components/ui'
+import { Icon, Toast } from '../../components/ui'
 import { useContractsStore } from '../../stores/useContractsStore'
 import { usePlayerStore } from '../../stores/usePlayerStore'
 import type { Contract, Difficulty } from '../../db'
 import { priorityRank } from '../../game/priority'
 import { ConfirmDialog } from '../common/ConfirmDialog'
 import { LanguageSwitcher } from '../common/LanguageSwitcher'
+import { LevelUpToast } from '../progression/LevelUpToast'
+import { ProgressionIndicator } from '../progression/ProgressionIndicator'
 import { ContractDetail } from './ContractDetail'
 import { ContractList } from './ContractList'
 import { QuickAddContract } from './QuickAddContract'
@@ -21,9 +23,9 @@ interface ToastItem {
 }
 
 /**
- * Écran « Contrats » (US-004) : en-tête (compteur actifs/total + progression),
- * barre de création rapide, liste réactive des contrats (terminer / éditer /
- * supprimer), toasts, popup de confirmation de suppression.
+ * Écran « Contrats » (US-004) : en-tête (gains de session + indicateur de
+ * progression US-009), barre de création rapide, liste réactive des contrats
+ * (terminer / éditer / supprimer), toasts, popup de confirmation de suppression.
  */
 export function ContractsView() {
   const { t } = useTranslation()
@@ -50,6 +52,8 @@ export function ContractsView() {
   const [sessionGains, setSessionGains] = useState({ xp: 0, credits: 0 })
   // Contrat qui vient d'encaisser sa récompense → flash « hack réussi ».
   const [flashingId, setFlashingId] = useState<string | null>(null)
+  // Niveau atteint à retenir le temps de la rétroaction de palier (US-009).
+  const [levelUp, setLevelUp] = useState<number | null>(null)
 
   useEffect(() => {
     void load()
@@ -82,15 +86,30 @@ export function ContractsView() {
       // `reward` non nul = première complétion → on verse au joueur, on cumule
       // les gains de session, et on déclenche le retour visuel (toast + flash).
       if (!reward) return
-      void grantReward(reward)
-      setSessionGains((g) => ({ xp: g.xp + reward.xp, credits: g.credits + reward.credits }))
+      // L'octroi recalcule le niveau ; si palier franchi → toast de palier
+      // (~4 s) + surbrillance de l'indicateur, en plus du toast de récompense.
+      void grantReward(reward).then((res) => {
+        if (!res.leveledUp) return
+        setLevelUp(res.newLevel)
+        window.setTimeout(
+          () => setLevelUp((cur) => (cur === res.newLevel ? null : cur)),
+          4000,
+        )
+      })
+      setSessionGains((g) => ({
+        xp: g.xp + reward.xp,
+        credits: g.credits + reward.credits,
+      }))
       pushToast(
         'success',
         t('contracts.toastReward'),
         t('contracts.reward', { xp: reward.xp, credits: reward.credits }),
       )
       setFlashingId(id)
-      window.setTimeout(() => setFlashingId((cur) => (cur === id ? null : cur)), 720)
+      window.setTimeout(
+        () => setFlashingId((cur) => (cur === id ? null : cur)),
+        720,
+      )
     })
   }
 
@@ -103,9 +122,8 @@ export function ContractsView() {
   }
 
   const total = contracts.length
-  const doneCount = contracts.filter((c) => c.status === 'done').length
-  const active = total - doneCount
-  const pct = total ? (doneCount / total) * 100 : 0
+  // Aucun gain encaissé cette session → état « — · — » (US-009).
+  const noGains = sessionGains.xp === 0 && sessionGains.credits === 0
 
   // Tri d'affichage : ouverts d'abord, terminés en bas. Parmi les ouverts,
   // priorité (haute → basse) puis récence (US-005) ; les terminés restent triés
@@ -138,7 +156,7 @@ export function ContractsView() {
           padding: '32px 30px 40px',
         }}
       >
-        {/* En-tête : titre + sélecteur de langue + compteur actifs/total */}
+        {/* En-tête : titre + sélecteur de langue + gains session + indicateur */}
         <div
           style={{
             display: 'flex',
@@ -184,9 +202,16 @@ export function ContractsView() {
             }}
           >
             <LanguageSwitcher />
-            <div style={{ display: 'flex', alignItems: 'flex-end', gap: 22, flex: 'none' }}>
-              {/* GAINS · SESSION — cumul en mémoire des récompenses encaissées */}
-              <div style={{ textAlign: 'right' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'stretch',
+                gap: 16,
+                flex: 'none',
+              }}
+            >
+              {/* GAINS · SESSION — cumul en mémoire (éphémère), texte nu à gauche */}
+              <div style={{ textAlign: 'right', alignSelf: 'flex-end' }}>
                 <div
                   style={{
                     fontFamily: 'var(--font-mono)',
@@ -198,112 +223,77 @@ export function ContractsView() {
                 >
                   {t('contracts.sessionGains')}
                 </div>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'baseline',
-                    justifyContent: 'flex-end',
-                    gap: 6,
-                  }}
-                >
-                  <span
-                    className="nw-neon-mint"
+                {noGains ? (
+                  <div
                     style={{
                       fontFamily: 'var(--font-mono)',
-                      fontSize: 'var(--text-xl)',
-                      lineHeight: 1,
+                      fontSize: 'var(--text-sm)',
+                      color: 'var(--steel-600)',
                     }}
                   >
-                    +{sessionGains.xp}
-                  </span>
-                  <span
+                    {t('contracts.sessionGainsEmpty')}
+                  </div>
+                ) : (
+                  <div
                     style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: 'var(--text-2xs)',
-                      letterSpacing: '0.14em',
-                      color: 'var(--mint-500)',
+                      display: 'flex',
+                      alignItems: 'baseline',
+                      justifyContent: 'flex-end',
+                      gap: 6,
                     }}
                   >
-                    XP
-                  </span>
-                  <span style={{ color: 'var(--steel-600)', margin: '0 3px' }}>·</span>
-                  <span
-                    style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: 'var(--text-xl)',
-                      lineHeight: 1,
-                      color: 'var(--amber-500)',
-                      textShadow: '0 0 8px rgba(255,176,32,.4)',
-                    }}
-                  >
-                    +{sessionGains.credits}
-                  </span>
-                  <span
-                    style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: 'var(--text-2xs)',
-                      letterSpacing: '0.14em',
-                      color: 'var(--amber-500)',
-                    }}
-                  >
-                    ¢
-                  </span>
-                </div>
+                    <span
+                      className="nw-neon-mint"
+                      style={{
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: 'var(--text-xl)',
+                        lineHeight: 1,
+                      }}
+                    >
+                      +{sessionGains.xp}
+                    </span>
+                    <span
+                      style={{
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: 'var(--text-2xs)',
+                        letterSpacing: '0.14em',
+                        color: 'var(--mint-500)',
+                      }}
+                    >
+                      XP
+                    </span>
+                    <span
+                      style={{ color: 'var(--steel-600)', margin: '0 3px' }}
+                    >
+                      ·
+                    </span>
+                    <span
+                      style={{
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: 'var(--text-xl)',
+                        lineHeight: 1,
+                        color: 'var(--amber-500)',
+                        textShadow: '0 0 8px rgba(255,176,32,.4)',
+                      }}
+                    >
+                      +{sessionGains.credits}
+                    </span>
+                    <span
+                      style={{
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: 'var(--text-2xs)',
+                        letterSpacing: '0.14em',
+                        color: 'var(--amber-500)',
+                      }}
+                    >
+                      ¢
+                    </span>
+                  </div>
+                )}
               </div>
-              <div style={{ width: 1, height: 42, background: 'var(--border)' }} />
-              <div style={{ textAlign: 'right', minWidth: 150 }}>
-              <div
-                style={{
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: 'var(--text-2xs)',
-                  letterSpacing: '0.16em',
-                  color: 'var(--steel-400)',
-                  marginBottom: 4,
-                }}
-              >
-                {t('contracts.activeTotal')}
-              </div>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'baseline',
-                  justifyContent: 'flex-end',
-                  gap: 8,
-                  marginBottom: 9,
-                }}
-              >
-                <span
-                  className="nw-neon-cyan"
-                  style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: 'var(--text-2xl)',
-                    lineHeight: 1,
-                  }}
-                >
-                  {String(active).padStart(2, '0')}
-                </span>
-                <span
-                  style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: 'var(--text-lg)',
-                    color: 'var(--steel-600)',
-                  }}
-                >
-                  /
-                </span>
-                <span
-                  style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: 'var(--text-2xl)',
-                    lineHeight: 1,
-                    color: 'var(--steel-400)',
-                  }}
-                >
-                  {String(total).padStart(2, '0')}
-                </span>
-              </div>
-              <ProgressBar value={pct} max={100} accent="mint" height={5} />
-              </div>
+              <div style={{ width: 1, background: 'var(--border)' }} />
+              {/* Indicateur de progression permanent (US-009) */}
+              <ProgressionIndicator elevated={levelUp !== null} />
             </div>
           </div>
         </div>
@@ -374,6 +364,21 @@ export function ContractsView() {
           )}
         </div>
 
+        {/* Toast de montée de niveau (haut-centre) — un palier à la fois */}
+        {levelUp !== null && (
+          <div
+            style={{
+              position: 'fixed',
+              top: 24,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              zIndex: 1100,
+            }}
+          >
+            <LevelUpToast level={levelUp} onClose={() => setLevelUp(null)} />
+          </div>
+        )}
+
         {/* Pile de toasts (bas-droite) */}
         <div
           style={{
@@ -389,8 +394,16 @@ export function ContractsView() {
           }}
         >
           {toasts.map((item) => (
-            <div key={item.id} className="nw-toast-in" style={{ pointerEvents: 'auto' }}>
-              <Toast kind={item.kind} title={item.title} onClose={() => dismiss(item.id)}>
+            <div
+              key={item.id}
+              className="nw-toast-in"
+              style={{ pointerEvents: 'auto' }}
+            >
+              <Toast
+                kind={item.kind}
+                title={item.title}
+                onClose={() => dismiss(item.id)}
+              >
                 {item.label}
               </Toast>
             </div>

@@ -19,7 +19,7 @@ Les US-005 à US-007 enrichissent le to-do.
 | US-006 | Récurrence des contrats | 1 | moyenne | à faire |
 | US-007 | Factions (catégories) & filtrage | 1 | moyenne | à faire |
 | US-008 | Difficulté & calcul de récompense (XP + crédits) | 1 | haute | fait |
-| US-009 | Progression joueur (XP, niveau netrunner, solde crédits) | 1 | haute | à faire |
+| US-009 | Progression joueur (XP, niveau netrunner, solde crédits) | 1 | haute | fait |
 | US-010 | Tableau de bord / HUD (contrats du jour, niveau, solde) | 1 | moyenne | à faire |
 
 > **Dette design system (suite migration NIGHTWIRE, décision #008)** : les

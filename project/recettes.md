@@ -166,3 +166,28 @@ confirmée par le PO (édition, tri, alertes d'échéance, sous-tâches animées
   **animé** (Framer Motion, `layout` + `AnimatePresence`). Validé PO.
 
 **Verdict : recette US-005 validée (15/15 points).**
+
+## US-009 — Progression joueur (XP, niveau netrunner, solde crédits)
+
+Recette du 18/07/2026. **Vérifs automatiques** : tests unitaires de la courbe
+(`src/game/progression.test.ts`, **10/10**), `typecheck`, `lint`, `build` — tous
+OK. **Recette visuelle navigateur (fidélité maquette 5a/5b + F5) confirmée par le
+PO : 100 % conforme à l'attendu.** Colonne « Méthode » = comment le critère a été
+vérifié.
+
+| # | Critère (action → résultat attendu) | Méthode | Statut | Date |
+|---|-------------------------------------|---------|--------|------|
+| C1 | Base vierge → indicateur niveau **1**, **0 %** (`0/100`), **0 ¢** | test `progressionFor(0)` + code indicateur | validé | 18/07/2026 |
+| C2 | Terminer un `medium` (niv.1) → reste niv.1, **25/100** (25 %), solde **+20 ¢** | test `progressionFor(25)` + `rewardFor(medium)` + `grantReward` | validé | 18/07/2026 |
+| C3 | Joueur à 75 XP + `medium` (→100) → niveau **2**, **0/200** | test `progressionFor(100)` + `levelForXp(75→100)` | validé | 18/07/2026 |
+| C4 | Joueur à 250 XP (niv.2) + `legendary` (→350) → niveau **3**, **50/300** | test `progressionFor(350)` + `levelForXp(250→350)` | validé | 18/07/2026 |
+| C5 | Palier franchi → retour visuel « NIVEAU X ATTEINT » ; **absent** si aucun palier | traçage + recette navigateur PO | validé | 18/07/2026 |
+| C6 | Rouvrir + re-terminer un contrat déjà payé → **aucun** XP, **aucune** montée, **aucun** toast | traçage : `complete()` → `null` (rewardGranted) → `grantReward` non appelé | validé | 18/07/2026 |
+| C7 | Après montée, **F5** → niveau, avancement et solde conservés | traçage `playerRepo.update` + recette navigateur PO | validé | 18/07/2026 |
+| C8 | Indicateur permanent (niveau + barre + solde) visible hors modale, **maj immédiate** sans F5 | traçage abonnement store + recette navigateur PO | validé | 18/07/2026 |
+| C9 | Fidélité visuelle maquette 5a (bloc biseauté cyan) & 5b (toast palier mint) | recette navigateur PO | validé | 18/07/2026 |
+| C10 | Non-régression US-008 : récompense à la complétion (gains session + toast « HACK RÉUSSI » + flash) + anti-farm | traçage + recette navigateur PO | validé | 18/07/2026 |
+| C11 | Périmètre : compteur « ACTIFS · TOTAL » retiré de l'en-tête (→ HUD US-010) | code en-tête | validé | 18/07/2026 |
+| C12 | `typecheck` + `lint` + `build` + tests unitaires passent | exécution | validé | 18/07/2026 |
+
+**Verdict : recette US-009 validée (12/12 critères).**
