@@ -26,13 +26,37 @@
       "hard": "DIFFICILE",
       "legendary": "LÉGENDAIRE"
     },
+    "priorityLabel": "PRIORITÉ",
+    "priority": {
+      "low": "BASSE",
+      "normal": "NORMALE",
+      "high": "HAUTE"
+    },
+    "dueDateLabel": "ÉCHÉANCE",
+    "due": {
+      "overdue": "EN RETARD",
+      "soon": "BIENTÔT",
+      "clear": "Effacer l'échéance",
+      "none": "— aucune —"
+    },
+    "subtasks": {
+      "title": "SOUS-TÂCHES",
+      "progress": "{{done}}/{{total}}",
+      "addPlaceholder": "Ajouter une sous-tâche…",
+      "add": "Ajouter (Entrée)",
+      "remove": "Retirer",
+      "empty": "Aucune sous-tâche. Découpe le contrat, runner."
+    },
+    "detail": {
+      "title": "DÉTAIL DU CONTRAT",
+      "titleField": "INTITULÉ",
+      "close": "FERMER"
+    },
     "item": {
       "codePrefix": "CTR",
       "done": "TERMINÉ",
-      "edit": "Éditer le titre",
-      "delete": "Supprimer",
-      "save": "Enregistrer (Entrée)",
-      "cancel": "Annuler (Échap)"
+      "edit": "Modifier le contrat",
+      "delete": "Supprimer"
     },
     "delete": {
       "title": "SUPPRIMER LE CONTRAT",

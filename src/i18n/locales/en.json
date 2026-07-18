@@ -26,13 +26,37 @@
       "hard": "HARD",
       "legendary": "LEGENDARY"
     },
+    "priorityLabel": "PRIORITY",
+    "priority": {
+      "low": "LOW",
+      "normal": "NORMAL",
+      "high": "HIGH"
+    },
+    "dueDateLabel": "DUE DATE",
+    "due": {
+      "overdue": "OVERDUE",
+      "soon": "SOON",
+      "clear": "Clear due date",
+      "none": "— none —"
+    },
+    "subtasks": {
+      "title": "SUBTASKS",
+      "progress": "{{done}}/{{total}}",
+      "addPlaceholder": "Add a subtask…",
+      "add": "Add (Enter)",
+      "remove": "Remove",
+      "empty": "No subtasks. Break the contract down, runner."
+    },
+    "detail": {
+      "title": "CONTRACT DETAIL",
+      "titleField": "TITLE",
+      "close": "CLOSE"
+    },
     "item": {
       "codePrefix": "CTR",
       "done": "DONE",
-      "edit": "Edit title",
-      "delete": "Delete",
-      "save": "Save (Enter)",
-      "cancel": "Cancel (Esc)"
+      "edit": "Edit contract",
+      "delete": "Delete"
     },
     "delete": {
       "title": "DELETE CONTRACT",

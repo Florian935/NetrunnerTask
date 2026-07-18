@@ -5,23 +5,24 @@
 
 ## US active
 
-_Aucune US active._ Dernière US clôturée : **US-008** (archivée dans
+_Aucune US active._ Dernière US clôturée : **US-005** (archivée dans
 `us/archive/`).
 
 ## Étape du cycle de vie
 
-US-008 terminée : cycle complet (cadrages → maquette → plan → implémentation →
-recette **9/9** → commit/merge). Introduit la couche **`src/game/`** (règles de
-jeu, barème), le **store joueur** (`usePlayerStore`), le marqueur anti-farm
-`rewardGranted` (**Dexie v3**), le sélecteur de difficulté, l'affichage de la
-récompense potentielle et le retour de gain (compteur **GAINS · SESSION** +
-toast + flash mint). Ajustement de recette : halos figés (Framer Motion) →
-pilotés par classes CSS. Prêt à démarrer **US-005**.
+US-005 terminée : cycle complet (cadrages → maquette → plan → implémentation →
+recette **15/15** → commit/merge). Introduit **`SubTask` + `Contract.subtasks`**
+(**Dexie v4**), la couche `src/game/priority.ts` et `features/contracts/dueDate.ts`,
+la **modale de détail** (`ContractDetail`, surface d'édition unique : titre +
+difficulté + priorité + échéance + sous-tâches), les **barres de priorité**, la
+**puce d'échéance** (en retard / bientôt), la **progression de sous-tâches** et
+leur **réordonnancement animé**. Édition inline d'US-008 supprimée (un seul
+bouton « modifier »). Prêt à démarrer **US-006** ou **US-009**.
 
-Reports encore ouverts : **US-005** (attributs de contrat) ; **app-shell** — rail
-de nav + barre de statut (US-010) ; **i18n des noms de factions** (US-007) ;
-**progression de niveau** (dérivation `xp → level`, montée de niveau) et
-**affichage permanent solde/niveau** → US-009 / US-010.
+Reports encore ouverts : **app-shell** — rail de nav + barre de statut (US-010) ;
+**i18n des noms de factions** (US-007) ; **progression de niveau**
+(dérivation `xp → level`, montée de niveau) et **affichage permanent solde/niveau**
+→ US-009 / US-010.
 
 ## Avancement global
 
@@ -33,13 +34,13 @@ de nav + barre de statut (US-010) ; **i18n des noms de factions** (US-007) ;
 - [x] US-003 — Création rapide de contrat (règle des 2 s) (**fait**).
 - [x] US-004 — Liste des contrats & complétion (**fait**, décision #011).
 - [x] US-008 — Difficulté & calcul de récompense (**fait**, décision #012).
-- [ ] US-005 — Attributs de contrat (priorité, échéance, sous-tâches) — prochaine.
+- [x] US-005 — Attributs de contrat (priorité, échéance, sous-tâches) (**fait**, décision #013).
 
 ## Prochaine action
 
-Démarrer **US-005 — Attributs de contrat (priorité, échéance, sous-tâches)** via
-le skill `nouvelle-us`. Impact UI → étape design probable ; libellés i18n ;
-probables évolutions du modèle Dexie (montée de version).
+Choisir la prochaine US via le skill `nouvelle-us` : **US-006 — Récurrence des
+contrats** (enchaîne sur les attributs) ou **US-009 — Progression joueur** (boucle
+XP → niveau, chemin critique). Restent aussi US-007 (factions & filtrage).
 
 > À reconstruire sur NIGHTWIRE dans leur US métier : composants `game/`
 > (ContractCard, RarityBadge, CosmeticCard, FactionBadge) + rampe de rareté

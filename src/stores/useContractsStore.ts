@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { contractsRepo } from '../db'
-import type { Contract, Difficulty } from '../db'
+import type { Contract, Difficulty, Priority } from '../db'
 import { rewardFor } from '../game/rewards'
 import type { Reward } from '../game/rewards'
 
@@ -23,6 +23,11 @@ interface ContractsState {
   reopen: (id: string) => Promise<void>
   rename: (id: string, title: string) => Promise<void>
   setDifficulty: (id: string, difficulty: Difficulty) => Promise<void>
+  setPriority: (id: string, priority: Priority) => Promise<void>
+  setDueDate: (id: string, dueDate: number | null) => Promise<void>
+  addSubtask: (id: string, title: string) => Promise<void>
+  toggleSubtask: (id: string, subtaskId: string) => Promise<void>
+  removeSubtask: (id: string, subtaskId: string) => Promise<void>
   remove: (id: string) => Promise<void>
 }
 
@@ -88,6 +93,59 @@ export const useContractsStore = create<ContractsState>((set, get) => ({
     await contractsRepo.update(id, { difficulty })
     set((s) => ({
       contracts: s.contracts.map((c) => (c.id === id ? { ...c, difficulty } : c)),
+    }))
+  },
+
+  setPriority: async (id, priority) => {
+    await contractsRepo.setPriority(id, priority)
+    set((s) => ({
+      contracts: s.contracts.map((c) => (c.id === id ? { ...c, priority } : c)),
+    }))
+  },
+
+  setDueDate: async (id, dueDate) => {
+    await contractsRepo.setDueDate(id, dueDate)
+    set((s) => ({
+      contracts: s.contracts.map((c) => (c.id === id ? { ...c, dueDate } : c)),
+    }))
+  },
+
+  addSubtask: async (id, title) => {
+    await contractsRepo.addSubtask(id, title)
+    // Relit le contrat pour récupérer la sous-tâche (id généré côté repo).
+    const updated = await contractsRepo.get(id)
+    if (!updated) return
+    set((s) => ({
+      contracts: s.contracts.map((c) =>
+        c.id === id ? { ...c, subtasks: updated.subtasks } : c,
+      ),
+    }))
+  },
+
+  toggleSubtask: async (id, subtaskId) => {
+    await contractsRepo.toggleSubtask(id, subtaskId)
+    set((s) => ({
+      contracts: s.contracts.map((c) =>
+        c.id === id
+          ? {
+              ...c,
+              subtasks: c.subtasks.map((sub) =>
+                sub.id === subtaskId ? { ...sub, done: !sub.done } : sub,
+              ),
+            }
+          : c,
+      ),
+    }))
+  },
+
+  removeSubtask: async (id, subtaskId) => {
+    await contractsRepo.removeSubtask(id, subtaskId)
+    set((s) => ({
+      contracts: s.contracts.map((c) =>
+        c.id === id
+          ? { ...c, subtasks: c.subtasks.filter((sub) => sub.id !== subtaskId) }
+          : c,
+      ),
     }))
   },
 

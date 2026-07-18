@@ -132,3 +132,37 @@ Recette du 17/07/2026. Vérifs automatiques (tsc/lint/build) + recette navigateu
   préservé au repos. Validé PO.
 
 **Verdict : recette US-008 validée (9/9 critères).**
+
+## US-005 — Attributs de contrat (priorité, échéance, sous-tâches)
+
+Recette du 18/07/2026. Vérifs automatiques (tsc/lint/build) + recette navigateur
+confirmée par le PO (édition, tri, alertes d'échéance, sous-tâches animées, i18n).
+
+| # | Critère (action → résultat attendu) | Statut | Date |
+|---|-------------------------------------|--------|------|
+| E1 | Ligne = **un seul bouton « modifier »** + corbeille ; le crayon ouvre la modale de détail | validé | 18/07/2026 |
+| E2 | Titre éditable dans la modale (persiste F5) ; saisie vide → dernier titre non vide conservé | validé | 18/07/2026 |
+| E3 | Difficulté éditable dans la modale (pastilles) → récompense potentielle mise à jour ; persiste | validé | 18/07/2026 |
+| C1 | Priorité (basse/normale/haute) réglée dans la modale, persistée après F5 | validé | 18/07/2026 |
+| C2 | Priorité visible sur la ligne via **barres de signal** (1/2/3, haute = cyan + glow) | validé | 18/07/2026 |
+| C3 | Tri : ouverts par priorité (haute→basse) puis récence ; terminés en bas | validé | 18/07/2026 |
+| C4 | Échéance définie / modifiée / effacée dans la modale ; chaque état persiste (F5) | validé | 18/07/2026 |
+| C5 | Puce d'échéance : rouge « EN RETARD » (dépassée), amber « BIENTÔT » (≤ 1 j), neutre sinon | validé | 18/07/2026 |
+| C6 | Sous-tâches : ajout (Entrée), coche/décoche, suppression ; persistées après F5 | validé | 18/07/2026 |
+| C7 | Progression « n/m » sur la ligne (icône check-list) ; passe au mint quand tout est coché | validé | 18/07/2026 |
+| C8 | Cocher une sous-tâche n'octroie aucun XP/crédit ; ne termine pas le contrat | validé | 18/07/2026 |
+| C9 | Création rapide inchangée (geste de 2 s) | validé | 18/07/2026 |
+| C10 | i18n FR/EN complet (priorité, échéance, détail, sous-tâches) ; aucune chaîne en dur | validé | 18/07/2026 |
+| C11 | Cocher une sous-tâche la fait glisser en bas (animé Framer Motion) ; décocher la remonte | validé | 18/07/2026 |
+| C12 | Non-régression US-008 : récompense à la complétion (compteur + toast + flash) + anti-farm | validé | 18/07/2026 |
+| — | Migration Dexie v4 : contrats existants ouverts sans perte (`subtasks: []`) | validé | 18/07/2026 |
+
+### Ajustements issus de la recette (résolus dans l'US)
+
+- **Deux boutons d'édition trop lourds** → **surface d'édition unique** : un seul
+  bouton « modifier » ouvre la modale qui édite tout (titre, difficulté, priorité,
+  échéance, sous-tâches) ; édition inline d'US-008 supprimée. Validé PO.
+- **Réordonnancement des sous-tâches cochées** (glissement en bas) ajouté, puis
+  **animé** (Framer Motion, `layout` + `AnimatePresence`). Validé PO.
+
+**Verdict : recette US-005 validée (15/15 points).**
