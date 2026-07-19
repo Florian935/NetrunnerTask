@@ -49,6 +49,7 @@ export const contractsRepo = {
       difficulty: input.difficulty ?? 'trivial',
       priority: input.priority ?? 'normal',
       dueDate: input.dueDate ?? null,
+      dueHasTime: false,
       status: 'open',
       createdAt: Date.now(),
       completedAt: null,
@@ -59,6 +60,8 @@ export const contractsRepo = {
       bestStreak: 0,
       stake: 0,
       stakeOutcome: 'none',
+      reminderLead: null,
+      reminderNotifiedFor: null,
     }
     await db.contracts.add(contract)
     return contract

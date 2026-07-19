@@ -1,7 +1,8 @@
 import { create } from 'zustand'
 import { contractsRepo, factionsRepo } from '../db'
 import type { Contract, Difficulty, Priority, Recurrence } from '../db'
-import { daysUntilDue } from '../features/contracts/dueDate'
+import { applyTimeToDue, toTimeInputValue } from '../features/contracts/dueDate'
+import { isDue } from '../game/dueTime'
 import { firstOccurrence, nextOccurrence } from '../game/recurrence'
 import { applyReputationDelta, reputationGain } from '../game/reputation'
 import { isStakeEligible, isStakeLost, stakePayout } from '../game/risk'
@@ -34,8 +35,29 @@ interface ContractsState {
   setDifficulty: (id: string, difficulty: Difficulty) => Promise<void>
   setFaction: (id: string, factionId: string | null) => Promise<void>
   setPriority: (id: string, priority: Priority) => Promise<void>
-  setDueDate: (id: string, dueDate: number | null) => Promise<void>
+  /**
+   * Définit/efface l'échéance (US-005) et son caractère **horodaté** (US-014).
+   * `hasTime=false` = « toute la journée » (coupe le rappel, qui exige une heure).
+   * Réarme le rappel (`reminderNotifiedFor=null`) car l'instant limite change.
+   */
+  setDueDate: (
+    id: string,
+    dueDate: number | null,
+    hasTime: boolean,
+  ) => Promise<void>
   setRecurrence: (id: string, recurrence: Recurrence | null) => Promise<void>
+  /**
+   * Règle le rappel (US-014) : `lead` minutes avant l'échéance, ou `null` (aucun).
+   * Réarme le rappel (`reminderNotifiedFor=null`). Nécessite une échéance
+   * horodatée côté UI (le contrôle est inactif sinon).
+   */
+  setReminderLead: (id: string, lead: number | null) => Promise<void>
+  /**
+   * Marque le rappel d'un contrat comme **émis** pour un instant limite donné
+   * (US-014) — dédoublonne au fil des ticks/rechargements. Piloté par le service
+   * `useReminders`.
+   */
+  markReminderNotified: (id: string, instant: number) => Promise<void>
   /**
    * Pose, modifie ou retire une mise à risque (US-013). `amount` en crédits
    * entiers : `> 0` pose/ajuste la mise, `0` la retire. Rembourse l'ancienne mise
@@ -86,7 +108,7 @@ export const useContractsStore = create<ContractsState>((set, get) => ({
         if (
           c.status === 'done' &&
           c.dueDate !== null &&
-          daysUntilDue(c.dueDate, now) <= 0
+          isDue(c.dueDate, c.dueHasTime, now)
         ) {
           const patch = {
             status: 'open' as const,
@@ -103,6 +125,7 @@ export const useContractsStore = create<ContractsState>((set, get) => ({
           const s = resetIfMissed(
             { currentStreak: c.currentStreak, bestStreak: c.bestStreak },
             c.dueDate,
+            c.dueHasTime,
             now,
           )
           if (s.currentStreak !== c.currentStreak) {
@@ -166,7 +189,7 @@ export const useContractsStore = create<ContractsState>((set, get) => ({
       // Série (US-011) : « à temps » évalué sur l'échéance **courante**, avant de
       // l'avancer. À temps → +1 ; en retard → repart à 1. Une seule fois par
       // cycle (le verrou « récurrent validé » empêche une seconde complétion).
-      const onTime = isOnTime(current.dueDate, now)
+      const onTime = isOnTime(current.dueDate, current.dueHasTime, now)
       const streak = applyCompletion(
         { currentStreak: current.currentStreak, bestStreak: current.bestStreak },
         onTime,
@@ -175,7 +198,13 @@ export const useContractsStore = create<ContractsState>((set, get) => ({
         status: 'done' as const,
         completedAt: now,
         rewardGranted: true,
-        dueDate: nextOccurrence(current.recurrence, current.dueDate, now),
+        // US-014 : la prochaine occurrence conserve l'heure (récurrent horodaté).
+        dueDate: nextOccurrence(
+          current.recurrence,
+          current.dueDate,
+          now,
+          current.dueHasTime,
+        ),
         currentStreak: streak.currentStreak,
         bestStreak: streak.bestStreak,
       }
@@ -257,7 +286,7 @@ export const useContractsStore = create<ContractsState>((set, get) => ({
     }))
   },
 
-  setDueDate: async (id, dueDate) => {
+  setDueDate: async (id, dueDate, hasTime) => {
     // US-013 : retirer l'échéance d'un contrat dont la mise est en jeu la rend
     // inéligible (plus de déclencheur de perte) → on rembourse et annule la mise
     // pour ne pas laisser une mise « prisonnière » sans issue possible.
@@ -266,22 +295,40 @@ export const useContractsStore = create<ContractsState>((set, get) => ({
       dueDate === null &&
       current?.stakeOutcome === 'pending' &&
       current.stake > 0
-    await contractsRepo.setDueDate(id, dueDate)
-    if (clearsStake) {
-      await usePlayerStore.getState().adjustCredits(current.stake)
-      await contractsRepo.update(id, { stake: 0, stakeOutcome: 'none' })
+    // US-014 : sans heure (ou sans échéance), le rappel n'a plus lieu d'être
+    // (il exige une heure). L'instant limite change → on réarme (`notifiedFor`).
+    const dueHasTime = dueDate !== null && hasTime
+    const reminderLead = dueHasTime ? (current?.reminderLead ?? null) : null
+    const patch = {
+      dueDate,
+      dueHasTime,
+      reminderLead,
+      reminderNotifiedFor: null,
+      ...(clearsStake ? { stake: 0, stakeOutcome: 'none' as const } : {}),
     }
+    if (clearsStake && current) {
+      await usePlayerStore.getState().adjustCredits(current.stake)
+    }
+    await contractsRepo.update(id, patch)
+    set((s) => ({
+      contracts: s.contracts.map((c) => (c.id === id ? { ...c, ...patch } : c)),
+    }))
+  },
+
+  setReminderLead: async (id, lead) => {
+    // Réarme le rappel (nouvel intervalle) : on efface la marque de notification.
+    const patch = { reminderLead: lead, reminderNotifiedFor: null }
+    await contractsRepo.update(id, patch)
+    set((s) => ({
+      contracts: s.contracts.map((c) => (c.id === id ? { ...c, ...patch } : c)),
+    }))
+  },
+
+  markReminderNotified: async (id, instant) => {
+    await contractsRepo.update(id, { reminderNotifiedFor: instant })
     set((s) => ({
       contracts: s.contracts.map((c) =>
-        c.id === id
-          ? {
-              ...c,
-              dueDate,
-              ...(clearsStake
-                ? { stake: 0, stakeOutcome: 'none' as const }
-                : {}),
-            }
-          : c,
+        c.id === id ? { ...c, reminderNotifiedFor: instant } : c,
       ),
     }))
   },
@@ -301,6 +348,10 @@ export const useContractsStore = create<ContractsState>((set, get) => ({
       const switching = current.recurrence !== null && changed
       if (current.dueDate === null || switching) {
         dueDate = firstOccurrence(recurrence, Date.now())
+        // US-014 : préserver l'heure d'un récurrent horodaté qu'on reprogramme.
+        if (current.dueHasTime && current.dueDate !== null) {
+          dueDate = applyTimeToDue(dueDate, toTimeInputValue(current.dueDate))
+        }
       }
     }
     // Retrait de la récurrence → la série n'a plus de sens : on remet à 0
@@ -380,7 +431,7 @@ export const useContractsStore = create<ContractsState>((set, get) => ({
     }
     const stake = current.stake
     // À temps → gain crédité ; en retard → perte (aucun mouvement, déjà débité).
-    if (isOnTime(current.dueDate, Date.now())) {
+    if (isOnTime(current.dueDate, current.dueHasTime, Date.now())) {
       const payout = stakePayout(stake, current.difficulty)
       await usePlayerStore.getState().adjustCredits(payout)
       await contractsRepo.update(id, { stakeOutcome: 'won' })

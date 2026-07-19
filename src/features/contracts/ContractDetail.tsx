@@ -22,9 +22,15 @@ import { DIFFICULTY_ACCENTS, rewardFor } from '../../game/rewards'
 import { PRIORITY_BARS, PRIORITY_ORDER } from '../../game/priority'
 import { contractCode } from './contractCode'
 import { DifficultyDots } from './DifficultyDots'
-import { fromDateInputValue, toDateInputValue } from './dueDate'
+import {
+  applyTimeToDue,
+  fromDateInputValue,
+  toDateInputValue,
+  toTimeInputValue,
+} from './dueDate'
 import { factionLabel } from './factionLabel'
 import { RecurrenceControl } from './RecurrenceControl'
+import { ReminderControl } from './ReminderControl'
 import { StakeControl } from './StakeControl'
 
 export interface ContractDetailProps {
@@ -37,8 +43,10 @@ export interface ContractDetailProps {
   onSetDifficulty: (id: string, difficulty: Difficulty) => void
   onSetFaction: (id: string, factionId: string | null) => void
   onSetPriority: (id: string, priority: Priority) => void
-  onSetDueDate: (id: string, dueDate: number | null) => void
+  onSetDueDate: (id: string, dueDate: number | null, hasTime: boolean) => void
   onSetRecurrence: (id: string, recurrence: Recurrence | null) => void
+  /** Règle le rappel (US-014) : minutes avant l'échéance, ou `null` (aucun). */
+  onSetReminderLead: (id: string, lead: number | null) => void
   /** Pose (> 0) ou retire (0) la mise à risque (US-013). */
   onSetStake: (id: string, amount: number) => void
   onAddSubtask: (id: string, title: string) => void
@@ -63,6 +71,7 @@ export function ContractDetail({
   onSetPriority,
   onSetDueDate,
   onSetRecurrence,
+  onSetReminderLead,
   onSetStake,
   onAddSubtask,
   onToggleSubtask,
@@ -100,6 +109,31 @@ export function ContractDetail({
   // l'ordre stocké est inchangé). Cocher fait glisser l'étape vers le bas.
   const orderedSubs = [...subs].sort((a, b) => Number(a.done) - Number(b.done))
   const hasDue = contract.dueDate != null
+
+  // Échéance (US-014) : la date préserve l'heure existante ; l'heure bascule
+  // `dueHasTime` (la vider repasse « toute la journée »).
+  const onDateChange = (value: string) => {
+    const day = fromDateInputValue(value)
+    if (day === null) {
+      onSetDueDate(contract.id, null, false)
+    } else if (contract.dueHasTime && contract.dueDate != null) {
+      onSetDueDate(
+        contract.id,
+        applyTimeToDue(day, toTimeInputValue(contract.dueDate)),
+        true,
+      )
+    } else {
+      onSetDueDate(contract.id, day, false)
+    }
+  }
+  const onTimeChange = (value: string) => {
+    if (contract.dueDate == null) return
+    onSetDueDate(
+      contract.id,
+      applyTimeToDue(contract.dueDate, value),
+      value !== '',
+    )
+  }
 
   const addSub = () => {
     const title = subDraft.trim()
@@ -334,12 +368,7 @@ export function ContractDetail({
                     value={
                       hasDue ? toDateInputValue(contract.dueDate as number) : ''
                     }
-                    onChange={(e) =>
-                      onSetDueDate(
-                        contract.id,
-                        fromDateInputValue(e.target.value),
-                      )
-                    }
+                    onChange={(e) => onDateChange(e.target.value)}
                     style={{
                       flex: 1,
                       minWidth: 0,
@@ -355,17 +384,56 @@ export function ContractDetail({
                       colorScheme: 'dark',
                     }}
                   />
+                  {/* Heure (US-014) — active seulement si une date est posée. */}
+                  <input
+                    type="time"
+                    disabled={!hasDue}
+                    value={
+                      contract.dueHasTime
+                        ? toTimeInputValue(contract.dueDate as number)
+                        : ''
+                    }
+                    onChange={(e) => onTimeChange(e.target.value)}
+                    aria-label={t('contracts.due.timeLabel')}
+                    style={{
+                      width: 96,
+                      height: 40,
+                      padding: '0 9px',
+                      background: 'var(--bg-inset)',
+                      border: '1px solid var(--border)',
+                      borderRadius: 'var(--radius-sm)',
+                      color: contract.dueHasTime
+                        ? 'var(--frost-100)'
+                        : 'var(--steel-600)',
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: 'var(--text-sm)',
+                      letterSpacing: '0.04em',
+                      colorScheme: 'dark',
+                      opacity: hasDue ? 1 : 0.45,
+                    }}
+                  />
                   {hasDue && (
                     <IconButton
                       name="x"
                       size="sm"
                       title={t('contracts.due.clear')}
-                      onClick={() => onSetDueDate(contract.id, null)}
+                      onClick={() => onSetDueDate(contract.id, null, false)}
                     />
                   )}
                 </div>
               </div>
             </div>
+
+            {/* Rappel (US-014) — actif seulement si l'échéance est horodatée */}
+            {hasDue && (
+              <ReminderControl
+                reminderLead={contract.reminderLead}
+                hasTime={contract.dueHasTime}
+                onSetReminderLead={(lead) =>
+                  onSetReminderLead(contract.id, lead)
+                }
+              />
+            )}
 
             {/* Récurrence (US-006) */}
             <RecurrenceControl

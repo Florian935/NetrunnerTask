@@ -2,6 +2,7 @@
 // Contrats ouverts à échéance dépassée (overdue) ou aujourd'hui (today).
 
 import type { Contract } from '../../db'
+import { isPastDeadline } from '../../game/dueTime'
 import { daysUntilDue } from '../contracts/dueDate'
 
 /** Groupes de contrats du jour, chacun trié par échéance croissante. */
@@ -26,9 +27,10 @@ export function todayContracts(
 
   for (const c of contracts) {
     if (c.status !== 'open' || c.dueDate === null) continue
-    const days = daysUntilDue(c.dueDate, now)
-    if (days < 0) overdue.push(c)
-    else if (days === 0) today.push(c)
+    // US-014 : « en retard » = instant limite dépassé (horodaté ou fin de journée
+    // au jour) ; « aujourd'hui » = échéance du jour non encore dépassée.
+    if (isPastDeadline(c.dueDate, c.dueHasTime, now)) overdue.push(c)
+    else if (daysUntilDue(c.dueDate, now) === 0) today.push(c)
   }
 
   const byDue = (a: Contract, b: Contract) =>

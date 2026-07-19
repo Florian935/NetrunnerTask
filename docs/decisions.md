@@ -342,3 +342,36 @@ L'EN est une réécriture in-world (ton netrunner), pas du mot-à-mot.
   gatée par la récompense de base → mise non réglée sur un contrat rouvert re-misé ;
   (2) `setRecurrence` ne soldait pas une mise en jeu → mise « prisonnière » et
   confiscable sur un récurrent. Corrigés (symétrie avec `setDueDate`).
+
+### 021 — Échéances horodatées & rappels PWA (US-014, 19/07/2026)
+
+- **Heure optionnelle** sur l'échéance : `Contract.dueHasTime` (**Dexie v9**,
+  backfill `false`) — `dueDate` reste l'epoch ms (minuit si au jour, instant exact
+  si horodaté). `reminderLead` (minutes avant, `null` = aucun) + `reminderNotifiedFor`
+  (dédoublonnage). **Rappel réservé aux contrats horodatés** (révision design PO).
+- **Unification `game/dueTime.ts`** (testé, non-régression) : `deadlineInstant`
+  (horodaté → instant ; au jour → **minuit suivant**, calculé par arithmétique de
+  date = **DST-safe**) → `isPastDeadline` unifie en retard / manqué / mise perdue ;
+  `occurrenceInstant`/`isDue` (début de période) pilotent la **réactivation** des
+  récurrents. `dueState` (`soon` = dans l'heure si horodaté, aujourd'hui/demain
+  sinon) ; `reminderTrigger`. Les prédicats `streak`/`risk`/`recurrence`/`dueDate`
+  délèguent et reçoivent `hasTime` ; `nextOccurrence` **conserve l'heure**.
+- **Périmètre B (best-effort local)** : pas de serveur push → notification système
+  émise **seulement quand l'app tourne** + **rattrapage** à l'ouverture ; honnête
+  sur la limite (C — arrière-plan garanti — écarté car hors local-first).
+- **Service `useReminders`** (monté dans `AppShell`) : tick **30 s** + 1ʳᵉ passe
+  gatée sur `loaded` (rattrapage) ; garde mémoire anti-boucle ; notif système
+  (`notifications.ts`, **dégradation propre** si API absente, permission demandée
+  **sur action utilisateur** uniquement) + toast in-app ; rattrapage agrégé →
+  bandeau `Alert` + une seule notif. `useFeedbackStore` : toasts élargis
+  (`warning`/`info`) + `dueCatchup`.
+- **UI (maquette `docs/maquettes/US-014/`, validée PO)** : `ContractDetail`
+  (champ heure + `ReminderControl` segments Aucun/À l'échéance/10 min/1 h +
+  permission), `ContractItem` (pastille horodatée + puce rappel violette),
+  `todayContracts` (via `isPastDeadline`). i18n `contracts.due.*`/`reminder.*`.
+  5 icônes ajoutées (`bell`, `bell-off`, `calendar`, `calendar-clock`, `clock`).
+- **Revue de code** : 4 points corrigés avant merge — **bug DST** sur l'instant
+  limite au jour (arithmétique de date), garde anti-boucle du rappel, notif de
+  rattrapage **agrégée**, cohérence d'affichage de l'heure.
+- **Hors périmètre inclus** (correctif rapide validé PO) : alignement vertical du
+  rond de difficulté (`line-height: 1`) sur `ContractItem`.

@@ -61,7 +61,29 @@
       "soon": "SOON",
       "today": "TODAY",
       "clear": "Clear due date",
+      "timeLabel": "Due time",
       "none": "— none —"
+    },
+    "reminder": {
+      "label": "REMINDER",
+      "opt": {
+        "none": "NONE",
+        "due": "AT DUE",
+        "m10": "10 MIN",
+        "h1": "1 H"
+      },
+      "needTime": "A reminder requires a due time.",
+      "off": "System notifications not enabled.",
+      "enable": "Enable",
+      "denied": "Notifications denied — reminders shown in-app only.",
+      "unsupported": "Notifications unavailable — reminders shown in-app.",
+      "active": "Reminder on",
+      "notifTitle": "Deadline reminder",
+      "notifBody": "{{title}} — due at {{time}}.",
+      "toastTitle": "DEADLINE REMINDER",
+      "toastBody": "{{title}} — due {{time}}.",
+      "catchupTitle": "{{count}} deadline(s) while you were away",
+      "catchupBody": "Timed contracts reached their deadline while the app was closed."
     },
     "subtasks": {
       "title": "SUBTASKS",

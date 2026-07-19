@@ -11,23 +11,31 @@ const NOW = new Date(2026, 6, 18, 12, 0, 0).getTime()
 
 describe('isOnTime / isMissed', () => {
   it('sans échéance : toujours à temps, jamais manqué', () => {
-    expect(isOnTime(null, NOW)).toBe(true)
-    expect(isMissed(null, NOW)).toBe(false)
+    expect(isOnTime(null, false, NOW)).toBe(true)
+    expect(isMissed(null, false, NOW)).toBe(false)
   })
 
   it('échéance aujourd’hui (même jour, heure différente) : à temps', () => {
-    expect(isOnTime(july(18), NOW)).toBe(true)
-    expect(isMissed(july(18), NOW)).toBe(false)
+    expect(isOnTime(july(18), false, NOW)).toBe(true)
+    expect(isMissed(july(18), false, NOW)).toBe(false)
   })
 
   it('échéance demain : à temps', () => {
-    expect(isOnTime(july(19), NOW)).toBe(true)
-    expect(isMissed(july(19), NOW)).toBe(false)
+    expect(isOnTime(july(19), false, NOW)).toBe(true)
+    expect(isMissed(july(19), false, NOW)).toBe(false)
   })
 
   it('échéance hier : en retard / manqué', () => {
-    expect(isOnTime(july(17), NOW)).toBe(false)
-    expect(isMissed(july(17), NOW)).toBe(true)
+    expect(isOnTime(july(17), false, NOW)).toBe(false)
+    expect(isMissed(july(17), false, NOW)).toBe(true)
+  })
+
+  it('horodaté : à temps avant l’instant, manqué après (même jour)', () => {
+    const at1842 = new Date(2026, 6, 18, 18, 42).getTime()
+    expect(isOnTime(at1842, true, NOW)).toBe(true) // NOW = 12:00
+    expect(isMissed(at1842, true, NOW)).toBe(false)
+    const at1100 = new Date(2026, 6, 18, 11, 0).getTime()
+    expect(isMissed(at1100, true, NOW)).toBe(true) // 11:00 dépassé à 12:00
   })
 })
 
@@ -58,7 +66,7 @@ describe('applyCompletion', () => {
 describe('resetIfMissed', () => {
   it('période manquée : série à 0, record préservé', () => {
     const s: Streak = { currentStreak: 6, bestStreak: 8 }
-    expect(resetIfMissed(s, july(17), NOW)).toEqual({
+    expect(resetIfMissed(s, july(17), false, NOW)).toEqual({
       currentStreak: 0,
       bestStreak: 8,
     })
@@ -66,11 +74,11 @@ describe('resetIfMissed', () => {
 
   it('échéance aujourd’hui : rien ne change', () => {
     const s: Streak = { currentStreak: 6, bestStreak: 8 }
-    expect(resetIfMissed(s, july(18), NOW)).toBe(s)
+    expect(resetIfMissed(s, july(18), false, NOW)).toBe(s)
   })
 
   it('sans échéance : rien ne change', () => {
     const s: Streak = { currentStreak: 3, bestStreak: 3 }
-    expect(resetIfMissed(s, null, NOW)).toBe(s)
+    expect(resetIfMissed(s, null, false, NOW)).toBe(s)
   })
 })

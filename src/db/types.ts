@@ -43,6 +43,12 @@ export interface Contract {
   priority: Priority
   /** Échéance en epoch ms ; `null` = pas d'échéance. */
   dueDate: number | null
+  /**
+   * L'échéance porte-t-elle une **heure** (US-014) ? `false` = « toute la
+   * journée » (`dueDate` = minuit local, comportement historique) ; `true` =
+   * `dueDate` est l'instant exact. `false` par défaut.
+   */
+  dueHasTime: boolean
   status: ContractStatus
   /** Date de création (epoch ms). */
   createdAt: number
@@ -87,6 +93,18 @@ export interface Contract {
    * `stake > 0 ⇔ stakeOutcome ≠ 'none'`.
    */
   stakeOutcome: StakeOutcome
+  /**
+   * Rappel (US-014) : minutes **avant** l'échéance pour notifier. `null` = pas de
+   * rappel (défaut) ; `0` = à l'échéance ; `10` / `60` = crans. **Exige une
+   * heure** (`dueHasTime`) — sans heure, reste `null`.
+   */
+  reminderLead: number | null
+  /**
+   * Instant limite (epoch ms) pour lequel le rappel a **déjà été émis** (US-014) —
+   * dédoublonne au fil des ticks/rechargements. `null` = jamais notifié ; diffère
+   * quand l'échéance change ou qu'un récurrent se reprogramme.
+   */
+  reminderNotifiedFor: number | null
 }
 
 /** Catégorie de vie regroupant des contrats. */

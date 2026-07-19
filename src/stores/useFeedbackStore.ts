@@ -1,9 +1,9 @@
 import { create } from 'zustand'
 
-/** Toast transitoire (récompense, création, suppression). */
+/** Toast transitoire (récompense, création, suppression, rappel). */
 export interface ToastItem {
   id: string
-  kind: 'success' | 'danger'
+  kind: 'success' | 'warning' | 'danger' | 'info'
   title: string
   label: string
 }
@@ -59,6 +59,8 @@ interface FeedbackState {
   flashingId: string | null
   /** Mises perdues au chargement (US-013), à transformer en toasts (AppShell). */
   stakeLosses: StakeLossItem[]
+  /** Rattrapage US-014 : nb d'échéances arrivées pendant l'absence (bandeau). */
+  dueCatchup: number | null
 
   pushToast: (kind: ToastItem['kind'], title: string, label: string) => void
   dismiss: (id: string) => void
@@ -71,6 +73,10 @@ interface FeedbackState {
   pushStakeLosses: (items: Omit<StakeLossItem, 'id'>[]) => void
   /** Vide la file une fois les toasts émis (AppShell). */
   clearStakeLosses: () => void
+  /** Signale un rattrapage d'échéances (US-014) — bandeau `Alert`. */
+  setDueCatchup: (count: number) => void
+  /** Ferme le bandeau de rattrapage. */
+  clearDueCatchup: () => void
 }
 
 export const useFeedbackStore = create<FeedbackState>((set, get) => ({
@@ -81,6 +87,7 @@ export const useFeedbackStore = create<FeedbackState>((set, get) => ({
   rankUp: null,
   flashingId: null,
   stakeLosses: [],
+  dueCatchup: null,
 
   pushToast: (kind, title, label) => {
     const id = crypto.randomUUID()
@@ -147,4 +154,7 @@ export const useFeedbackStore = create<FeedbackState>((set, get) => ({
   },
 
   clearStakeLosses: () => set({ stakeLosses: [] }),
+
+  setDueCatchup: (count) => set({ dueCatchup: count }),
+  clearDueCatchup: () => set({ dueCatchup: null }),
 }))
