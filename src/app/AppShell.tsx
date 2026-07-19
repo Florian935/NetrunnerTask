@@ -1,10 +1,11 @@
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Outlet } from 'react-router'
-import { Toast } from '../components/ui'
+import { Alert, Toast } from '../components/ui'
 import { NavRail } from '../components/layout/NavRail'
 import { StatusBar } from '../components/layout/StatusBar'
 import { LevelUpToast } from '../features/progression/LevelUpToast'
+import { useReminders } from '../features/reminders/useReminders'
 import { RankUpToast } from '../features/reputation/RankUpToast'
 import { ReputationGainToast } from '../features/reputation/ReputationGainToast'
 import { useContractsStore } from '../stores/useContractsStore'
@@ -31,6 +32,11 @@ export function AppShell() {
   const pushToast = useFeedbackStore((s) => s.pushToast)
   const stakeLosses = useFeedbackStore((s) => s.stakeLosses)
   const clearStakeLosses = useFeedbackStore((s) => s.clearStakeLosses)
+  const dueCatchup = useFeedbackStore((s) => s.dueCatchup)
+  const clearDueCatchup = useFeedbackStore((s) => s.clearDueCatchup)
+
+  // US-014 : service de rappels (tick + rattrapage), best-effort local.
+  useReminders()
   const levelUp = useFeedbackStore((s) => s.levelUp)
   const clearLevelUp = () => useFeedbackStore.setState({ levelUp: null })
   const repGain = useFeedbackStore((s) => s.repGain)
@@ -69,6 +75,29 @@ export function AppShell() {
           <Outlet />
         </main>
       </div>
+
+      {/* Rattrapage d'échéances (US-014) : bandeau au montage si l'app a été
+          fermée pendant que des échéances horodatées passaient. */}
+      {dueCatchup !== null && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 18,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: 'min(520px, calc(100vw - 36px))',
+            zIndex: 1200,
+          }}
+        >
+          <Alert
+            kind="warning"
+            title={t('contracts.reminder.catchupTitle', { count: dueCatchup })}
+            onClose={clearDueCatchup}
+          >
+            {t('contracts.reminder.catchupBody')}
+          </Alert>
+        </div>
+      )}
 
       {/* Moments de palier (haut-centre) : montée de niveau + passage de rang */}
       {(levelUp !== null || rankUp !== null) && (

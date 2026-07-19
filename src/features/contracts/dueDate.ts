@@ -1,7 +1,11 @@
-// Logique pure d'échéance (US-005) : statut d'alerte + format court. Sans React.
+// Logique pure d'échéance (US-005) : format court + parsing des champs date/heure.
+// US-014 : le statut d'alerte est délégué au cœur temporel `game/dueTime.ts`
+// (échéance au jour **ou** horodatée).
 
-/** Statut visuel d'une échéance (aucune pénalité — signal seul). */
-export type DueState = 'overdue' | 'soon' | 'neutral'
+import { dueState } from '../../game/dueTime'
+import type { DueState } from '../../game/dueTime'
+
+export type { DueState }
 
 /** Début de journée locale (00:00) pour l'epoch ms fourni. */
 function startOfDay(ms: number): number {
@@ -12,23 +16,23 @@ function startOfDay(ms: number): number {
 
 /**
  * Nombre de jours (calendaires, locaux) entre aujourd'hui et l'échéance :
- * `< 0` = dépassée, `0` = aujourd'hui, `1` = demain, etc. Comparaison au
- * **début de journée** local.
+ * `< 0` = dépassée, `0` = aujourd'hui, `1` = demain, etc. Sert au **tri** et à
+ * l'affichage (le statut passe par `dueState`).
  */
 export function daysUntilDue(dueDate: number, now: number): number {
   return Math.round((startOfDay(dueDate) - startOfDay(now)) / 86_400_000)
 }
 
 /**
- * Statut d'une échéance par rapport à `now`, comparé au **début de journée**
- * local : dépassée (< aujourd'hui) → `overdue` ; aujourd'hui ou demain (≤ 1 j) →
- * `soon` ; au-delà → `neutral`.
+ * Statut visuel d'une échéance — délègue à `dueState` (US-014, tient compte de
+ * l'heure). Conservé ici pour les consommateurs existants.
  */
-export function dueStatus(dueDate: number, now: number): DueState {
-  const days = daysUntilDue(dueDate, now)
-  if (days < 0) return 'overdue'
-  if (days <= 1) return 'soon'
-  return 'neutral'
+export function dueStatus(
+  dueDate: number,
+  hasTime: boolean,
+  now: number,
+): DueState {
+  return dueState(dueDate, hasTime, now)
 }
 
 /** Accent NIGHTWIRE associé à un statut d'échéance. */
@@ -38,12 +42,36 @@ export const DUE_COLORS: Record<DueState, string> = {
   neutral: 'var(--steel-400)',
 }
 
-/** Format court « JJ.MM » (jour local). */
-export function formatDueShort(dueDate: number): string {
+/** Format court « JJ.MM » (jour local), avec l'heure « · HH:MM » si horodatée. */
+export function formatDueShort(dueDate: number, hasTime = false): string {
   const d = new Date(dueDate)
   const dd = String(d.getDate()).padStart(2, '0')
   const mm = String(d.getMonth() + 1).padStart(2, '0')
-  return `${dd}.${mm}`
+  const date = `${dd}.${mm}`
+  if (!hasTime) return date
+  const hh = String(d.getHours()).padStart(2, '0')
+  const mi = String(d.getMinutes()).padStart(2, '0')
+  return `${date} · ${hh}:${mi}`
+}
+
+/** epoch ms → valeur `<input type="time">` (`HH:MM`, heure locale). */
+export function toTimeInputValue(dueDate: number): string {
+  const d = new Date(dueDate)
+  const hh = String(d.getHours()).padStart(2, '0')
+  const mi = String(d.getMinutes()).padStart(2, '0')
+  return `${hh}:${mi}`
+}
+
+/**
+ * Applique une heure `HH:MM` à l'échéance existante (même jour local) → epoch ms.
+ * `value` vide → renvoie l'échéance ramenée à **minuit** (retrait de l'heure).
+ */
+export function applyTimeToDue(dueDate: number, value: string): number {
+  const base = startOfDay(dueDate)
+  if (!value) return base
+  const [hh, mi] = value.split(':').map(Number)
+  if (Number.isNaN(hh) || Number.isNaN(mi)) return base
+  return base + hh * 3_600_000 + mi * 60_000
 }
 
 /** epoch ms → valeur `<input type="date">` (`YYYY-MM-DD`, jour local). */

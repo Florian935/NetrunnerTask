@@ -44,7 +44,11 @@ export function ContractItem({
   const due =
     !done && contract.dueDate != null
       ? (() => {
-          const state = dueStatus(contract.dueDate, Date.now())
+          const state = dueStatus(
+            contract.dueDate,
+            contract.dueHasTime,
+            Date.now(),
+          )
           const tag =
             state === 'overdue'
               ? t('contracts.due.overdue')
@@ -54,11 +58,14 @@ export function ContractItem({
           return {
             color: DUE_COLORS[state],
             neutral: state === 'neutral',
-            date: formatDueShort(contract.dueDate),
+            date: formatDueShort(contract.dueDate, contract.dueHasTime),
             tag,
           }
         })()
       : null
+
+  // Rappel actif (US-014) : cloche violette sur la ligne (contrat horodaté ouvert).
+  const hasReminder = !done && contract.reminderLead != null
 
   const subtotal = contract.subtasks.length
   const subdone = contract.subtasks.filter((s) => s.done).length
@@ -99,7 +106,7 @@ export function ContractItem({
         title={
           recurringDone && contract.dueDate != null
             ? t('contracts.recurrence.lockedTooltip', {
-                date: formatDueShort(contract.dueDate),
+                date: formatDueShort(contract.dueDate, contract.dueHasTime),
               })
             : undefined
         }
@@ -172,6 +179,7 @@ export function ContractItem({
                 fontFamily: 'var(--font-mono)',
                 fontSize: 'var(--text-2xs)',
                 letterSpacing: '0.14em',
+                lineHeight: 1,
                 color: accent,
                 whiteSpace: 'nowrap',
               }}
@@ -236,6 +244,20 @@ export function ContractItem({
               {due.tag && <b style={{ fontWeight: 700 }}> · {due.tag}</b>}
             </span>
           )}
+          {hasReminder && (
+            <span
+              title={t('contracts.reminder.active')}
+              aria-label={t('contracts.reminder.active')}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                color: 'var(--violet-400)',
+                flex: 'none',
+              }}
+            >
+              <Icon name="bell" size={13} />
+            </span>
+          )}
           {subtotal > 0 && (
             <span
               style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
@@ -281,7 +303,7 @@ export function ContractItem({
         >
           {recurringDone && contract.dueDate != null
             ? t('contracts.recurrence.returns', {
-                date: formatDueShort(contract.dueDate),
+                date: formatDueShort(contract.dueDate, contract.dueHasTime),
               })
             : t('contracts.item.done')}
         </span>

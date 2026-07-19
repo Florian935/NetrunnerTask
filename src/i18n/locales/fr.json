@@ -61,7 +61,29 @@
       "soon": "BIENTÔT",
       "today": "AUJOURD'HUI",
       "clear": "Effacer l'échéance",
+      "timeLabel": "Heure de l'échéance",
       "none": "— aucune —"
+    },
+    "reminder": {
+      "label": "RAPPEL",
+      "opt": {
+        "none": "AUCUN",
+        "due": "À L'ÉCHÉANCE",
+        "m10": "10 MIN",
+        "h1": "1 H"
+      },
+      "needTime": "Un rappel exige une heure d'échéance.",
+      "off": "Notifications système non activées.",
+      "enable": "Activer",
+      "denied": "Notifications refusées — rappels visibles seulement dans l'app.",
+      "unsupported": "Notifications indisponibles — rappels visibles dans l'app.",
+      "active": "Rappel actif",
+      "notifTitle": "Rappel d'échéance",
+      "notifBody": "{{title}} — échéance à {{time}}.",
+      "toastTitle": "RAPPEL D'ÉCHÉANCE",
+      "toastBody": "{{title}} — échéance {{time}}.",
+      "catchupTitle": "{{count}} échéance(s) pendant ton absence",
+      "catchupBody": "Des contrats horodatés ont atteint leur échéance pendant que l'app était fermée."
     },
     "subtasks": {
       "title": "SOUS-TÂCHES",

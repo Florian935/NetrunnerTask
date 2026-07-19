@@ -37,6 +37,11 @@ function isoWeekday(ms: number): number {
   return d === 0 ? 7 : d
 }
 
+/** Décalage (ms) depuis minuit — l'heure locale de l'échéance (US-014). */
+function timeOfDay(ms: number): number {
+  return ms - startOfDay(ms)
+}
+
 /** Avance une date d'une période d'intervalle. */
 function stepInterval(
   ms: number,
@@ -74,13 +79,17 @@ export function nextOccurrence(
   recurrence: Recurrence,
   anchor: number | null,
   now: number,
+  hasTime = false,
 ): number {
   const today = startOfDay(now)
+  // Heure à réappliquer (US-014) : l'occurrence d'un récurrent **horodaté**
+  // conserve l'heure de l'ancre (ex. tous les jours à 08:00). `0` si au jour.
+  const tod = hasTime && anchor !== null ? timeOfDay(anchor) : 0
 
   if (recurrence.mode === 'weekday') {
     // Prochaine date de ce jour ISO, strictement après aujourd'hui.
     const delta = (recurrence.weekday - isoWeekday(today) + 7) % 7 || 7
-    return addDays(today, delta)
+    return addDays(today, delta) + tod
   }
 
   const base = anchor !== null ? startOfDay(anchor) : today
@@ -88,5 +97,5 @@ export function nextOccurrence(
   while (next <= today) {
     next = stepInterval(next, recurrence.every, recurrence.unit)
   }
-  return next
+  return next + tod
 }

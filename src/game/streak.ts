@@ -1,6 +1,10 @@
 // Couche « règles de jeu » — logique pure, sans Dexie ni i18n ni React.
 // US-011 : série (streak) des contrats récurrents = nombre de périodes
 // consécutives complétées à temps, avec conservation du record.
+// US-014 : « à temps / manqué » s'appuie sur l'instant limite (`dueTime`) →
+// gère l'échéance horodatée comme l'échéance au jour, sans régression.
+
+import { isPastDeadline } from './dueTime'
 
 /** Série d'un contrat : valeur courante + record (meilleure série atteinte). */
 export interface Streak {
@@ -8,27 +12,28 @@ export interface Streak {
   bestStreak: number
 }
 
-/** Début de journée locale (00:00) pour l'epoch ms fourni. */
-function startOfDay(ms: number): number {
-  const d = new Date(ms)
-  d.setHours(0, 0, 0, 0)
-  return d.getTime()
-}
-
 /**
- * Complétion « à temps » ? `true` s'il n'y a pas d'échéance, ou si le jour de
- * `now` est ≤ au jour de l'échéance. Comparaison au **jour local** (l'échéance
- * est posée à minuit, cf. `recurrence.ts`).
+ * Complétion « à temps » ? `true` s'il n'y a pas d'échéance, ou tant que
+ * l'**instant limite** n'est pas dépassé (`dueTime`). Au jour = fin de la journée
+ * d'échéance ; horodaté = l'instant exact.
  */
-export function isOnTime(dueDate: number | null, now: number): boolean {
+export function isOnTime(
+  dueDate: number | null,
+  hasTime: boolean,
+  now: number,
+): boolean {
   if (dueDate === null) return true
-  return startOfDay(now) <= startOfDay(dueDate)
+  return !isPastDeadline(dueDate, hasTime, now)
 }
 
-/** Période manquée ? Une échéance définie dont le jour est **strictement** passé. */
-export function isMissed(dueDate: number | null, now: number): boolean {
+/** Période manquée ? Une échéance définie dont l'**instant limite** est dépassé. */
+export function isMissed(
+  dueDate: number | null,
+  hasTime: boolean,
+  now: number,
+): boolean {
   if (dueDate === null) return false
-  return startOfDay(now) > startOfDay(dueDate)
+  return isPastDeadline(dueDate, hasTime, now)
 }
 
 /**
@@ -51,8 +56,9 @@ export function applyCompletion(streak: Streak, onTime: boolean): Streak {
 export function resetIfMissed(
   streak: Streak,
   dueDate: number | null,
+  hasTime: boolean,
   now: number,
 ): Streak {
-  if (!isMissed(dueDate, now)) return streak
+  if (!isMissed(dueDate, hasTime, now)) return streak
   return { currentStreak: 0, bestStreak: streak.bestStreak }
 }

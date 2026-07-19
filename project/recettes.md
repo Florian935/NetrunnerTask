@@ -3,6 +3,32 @@
 > Tests de recette par US. Chaque test reprend un critère d'acceptation de l'US.
 > Statuts : `à faire` / `validé` / `échoué`.
 
+## US-014 — Échéances horodatées + rappels / notifications PWA
+
+Recette du 19/07/2026. Vérifs automatiques (typecheck / lint / build / tests
+Vitest **82/82**, dont `game/dueTime.ts` **15/15** — **non-régression au jour**) +
+recette comportementale navigateur (`npm run dev`) confirmée par le PO.
+
+| # | Critère (action → résultat attendu) | Statut | Date |
+|---|-------------------------------------|--------|------|
+| C1 | Ajouter une heure à l'échéance → persistée (F5), affichée ligne + détail (« JJ.MM · HH:MM ») | validé | 19/07/2026 |
+| C2 | Retirer l'heure → « toute la journée » ; retirer la date → plus d'échéance | validé | 19/07/2026 |
+| C3 | Horodaté à heure dépassée → EN RETARD ; au jour le jour même → reste du jour (non-régression) | validé | 19/07/2026 |
+| C4 | Récurrent horodaté complété → prochaine occurrence conserve l'heure | validé | 19/07/2026 |
+| C5 | Récurrent horodaté dont l'instant est atteint → réactivé au chargement dès cet instant | validé | 19/07/2026 |
+| C6 | Mise à risque sur horodaté → perdue dès l'instant dépassé (pas seulement fin de journée) | validé | 19/07/2026 |
+| C7 | Activer un rappel → permission demandée ; accordée → notif système + toast quand l'app tourne ; refusée → repli in-app honnête ; sans heure → contrôle inactif | validé | 19/07/2026 |
+| C8 | Rouvrir après échéances passées hors-ligne → bandeau de rattrapage + notif agrégée | validé | 19/07/2026 |
+| C9 | Rappel/notification = signal seul (aucune récompense, aucun contrat modifié) | validé | 19/07/2026 |
+
+**Verdict : recette US-014 validée (9/9 critères).** Dexie **v9** (`dueHasTime` +
+`reminderLead` + `reminderNotifiedFor`). Cœur temporel unifié `game/dueTime.ts`
+(`deadlineInstant` **DST-safe**). Périmètre B (best-effort local). Revue de code :
+4 points corrigés avant merge (bug DST, garde anti-boucle, notif de rattrapage
+agrégée, cohérence d'affichage de l'heure). **Correctif visuel hors périmètre
+inclus** (validé PO) : alignement vertical du rond de difficulté sur la ligne de
+contrat (`line-height: 1`).
+
 ## US-013 — Contrats à risque (mise de crédits)
 
 Recette du 19/07/2026. Vérifs automatiques (typecheck / lint / build / tests

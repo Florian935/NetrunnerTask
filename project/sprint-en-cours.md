@@ -5,11 +5,29 @@
 
 ## US active
 
-_Aucune US active._ Dernière US clôturée : **US-013** (archivée dans
-`us/archive/`, décision **#020**, recette **8/8**). **Prochaine : US-014**
-(échéances horodatées + rappels/notifications PWA).
+_Aucune US active._ Dernière US clôturée : **US-014** (archivée dans
+`us/archive/`, décision **#021**, recette **9/9**). **Prochaine : US-015** (état
+vide filtre, basse) ou **US-016** (socle rareté, moyenne — débloque US-017 Caisses).
 
 ## Étape du cycle de vie
+
+**US-014 clôturée le 19/07/2026** (commit + merge sur `develop`). Cycle complet :
+cadrages fonctionnel + technique validés PO → **maquette reçue & validée**
+(`docs/maquettes/US-014/`, révision « rappel = heure requise ») → plan 12 étapes →
+implémentation → **recette 9/9 PO**. Contenu : **heure d'échéance optionnelle**
+(**Dexie v9** : `dueHasTime` + `reminderLead` + `reminderNotifiedFor`) + **rappels
+best-effort** (périmètre B). Cœur temporel unifié **`game/dueTime.ts`**
+(`deadlineInstant` **DST-safe** ; testé, **non-régression**), refactor
+`streak`/`risk`/`recurrence`/`dueDate` (`hasTime`, heure conservée), réactivation
+via `isDue`. Service **`useReminders`** (tick 30 s + rattrapage, notif système +
+toast, bandeau agrégé), `notifications.ts` (dégradation propre). UI : champ heure +
+`ReminderControl` + permission, pastille horodatée + puce rappel, bandeau `Alert`.
+**Revue de code** : 4 corrections avant merge (bug DST, garde anti-boucle, notif
+agrégée, affichage heure). **Correctif visuel hors périmètre inclus** (validé PO) :
+alignement du rond de difficulté. Vérifs vertes : **typecheck + lint + build +
+tests 82/82**.
+
+## Étape du cycle de vie (US antérieure)
 
 **US-013 clôturée le 19/07/2026** (commit + merge sur `develop`). Cycle complet :
 cadrages fonctionnel + technique validés PO → **maquette reçue & validée**

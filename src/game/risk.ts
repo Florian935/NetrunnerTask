@@ -4,6 +4,7 @@
 // détection de la perte (échéance dépassée).
 
 import type { Difficulty, Recurrence, StakeOutcome } from '../db'
+import { isPastDeadline } from './dueTime'
 
 /**
  * Multiplicateur de **retour** d'une mise réussie, croissant avec la difficulté
@@ -21,13 +22,6 @@ export const STAKE_MULTIPLIERS: Record<Difficulty, number> = {
 /** Retour total (entier) d'une mise réussie pour une difficulté donnée. */
 export function stakePayout(stake: number, difficulty: Difficulty): number {
   return Math.round(stake * STAKE_MULTIPLIERS[difficulty])
-}
-
-/** Début de journée locale (00:00) pour l'epoch ms fourni. */
-function startOfDay(ms: number): number {
-  const d = new Date(ms)
-  d.setHours(0, 0, 0, 0)
-  return d.getTime()
 }
 
 /**
@@ -49,14 +43,15 @@ export function isStakeEligible(contract: {
 
 /**
  * Une mise **en jeu** est-elle perdue à l'instant `now` ? Vrai si elle est
- * `pending`, le contrat encore `open`, et le **jour** d'échéance
- * **strictement** passé (le jour même reste gagnable — aligné sur `isOnTime`,
- * US-006). Comparaison au **jour local** (échéance posée à minuit).
+ * `pending`, le contrat encore `open`, et l'**instant limite** de l'échéance
+ * dépassé (`dueTime`, US-014). Au jour = fin de la journée d'échéance (le jour
+ * même reste gagnable) ; horodaté = l'instant exact.
  */
 export function isStakeLost(
   contract: {
     stakeOutcome: StakeOutcome
     dueDate: number | null
+    dueHasTime: boolean
     status: 'open' | 'done'
   },
   now: number,
@@ -64,5 +59,5 @@ export function isStakeLost(
   if (contract.stakeOutcome !== 'pending') return false
   if (contract.status !== 'open') return false
   if (contract.dueDate === null) return false
-  return startOfDay(now) > startOfDay(contract.dueDate)
+  return isPastDeadline(contract.dueDate, contract.dueHasTime, now)
 }

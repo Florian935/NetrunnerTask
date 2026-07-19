@@ -7,8 +7,8 @@ import {
 } from './risk'
 
 // Jours locaux fixes pour les comparaisons d'échéance (au jour, comme US-006).
-const day = (y: number, m: number, d: number, h = 12) =>
-  new Date(y, m - 1, d, h).getTime()
+const day = (y: number, m: number, d: number, h = 12, min = 0) =>
+  new Date(y, m - 1, d, h, min).getTime()
 const DUE = day(2026, 7, 19) // échéance : 19/07/2026 (posée à midi ici)
 
 describe('STAKE_MULTIPLIERS — barème par difficulté', () => {
@@ -74,6 +74,7 @@ describe('isStakeLost — pending, ouvert, échéance dépassée', () => {
   const base = {
     stakeOutcome: 'pending' as const,
     dueDate: DUE,
+    dueHasTime: false,
     status: 'open' as const,
   }
 
@@ -87,6 +88,12 @@ describe('isStakeLost — pending, ouvert, échéance dépassée', () => {
 
   it('pas perdu : avant l’échéance', () => {
     expect(isStakeLost(base, day(2026, 7, 18))).toBe(false)
+  })
+
+  it('horodaté : perdu dès l’instant dépassé (même jour)', () => {
+    const timed = { ...base, dueDate: day(2026, 7, 19, 18, 42), dueHasTime: true }
+    expect(isStakeLost(timed, day(2026, 7, 19, 18, 41))).toBe(false)
+    expect(isStakeLost(timed, day(2026, 7, 19, 18, 43))).toBe(true)
   })
 
   it('pas perdu : mise non en jeu (none / won / lost)', () => {

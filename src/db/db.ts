@@ -144,6 +144,26 @@ export class NetrunnerDB extends Dexie {
             if (c.stakeOutcome === undefined) c.stakeOutcome = 'none'
           }),
       )
+    // v9 (US-014) : échéance horodatée + rappels. Pas d'index nouveau → schéma v8
+    // recopié + rétro-remplissage `dueHasTime = false` (échéances existantes = au
+    // jour), `reminderLead = null`, `reminderNotifiedFor = null`.
+    this.version(9)
+      .stores({
+        contracts: 'id, factionId, status, dueDate, createdAt',
+        factions: 'id, name',
+        player: 'id',
+        demoKV: 'key',
+      })
+      .upgrade((tx) =>
+        tx
+          .table<Contract>('contracts')
+          .toCollection()
+          .modify((c) => {
+            if (c.dueHasTime === undefined) c.dueHasTime = false
+            if (c.reminderLead === undefined) c.reminderLead = null
+            if (c.reminderNotifiedFor === undefined) c.reminderNotifiedFor = null
+          }),
+      )
   }
 }
 

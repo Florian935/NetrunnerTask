@@ -11,6 +11,7 @@ function makeContract(over: Partial<Contract>): Contract {
     difficulty: 'trivial',
     priority: 'normal',
     dueDate: over.dueDate ?? null,
+    dueHasTime: false,
     status: over.status ?? 'open',
     createdAt: 0,
     completedAt: null,
@@ -21,6 +22,8 @@ function makeContract(over: Partial<Contract>): Contract {
     bestStreak: 0,
     stake: 0,
     stakeOutcome: 'none',
+    reminderLead: null,
+    reminderNotifiedFor: null,
     ...over,
   }
 }

@@ -32,7 +32,7 @@ export function TodayContractRow({
   const color = kind === 'overdue' ? 'var(--red-500)' : 'var(--amber-500)'
   const chipLabel =
     kind === 'overdue'
-      ? `${t('contracts.due.overdue')} · ${contract.dueDate ? formatDueShort(contract.dueDate) : ''}`
+      ? `${t('contracts.due.overdue')} · ${contract.dueDate ? formatDueShort(contract.dueDate, contract.dueHasTime) : ''}`
       : t('contracts.due.today')
 
   return (
