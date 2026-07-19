@@ -33,24 +33,33 @@ Les US-005 à US-007 enrichissent le to-do.
 
 ## MVP 2 — Progression & tension
 
-> À découper en US à l'approche du MVP 2 (voir `docs/roadmap.md`).
-> Thèmes : contrats permanents & streaks, réputation par faction, contrats à
-> risque, caisses & rituel d'ouverture, inventaire cosmétiques, pity & fragments.
+> Découpé le 19/07/2026 (voir `docs/roadmap.md`). Chemin critique de rétention :
+> **US-011 → US-012 → US-017 → US-018/019**. US-013/014/015 = enrichissements plus
+> indépendants ; US-016 = socle technique juste avant les caisses.
 
-| ID | Titre | MVP | Priorité | Statut |
-|----|-------|-----|----------|--------|
-| _—_ | _à détailler_ | 2 | _—_ | à faire |
+| ID | Titre | MVP | Priorité | Statut | Dépend de |
+|----|-------|-----|----------|--------|-----------|
+| US-011 | Contrats permanents (habitudes) & streaks | 2 | haute | à faire | contrats, récurrence |
+| US-012 | Réputation par faction (paliers, gain/perte) | 2 | haute | à faire | factions, US-011 |
+| US-013 | Contrats à risque (mise de crédits) | 2 | moyenne | à faire | crédits (US-009) |
+| US-014 | Échéances horodatées + rappels / notifications PWA | 2 | moyenne | à faire | échéances (US-005/006) |
+| US-015 | État vide « aucun contrat pour ce filtre » | 2 | basse | à faire | filtre (US-007) |
+| US-016 | Socle rareté (rampe `--rarity-*`, `RarityBadge`, `CosmeticCard`) | 2 | moyenne | à faire | design system |
+| US-017 | Caisses & rituel d'ouverture (3 qualités, tables de probas) | 2 | haute | à faire | crédits, US-016 |
+| US-018 | Inventaire cosmétiques + équipement | 2 | moyenne | à faire | caisses (US-017) |
+| US-019 | Pity + fragments + caisse quotidienne/hebdo | 2 | moyenne | à faire | caisses (US-017) |
 
-> **Évolution identifiée (US-006, 18/07/2026)** : les échéances sont gérées **au
-> jour** (pas d'heure/minute). À faire évoluer vers des **échéances horodatées +
-> rappels / notifications PWA** — à traiter conjointement (une heure d'échéance
-> n'a de valeur qu'avec une alerte). Impacte la logique « en retard / du jour »
-> et la réactivation des récurrents.
+> **US-014** reprend l'évolution identifiée en US-006 (18/07/2026) : échéances
+> gérées **au jour** aujourd'hui → **horodatées + rappels/notifications PWA**
+> (l'heure d'échéance n'a de valeur qu'avec une alerte). Impacte la logique
+> « en retard / du jour » et la réactivation des récurrents.
 
-> **Amélioration identifiée (US-007, 18/07/2026)** : ajouter un **état vide dédié
-> « aucun contrat pour ce filtre »** sur l'écran Contrats quand le filtre de
-> faction actif ne renvoie aucun contrat (aujourd'hui la file s'affiche
-> simplement vide, sans message ni action pour réinitialiser le filtre).
+> **US-015** reprend l'amélioration identifiée en US-007 (18/07/2026) : état vide
+> dédié quand le filtre de faction actif ne renvoie aucun contrat (aujourd'hui la
+> file s'affiche vide, sans message ni action pour réinitialiser le filtre).
+
+> **US-016** solde la dette design system #008 (rampe de rareté `--rarity-*` +
+> `RarityBadge` + `CosmeticCard`), consommée par les US caisses/inventaire.
 
 ## MVP 3 — Rétention profonde & identité
 
