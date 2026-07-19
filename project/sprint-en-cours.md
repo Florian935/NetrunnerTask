@@ -3,11 +3,19 @@
 > Reflète l'état réel du projet à tout instant. Mis à jour après **chaque**
 > étape franchie du cycle de vie (voir `CLAUDE.md` §5).
 
-## US active
+## État actuel — pause du cycle US : rangement du pivot « plateforme »
 
-_Aucune US active._ Dernière US clôturée : **US-014** (archivée dans
-`us/archive/`, décision **#021**, recette **9/9**). **Prochaine : US-015** (état
-vide filtre, basse) ou **US-016** (socle rareté, moyenne — débloque US-017 Caisses).
+_Aucune US classique active._ Dernière US clôturée : **US-014** (archivée dans
+`us/archive/`, décision **#021**, recette **9/9**). Le projet fait une **pause
+stratégique** du backlog MVP 2/3 historique pour **acter et ranger un pivot
+produit majeur** : Netrunner Tasks évolue d'un **to-do gamifié solo** vers un
+**jeu builder** (façon Universal Paperclips) dont la **progression réelle** est
+l'accélérateur. Vision & principes **P1–P8** : `docs/vision-plateforme.md` ;
+décision **#022**.
+
+**US-015 → US-019 sont GELÉES** (caisses/inventaire/rareté/pity : réinventées par
+le pivot). Le to-do + habitudes + factions déjà livrés deviennent le **module
+perso privé** du nouveau produit — rien n'est jeté. `develop` propre & à jour.
 
 ## Étape du cycle de vie
 
@@ -169,11 +177,15 @@ référencées mais absentes de `decisions.md`). Backlog MVP 2 : échéances hor
 
 ## Prochaine action
 
-**Découper le MVP 2** en US (voir `docs/roadmap.md` et `project/backlog.md`) :
-thèmes contrats permanents & streaks, réputation par faction, contrats à risque,
-caisses & inventaire cosmétiques. Évolutions déjà identifiées à intégrer :
-échéances horodatées + notifications PWA ; état vide « aucun contrat pour ce
-filtre ». Reconstruire au fil des US les composants `game/` retirés (#008).
+**Ranger le pivot, puis cadrer la 1ʳᵉ brique jouable.**
+1. **Valider la roadmap produit** (Phases A/B) — proposée par Claude.
+   - **Phase A** : jeu solo **local-first, sans backend** (bâtir le builder Réseau
+     + Daemons, brancher les accélérateurs réels, valider le fun à coût nul).
+   - **Phase B** : couche connectée (comptes, clans, deux classements, mondes,
+     validation serveur) — réécrira `CLAUDE.md`/roadmap **le moment venu**.
+2. Puis **cadrer la 1ʳᵉ tranche jouable** du builder (mini-loop : une ressource +
+   quelques daemons + un premier reveal), via le cycle de vie US → **STOP
+   validation** avant tout code.
 
 > À reconstruire sur NIGHTWIRE dans leur US métier : composants `game/`
 > (ContractCard, RarityBadge, CosmeticCard, FactionBadge) + rampe de rareté

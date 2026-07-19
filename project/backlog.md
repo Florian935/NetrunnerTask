@@ -1,7 +1,14 @@
 # Backlog — Netrunner Tasks
 
-> Statuts : `à faire` / `en cours` / `fait`. Priorité : `haute` / `moyenne` / `basse`.
+> Statuts : `à faire` / `en cours` / `fait` / `gelé`. Priorité : `haute` / `moyenne` / `basse`.
 > Le MVP 1 est détaillé. Les MVP 2 et 3 seront découpés en US à leur approche.
+
+> **⚠️ PIVOT ACTÉ (19/07/2026, décision #022) — voir `docs/vision-plateforme.md`.**
+> Le produit évolue vers un **jeu builder social**. **MVP 1 + US-011→014 = acquis**
+> (futur « module perso »). **US-015→019 (état vide, rareté, caisses, inventaire,
+> pity) et le MVP 3 historique sont GELÉS** : réinventés par le pivot. Une roadmap
+> produit (Phases A/B) les remplacera une fois validée. Statut `gelé (#022)` = **ne
+> pas implémenter en l'état**.
 
 ## MVP 1 — Le to-do jouable
 
@@ -43,11 +50,11 @@ Les US-005 à US-007 enrichissent le to-do.
 | US-012 | Réputation par faction (paliers, gain/perte) | 2 | haute | fait | factions, US-011 |
 | US-013 | Contrats à risque (mise de crédits) | 2 | moyenne | fait | crédits (US-009) |
 | US-014 | Échéances horodatées + rappels / notifications PWA | 2 | moyenne | fait | échéances (US-005/006) |
-| US-015 | État vide « aucun contrat pour ce filtre » | 2 | basse | à faire | filtre (US-007) |
-| US-016 | Socle rareté (rampe `--rarity-*`, `RarityBadge`, `CosmeticCard`) | 2 | moyenne | à faire | design system |
-| US-017 | Caisses & rituel d'ouverture (3 qualités, tables de probas) | 2 | haute | à faire | crédits, US-016 |
-| US-018 | Inventaire cosmétiques + équipement | 2 | moyenne | à faire | caisses (US-017) |
-| US-019 | Pity + fragments + caisse quotidienne/hebdo | 2 | moyenne | à faire | caisses (US-017) |
+| US-015 | État vide « aucun contrat pour ce filtre » | 2 | basse | gelé (#022) | filtre (US-007) |
+| US-016 | Socle rareté (rampe `--rarity-*`, `RarityBadge`, `CosmeticCard`) | 2 | moyenne | gelé (#022) | design system |
+| US-017 | Caisses & rituel d'ouverture (3 qualités, tables de probas) | 2 | haute | gelé (#022) | crédits, US-016 |
+| US-018 | Inventaire cosmétiques + équipement | 2 | moyenne | gelé (#022) | caisses (US-017) |
+| US-019 | Pity + fragments + caisse quotidienne/hebdo | 2 | moyenne | gelé (#022) | caisses (US-017) |
 
 > **US-014** reprend l'évolution identifiée en US-006 (18/07/2026) : échéances
 > gérées **au jour** aujourd'hui → **horodatées + rappels/notifications PWA**

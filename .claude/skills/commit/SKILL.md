@@ -17,8 +17,9 @@ dans l'ordre, sans sauter d'étape.
 
 2. **Mise à jour des fichiers de suivi**
    - `project/backlog.md` : passer l'US en `fait`.
-   - `project/sprint-en-cours.md` : refléter la clôture (US terminée, étape
-     commit/merge).
+   - `project/sprint-en-cours.md` : **OBLIGATOIRE À CHAQUE COMMIT** — refléter
+     l'état réel (US/étape terminée, prochaine action). **Vérifier qu'il colle à
+     `git log` AVANT de commiter ; ne jamais commiter avec un suivi en retard.**
    - `project/recettes.md` : consigner les résultats de recette.
    - `project/bugs.md` : fermer les bugs corrigés (statut `corrigé`, US liée).
    - `docs/decisions.md` : ajouter une entrée si un choix structurant a été fait.
@@ -41,3 +42,6 @@ dans l'ordre, sans sauter d'étape.
 - Ne pas merger sur `main` ici (réservé aux MVP livrés stables).
 - Vérifier que la recette est faite avant de clôturer une US
   (skill `recette` si besoin).
+- **Le suivi ne doit JAMAIS être en retard sur le dépôt.** `sprint-en-cours.md`
+  est rafraîchi à chaque passage du skill — pas seulement en fin d'US. Si un écart
+  apparaît entre le doc et `git log`, le corriger avant tout nouveau commit.
