@@ -375,3 +375,31 @@ L'EN est une réécriture in-world (ton netrunner), pas du mot-à-mot.
   rattrapage **agrégée**, cohérence d'affichage de l'heure.
 - **Hors périmètre inclus** (correctif rapide validé PO) : alignement vertical du
   rond de difficulté (`line-height: 1`) sur `ContractItem`.
+
+### 022 — Pivot produit : de « to-do gamifié » vers « jeu builder social » (19/07/2026)
+
+Décision structurante actée après un brainstorming PO ↔ Claude (voir
+`docs/vision-plateforme.md`, principes **P1–P8**). **Réoriente le produit** ; le
+reste du MVP 2 et le MVP 3 historiques (US-015→019 : caisses/inventaire/rareté/
+pity) sont **gelés**.
+
+- **Nouveau socle** : un **jeu builder / incrémental** (façon Universal Paperclips)
+  — bâtir et optimiser un **Réseau de netrunner peuplé de daemons** — qui **tient
+  debout seul**. La **progression réelle** (focus, sport, apprentissage, détox
+  numérique…) devient un **accélérateur** (« Voie 2 »), jamais une corvée obligatoire.
+- **Principes gravés** (détail dans la vision) : deux économies séparées (perso
+  cachée / compétitive **vérifiable**) ; deux classements (clan + individuel,
+  clan facultatif) ; **aucun avantage payant** ; **santé / anti-addiction** ;
+  **socle accessible + « forêt cachée »** ; monétisation par **expression**
+  (l'argent achète l'esthétique, l'effort débloque le contenu) ; **continuité
+  inter-mondes** (« rien n'est jamais vain »).
+- **Phasage** : **Phase A** = jeu solo **local-first, sans backend** (valider le
+  fun à coût nul) ; **Phase B** = couche connectée (backend, comptes, clans,
+  classements, mondes, **validation côté serveur**). La Phase B seule réécrira les
+  lignes « local-first / mono-utilisateur » de `CLAUDE.md` et de la roadmap — **pas
+  avant**.
+- **Rien n'est jeté** : le to-do + habitudes + factions déjà construits deviennent
+  le **module perso privé** du nouveau produit.
+- **Statut** : vision **adoptée comme cap** ; **roadmap produit détaillée (Phases
+  A/B) à valider** ; puis cadrage de la 1ʳᵉ tranche jouable (cycle de vie US
+  inchangé, portes de validation maintenues).
