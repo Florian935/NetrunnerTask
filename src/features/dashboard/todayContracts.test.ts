@@ -19,6 +19,8 @@ function makeContract(over: Partial<Contract>): Contract {
     recurrence: null,
     currentStreak: 0,
     bestStreak: 0,
+    stake: 0,
+    stakeOutcome: 'none',
     ...over,
   }
 }

@@ -307,3 +307,38 @@ L'EN est une réécriture in-world (ton netrunner), pas du mot-à-mot.
 - **Ajustement PO** : barres **en cours** en **dégradé de teinte** (couleur voisine
   → couleur faction), **local au panneau** (composant `ProgressBar` partagé
   **inchangé**). LÉGENDE reste plein + hachuré.
+
+### 020 — Contrats à risque (US-013, 19/07/2026)
+
+- **Mise = deux champs par contrat** (`Contract.stake` entier + `stakeOutcome`
+  `none|pending|won|lost`), **migration Dexie v8** (backfill `0` / `none`).
+  Invariant : `stake > 0 ⇔ stakeOutcome ≠ 'none'` ; crédits « en jeu » stockés
+  **uniquement** dans le `stake` d'un contrat `pending` (débit à la pose).
+- **Règle pure `game/risk.ts`** (testée **14/14**) : bonus **indexé sur la
+  difficulté** (multiplicateurs **`1,5 / 2 / 2,5 / 3 / 4`**), `stakePayout` =
+  `round(mise × mult)` ; `isStakeEligible` (**one-shot** + échéance + ouvert) ;
+  `isStakeLost` (`pending` + ouvert + **jour d'échéance strictement passé** — le
+  jour même reste gagnable, aligné sur `isOnTime` US-006).
+- **Décisions gameplay (validées PO)** : **débit immédiat** à la pose ; mise
+  réservée aux **one-shot à échéance** ; **plafond = solde disponible** (pas de cap
+  distinct) ; **perte = aucun mouvement de crédit** (déjà débité), constatée au
+  **`load()`** ; **résolu (`won`/`lost`) = figé** (rouvrir ne relance rien) ; pose
+  sur **confirmation** explicite (bouton « Miser »).
+- **Crédits** : `usePlayerStore.adjustCredits(delta)` (**plancher 0**, jamais
+  négatif), réutilisé pour débit/remboursement/gain. Orchestration :
+  `useContractsStore.setStake` (validation ≤ solde, remboursement + débit) ;
+  **remboursement** à la suppression, au **retrait d'échéance** et à l'**ajout de
+  récurrence** d'une mise en jeu (garde l'invariant « pending ⇒ one-shot éligible ») ;
+  `settleStakeOnComplete` (gain si à temps / perte sinon) appelé à **toute**
+  complétion dans `useCompleteContract` (même sans récompense de base, ex. contrat
+  rouvert re-misé) ; perte au `load()` collectée → toasts via `AppShell`.
+- **UI (maquette `docs/maquettes/US-013/`, validée PO)** : `StakeControl` (4 états —
+  inéligible / saisie avec aperçu **Mise → Retour → Gain net** / gagné / perdu) dans
+  le détail ; `StakeChip` sur la ligne (en jeu **ambre** / gagné **menthe** / perdu
+  **rouge**, exclusif du `StreakChip`) ; toasts « mise réussie » / « mise perdue ».
+  i18n `contracts.stake.*` FR/EN. 5 icônes ajoutées au registre (`arrow-right`,
+  `lock`, `undo-2`, `x-circle`, `zap`).
+- **Deux bugs corrigés en revue** (avant merge) : (1) la résolution de mise était
+  gatée par la récompense de base → mise non réglée sur un contrat rouvert re-misé ;
+  (2) `setRecurrence` ne soldait pas une mise en jeu → mise « prisonnière » et
+  confiscable sur un récurrent. Corrigés (symétrie avec `setDueDate`).

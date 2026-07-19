@@ -11,6 +11,7 @@ export type {
   Player,
   Priority,
   Recurrence,
+  StakeOutcome,
   SubTask,
 } from './types'
 

@@ -28,6 +28,12 @@ interface PlayerState {
    * niveau, puis renvoie l'issue de palier pour piloter la rétroaction.
    */
   grantReward: (reward: Reward) => Promise<LevelUpResult>
+  /**
+   * Applique un delta de crédits (négatif = débit), **plancher 0** — le solde ne
+   * peut jamais devenir négatif (US-013). N'affecte ni l'XP ni le niveau.
+   * Utilisé par les mises à risque : débit à la pose, remboursement, gain.
+   */
+  adjustCredits: (delta: number) => Promise<void>
 }
 
 export const usePlayerStore = create<PlayerState>((set, get) => ({
@@ -60,5 +66,14 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     })
     set({ player: next })
     return { leveledUp: newLevel > previousLevel, previousLevel, newLevel }
+  },
+
+  adjustCredits: async (delta) => {
+    const current = get().player
+    if (!current) return
+    const credits = Math.max(0, current.credits + delta)
+    if (credits === current.credits) return
+    await playerRepo.update({ credits })
+    set({ player: { ...current, credits } })
   },
 }))

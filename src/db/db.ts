@@ -124,6 +124,26 @@ export class NetrunnerDB extends Dexie {
             if (f.reputation === undefined) f.reputation = 0
           }),
       )
+    // v8 (US-013) : mise à risque embarquée sur les contrats. Pas d'index nouveau
+    // (`stake`/`stakeOutcome` non interrogés) → schéma v7 recopié + rétro-
+    // remplissage `stake = 0` / `stakeOutcome = 'none'` (contrats existants = pas
+    // de mise).
+    this.version(8)
+      .stores({
+        contracts: 'id, factionId, status, dueDate, createdAt',
+        factions: 'id, name',
+        player: 'id',
+        demoKV: 'key',
+      })
+      .upgrade((tx) =>
+        tx
+          .table<Contract>('contracts')
+          .toCollection()
+          .modify((c) => {
+            if (c.stake === undefined) c.stake = 0
+            if (c.stakeOutcome === undefined) c.stakeOutcome = 'none'
+          }),
+      )
   }
 }
 

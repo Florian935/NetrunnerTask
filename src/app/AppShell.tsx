@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Outlet } from 'react-router'
 import { Toast } from '../components/ui'
 import { NavRail } from '../components/layout/NavRail'
@@ -21,11 +22,15 @@ import '../components/layout/appShell.css'
  * (qui lisent la réputation à jour), et le joueur en parallèle.
  */
 export function AppShell() {
+  const { t } = useTranslation()
   const loadContracts = useContractsStore((s) => s.load)
   const loadFactions = useFactionsStore((s) => s.load)
   const loadPlayer = usePlayerStore((s) => s.load)
   const toasts = useFeedbackStore((s) => s.toasts)
   const dismiss = useFeedbackStore((s) => s.dismiss)
+  const pushToast = useFeedbackStore((s) => s.pushToast)
+  const stakeLosses = useFeedbackStore((s) => s.stakeLosses)
+  const clearStakeLosses = useFeedbackStore((s) => s.clearStakeLosses)
   const levelUp = useFeedbackStore((s) => s.levelUp)
   const clearLevelUp = () => useFeedbackStore.setState({ levelUp: null })
   const repGain = useFeedbackStore((s) => s.repGain)
@@ -38,6 +43,22 @@ export function AppShell() {
     void loadContracts().then(() => loadFactions())
     void loadPlayer()
   }, [loadContracts, loadFactions, loadPlayer])
+
+  // US-013 : mises perdues détectées au chargement → toasts danger (une fois).
+  useEffect(() => {
+    if (stakeLosses.length === 0) return
+    for (const loss of stakeLosses) {
+      pushToast(
+        'danger',
+        t('contracts.stake.toastLost'),
+        t('contracts.stake.toastLostBody', {
+          amount: loss.amount,
+          title: loss.title,
+        }),
+      )
+    }
+    clearStakeLosses()
+  }, [stakeLosses, pushToast, clearStakeLosses, t])
 
   return (
     <div className="app-shell">

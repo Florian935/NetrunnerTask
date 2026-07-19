@@ -25,17 +25,22 @@ import { DifficultyDots } from './DifficultyDots'
 import { fromDateInputValue, toDateInputValue } from './dueDate'
 import { factionLabel } from './factionLabel'
 import { RecurrenceControl } from './RecurrenceControl'
+import { StakeControl } from './StakeControl'
 
 export interface ContractDetailProps {
   contract: Contract
   /** Factions disponibles pour le sélecteur (US-007). */
   factions: Faction[]
+  /** Solde de crédits du joueur, pour le contrôle de mise à risque (US-013). */
+  balance: number
   onRename: (id: string, title: string) => void
   onSetDifficulty: (id: string, difficulty: Difficulty) => void
   onSetFaction: (id: string, factionId: string | null) => void
   onSetPriority: (id: string, priority: Priority) => void
   onSetDueDate: (id: string, dueDate: number | null) => void
   onSetRecurrence: (id: string, recurrence: Recurrence | null) => void
+  /** Pose (> 0) ou retire (0) la mise à risque (US-013). */
+  onSetStake: (id: string, amount: number) => void
   onAddSubtask: (id: string, title: string) => void
   onToggleSubtask: (id: string, subtaskId: string) => void
   onRemoveSubtask: (id: string, subtaskId: string) => void
@@ -51,12 +56,14 @@ export interface ContractDetailProps {
 export function ContractDetail({
   contract,
   factions,
+  balance,
   onRename,
   onSetDifficulty,
   onSetFaction,
   onSetPriority,
   onSetDueDate,
   onSetRecurrence,
+  onSetStake,
   onAddSubtask,
   onToggleSubtask,
   onRemoveSubtask,
@@ -364,6 +371,13 @@ export function ContractDetail({
             <RecurrenceControl
               value={contract.recurrence}
               onChange={(r) => onSetRecurrence(contract.id, r)}
+            />
+
+            {/* Mise à risque (US-013) */}
+            <StakeControl
+              contract={contract}
+              balance={balance}
+              onSetStake={onSetStake}
             />
 
             {/* Série & record (US-011) — seulement pour un contrat récurrent */}
