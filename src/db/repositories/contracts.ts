@@ -55,6 +55,8 @@ export const contractsRepo = {
       rewardGranted: false,
       subtasks: [],
       recurrence: null,
+      currentStreak: 0,
+      bestStreak: 0,
     }
     await db.contracts.add(contract)
     return contract

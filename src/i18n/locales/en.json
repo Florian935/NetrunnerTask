@@ -114,6 +114,12 @@
       "edit": "Edit contract",
       "delete": "Delete"
     },
+    "streak": {
+      "label": "STREAK",
+      "best": "BEST",
+      "chipTitle": "Streak: {{count}} · Best: {{best}}",
+      "aria": "Streak of {{count}}, best {{best}}"
+    },
     "delete": {
       "title": "DELETE CONTRACT",
       "message": "You're about to purge this contract from the grid. No trace, no undo — it's final, runner.",

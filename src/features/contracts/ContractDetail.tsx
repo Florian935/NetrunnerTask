@@ -6,6 +6,7 @@ import {
   Button,
   Checkbox,
   HudPanel,
+  Icon,
   IconButton,
   Input,
   ProgressBar,
@@ -364,6 +365,56 @@ export function ContractDetail({
               value={contract.recurrence}
               onChange={(r) => onSetRecurrence(contract.id, r)}
             />
+
+            {/* Série & record (US-011) — seulement pour un contrat récurrent */}
+            {contract.recurrence && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
+                <div
+                  style={{ display: 'flex', alignItems: 'center', gap: 9 }}
+                >
+                  <Icon
+                    name="flame"
+                    size={17}
+                    color={
+                      contract.currentStreak > 0
+                        ? 'var(--amber-500)'
+                        : 'var(--steel-600)'
+                    }
+                  />
+                  <div>
+                    <div style={labelStyle}>{t('contracts.streak.label')}</div>
+                    <div
+                      style={{
+                        fontFamily: 'var(--font-display)',
+                        fontSize: 'var(--text-lg)',
+                        fontWeight: 700,
+                        lineHeight: 1.1,
+                        color:
+                          contract.currentStreak > 0
+                            ? 'var(--amber-500)'
+                            : 'var(--steel-400)',
+                      }}
+                    >
+                      {contract.currentStreak}
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <div style={labelStyle}>{t('contracts.streak.best')}</div>
+                  <div
+                    style={{
+                      fontFamily: 'var(--font-display)',
+                      fontSize: 'var(--text-lg)',
+                      fontWeight: 700,
+                      lineHeight: 1.1,
+                      color: 'var(--steel-200)',
+                    }}
+                  >
+                    {contract.bestStreak}
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Sous-tâches */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>

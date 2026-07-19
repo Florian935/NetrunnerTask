@@ -281,3 +281,31 @@ le PO : 100 %** (après boucle d'ajustements ci-dessous ; pas de maquette).
   PWA — hors périmètre, tracé au backlog MVP 2.
 
 **Verdict : recette US-006 validée (13/13 critères + ajustements).**
+
+## US-011 — Contrats permanents (habitudes) & streaks
+
+Recette du 19/07/2026. Critères d'acceptation de `us/US-011-permanents-streaks.md`.
+
+| ID | Critère (action → résultat) | Vérif | Statut | Date |
+|----|------------------------------|-------|--------|------|
+| C1 | Rendre un contrat récurrent → puce **🔥 0** sur la ligne ; un one-shot n'affiche aucune série | `StreakChip` (gate `recurrence != null`) + PO live | validé | 19/07/2026 |
+| C2 | Compléter un récurrent **à temps** → série N→**N+1**, record MAJ si dépassé | `applyCompletion(onTime)` + `complete()` + PO live | validé | 19/07/2026 |
+| C3 | Rouvrir/re-compléter dans la **même période** → série **inchangée** (pas de double) | verrou « récurrent validé » (`toggle` garde + `complete()` 1×/cycle) — anti-double par construction | validé | 19/07/2026 |
+| C4 | Échéance manquée sans complétion + **reload** → réactivation (US-006) **et** série **à 0** | `resetIfMissed` (**test unit.**) + câblage `load()` (récurrent `open` échu) — *dépend d'un changement de jour, non observé en live* | validé | 19/07/2026 |
+| C5 | Le **record** ne diminue **jamais**, même après remise à zéro | `Math.max` dans `applyCompletion` + `resetIfMissed` préserve `bestStreak` (**tests unit.**) | validé | 19/07/2026 |
+| C6 | Série & record **persistent** (Dexie) après rechargement | champs inclus dans les patchs `contractsRepo.update` (`complete`/`load`) + migration v6 ; relus au `load()` | validé | 19/07/2026 |
+| C7 | Détail d'un récurrent affiche **série + record** ; un one-shot ne les affiche pas | bloc « Série / Record » (gate `recurrence != null`) dans `ContractDetail` + PO live | validé | 19/07/2026 |
+| C8 | `game/streak.ts` couvert par tests (à temps/retard, record, bornes d'échéance, reset) | `streak.test.ts` (**11/11**) | validé | 19/07/2026 |
+| C9 | `typecheck` + `lint` + `build` + `test` (**41/41**) | exécution | validé | 19/07/2026 |
+| — | i18n FR/EN (`contracts.streak.*`), aucune chaîne en dur | clés FR+EN + `StreakChip`/détail via `t()` | validé | 19/07/2026 |
+| — | Migration Dexie **v6** : contrats existants rétro-remplis `currentStreak/bestStreak = 0` | upgrade v6 (backfill) | validé | 19/07/2026 |
+| — | Récompenses **inchangées** (H5) — aucune touche XP/crédits | hors périmètre `complete()` one-shot / rewards | validé | 19/07/2026 |
+
+> **Note de méthode** : C1/C2/C7 vérifiés en live par le PO (19/07/2026). C4 et
+> la préservation du record après reset (C5) **dépendent d'un changement de jour**
+> et ne sont pas observés « à la volée » : ils sont couverts par les tests
+> unitaires de `game/streak.ts` (`resetIfMissed`, `applyCompletion`) et la revue
+> du câblage `load()`. C3 est garanti **par construction** (le récurrent validé
+> est verrouillé jusqu'à réactivation, US-006).
+
+**Verdict : recette US-011 validée (7/7 critères + vérifs annexes).**
