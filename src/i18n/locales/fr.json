@@ -148,5 +148,27 @@
     "emptyTitle": "GRID CALME",
     "emptyBody": "Aucun contrat pour aujourd'hui, runner. Rien qui brûle — passe à la file pour prendre de l'avance.",
     "emptyCta": "VOIR LES CONTRATS"
+  },
+  "reputation": {
+    "panelTitle": "RÉPUTATION DES FACTIONS",
+    "panelTitleShort": "RÉPUTATION",
+    "factionsTag": "{{count}} FACTIONS",
+    "scaleTitle": "ÉCHELLE DES RANGS",
+    "noBonus": "STATUT · SANS BONUS",
+    "maxRank": "RANG MAX",
+    "next": "→ {{rank}}",
+    "rank": {
+      "unknown": "INCONNU",
+      "contact": "CONTACT",
+      "associate": "ASSOCIÉ",
+      "fixer": "FIXER",
+      "legend": "LÉGENDE"
+    },
+    "gainLabel": "RÉPUTATION",
+    "gainAria": "+{{n}} réputation {{faction}}",
+    "rankUp": {
+      "overline": "NOUVEAU RANG · {{faction}}",
+      "detail": "{{from}} → {{to}} · {{threshold}} RÉP"
+    }
   }
 }

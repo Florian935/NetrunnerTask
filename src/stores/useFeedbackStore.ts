@@ -8,6 +8,28 @@ export interface ToastItem {
   label: string
 }
 
+/** Gain de réputation transitoire (US-012) — micro-toast teinté faction. */
+export interface RepGainItem {
+  id: string
+  factionName: string
+  color: string
+  delta: number
+  before: number
+  after: number
+}
+
+/** Passage de rang d'une faction (US-012) — moment de palier. */
+export interface RankUpItem {
+  id: string
+  factionName: string
+  color: string
+  /** Clés i18n des rangs (`reputation.rank.*`). */
+  toRankKey: string
+  fromRankKey: string
+  /** Seuil franchi (réputation du nouveau rang). */
+  threshold: number
+}
+
 /**
  * État de rétroaction **partagé** entre les écrans (US-010). Hébergé par
  * l'app-shell : les toasts, les gains de session, le toast de palier et le
@@ -20,6 +42,10 @@ interface FeedbackState {
   sessionGains: { xp: number; credits: number }
   /** Niveau atteint à afficher (toast de palier) ; `null` si aucun. */
   levelUp: number | null
+  /** Gain de réputation à afficher (US-012) ; `null` si aucun. */
+  repGain: RepGainItem | null
+  /** Passage de rang à afficher (US-012) ; `null` si aucun. */
+  rankUp: RankUpItem | null
   /** Contrat qui vient d'encaisser sa récompense → flash transitoire. */
   flashingId: string | null
 
@@ -27,6 +53,8 @@ interface FeedbackState {
   dismiss: (id: string) => void
   addGains: (xp: number, credits: number) => void
   triggerLevelUp: (level: number) => void
+  triggerRepGain: (item: Omit<RepGainItem, 'id'>) => void
+  triggerRankUp: (item: Omit<RankUpItem, 'id'>) => void
   flash: (id: string) => void
 }
 
@@ -34,6 +62,8 @@ export const useFeedbackStore = create<FeedbackState>((set, get) => ({
   toasts: [],
   sessionGains: { xp: 0, credits: 0 },
   levelUp: null,
+  repGain: null,
+  rankUp: null,
   flashingId: null,
 
   pushToast: (kind, title, label) => {
@@ -60,6 +90,24 @@ export const useFeedbackStore = create<FeedbackState>((set, get) => ({
     set({ levelUp: level })
     window.setTimeout(
       () => set((s) => (s.levelUp === level ? { levelUp: null } : s)),
+      4000,
+    )
+  },
+
+  triggerRepGain: (item) => {
+    const repGain = { id: crypto.randomUUID(), ...item }
+    set({ repGain })
+    window.setTimeout(
+      () => set((s) => (s.repGain?.id === repGain.id ? { repGain: null } : s)),
+      2600,
+    )
+  },
+
+  triggerRankUp: (item) => {
+    const rankUp = { id: crypto.randomUUID(), ...item }
+    set({ rankUp })
+    window.setTimeout(
+      () => set((s) => (s.rankUp?.id === rankUp.id ? { rankUp: null } : s)),
       4000,
     )
   },

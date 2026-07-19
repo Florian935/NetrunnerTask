@@ -148,5 +148,27 @@
     "emptyTitle": "QUIET GRID",
     "emptyBody": "No contracts due today, runner. Nothing's burning — hit the queue to get ahead.",
     "emptyCta": "VIEW CONTRACTS"
+  },
+  "reputation": {
+    "panelTitle": "FACTION REPUTATION",
+    "panelTitleShort": "REPUTATION",
+    "factionsTag": "{{count}} FACTIONS",
+    "scaleTitle": "RANK LADDER",
+    "noBonus": "STATUS · NO BONUS",
+    "maxRank": "MAX RANK",
+    "next": "→ {{rank}}",
+    "rank": {
+      "unknown": "UNKNOWN",
+      "contact": "CONTACT",
+      "associate": "ASSOCIATE",
+      "fixer": "FIXER",
+      "legend": "LEGEND"
+    },
+    "gainLabel": "REPUTATION",
+    "gainAria": "+{{n}} reputation {{faction}}",
+    "rankUp": {
+      "overline": "NEW RANK · {{faction}}",
+      "detail": "{{from}} → {{to}} · {{threshold}} REP"
+    }
   }
 }

@@ -23,6 +23,7 @@ export const factionsRepo = {
       name: input.name,
       color: input.color,
       createdAt: Date.now(),
+      reputation: 0,
     }
     await db.factions.add(faction)
     return faction

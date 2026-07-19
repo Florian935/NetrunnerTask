@@ -6,6 +6,7 @@ import type { Contract } from '../../db'
 import { useContractsStore } from '../../stores/useContractsStore'
 import { ContractDetailConnected } from '../contracts/ContractDetailConnected'
 import { useCompleteContract } from '../contracts/useCompleteContract'
+import { ReputationPanel } from '../reputation/ReputationPanel'
 import { TodayContractRow } from './TodayContractRow'
 import { todayContracts } from './todayContracts'
 
@@ -245,6 +246,11 @@ export function DashboardView() {
           )}
         </>
       )}
+
+      {/* Réputation des factions (US-012) */}
+      <div style={{ marginTop: 26 }}>
+        <ReputationPanel />
+      </div>
 
       <ContractDetailConnected
         contractId={detailId}

@@ -279,3 +279,31 @@ L'EN est une réécriture in-world (ton netrunner), pas du mot-à-mot.
 - **UI sans maquette** (alignée sur l'existant) : puce `StreakChip` (icône Lucide
   `flame`, ambre si série active) sur la ligne des récurrents + bloc « Série /
   Record » dans la surface de détail. i18n `contracts.streak.*` FR/EN.
+
+### 019 — Réputation par faction (US-012, 19/07/2026)
+
+- **Réputation = champ par faction** (`Faction.reputation`, entier **plancher 0**),
+  **migration Dexie v7** (backfill `0`). Le **rang** est **dérivé par seuils**
+  (règle pure, pas de stockage) — modèle analogue au niveau depuis l'XP (US-009).
+- **Règle pure `game/reputation.ts`** (testée **10/10**) : barème de gain par
+  difficulté **`1/2/4/7/12`** ; 5 rangs **`unknown 0 · contact 25 · associate 75 ·
+  fixer 200 · legend 500`** (`rankForReputation`) ; `reputationProgress` (barre =
+  `courant / seuil suivant` depuis 0, comme la maquette) ; `applyReputationDelta`
+  = `max(0, …)` (plancher, sert au gain **et** à la perte).
+- **Gain** à la **complétion payante** d'un contrat rattaché à une faction
+  (`useCompleteContract` → `useFactionsStore.grantReputation`), une fois par
+  one-shot / **par occurrence** d'un récurrent. **Perte** = malus égal au gain,
+  appliquée au **`load()`** quand un streak d'habitude rattaché casse (US-011),
+  **silencieuse**, agrégée par faction, plancher 0.
+- **Séquencement `AppShell`** : **contrats chargés avant factions** (les pénalités
+  sont écrites en base pendant `loadContracts` avant la lecture de la réputation).
+- **Paliers = statut/identité, aucun avantage fonctionnel** (contrainte roadmap).
+- **UI (maquette `docs/maquettes/US-012/`, validée PO)** : panneau `ReputationPanel`
+  (`HudPanel`) sur le tableau de bord — ligne/faction = pastille + nom + **insigne
+  5 crans** (`RankInsignia`) + rang + **barre teintée** ; **LÉGENDE** = couronne +
+  RANG MAX. **Rétroactions** : `ReputationGainToast` (teinté faction, `avant→après`,
+  ~2,6 s) et `RankUpToast` (passage de rang, `shield-check`, glow pulsé teinté via
+  `--rank-c`, ~4 s). Icônes `crown` + `shield-check`. i18n `reputation.*` FR/EN.
+- **Ajustement PO** : barres **en cours** en **dégradé de teinte** (couleur voisine
+  → couleur faction), **local au panneau** (composant `ProgressBar` partagé
+  **inchangé**). LÉGENDE reste plein + hachuré.

@@ -1,0 +1,74 @@
+/* US-012 — animations des rétroactions de réputation.
+   La couleur (glow) est paramétrée par la variable `--rank-c` posée en inline,
+   pour teindre le pulse selon la faction. Désactivées sous reduced-motion. */
+
+@keyframes nw-rank-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes nw-rank-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 1px var(--rank-c),
+      0 0 20px -6px var(--rank-c);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px var(--rank-c),
+      0 0 34px 0 var(--rank-c);
+  }
+}
+@keyframes nw-rank-spark {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  45% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Toast de passage de rang : entrée + glow pulsé teinté faction. */
+.nw-rank-toast {
+  animation:
+    nw-rank-in 220ms var(--ease-out),
+    nw-rank-pulse 1.8s var(--ease-in-out) 220ms infinite;
+}
+.nw-rank-spark {
+  animation: nw-rank-spark 420ms var(--ease-out) both;
+}
+
+/* Micro-toast de gain (entrée latérale discrète). */
+@keyframes nw-repgain-in {
+  from {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.nw-repgain-in {
+  animation: nw-repgain-in 180ms var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nw-rank-toast,
+  .nw-rank-spark,
+  .nw-repgain-in {
+    animation: none !important;
+  }
+}
