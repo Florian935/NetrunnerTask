@@ -4,10 +4,12 @@ import { Outlet } from 'react-router'
 import { Alert, Toast } from '../components/ui'
 import { NavRail } from '../components/layout/NavRail'
 import { StatusBar } from '../components/layout/StatusBar'
+import { useBuilderTick } from '../features/builder'
 import { LevelUpToast } from '../features/progression/LevelUpToast'
 import { useReminders } from '../features/reminders/useReminders'
 import { RankUpToast } from '../features/reputation/RankUpToast'
 import { ReputationGainToast } from '../features/reputation/ReputationGainToast'
+import { useBuilderStore } from '../stores/useBuilderStore'
 import { useContractsStore } from '../stores/useContractsStore'
 import { useFactionsStore } from '../stores/useFactionsStore'
 import { usePlayerStore } from '../stores/usePlayerStore'
@@ -27,6 +29,7 @@ export function AppShell() {
   const loadContracts = useContractsStore((s) => s.load)
   const loadFactions = useFactionsStore((s) => s.load)
   const loadPlayer = usePlayerStore((s) => s.load)
+  const loadBuilder = useBuilderStore((s) => s.load)
   const toasts = useFeedbackStore((s) => s.toasts)
   const dismiss = useFeedbackStore((s) => s.dismiss)
   const pushToast = useFeedbackStore((s) => s.pushToast)
@@ -37,6 +40,8 @@ export function AppShell() {
 
   // US-014 : service de rappels (tick + rattrapage), best-effort local.
   useReminders()
+  // US-020 : production automatique du builder (tant que l'app est ouverte/visible).
+  useBuilderTick()
   const levelUp = useFeedbackStore((s) => s.levelUp)
   const clearLevelUp = () => useFeedbackStore.setState({ levelUp: null })
   const repGain = useFeedbackStore((s) => s.repGain)
@@ -48,7 +53,8 @@ export function AppShell() {
     // streaks cassés sont écrites pendant `loadContracts`, avant leur lecture).
     void loadContracts().then(() => loadFactions())
     void loadPlayer()
-  }, [loadContracts, loadFactions, loadPlayer])
+    void loadBuilder()
+  }, [loadContracts, loadFactions, loadPlayer, loadBuilder])
 
   // US-013 : mises perdues détectées au chargement → toasts danger (une fois).
   useEffect(() => {

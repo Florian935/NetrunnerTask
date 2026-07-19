@@ -3,6 +3,46 @@
 > Tests de recette par US. Chaque test reprend un critère d'acceptation de l'US.
 > Statuts : `à faire` / `validé` / `échoué`.
 
+## US-020 — A1 : Noyau du builder (« Réseau »)
+
+Recette du 20/07/2026. Critères d'acceptation de `us/archive/US-020-noyau-builder.md`.
+**Vérifs automatiques** : `typecheck` + `lint` + `build`/PWA + tests Vitest
+**93/93** (dont `game/builder.ts` **11/11** ; 82 → 93). **Recette visuelle &
+interactive navigateur (`npm run dev`) confirmée par le PO : tout OK.**
+
+| # | Critère (action → résultat attendu) | Méthode | Statut | Date |
+|---|-------------------------------------|---------|--------|------|
+| C1 | Onglet **« Réseau »** dans le rail → ouvre l'écran builder | route `/network` + `NavRail` + PO live | validé | 20/07/2026 |
+| C2 | Premier lancement : `0` cycle, `0` daemon, `0/s` | seed `BuilderState` à 0 + `BuilderView` + PO | validé | 20/07/2026 |
+| C3 | Clic **HACK** → +1 cycle par clic (retour juteux : anneau + `+1`) | `hack()` + `HackZone` + PO live | validé | 20/07/2026 |
+| C4 | Acheter un daemon débite le coût ; **refusé** (cadenas) si solde insuffisant | `buyGenerator` (no-op) + bouton `disabled` ; `builder.test.ts` **11/11** + PO | validé | 20/07/2026 |
+| C5 | Chaque daemon fait **monter le solde tout seul** (`+X/s`) | `useBuilderTick` + `tick()` + PO live | validé | 20/07/2026 |
+| C6 | **Coût du prochain daemon monte** à chaque achat (15 → 18 → 20…) | `nextGeneratorCost` (escalade ×1,15, **testée**) + PO | validé | 20/07/2026 |
+| C7 | **Recharger** conserve l'état (solde + daemons) | persistance `builderRepo` (masquage/`pagehide`/throttle) + PO F5 | validé | 20/07/2026 |
+| C8 | Module **to-do inchangé** (aucune régression) | zéro modif entités `Contract`/`Faction`/`Player` + PO | validé | 20/07/2026 |
+| C9 | **Hors-ligne (PWA)** : l'écran Réseau tourne sans réseau | local-first + précache PWA + PO (DevTools offline) | validé | 20/07/2026 |
+| — | i18n FR/EN (`builder.*`, `nav.network*`), aucune chaîne en dur | clés FR+EN via `t()` | validé | 20/07/2026 |
+| — | Archi évolutive : réglages en **objet config**, tokens sémantiques (généralisation → A2) | revue | validé | 20/07/2026 |
+| — | Migration Dexie **v10** : nouvelle table `builderState` (singleton, seed à 0) | upgrade v10 | validé | 20/07/2026 |
+
+### Ajustement issu de la recette (résolu dans l'US)
+
+- **Repères d'angle de la carte daemon** : ma carte maison (repères violets décalés
+  de 6 px sur un biseau) ne collait pas aux coins. Remplacée par le composant DS
+  **`<Card hud brackets halo="violet">`** → repères blancs collés aux coins, comme
+  les cartes de contrat. Validé PO.
+
+> **Note de méthode** : C4/C6 couverts par les tests unitaires de `game/builder.ts`
+> (escalade du coût, achat refusé si solde <) **et** vérifiés en live par le PO.
+> C7 : persistance vérifiée à F5 par le PO (réserve assumée : les cycles hackés
+> dans les ~4 s précédant un reload brutal peuvent ne pas être persistés — throttle
+> volontaire ; l'achat, lui, persiste immédiatement).
+
+**Verdict : recette US-020 validée (9/9 critères + vérifs annexes).** Dexie **v10**
+(`BuilderState`). Noyau builder (`game/builder.ts` **11/11**), tick avec **pause
+`visibilitychange`** (pas de rattrapage hors-ligne → A5/US-024). Fond immersif
+hérité de `.nav-main` (#017) ; `prefers-reduced-motion` respecté (P9).
+
 ## US-014 — Échéances horodatées + rappels / notifications PWA
 
 Recette du 19/07/2026. Vérifs automatiques (typecheck / lint / build / tests

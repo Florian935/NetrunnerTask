@@ -41,4 +41,14 @@ export async function ensureSeeded(): Promise<void> {
   if (!player) {
     await db.player.add({ id: 'me', xp: 0, level: 1, credits: 0 })
   }
+
+  const builder = await db.builderState.get('me')
+  if (!builder) {
+    await db.builderState.add({
+      id: 'me',
+      cycles: 0,
+      generatorCount: 0,
+      updatedAt: Date.now(),
+    })
+  }
 }
