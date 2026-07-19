@@ -376,6 +376,36 @@ L'EN est une réécriture in-world (ton netrunner), pas du mot-à-mot.
 - **Hors périmètre inclus** (correctif rapide validé PO) : alignement vertical du
   rond de difficulté (`line-height: 1`) sur `ContractItem`.
 
+### 023 — Noyau du builder « Réseau » (US-020, A1, 20/07/2026)
+
+Première brique du **pivot builder (#022)**, Phase A (local-first, sans backend).
+Écran « Réseau » (`/network`) : jeu incrémental nu — une ressource `cycles`, un
+HACK manuel, un daemon générateur (production automatique). But : **valider le fun
+du socle** avant d'investir.
+
+- **Modèle** : nouvelle entité **singleton `BuilderState`** (`cycles`,
+  `generatorCount`, `updatedAt`), **migration Dexie v10** (nouvelle table
+  `builderState`, seed idempotent à 0, patron #009), `builderRepo`. **Aucune modif**
+  de `Contract`/`Faction`/`Player`.
+- **Logique pure `game/builder.ts`** (**testée 11/11**) : réglages regroupés en
+  **objet config** `BUILDER_CONFIG` (manuel 1 ; daemon base 15 · croissance ×1,15 ·
+  1 cycle/s — **placeholders**) ; `nextGeneratorCost` (escalade), `productionPerSec`,
+  `hack`, `buyGenerator` (no-op si solde <), `tick(dt)`.
+- **Store `useBuilderStore`** + hook **`useBuilderTick`** (monté dans `AppShell`,
+  cadence 250 ms, **pause `visibilitychange`**, persistance throttlée + au masquage/
+  `pagehide`/démontage). **Pas de rattrapage hors-ligne** → reporté **A5/US-024**.
+- **UI** : `BuilderView` + `HackZone` (hack juteux) + `DaemonCard` **sur le composant
+  DS `<Card hud brackets halo>`** (pas de carte maison). Fond immersif **hérité de
+  `.nav-main`** (#017, pas de duplication) ; `prefers-reduced-motion` respecté (P9).
+  Route `/network` + onglet **Réseau** ; « Stats »/« Profil » de la maquette **non**
+  implémentés.
+- **Archi évolutive (réponse PO)** : bonnes frontières + tokens sémantiques + config ;
+  **pas** de « world-engine » spéculatif (généralisation des générateurs → **A2**,
+  sur 2 cas réels). Détail futur dans `docs/architecture.md`.
+- i18n `builder.*` + `nav.network*` FR/EN ; icônes `cpu`/`share-2`. Vérifs :
+  typecheck + lint + build/PWA + **tests 93/93**. Maquette (`docs/maquettes/US-020/`,
+  proto JSX) **non versionnée** (convention #007) — supprimée après implémentation.
+
 ### 022 — Pivot produit : de « to-do gamifié » vers « jeu builder social » (19/07/2026)
 
 Décision structurante actée après un brainstorming PO ↔ Claude (voir

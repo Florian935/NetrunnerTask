@@ -130,3 +130,21 @@ export interface Player {
   level: number
   credits: number
 }
+
+/**
+ * État du builder « Réseau » (US-020) — enregistrement unique (singleton, clé
+ * fixe `'me'`). Jeu incrémental : `cycles` (ressource) produits à la main (HACK)
+ * et automatiquement par les daemons possédés. Voir `game/builder.ts`.
+ */
+export interface BuilderState {
+  id: 'me'
+  /** Ressource courante (cycles) ; peut être fractionnaire, plancher 0. */
+  cycles: number
+  /** Nombre de daemons générateurs possédés (production automatique). */
+  generatorCount: number
+  /**
+   * Dernier instant de mise à jour (epoch ms) — base du tick. Socle du futur
+   * calcul de production hors-ligne (reporté à A5/US-024).
+   */
+  updatedAt: number
+}

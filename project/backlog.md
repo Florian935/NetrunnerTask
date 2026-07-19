@@ -68,6 +68,21 @@ Les US-005 à US-007 enrichissent le to-do.
 > **US-016** solde la dette design system #008 (rampe de rareté `--rarity-*` +
 > `RarityBadge` + `CosmeticCard`), consommée par les US caisses/inventaire.
 
+## Phase A — Jeu builder (pivot #022, local-first sans backend)
+
+> Nouveau produit (voir `docs/roadmap.md` § « Roadmap produit — pivot #022 » et
+> `docs/vision-plateforme.md`). Objectif : **prouver que le builder est fun** à
+> coût d'infra nul. Chemin critique : **US-020 → US-021**. Colonne « MVP » = `A`.
+
+| ID | Titre | MVP | Priorité | Statut | Dépend de |
+|----|-------|-----|----------|--------|-----------|
+| US-020 | A1 — Noyau du builder (ressource `cycles`, hack manuel, 1ᵉʳ générateur) | A | haute | fait | — |
+| US-021 | A2 — Daemons & automatisation (générateurs auto, upgrades, montée exponentielle) | A | haute | à faire | US-020 |
+| US-022 | A3 — 2ᵉ couche de ressource + arbre de déblocage + 1ᵉʳ reveal caché | A | haute | à faire | US-021 |
+| US-023 | A4 — Accélérateurs réels **au choix** (catalogue vérifiable : focus + 1) | A | haute | à faire | US-021 |
+| US-024 | A5 — Hors-ligne & temps écoulé + embryon de prestige | A | moyenne | à faire | US-021 |
+| US-025 | A6 — Rebrancher le module perso (to-do/habitudes/factions → économie privée) | A | moyenne | à faire | US-020, module perso |
+
 ## MVP 3 — Rétention profonde & identité
 
 > À découper en US à l'approche du MVP 3 (voir `docs/roadmap.md`).

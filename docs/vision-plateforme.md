@@ -81,6 +81,16 @@ Ces règles sont le squelette. Toute idée du buffet (§3) doit s'y plier.
   d'héritage** + un **fil narratif** relient tous les mondes. Tout est
   interconnecté. Voir §3-C (changement de monde).
 
+- **P9 — Immersion « wahou » dès l'arrivée.** *(posé le 19/07/2026 — exigence PO
+  forte)* L'app doit **plonger** l'utilisateur dans l'univers du design system
+  (NIGHTWIRE cyberpunk) dès l'ouverture : identité visuelle forte, effets et
+  retours **« wahou »**, sensation d'**entrer dans un monde** — pas dans un tableur.
+  L'immersion est un **critère de qualité de premier ordre**, traité à l'**étape
+  design de chaque tranche** (en respectant `prefers-reduced-motion` et la
+  perf/PWA). Nuance de cadrage : on ne **gold-plate** pas un squelette avant
+  d'avoir prouvé le fun — sur les premières tranches on vise « **immersif mais pas
+  sur-produit** », la pleine mise en scène arrivant quand la boucle est validée.
+
 ---
 
 ## 2bis. Monétisation — saine & à forte valeur perçue

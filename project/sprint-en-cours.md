@@ -3,19 +3,30 @@
 > Reflète l'état réel du projet à tout instant. Mis à jour après **chaque**
 > étape franchie du cycle de vie (voir `CLAUDE.md` §5).
 
-## État actuel — pause du cycle US : rangement du pivot « plateforme »
+## US active
 
-_Aucune US classique active._ Dernière US clôturée : **US-014** (archivée dans
-`us/archive/`, décision **#021**, recette **9/9**). Le projet fait une **pause
-stratégique** du backlog MVP 2/3 historique pour **acter et ranger un pivot
-produit majeur** : Netrunner Tasks évolue d'un **to-do gamifié solo** vers un
-**jeu builder** (façon Universal Paperclips) dont la **progression réelle** est
-l'accélérateur. Vision & principes **P1–P8** : `docs/vision-plateforme.md` ;
-décision **#022**.
+_Aucune US active._ Dernière US clôturée : **US-020 — A1 : Noyau du builder**
+(commit + merge sur `develop`, décision **#023**, **recette 9/9 PO** le 20/07/2026,
+archivée dans `us/archive/`). **Prochaine : US-021 — A2** (daemons &
+automatisation : générateurs auto, upgrades, montée exponentielle).
 
-**US-015 → US-019 sont GELÉES** (caisses/inventaire/rareté/pity : réinventées par
-le pivot). Le to-do + habitudes + factions déjà livrés deviennent le **module
-perso privé** du nouveau produit — rien n'est jeté. `develop` propre & à jour.
+Réalisé US-020 : Dexie **v10** + entité `BuilderState` + `builderRepo` + seed
+idempotent ; logique pure **`game/builder.ts`** (**testée 11/11**) ;
+**`useBuilderStore`** + hook **`useBuilderTick`** (pause `visibilitychange`, pas de
+rattrapage hors-ligne → A5) ; écran **`/network`** (`BuilderView` + `HackZone` +
+`DaemonCard` sur le composant DS `<Card>`) + onglet **Réseau** ; i18n `builder.*` +
+`nav.network*` FR/EN ; icônes `cpu`/`share-2` ; fond immersif hérité de `.nav-main`
+(#017). **Vérifs vertes : typecheck + lint + build/PWA + tests 93/93** (82 → 93).
+Maquettes `docs/maquettes/` **supprimées** (non versionnées, convention #007).
+
+## Contexte — pivot builder (#022) acté & commité
+
+Le rangement du pivot est **commité** (branche `chore/pivot-vision` mergée sur
+`develop`, `2d35e3e`). Netrunner Tasks devient un **jeu builder** (façon Universal
+Paperclips) dont la **progression réelle** est l'accélérateur ; le to-do +
+habitudes + factions existants deviennent le **module perso privé**. Vision &
+principes **P1–P8** : `docs/vision-plateforme.md`. Roadmap produit (Phase A A1–A6 /
+Phase B B1–B4) : `docs/roadmap.md`. **US-015→019 gelées.**
 
 ## Étape du cycle de vie
 
@@ -177,15 +188,10 @@ référencées mais absentes de `decisions.md`). Backlog MVP 2 : échéances hor
 
 ## Prochaine action
 
-**Ranger le pivot, puis cadrer la 1ʳᵉ brique jouable.**
-1. **Valider la roadmap produit** (Phases A/B) — proposée par Claude.
-   - **Phase A** : jeu solo **local-first, sans backend** (bâtir le builder Réseau
-     + Daemons, brancher les accélérateurs réels, valider le fun à coût nul).
-   - **Phase B** : couche connectée (comptes, clans, deux classements, mondes,
-     validation serveur) — réécrira `CLAUDE.md`/roadmap **le moment venu**.
-2. Puis **cadrer la 1ʳᵉ tranche jouable** du builder (mini-loop : une ressource +
-   quelques daemons + un premier reveal), via le cycle de vie US → **STOP
-   validation** avant tout code.
+**Démarrer US-021 — A2 (daemons & automatisation)** via le skill `nouvelle-us` :
+généraliser le builder à **plusieurs générateurs** (data-driven, sur 2 cas réels
+comme prévu au cadrage US-020), upgrades/multiplicateurs, montée exponentielle.
+Roadmap produit complète : `docs/roadmap.md` (Phase A A1–A6 / Phase B B1–B4).
 
 > À reconstruire sur NIGHTWIRE dans leur US métier : composants `game/`
 > (ContractCard, RarityBadge, CosmeticCard, FactionBadge) + rampe de rareté

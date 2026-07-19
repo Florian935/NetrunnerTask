@@ -19,6 +19,13 @@ const ROUTES = [
     label: 'nav.contracts',
     end: false,
   },
+  {
+    to: '/network',
+    icon: 'share-2',
+    code: 'nav.networkCode',
+    label: 'nav.network',
+    end: false,
+  },
 ] as const
 
 /** Destinations à venir (MVP 2/3), affichées désactivées. `hideMobile` = masquée

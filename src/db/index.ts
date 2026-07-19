@@ -4,6 +4,7 @@ export { db, readDemoValue, writeDemoValue } from './db'
 export type { DemoKV, NetrunnerDB } from './db'
 
 export type {
+  BuilderState,
   Contract,
   ContractStatus,
   Difficulty,
@@ -25,3 +26,4 @@ export type {
   CreateContractInput,
 } from './repositories/contracts'
 export { playerRepo } from './repositories/player'
+export { builderRepo } from './repositories/builder'

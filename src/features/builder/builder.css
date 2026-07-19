@@ -1,0 +1,417 @@
+/* Écran « Réseau » (US-020) — builder incrémental. Le fond du monde (navy +
+   quadrillage + halos d'angle) est fourni globalement par `.nav-main` (#017) :
+   ici on ne pose que la mise en page et les animations « juteuses » du HACK. */
+
+.builder {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* En-tête */
+.builder__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+}
+.builder__title {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.builder__title-mark {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  color: var(--magenta-400);
+}
+.builder__title-text {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 0.16em;
+  color: var(--frost-100);
+  text-shadow: var(--text-glow-cyan);
+}
+.builder__uplink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--mint-500);
+}
+.builder__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--mint-500);
+  box-shadow: 0 0 6px var(--mint-500);
+}
+
+/* Corps : colonne centrée ; sur large, deux colonnes (stage | daemon). */
+.builder__body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 26px;
+  align-content: center;
+  justify-items: center;
+  padding: 26px 18px 34px;
+}
+.builder__stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 26px;
+}
+.builder__side {
+  width: 100%;
+  max-width: 360px;
+}
+@media (min-width: 860px) {
+  .builder__body {
+    grid-template-columns: 1.1fr 0.9fr;
+    align-items: center;
+    justify-items: stretch;
+    gap: 34px;
+    padding: 30px 40px;
+  }
+  .builder__side {
+    max-width: 420px;
+    justify-self: center;
+  }
+}
+
+/* Compteur héros */
+.builder__readout {
+  text-align: center;
+}
+.builder__readout-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--cyan-400);
+  margin-bottom: 6px;
+}
+.builder__readout-pulse {
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--mint-500);
+  box-shadow: 0 0 6px var(--mint-500);
+  animation: nw-breathe 2s ease-in-out infinite;
+}
+.builder__readout-value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(48px, 11vw, 84px);
+  line-height: 0.95;
+  color: var(--frost-100);
+  text-shadow: var(--text-glow-cyan);
+  font-variant-numeric: tabular-nums;
+}
+.builder__readout-rate {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+.builder__readout-rate--active {
+  color: var(--mint-500);
+  text-shadow: var(--text-glow-mint);
+}
+
+/* Zone HACK (le geste juteux) */
+.builder__hack {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  user-select: none;
+}
+@media (max-width: 400px) {
+  .builder__hack {
+    width: 176px;
+    height: 176px;
+  }
+}
+.builder__hack-halo {
+  position: absolute;
+  inset: -10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 240, 255, 0.22), transparent 70%);
+  animation: nw-breathe 2.6s ease-in-out infinite;
+  pointer-events: none;
+}
+.builder__hack-core {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  border: none;
+  clip-path: polygon(50% 0, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+  background: radial-gradient(
+    circle at 50% 38%,
+    rgba(0, 240, 255, 0.28),
+    rgba(16, 21, 31, 0.96) 72%
+  );
+  box-shadow: var(--glow-cyan), inset 0 0 40px -8px var(--cyan-500);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform var(--dur-instant) var(--ease-out);
+}
+.builder__hack-core:active {
+  transform: scale(0.97);
+}
+.builder__hack-icon {
+  color: var(--cyan-400);
+  display: inline-flex;
+  filter: drop-shadow(0 0 10px var(--cyan-500));
+}
+.builder__hack-word {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 26px;
+  letter-spacing: 0.22em;
+  color: var(--frost-100);
+  text-shadow: var(--text-glow-cyan);
+}
+.builder__hack-sub {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.builder__hack-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 100%;
+  height: 100%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 2px solid var(--cyan-500);
+  animation: nw-hack-ring 0.7s var(--ease-out) forwards;
+  pointer-events: none;
+}
+.builder__hack-float {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--mint-500);
+  text-shadow: var(--text-glow-mint);
+  animation: nw-hack-float 0.72s var(--ease-out) forwards;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* En-tête de section « Daemons » */
+.builder__daemons-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+.builder__rule {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* Carte daemon — la surface (biseau HUD + repères d'angle + halo violet) vient
+   du composant `<Card hud brackets halo="violet">` du DS. Ici : contenu interne. */
+.builder__daemon-head {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.builder__daemon-icon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--violet-400);
+  background: rgba(168, 85, 247, 0.12);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  clip-path: var(--clip-bevel-sm);
+}
+.builder__daemon-meta {
+  min-width: 0;
+  flex: 1;
+}
+.builder__daemon-title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.builder__daemon-name {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--frost-100);
+  letter-spacing: 0.03em;
+}
+.builder__daemon-count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--violet-400);
+}
+.builder__daemon-role {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.builder__daemon-yield {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--mint-500);
+  margin-top: 7px;
+}
+.builder__daemon-owned {
+  color: var(--text-muted);
+}
+
+/* Bouton d'achat */
+.builder__buy {
+  width: 100%;
+  margin-top: 14px;
+  height: 44px;
+  cursor: pointer;
+  border: 1px solid var(--cyan-500);
+  clip-path: var(--clip-bevel-sm);
+  background: linear-gradient(
+    120deg,
+    rgba(0, 240, 255, 0.16),
+    rgba(168, 85, 247, 0.16)
+  );
+  box-shadow: 0 0 16px -6px var(--cyan-500);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--frost-100);
+  transition:
+    filter var(--dur-fast) var(--ease-out),
+    transform var(--dur-instant) var(--ease-out);
+}
+.builder__buy:hover:not(:disabled) {
+  filter: brightness(1.12);
+}
+.builder__buy:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.builder__buy:disabled {
+  cursor: not-allowed;
+  border-color: var(--border-strong);
+  background: var(--bg-inset);
+  box-shadow: none;
+  color: var(--text-muted);
+}
+.builder__buy-cost {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--cyan-400);
+}
+.builder__buy:disabled .builder__buy-cost {
+  color: var(--red-400);
+}
+.builder__insufficient {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--red-400);
+  margin-top: 8px;
+}
+.builder__hint {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.7;
+  margin-top: 16px;
+}
+
+/* Animations */
+@keyframes nw-hack-ring {
+  from {
+    transform: translate(-50%, -50%) scale(0.35);
+    opacity: 0.9;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1.15);
+    opacity: 0;
+  }
+}
+@keyframes nw-hack-float {
+  from {
+    transform: translate(-50%, -50%);
+    opacity: 1;
+  }
+  to {
+    transform: translate(-50%, calc(-50% - 46px));
+    opacity: 0;
+  }
+}
+@keyframes nw-breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .builder__hack-halo,
+  .builder__readout-pulse,
+  .builder__hack-ring,
+  .builder__hack-float {
+    animation: none !important;
+  }
+  .builder__hack-halo {
+    opacity: 0.7;
+  }
+}

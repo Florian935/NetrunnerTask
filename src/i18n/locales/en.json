@@ -184,6 +184,8 @@
     "dashboardCode": "HUD",
     "contracts": "Contracts",
     "contractsCode": "CTR",
+    "network": "Network",
+    "networkCode": "NET",
     "progression": "Progression",
     "inventory": "Inventory",
     "crates": "Crates",
@@ -221,5 +223,25 @@
       "overline": "NEW RANK · {{faction}}",
       "detail": "{{from}} → {{to}} · {{threshold}} REP"
     }
+  },
+  "builder": {
+    "title": "NETWORK",
+    "uplink": "Uplink live",
+    "cyclesLabel": "Cycles",
+    "perSecond": "{{value}}/s",
+    "hack": "HACK",
+    "hackSub": "inject",
+    "hackAria": "Hack",
+    "daemonsHeading": "Daemons",
+    "daemonName": "SCRAPER-01",
+    "daemonRole": "Passive mining node",
+    "daemonYield": "+{{n}} cycle/s",
+    "daemonOwned": "owned {{value}}/s",
+    "daemonCount": "×{{count}}",
+    "buy": "Compile",
+    "buyCost": "{{cost}} cyc",
+    "insufficient": "Insufficient balance",
+    "insufficientHint": "+{{n}}/s next",
+    "hint": "Hammer HACK to bootstrap · compile a daemon to automate production"
   }
 }

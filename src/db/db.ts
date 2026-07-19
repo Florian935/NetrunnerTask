@@ -1,6 +1,6 @@
 import Dexie from 'dexie'
 import type { Table } from 'dexie'
-import type { Contract, Faction, Player } from './types'
+import type { BuilderState, Contract, Faction, Player } from './types'
 
 /**
  * Table de démonstration héritée d'US-001 (clé/valeur). Conservée uniquement
@@ -20,6 +20,7 @@ export class NetrunnerDB extends Dexie {
   contracts!: Table<Contract, string>
   factions!: Table<Faction, string>
   player!: Table<Player, string>
+  builderState!: Table<BuilderState, string>
   demoKV!: Table<DemoKV, string>
 
   constructor() {
@@ -164,6 +165,16 @@ export class NetrunnerDB extends Dexie {
             if (c.reminderNotifiedFor === undefined) c.reminderNotifiedFor = null
           }),
       )
+    // v10 (US-020) : état du builder « Réseau ». **Nouvelle table** singleton
+    // `builderState` (clé `id`) → schéma v9 recopié + ajout du store. Pas de
+    // rétro-remplissage de rangée : le singleton est créé (idempotent) par le seed.
+    this.version(10).stores({
+      contracts: 'id, factionId, status, dueDate, createdAt',
+      factions: 'id, name',
+      player: 'id',
+      builderState: 'id',
+      demoKV: 'key',
+    })
   }
 }
 
