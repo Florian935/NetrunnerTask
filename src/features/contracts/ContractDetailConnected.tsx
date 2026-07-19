@@ -1,5 +1,6 @@
 import { useContractsStore } from '../../stores/useContractsStore'
 import { useFactionsStore } from '../../stores/useFactionsStore'
+import { usePlayerStore } from '../../stores/usePlayerStore'
 import { ContractDetail } from './ContractDetail'
 
 export interface ContractDetailConnectedProps {
@@ -25,6 +26,8 @@ export function ContractDetailConnected({
   const setPriority = useContractsStore((s) => s.setPriority)
   const setDueDate = useContractsStore((s) => s.setDueDate)
   const setRecurrence = useContractsStore((s) => s.setRecurrence)
+  const setStake = useContractsStore((s) => s.setStake)
+  const balance = usePlayerStore((s) => s.player?.credits ?? 0)
   const addSubtask = useContractsStore((s) => s.addSubtask)
   const toggleSubtask = useContractsStore((s) => s.toggleSubtask)
   const removeSubtask = useContractsStore((s) => s.removeSubtask)
@@ -38,12 +41,14 @@ export function ContractDetailConnected({
     <ContractDetail
       contract={contract}
       factions={factions}
+      balance={balance}
       onRename={rename}
       onSetDifficulty={setDifficulty}
       onSetFaction={setFaction}
       onSetPriority={setPriority}
       onSetDueDate={setDueDate}
       onSetRecurrence={setRecurrence}
+      onSetStake={setStake}
       onAddSubtask={addSubtask}
       onToggleSubtask={toggleSubtask}
       onRemoveSubtask={removeSubtask}

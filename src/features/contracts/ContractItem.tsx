@@ -8,6 +8,7 @@ import { contractCode } from './contractCode'
 import { FactionBadge } from './FactionBadge'
 import { PriorityBars } from './PriorityBars'
 import { RecurrenceChip } from './RecurrenceChip'
+import { StakeChip } from './StakeChip'
 import { StreakChip } from './StreakChip'
 import { DUE_COLORS, dueStatus, formatDueShort } from './dueDate'
 
@@ -199,6 +200,12 @@ export function ContractItem({
               best={contract.bestStreak}
             />
           )}
+          {/* Mise à risque (US-013) — exclusive de la série (one-shot). */}
+          <StakeChip
+            outcome={contract.stakeOutcome}
+            stake={contract.stake}
+            difficulty={contract.difficulty}
+          />
           {!done && contract.recurrence && (
             <RecurrenceChip recurrence={contract.recurrence} />
           )}

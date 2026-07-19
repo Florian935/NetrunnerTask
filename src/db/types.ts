@@ -10,6 +10,12 @@ export type Priority = 'low' | 'normal' | 'high'
 /** État d'avancement d'un contrat. */
 export type ContractStatus = 'open' | 'done'
 
+/**
+ * Issue d'une mise à risque (US-013). `none` = pas de mise ; `pending` = crédits
+ * en jeu (déjà débités) ; `won` / `lost` = résolue (figée). Voir `game/risk.ts`.
+ */
+export type StakeOutcome = 'none' | 'pending' | 'won' | 'lost'
+
 /** Étape d'un contrat (checklist). Informative : n'octroie aucune récompense. */
 export interface SubTask {
   id: string
@@ -70,6 +76,17 @@ export interface Contract {
    * diminue jamais**, même après une remise à zéro de `currentStreak`.
    */
   bestStreak: number
+  /**
+   * Mise à risque (US-013) : crédits misés, **déjà débités** du solde. `0` = pas
+   * de mise. Réservé aux one-shot à échéance (voir `game/risk.ts`).
+   */
+  stake: number
+  /**
+   * Issue de la mise (US-013). `'none'` par défaut ; `'pending'` tant qu'elle est
+   * en jeu ; `'won'` / `'lost'` une fois résolue (figée). Invariant :
+   * `stake > 0 ⇔ stakeOutcome ≠ 'none'`.
+   */
+  stakeOutcome: StakeOutcome
 }
 
 /** Catégorie de vie regroupant des contrats. */

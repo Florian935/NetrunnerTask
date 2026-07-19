@@ -5,10 +5,29 @@
 
 ## US active
 
-_Aucune US active._ Dernière US clôturée : **US-012** (archivée dans
-`us/archive/`, décision **#019**, recette **9/9**).
+_Aucune US active._ Dernière US clôturée : **US-013** (archivée dans
+`us/archive/`, décision **#020**, recette **8/8**). **Prochaine : US-014**
+(échéances horodatées + rappels/notifications PWA).
 
 ## Étape du cycle de vie
+
+**US-013 clôturée le 19/07/2026** (commit + merge sur `develop`). Cycle complet :
+cadrages fonctionnel + technique validés PO → **maquette reçue & validée**
+(`docs/maquettes/US-013/` — bonus indexé difficulté, one-shot, plafond = solde,
+bouton « Miser » explicite) → plan 13 étapes → implémentation → **recette 8/8 PO**.
+Contenu : **mise de crédits** sur un contrat one-shot à échéance (**Dexie v8** :
+`Contract.stake` + `stakeOutcome`), **débit immédiat** ; réussite avant échéance =
+retour `mise × mult` (**barème `1,5/2/2,5/3/4`** indexé difficulté) ; échéance
+dépassée = **perte** au `load()` (aucun mouvement de crédit). Réalisé : module pur
+**`game/risk.ts`** (**testé 14/14**), `usePlayerStore.adjustCredits`
+(**plancher 0**), `useContractsStore.setStake` + `settleStakeOnComplete` +
+remboursements (suppression / retrait d'échéance / ajout de récurrence), UI
+**`StakeControl`** (4 états) + **`StakeChip`** + toasts, i18n `contracts.stake.*`.
+**Revue de code** : 2 bugs d'intégrité crédits corrigés avant merge (résolution de
+mise gatée par la récompense de base ; `setRecurrence` ne soldait pas la mise en
+jeu). Vérifs vertes : **typecheck + lint + build + tests 65/65**.
+
+## Étape du cycle de vie (US antérieure)
 
 **US-012 clôturée le 19/07/2026** (commit + merge sur `develop`). Cycle complet :
 cadrages fonctionnel + technique validés PO → **maquette reçue & validée**

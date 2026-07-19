@@ -30,6 +30,15 @@ export interface RankUpItem {
   threshold: number
 }
 
+/** Mise perdue détectée au chargement (US-013) — remontée en toast danger. */
+export interface StakeLossItem {
+  id: string
+  /** Intitulé du contrat concerné. */
+  title: string
+  /** Montant de la mise confisquée (déjà débité à la pose). */
+  amount: number
+}
+
 /**
  * État de rétroaction **partagé** entre les écrans (US-010). Hébergé par
  * l'app-shell : les toasts, les gains de session, le toast de palier et le
@@ -48,6 +57,8 @@ interface FeedbackState {
   rankUp: RankUpItem | null
   /** Contrat qui vient d'encaisser sa récompense → flash transitoire. */
   flashingId: string | null
+  /** Mises perdues au chargement (US-013), à transformer en toasts (AppShell). */
+  stakeLosses: StakeLossItem[]
 
   pushToast: (kind: ToastItem['kind'], title: string, label: string) => void
   dismiss: (id: string) => void
@@ -56,6 +67,10 @@ interface FeedbackState {
   triggerRepGain: (item: Omit<RepGainItem, 'id'>) => void
   triggerRankUp: (item: Omit<RankUpItem, 'id'>) => void
   flash: (id: string) => void
+  /** File des mises perdues au chargement (déduplique par appel). */
+  pushStakeLosses: (items: Omit<StakeLossItem, 'id'>[]) => void
+  /** Vide la file une fois les toasts émis (AppShell). */
+  clearStakeLosses: () => void
 }
 
 export const useFeedbackStore = create<FeedbackState>((set, get) => ({
@@ -65,6 +80,7 @@ export const useFeedbackStore = create<FeedbackState>((set, get) => ({
   repGain: null,
   rankUp: null,
   flashingId: null,
+  stakeLosses: [],
 
   pushToast: (kind, title, label) => {
     const id = crypto.randomUUID()
@@ -119,4 +135,16 @@ export const useFeedbackStore = create<FeedbackState>((set, get) => ({
       720,
     )
   },
+
+  pushStakeLosses: (items) => {
+    if (items.length === 0) return
+    set((s) => ({
+      stakeLosses: [
+        ...s.stakeLosses,
+        ...items.map((it) => ({ id: crypto.randomUUID(), ...it })),
+      ],
+    }))
+  },
+
+  clearStakeLosses: () => set({ stakeLosses: [] }),
 }))

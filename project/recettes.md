@@ -3,6 +3,31 @@
 > Tests de recette par US. Chaque test reprend un critère d'acceptation de l'US.
 > Statuts : `à faire` / `validé` / `échoué`.
 
+## US-013 — Contrats à risque (mise de crédits)
+
+Recette du 19/07/2026. Vérifs automatiques (typecheck / lint / build / tests
+Vitest **65/65**, dont `game/risk.ts` **14/14**) + recette comportementale
+navigateur (`npm run dev`) confirmée par le PO.
+
+| # | Critère (action → résultat attendu) | Statut | Date |
+|---|-------------------------------------|--------|------|
+| C1 | Poser une mise valide (one-shot à échéance) → débit immédiat du solde, état « en jeu » + puce ambre | validé | 19/07/2026 |
+| C2 | Mise > solde disponible → refus (message), bouton *Miser* désactivé, aucun débit | validé | 19/07/2026 |
+| C3 | Contrat sans échéance / récurrent / permanent → bloc inéligible, pas de saisie | validé | 19/07/2026 |
+| C4 | Complétion avant échéance → retour = mise × multiplicateur difficulté, en plus de la récompense ; toast « mise réussie » ; puce menthe | validé | 19/07/2026 |
+| C5 | Échéance dépassée + rechargement → mise perdue (aucun re-crédit), toast « mise perdue » **une seule fois**, puce rouge | validé | 19/07/2026 |
+| C6 | Modifier la mise (remboursement + re-débit) ; retirer → re-crédit intégral, puce disparaît | validé | 19/07/2026 |
+| C7 | Solde jamais négatif à aucune étape (pose / modif / issue), plancher 0 | validé | 19/07/2026 |
+| C8 | Mise et issue (en jeu / remportée / perdue + montant) lisibles sur la ligne et dans le détail | validé | 19/07/2026 |
+
+Garde-fous vérifiés en bonus : retirer l'échéance d'un contrat en jeu **rembourse**
+la mise ; supprimer un contrat en jeu **rembourse** la mise.
+
+**Verdict : recette US-013 validée (8/8 critères).** Dexie **v8**
+(`Contract.stake` + `stakeOutcome`). Décisions gameplay : bonus indexé difficulté
+(`1,5/2/2,5/3/4`), one-shot uniquement, débit immédiat, perte constatée au `load()`,
+plafond = solde disponible.
+
 ## US-007 — Factions (catégories) & filtrage
 
 Recette du 18/07/2026. Vérifs automatiques (typecheck / lint / build / tests

@@ -57,6 +57,8 @@ export const contractsRepo = {
       recurrence: null,
       currentStreak: 0,
       bestStreak: 0,
+      stake: 0,
+      stakeOutcome: 'none',
     }
     await db.contracts.add(contract)
     return contract

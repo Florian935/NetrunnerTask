@@ -4,9 +4,12 @@ import type { Contract, Difficulty, Priority, Recurrence } from '../db'
 import { daysUntilDue } from '../features/contracts/dueDate'
 import { firstOccurrence, nextOccurrence } from '../game/recurrence'
 import { applyReputationDelta, reputationGain } from '../game/reputation'
+import { isStakeEligible, isStakeLost, stakePayout } from '../game/risk'
 import { rewardFor } from '../game/rewards'
 import type { Reward } from '../game/rewards'
 import { applyCompletion, isOnTime, resetIfMissed } from '../game/streak'
+import { useFeedbackStore } from './useFeedbackStore'
+import { usePlayerStore } from './usePlayerStore'
 
 /**
  * Store réactif des contrats (source de vérité de la liste en mémoire).
@@ -33,6 +36,24 @@ interface ContractsState {
   setPriority: (id: string, priority: Priority) => Promise<void>
   setDueDate: (id: string, dueDate: number | null) => Promise<void>
   setRecurrence: (id: string, recurrence: Recurrence | null) => Promise<void>
+  /**
+   * Pose, modifie ou retire une mise à risque (US-013). `amount` en crédits
+   * entiers : `> 0` pose/ajuste la mise, `0` la retire. Rembourse l'ancienne mise
+   * puis débite la nouvelle (plancher 0). Rejet sans effet si le contrat n'est
+   * pas éligible, si la mise est déjà résolue (`won`/`lost`), ou si `amount`
+   * dépasse le solde disponible (solde + mise actuelle). Renvoie `true` si la
+   * mise a été appliquée.
+   */
+  setStake: (id: string, amount: number) => Promise<boolean>
+  /**
+   * Résout la mise d'un contrat qu'on vient de terminer (US-013). Si la mise est
+   * en jeu (`pending`) : complété **à temps** → gain (`won`), le retour
+   * `stakePayout` est crédité ; complété **en retard** → perte (`lost`), aucun
+   * crédit (déjà débité à la pose). Renvoie l'issue pour piloter le toast.
+   */
+  settleStakeOnComplete: (
+    id: string,
+  ) => Promise<{ result: 'won' | 'lost' | 'none'; stake: number; payout: number }>
   addSubtask: (id: string, title: string) => Promise<void>
   toggleSubtask: (id: string, subtaskId: string) => Promise<void>
   removeSubtask: (id: string, subtaskId: string) => Promise<void>
@@ -48,8 +69,17 @@ export const useContractsStore = create<ContractsState>((set, get) => ({
     const now = Date.now()
     // US-012 : pénalités de réputation dues aux streaks cassés ce chargement.
     const penalties: { factionId: string; amount: number }[] = []
+    // US-013 : mises en jeu perdues ce chargement (→ toasts danger via AppShell).
+    const stakeLosses: { title: string; amount: number }[] = []
     const reactivated = await Promise.all(
       contracts.map(async (c) => {
+        // US-013 : mise en jeu dont l'échéance est dépassée → perdue (figée).
+        // One-shot uniquement ; aucun mouvement de crédit (débit fait à la pose).
+        if (isStakeLost(c, now)) {
+          await contractsRepo.update(c.id, { stakeOutcome: 'lost' })
+          stakeLosses.push({ title: c.title, amount: c.stake })
+          return { ...c, stakeOutcome: 'lost' as const }
+        }
         if (!c.recurrence) return c
         // Réactivation (US-006) : un récurrent **validé** dont la prochaine
         // échéance est atteinte redevient « à faire ».
@@ -108,6 +138,10 @@ export const useContractsStore = create<ContractsState>((set, get) => ({
           }
         }),
       )
+    }
+    // US-013 : remonte les mises perdues à la rétroaction (AppShell → toasts).
+    if (stakeLosses.length > 0) {
+      useFeedbackStore.getState().pushStakeLosses(stakeLosses)
     }
     set({ contracts: reactivated, loaded: true })
   },
@@ -224,9 +258,31 @@ export const useContractsStore = create<ContractsState>((set, get) => ({
   },
 
   setDueDate: async (id, dueDate) => {
+    // US-013 : retirer l'échéance d'un contrat dont la mise est en jeu la rend
+    // inéligible (plus de déclencheur de perte) → on rembourse et annule la mise
+    // pour ne pas laisser une mise « prisonnière » sans issue possible.
+    const current = get().contracts.find((c) => c.id === id)
+    const clearsStake =
+      dueDate === null &&
+      current?.stakeOutcome === 'pending' &&
+      current.stake > 0
     await contractsRepo.setDueDate(id, dueDate)
+    if (clearsStake) {
+      await usePlayerStore.getState().adjustCredits(current.stake)
+      await contractsRepo.update(id, { stake: 0, stakeOutcome: 'none' })
+    }
     set((s) => ({
-      contracts: s.contracts.map((c) => (c.id === id ? { ...c, dueDate } : c)),
+      contracts: s.contracts.map((c) =>
+        c.id === id
+          ? {
+              ...c,
+              dueDate,
+              ...(clearsStake
+                ? { stake: 0, stakeOutcome: 'none' as const }
+                : {}),
+            }
+          : c,
+      ),
     }))
   },
 
@@ -252,10 +308,22 @@ export const useContractsStore = create<ContractsState>((set, get) => ({
     const resetStreak =
       recurrence === null &&
       (current.currentStreak !== 0 || current.bestStreak !== 0)
+    // Ajout d'une récurrence → le contrat devient inéligible à la mise (réservée
+    // aux one-shot). On rembourse et annule la mise en jeu (symétrique de
+    // `setDueDate(null)`) pour ne pas laisser une mise « prisonnière » qui serait
+    // confisquée entre deux occurrences — US-013.
+    const clearsStake =
+      recurrence !== null &&
+      current.stakeOutcome === 'pending' &&
+      current.stake > 0
     await contractsRepo.setRecurrence(id, recurrence)
     if (dueDate !== current.dueDate) await contractsRepo.setDueDate(id, dueDate)
     if (resetStreak)
       await contractsRepo.update(id, { currentStreak: 0, bestStreak: 0 })
+    if (clearsStake) {
+      await usePlayerStore.getState().adjustCredits(current.stake)
+      await contractsRepo.update(id, { stake: 0, stakeOutcome: 'none' })
+    }
     set((s) => ({
       contracts: s.contracts.map((c) =>
         c.id === id
@@ -264,10 +332,72 @@ export const useContractsStore = create<ContractsState>((set, get) => ({
               recurrence,
               dueDate,
               ...(resetStreak ? { currentStreak: 0, bestStreak: 0 } : {}),
+              ...(clearsStake
+                ? { stake: 0, stakeOutcome: 'none' as const }
+                : {}),
             }
           : c,
       ),
     }))
+  },
+
+  setStake: async (id, amount) => {
+    const current = get().contracts.find((c) => c.id === id)
+    if (!current) return false
+    // Une mise résolue est figée : on n'y touche plus (US-013).
+    if (current.stakeOutcome === 'won' || current.stakeOutcome === 'lost') {
+      return false
+    }
+    // Montant entier ≥ 0. Poser (> 0) exige un contrat éligible.
+    const next = Math.floor(amount)
+    if (!Number.isFinite(next) || next < 0) return false
+    if (next > 0 && !isStakeEligible(current)) return false
+
+    const oldStake = current.stake
+    // Après remboursement de l'ancienne mise, le maximum misable = solde + ancienne.
+    const credits = usePlayerStore.getState().player?.credits ?? 0
+    if (next > credits + oldStake) return false
+    if (next === oldStake) return true // aucun changement
+
+    // Rembourse l'ancienne mise, débite la nouvelle (delta net ; plancher 0 géré
+    // par `adjustCredits`).
+    await usePlayerStore.getState().adjustCredits(oldStake - next)
+
+    const stakeOutcome = next > 0 ? 'pending' : 'none'
+    await contractsRepo.update(id, { stake: next, stakeOutcome })
+    set((s) => ({
+      contracts: s.contracts.map((c) =>
+        c.id === id ? { ...c, stake: next, stakeOutcome } : c,
+      ),
+    }))
+    return true
+  },
+
+  settleStakeOnComplete: async (id) => {
+    const current = get().contracts.find((c) => c.id === id)
+    if (!current || current.stakeOutcome !== 'pending') {
+      return { result: 'none', stake: 0, payout: 0 }
+    }
+    const stake = current.stake
+    // À temps → gain crédité ; en retard → perte (aucun mouvement, déjà débité).
+    if (isOnTime(current.dueDate, Date.now())) {
+      const payout = stakePayout(stake, current.difficulty)
+      await usePlayerStore.getState().adjustCredits(payout)
+      await contractsRepo.update(id, { stakeOutcome: 'won' })
+      set((s) => ({
+        contracts: s.contracts.map((c) =>
+          c.id === id ? { ...c, stakeOutcome: 'won' } : c,
+        ),
+      }))
+      return { result: 'won', stake, payout }
+    }
+    await contractsRepo.update(id, { stakeOutcome: 'lost' })
+    set((s) => ({
+      contracts: s.contracts.map((c) =>
+        c.id === id ? { ...c, stakeOutcome: 'lost' } : c,
+      ),
+    }))
+    return { result: 'lost', stake, payout: 0 }
   },
 
   addSubtask: async (id, title) => {
@@ -310,6 +440,12 @@ export const useContractsStore = create<ContractsState>((set, get) => ({
   },
 
   remove: async (id) => {
+    // US-013 : supprimer un contrat dont la mise est en jeu rembourse la mise
+    // (l'argent débité à la pose ne doit pas disparaître avec le contrat).
+    const current = get().contracts.find((c) => c.id === id)
+    if (current?.stakeOutcome === 'pending' && current.stake > 0) {
+      await usePlayerStore.getState().adjustCredits(current.stake)
+    }
     await contractsRepo.remove(id)
     set((s) => ({ contracts: s.contracts.filter((c) => c.id !== id) }))
   },

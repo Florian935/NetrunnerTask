@@ -22,6 +22,7 @@ import { factionLabel } from './factionLabel'
 export function useCompleteContract() {
   const { t } = useTranslation()
   const complete = useContractsStore((s) => s.complete)
+  const settleStake = useContractsStore((s) => s.settleStakeOnComplete)
   const grantReward = usePlayerStore((s) => s.grantReward)
   const grantReputation = useFactionsStore((s) => s.grantReputation)
   const pushToast = useFeedbackStore((s) => s.pushToast)
@@ -38,6 +39,33 @@ export function useCompleteContract() {
         .getState()
         .contracts.find((c) => c.id === id)
       void complete(id).then((reward) => {
+        // Mise à risque (US-013) — résolue à **toute** complétion (gain crédité si
+        // à temps → toast succès ; perte figée sinon → toast danger). Placé AVANT
+        // la garde `!reward` : une mise posée sur un contrat rouvert (déjà
+        // récompensé, `complete()` renvoie `null`) doit quand même être réglée. La
+        // double-résolution est déjà bloquée (mise `won`/`lost` figée).
+        void settleStake(id).then((r) => {
+          if (r.result === 'won') {
+            pushToast(
+              'success',
+              t('contracts.stake.toastWon'),
+              t('contracts.stake.toastWonBody', {
+                payout: r.payout,
+                net: r.payout - r.stake,
+              }),
+            )
+          } else if (r.result === 'lost') {
+            pushToast(
+              'danger',
+              t('contracts.stake.toastLost'),
+              t('contracts.stake.toastLostBody', {
+                amount: r.stake,
+                title: contract?.title ?? '',
+              }),
+            )
+          }
+        })
+
         if (!reward) return
         void grantReward(reward).then((res) => {
           if (res.leveledUp) triggerLevelUp(res.newLevel)
@@ -85,6 +113,7 @@ export function useCompleteContract() {
     },
     [
       complete,
+      settleStake,
       grantReward,
       grantReputation,
       pushToast,

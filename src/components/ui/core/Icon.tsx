@@ -2,6 +2,7 @@ import type { CSSProperties, HTMLAttributes } from 'react'
 import {
   Activity,
   AlertTriangle,
+  ArrowRight,
   Box,
   Briefcase,
   Check,
@@ -21,6 +22,7 @@ import {
   Info,
   LayoutDashboard,
   ListChecks,
+  Lock,
   type LucideIcon,
   Package,
   Plus,
@@ -34,8 +36,11 @@ import {
   Trash2,
   TrendingDown,
   TrendingUp,
+  Undo2,
   User,
   X,
+  XCircle,
+  Zap,
 } from 'lucide-react'
 
 /**
@@ -52,6 +57,7 @@ import {
 const REGISTRY: Record<string, LucideIcon> = {
   activity: Activity,
   'alert-triangle': AlertTriangle,
+  'arrow-right': ArrowRight,
   box: Box,
   briefcase: Briefcase,
   check: Check,
@@ -71,6 +77,7 @@ const REGISTRY: Record<string, LucideIcon> = {
   info: Info,
   'layout-dashboard': LayoutDashboard,
   'list-checks': ListChecks,
+  lock: Lock,
   package: Package,
   plus: Plus,
   radio: Radio,
@@ -83,8 +90,11 @@ const REGISTRY: Record<string, LucideIcon> = {
   'trash-2': Trash2,
   'trending-down': TrendingDown,
   'trending-up': TrendingUp,
+  'undo-2': Undo2,
   user: User,
   x: X,
+  'x-circle': XCircle,
+  zap: Zap,
 }
 
 export interface IconProps {

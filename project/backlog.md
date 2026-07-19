@@ -41,7 +41,7 @@ Les US-005 à US-007 enrichissent le to-do.
 |----|-------|-----|----------|--------|-----------|
 | US-011 | Contrats permanents (habitudes) & streaks | 2 | haute | fait | contrats, récurrence |
 | US-012 | Réputation par faction (paliers, gain/perte) | 2 | haute | fait | factions, US-011 |
-| US-013 | Contrats à risque (mise de crédits) | 2 | moyenne | à faire | crédits (US-009) |
+| US-013 | Contrats à risque (mise de crédits) | 2 | moyenne | fait | crédits (US-009) |
 | US-014 | Échéances horodatées + rappels / notifications PWA | 2 | moyenne | à faire | échéances (US-005/006) |
 | US-015 | État vide « aucun contrat pour ce filtre » | 2 | basse | à faire | filtre (US-007) |
 | US-016 | Socle rareté (rampe `--rarity-*`, `RarityBadge`, `CosmeticCard`) | 2 | moyenne | à faire | design system |
