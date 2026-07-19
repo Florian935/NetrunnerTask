@@ -1,8 +1,9 @@
 import { create } from 'zustand'
-import { contractsRepo } from '../db'
+import { contractsRepo, factionsRepo } from '../db'
 import type { Contract, Difficulty, Priority, Recurrence } from '../db'
 import { daysUntilDue } from '../features/contracts/dueDate'
 import { firstOccurrence, nextOccurrence } from '../game/recurrence'
+import { applyReputationDelta, reputationGain } from '../game/reputation'
 import { rewardFor } from '../game/rewards'
 import type { Reward } from '../game/rewards'
 import { applyCompletion, isOnTime, resetIfMissed } from '../game/streak'
@@ -45,6 +46,8 @@ export const useContractsStore = create<ContractsState>((set, get) => ({
   load: async () => {
     const contracts = await contractsRepo.list()
     const now = Date.now()
+    // US-012 : pénalités de réputation dues aux streaks cassés ce chargement.
+    const penalties: { factionId: string; amount: number }[] = []
     const reactivated = await Promise.all(
       contracts.map(async (c) => {
         if (!c.recurrence) return c
@@ -74,12 +77,38 @@ export const useContractsStore = create<ContractsState>((set, get) => ({
           )
           if (s.currentStreak !== c.currentStreak) {
             await contractsRepo.update(c.id, { currentStreak: s.currentStreak })
+            // US-012 : casser un streak rattaché à une faction lui coûte de la
+            // réputation (malus = gain d'un contrat de cette difficulté).
+            if (c.factionId) {
+              penalties.push({
+                factionId: c.factionId,
+                amount: reputationGain(c.difficulty),
+              })
+            }
             return { ...c, currentStreak: s.currentStreak }
           }
         }
         return c
       }),
     )
+    // Applique les pénalités (agrégées par faction, plancher 0). Écrites AVANT
+    // que l'app-shell ne (re)charge les factions → réputation à jour à l'affichage.
+    if (penalties.length > 0) {
+      const byFaction = new Map<string, number>()
+      for (const p of penalties) {
+        byFaction.set(p.factionId, (byFaction.get(p.factionId) ?? 0) + p.amount)
+      }
+      await Promise.all(
+        [...byFaction].map(async ([factionId, amount]) => {
+          const faction = await factionsRepo.get(factionId)
+          if (!faction) return
+          const reputation = applyReputationDelta(faction.reputation, -amount)
+          if (reputation !== faction.reputation) {
+            await factionsRepo.update(factionId, { reputation })
+          }
+        }),
+      )
+    }
     set({ contracts: reactivated, loaded: true })
   },
 

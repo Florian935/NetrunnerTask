@@ -4,6 +4,8 @@ import { Toast } from '../components/ui'
 import { NavRail } from '../components/layout/NavRail'
 import { StatusBar } from '../components/layout/StatusBar'
 import { LevelUpToast } from '../features/progression/LevelUpToast'
+import { RankUpToast } from '../features/reputation/RankUpToast'
+import { ReputationGainToast } from '../features/reputation/ReputationGainToast'
 import { useContractsStore } from '../stores/useContractsStore'
 import { useFactionsStore } from '../stores/useFactionsStore'
 import { usePlayerStore } from '../stores/usePlayerStore'
@@ -12,9 +14,11 @@ import '../components/layout/appShell.css'
 
 /**
  * Chrome permanent de l'app (US-010) : rail de navigation + barre de statut +
- * vue active (`<Outlet/>`), et **hôte global de la rétroaction** (toasts +
- * toast de palier), visible quelle que soit la vue. Charge les données au
- * montage (contrats + joueur).
+ * vue active (`<Outlet/>`), et **hôte global de la rétroaction** (toasts, toast
+ * de palier, gain de réputation & passage de rang), visible quelle que soit la
+ * vue. Charge les données au montage : **contrats d'abord** (US-012 — la casse
+ * d'un streak y applique les pénalités de réputation en base), **puis factions**
+ * (qui lisent la réputation à jour), et le joueur en parallèle.
  */
 export function AppShell() {
   const loadContracts = useContractsStore((s) => s.load)
@@ -24,10 +28,14 @@ export function AppShell() {
   const dismiss = useFeedbackStore((s) => s.dismiss)
   const levelUp = useFeedbackStore((s) => s.levelUp)
   const clearLevelUp = () => useFeedbackStore.setState({ levelUp: null })
+  const repGain = useFeedbackStore((s) => s.repGain)
+  const rankUp = useFeedbackStore((s) => s.rankUp)
+  const clearRankUp = () => useFeedbackStore.setState({ rankUp: null })
 
   useEffect(() => {
-    void loadContracts()
-    void loadFactions()
+    // Séquencement : contrats → factions (les pénalités de réputation dues aux
+    // streaks cassés sont écrites pendant `loadContracts`, avant leur lecture).
+    void loadContracts().then(() => loadFactions())
     void loadPlayer()
   }, [loadContracts, loadFactions, loadPlayer])
 
@@ -41,22 +49,31 @@ export function AppShell() {
         </main>
       </div>
 
-      {/* Toast de montée de niveau (haut-centre) — un palier à la fois */}
-      {levelUp !== null && (
+      {/* Moments de palier (haut-centre) : montée de niveau + passage de rang */}
+      {(levelUp !== null || rankUp !== null) && (
         <div
           style={{
             position: 'fixed',
             top: 24,
             left: '50%',
             transform: 'translateX(-50%)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 10,
             zIndex: 1100,
           }}
         >
-          <LevelUpToast level={levelUp} onClose={clearLevelUp} />
+          {levelUp !== null && (
+            <LevelUpToast level={levelUp} onClose={clearLevelUp} />
+          )}
+          {rankUp !== null && (
+            <RankUpToast item={rankUp} onClose={clearRankUp} />
+          )}
         </div>
       )}
 
-      {/* Pile de toasts (bas-droite) */}
+      {/* Pile de toasts (bas-droite) : gain de réputation au-dessus des toasts */}
       <div
         style={{
           position: 'fixed',
@@ -70,6 +87,11 @@ export function AppShell() {
           zIndex: 1000,
         }}
       >
+        {repGain !== null && (
+          <div style={{ pointerEvents: 'auto' }}>
+            <ReputationGainToast item={repGain} />
+          </div>
+        )}
         {toasts.map((item) => (
           <div
             key={item.id}

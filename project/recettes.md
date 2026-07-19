@@ -309,3 +309,40 @@ Recette du 19/07/2026. Critères d'acceptation de `us/US-011-permanents-streaks.
 > est verrouillé jusqu'à réactivation, US-006).
 
 **Verdict : recette US-011 validée (7/7 critères + vérifs annexes).**
+
+## US-012 — Réputation par faction (paliers, gain/perte)
+
+Recette du 19/07/2026. Critères d'acceptation de `us/US-012-reputation-factions.md`.
+
+| ID | Critère (action → résultat) | Vérif | Statut | Date |
+|----|------------------------------|-------|--------|------|
+| C1 | Compléter un contrat **rattaché à une faction** → réputation **+barème** (selon difficulté) | `useCompleteContract` + `grantReputation` + PO live | validé | 19/07/2026 |
+| C2 | Compléter un contrat **sans faction** → **aucune** réputation modifiée | garde `if (!contract.factionId) return` + PO live | validé | 19/07/2026 |
+| C3 | Récurrent rattaché complété à temps → **+montant à chaque occurrence** | même chemin de gain (réputation indépendante de l'anti-farm XP) + PO | validé | 19/07/2026 |
+| C4 | Casser le streak d'un récurrent rattaché (période manquée + **reload**) → réputation **−malus** | pénalités agrégées dans `load()` + `applyReputationDelta` (**tests**) — *dépend d'un changement de jour, non observé en live* | validé | 19/07/2026 |
+| C5 | Franchir un **seuil** → **rang** affiché change (+ toast de passage de rang) | `rankForReputation` avant/après + `triggerRankUp` + panneau ; **tests** des seuils | validé | 19/07/2026 |
+| C6 | La réputation ne descend **jamais sous 0** | `applyReputationDelta = max(0, …)` (**test unit.**) | validé | 19/07/2026 |
+| C7 | Réputation **et** palier **persistent** (Dexie) après reload | `factionsRepo.update` (gain + pénalités) + migration v7 ; relus au `load()` | validé | 19/07/2026 |
+| C8 | Réputation + palier **visibles par faction** (panneau) | `ReputationPanel` (HudPanel) sur le tableau de bord + PO live | validé | 19/07/2026 |
+| C9 | i18n **FR/EN** (`reputation.*` : rangs, libellés, toasts) ; aucune chaîne en dur | clés FR+EN + composants via `t()` | validé | 19/07/2026 |
+| C10 | `game/reputation.ts` couvert (barème, seuils, progression, plancher) | `reputation.test.ts` (**10/10**) | validé | 19/07/2026 |
+| C11 | `typecheck` + `lint` + `build` + `test` (**51/51**) | exécution | validé | 19/07/2026 |
+| — | Séquencement `AppShell` : contrats **avant** factions (pénalités écrites avant lecture) | `loadContracts().then(loadFactions)` | validé | 19/07/2026 |
+| — | Migration Dexie **v7** : factions existantes rétro-remplies `reputation = 0` | upgrade v7 (backfill) | validé | 19/07/2026 |
+| — | Rétroactions maquette 8d : **toast de gain** teinté faction + **toast de passage de rang** | `ReputationGainToast` / `RankUpToast` (hébergés `AppShell`) + PO | validé | 19/07/2026 |
+
+### Ajustement en cours de recette (validé PO)
+
+- **Barres de progression du panneau** : passées d'une couleur pleine à un
+  **dégradé de teinte** (couleur voisine → couleur de la faction, façon barre du
+  design system), pour les rangs **en cours** ; l'état **LÉGENDE** reste plein +
+  hachuré. Appliqué **localement** au panneau réputation (le composant partagé
+  `ProgressBar` n'est **pas** modifié — hors périmètre US-012).
+
+> **Note de méthode** : C1/C2/C3/C5/C8 vérifiés en live par le PO (19/07/2026).
+> C4 (perte au streak cassé) et le franchissement effectif de seuil (C5) dépendent
+> d'un changement de jour / de plusieurs complétions : couverts par les tests
+> unitaires de `game/reputation.ts` (`applyReputationDelta`, `rankForReputation`)
+> et la revue du câblage `load()` / `useCompleteContract`.
+
+**Verdict : recette US-012 validée (9/9 critères + vérifs annexes).**

@@ -106,6 +106,24 @@ export class NetrunnerDB extends Dexie {
             if (c.bestStreak === undefined) c.bestStreak = 0
           }),
       )
+    // v7 (US-012) : réputation embarquée sur les factions. Pas d'index nouveau
+    // (`reputation` non interrogé) → schéma v6 recopié + rétro-remplissage à `0`
+    // (factions existantes = réputation vierge).
+    this.version(7)
+      .stores({
+        contracts: 'id, factionId, status, dueDate, createdAt',
+        factions: 'id, name',
+        player: 'id',
+        demoKV: 'key',
+      })
+      .upgrade((tx) =>
+        tx
+          .table<Faction>('factions')
+          .toCollection()
+          .modify((f) => {
+            if (f.reputation === undefined) f.reputation = 0
+          }),
+      )
   }
 }
 

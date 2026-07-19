@@ -79,6 +79,13 @@ export interface Faction {
   /** Couleur d'accent (token NIGHTWIRE ou couleur CSS). */
   color: string
   createdAt: number
+  /**
+   * Réputation de la faction (US-012) : entier **≥ 0** (plancher). Monte à la
+   * complétion payante d'un de ses contrats, descend quand un streak d'habitude
+   * rattaché casse. Le **rang** en est dérivé par seuils (voir `game/reputation.ts`).
+   * `0` par défaut.
+   */
+  reputation: number
 }
 
 /** État de progression global — enregistrement unique (singleton, clé fixe `'me'`). */

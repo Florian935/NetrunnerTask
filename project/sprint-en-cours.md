@@ -5,10 +5,27 @@
 
 ## US active
 
-_Aucune US active._ Dernière US clôturée : **US-011** (archivée dans
-`us/archive/`, décision **#018**, recette **7/7**).
+_Aucune US active._ Dernière US clôturée : **US-012** (archivée dans
+`us/archive/`, décision **#019**, recette **9/9**).
 
 ## Étape du cycle de vie
+
+**US-012 clôturée le 19/07/2026** (commit + merge sur `develop`). Cycle complet :
+cadrages fonctionnel + technique validés PO → **maquette reçue & validée**
+(`docs/maquettes/US-012/`) → plan 13 étapes → implémentation → recette **9/9 PO**.
+Contenu : `Faction.reputation` (**Dexie v7**, plancher 0) **monte** à la complétion
+payante d'un contrat de la faction (barème `1/2/4/7/12`) et **descend** quand un
+streak d'habitude rattaché casse (perte au `load()`, US-011, silencieuse) ; **rangs
+dérivés par seuils** `0/25/75/200/500` (statut, sans avantage). Réalisé : module
+pur **`game/reputation.ts`** (**testé 10/10**), `grantReputation`, gain +
+**toasts** (gain teinté faction + passage de rang) dans `useCompleteContract`/
+`AppShell`, pénalités au `load()` + **séquencement contrats→factions**, panneau
+**`ReputationPanel`** (`HudPanel`) sur le tableau de bord (insigne 5 crans, barre
+en **dégradé de teinte** local au panneau, état LÉGENDE), icônes `crown`/
+`shield-check`, i18n `reputation.*` FR/EN. Vérifs vertes : **typecheck + lint +
+build + tests 51/51**.
+
+## Étape du cycle de vie (US antérieure)
 
 **US-011 clôturée le 19/07/2026** (commit + merge sur `develop`). Cycle complet :
 cadrages fonctionnel + technique validés PO → **pas de maquette** (alignement sur
@@ -25,8 +42,9 @@ active) sur la ligne + bloc **Série/Record** au détail, i18n `contracts.streak
 FR/EN. Vérifs vertes : **typecheck + lint + build + tests 41/41**.
 
 > **MVP 2 découpé** le 19/07/2026 en 9 US (US-011 → US-019, voir `backlog.md`) ;
-> **prochaine : US-012** (réputation par faction). **MVP 1 terminé** (US-001 →
-> US-010 `fait`) + chantier fond/cartes figé (#017). US-007 archivée.
+> **US-011 & US-012 faites** → **prochaine : US-013** (contrats à risque, mise de
+> crédits). **MVP 1 terminé** (US-001 → US-010 `fait`) + chantier fond/cartes figé
+> (#017).
 
 ## Chantier exploration figé (hors cycle US) — `test/fonds-halos` → `develop`
 

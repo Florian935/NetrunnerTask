@@ -32,6 +32,7 @@ export async function ensureSeeded(): Promise<void> {
         name: f.name,
         color: f.color,
         createdAt: now,
+        reputation: 0,
       })),
     )
   }
