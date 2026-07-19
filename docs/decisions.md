@@ -255,3 +255,27 @@ L'EN est une réécriture in-world (ton netrunner), pas du mot-à-mot.
   nettoie pas les clés de style disparues.
 - **À suivre (backlog MVP 2)** : adoption de `StatCard`/`HudPanel` sur le tableau
   de bord ; réserver le bouton plein `primary` à un CTA « héros ».
+
+### 018 — Contrats permanents & streaks (US-011, 19/07/2026)
+
+- **Le streak est une propriété des contrats récurrents** (US-006), pas un
+  nouveau type (H1) : tout contrat avec une `recurrence` devient une habitude
+  suivie ; un one-shot n'a pas de série.
+- **Règle de série** (`game/streak.ts`, pur, testé **11/11**) : complétion **à
+  temps** → `currentStreak + 1` ; complétion **en retard** → repart à `1` ;
+  `bestStreak = max(...)` **ne diminue jamais**. « À temps »/« manqué » comparés
+  au **jour local** (l'échéance est à minuit, cohérent avec `recurrence.ts`).
+- **Remise à zéro** d'une période manquée détectée **au chargement** (`load()`,
+  récurrent `open` dont l'échéance est dépassée), **en plus** de la réactivation
+  des récurrents `done` échus (cas exclusifs). Écriture idempotente (seulement si
+  la valeur change).
+- **Anti-double garanti par construction** : le verrou « récurrent validé »
+  (US-006) empêche une seconde complétion dans le même cycle → une seule
+  incrémentation par période (pas de champ « déjà compté »).
+- **Récompenses inchangées** (H5) : US-011 ne fait que suivre + afficher. Les
+  **conséquences** de la série (réputation gagnée/perdue, paliers) = **US-012**.
+- **Modèle** : `currentStreak` / `bestStreak` sur `Contract`, **migration Dexie
+  v6** (backfill à `0`, pas d'index nouveau — patron v3/v4/v5).
+- **UI sans maquette** (alignée sur l'existant) : puce `StreakChip` (icône Lucide
+  `flame`, ambre si série active) sur la ligne des récurrents + bloc « Série /
+  Record » dans la surface de détail. i18n `contracts.streak.*` FR/EN.

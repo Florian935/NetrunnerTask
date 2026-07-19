@@ -5,8 +5,28 @@
 
 ## US active
 
-_Aucune US active._ Dernière US clôturée : **US-007** (archivée dans
-`us/archive/`). **MVP 1 terminé** — toutes les US (US-001 → US-010) sont `fait`.
+_Aucune US active._ Dernière US clôturée : **US-011** (archivée dans
+`us/archive/`, décision **#018**, recette **7/7**).
+
+## Étape du cycle de vie
+
+**US-011 clôturée le 19/07/2026** (commit + merge sur `develop`). Cycle complet :
+cadrages fonctionnel + technique validés PO → **pas de maquette** (alignement sur
+l'existant) → plan 10 étapes → implémentation → recette **7/7 PO**. Contenu : le
+**streak** est une propriété des contrats **récurrents** (US-006) — série des
+périodes complétées à temps (+1 à temps, repart à 1 en retard), **record** qui ne
+diminue jamais, **remise à 0** sur période manquée (au `load()`, avec la
+réactivation US-006). Anti-double garanti par le verrou « récurrent validé ».
+Récompenses **inchangées** (conséquences réputation = **US-012**). Réalisé :
+**migration Dexie v6** (`currentStreak`/`bestStreak` sur `Contract`, backfill 0),
+module pur **`game/streak.ts`** (**testé 11/11**) branché dans `complete()` /
+`load()` / `setRecurrence(null)`, puce **`StreakChip`** (icône `flame`, ambre si
+active) sur la ligne + bloc **Série/Record** au détail, i18n `contracts.streak.*`
+FR/EN. Vérifs vertes : **typecheck + lint + build + tests 41/41**.
+
+> **MVP 2 découpé** le 19/07/2026 en 9 US (US-011 → US-019, voir `backlog.md`) ;
+> **prochaine : US-012** (réputation par faction). **MVP 1 terminé** (US-001 →
+> US-010 `fait`) + chantier fond/cartes figé (#017). US-007 archivée.
 
 ## Chantier exploration figé (hors cycle US) — `test/fonds-halos` → `develop`
 

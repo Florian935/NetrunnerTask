@@ -17,6 +17,8 @@ function makeContract(over: Partial<Contract>): Contract {
     rewardGranted: false,
     subtasks: [],
     recurrence: null,
+    currentStreak: 0,
+    bestStreak: 0,
     ...over,
   }
 }

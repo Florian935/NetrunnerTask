@@ -114,6 +114,12 @@
       "edit": "Modifier le contrat",
       "delete": "Supprimer"
     },
+    "streak": {
+      "label": "SÉRIE",
+      "best": "RECORD",
+      "chipTitle": "Série : {{count}} · Record : {{best}}",
+      "aria": "Série de {{count}}, record {{best}}"
+    },
     "delete": {
       "title": "SUPPRIMER LE CONTRAT",
       "message": "Tu vas purger ce contrat du grid. Aucune trace, aucun retour — c'est définitif, runner.",

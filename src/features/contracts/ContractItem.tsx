@@ -8,6 +8,7 @@ import { contractCode } from './contractCode'
 import { FactionBadge } from './FactionBadge'
 import { PriorityBars } from './PriorityBars'
 import { RecurrenceChip } from './RecurrenceChip'
+import { StreakChip } from './StreakChip'
 import { DUE_COLORS, dueStatus, formatDueShort } from './dueDate'
 
 export interface ContractItemProps {
@@ -191,6 +192,12 @@ export function ContractItem({
                 credits: reward.credits,
               })}
             </span>
+          )}
+          {contract.recurrence && (
+            <StreakChip
+              current={contract.currentStreak}
+              best={contract.bestStreak}
+            />
           )}
           {!done && contract.recurrence && (
             <RecurrenceChip recurrence={contract.recurrence} />

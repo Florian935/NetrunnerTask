@@ -5,6 +5,7 @@ import { daysUntilDue } from '../features/contracts/dueDate'
 import { firstOccurrence, nextOccurrence } from '../game/recurrence'
 import { rewardFor } from '../game/rewards'
 import type { Reward } from '../game/rewards'
+import { applyCompletion, isOnTime, resetIfMissed } from '../game/streak'
 
 /**
  * Store réactif des contrats (source de vérité de la liste en mémoire).
@@ -43,13 +44,13 @@ export const useContractsStore = create<ContractsState>((set, get) => ({
 
   load: async () => {
     const contracts = await contractsRepo.list()
-    // Réactivation (US-006) : un contrat récurrent **validé** dont la prochaine
-    // échéance est atteinte redevient « à faire » (au chargement de l'app).
     const now = Date.now()
     const reactivated = await Promise.all(
       contracts.map(async (c) => {
+        if (!c.recurrence) return c
+        // Réactivation (US-006) : un récurrent **validé** dont la prochaine
+        // échéance est atteinte redevient « à faire ».
         if (
-          c.recurrence &&
           c.status === 'done' &&
           c.dueDate !== null &&
           daysUntilDue(c.dueDate, now) <= 0
@@ -61,6 +62,20 @@ export const useContractsStore = create<ContractsState>((set, get) => ({
           }
           await contractsRepo.update(c.id, patch)
           return { ...c, ...patch }
+        }
+        // Période manquée (US-011) : un récurrent **ouvert** dont l'échéance est
+        // dépassée voit sa série retomber à 0 (record préservé). Écriture
+        // seulement si la valeur change (idempotent au fil des chargements).
+        if (c.status === 'open') {
+          const s = resetIfMissed(
+            { currentStreak: c.currentStreak, bestStreak: c.bestStreak },
+            c.dueDate,
+            now,
+          )
+          if (s.currentStreak !== c.currentStreak) {
+            await contractsRepo.update(c.id, { currentStreak: s.currentStreak })
+            return { ...c, currentStreak: s.currentStreak }
+          }
         }
         return c
       }),
@@ -85,11 +100,21 @@ export const useContractsStore = create<ContractsState>((set, get) => ({
     if (current.recurrence) {
       const now = Date.now()
       const firstTime = !current.rewardGranted
+      // Série (US-011) : « à temps » évalué sur l'échéance **courante**, avant de
+      // l'avancer. À temps → +1 ; en retard → repart à 1. Une seule fois par
+      // cycle (le verrou « récurrent validé » empêche une seconde complétion).
+      const onTime = isOnTime(current.dueDate, now)
+      const streak = applyCompletion(
+        { currentStreak: current.currentStreak, bestStreak: current.bestStreak },
+        onTime,
+      )
       const patch = {
         status: 'done' as const,
         completedAt: now,
         rewardGranted: true,
         dueDate: nextOccurrence(current.recurrence, current.dueDate, now),
+        currentStreak: streak.currentStreak,
+        bestStreak: streak.bestStreak,
       }
       await contractsRepo.update(id, patch)
       set((s) => ({
@@ -193,11 +218,25 @@ export const useContractsStore = create<ContractsState>((set, get) => ({
         dueDate = firstOccurrence(recurrence, Date.now())
       }
     }
+    // Retrait de la récurrence → la série n'a plus de sens : on remet à 0
+    // (évite un résidu qui réapparaîtrait à une future re-récurrence) — US-011.
+    const resetStreak =
+      recurrence === null &&
+      (current.currentStreak !== 0 || current.bestStreak !== 0)
     await contractsRepo.setRecurrence(id, recurrence)
     if (dueDate !== current.dueDate) await contractsRepo.setDueDate(id, dueDate)
+    if (resetStreak)
+      await contractsRepo.update(id, { currentStreak: 0, bestStreak: 0 })
     set((s) => ({
       contracts: s.contracts.map((c) =>
-        c.id === id ? { ...c, recurrence, dueDate } : c,
+        c.id === id
+          ? {
+              ...c,
+              recurrence,
+              dueDate,
+              ...(resetStreak ? { currentStreak: 0, bestStreak: 0 } : {}),
+            }
+          : c,
       ),
     }))
   },

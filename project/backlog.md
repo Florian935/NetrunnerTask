@@ -39,7 +39,7 @@ Les US-005 à US-007 enrichissent le to-do.
 
 | ID | Titre | MVP | Priorité | Statut | Dépend de |
 |----|-------|-----|----------|--------|-----------|
-| US-011 | Contrats permanents (habitudes) & streaks | 2 | haute | à faire | contrats, récurrence |
+| US-011 | Contrats permanents (habitudes) & streaks | 2 | haute | fait | contrats, récurrence |
 | US-012 | Réputation par faction (paliers, gain/perte) | 2 | haute | à faire | factions, US-011 |
 | US-013 | Contrats à risque (mise de crédits) | 2 | moyenne | à faire | crédits (US-009) |
 | US-014 | Échéances horodatées + rappels / notifications PWA | 2 | moyenne | à faire | échéances (US-005/006) |

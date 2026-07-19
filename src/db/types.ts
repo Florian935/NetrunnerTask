@@ -59,6 +59,17 @@ export interface Contract {
    * entrée, sans historique des occurrences).
    */
   recurrence: Recurrence | null
+  /**
+   * Série courante (US-011) : nombre de périodes **consécutives complétées à
+   * temps** pour un contrat récurrent. `0` par défaut et pour un one-shot.
+   * Remise à `0` dès qu'une période est manquée. Voir `game/streak.ts`.
+   */
+  currentStreak: number
+  /**
+   * Meilleure série jamais atteinte (record, US-011). `0` par défaut ; **ne
+   * diminue jamais**, même après une remise à zéro de `currentStreak`.
+   */
+  bestStreak: number
 }
 
 /** Catégorie de vie regroupant des contrats. */

@@ -87,6 +87,25 @@ export class NetrunnerDB extends Dexie {
             if (c.recurrence === undefined) c.recurrence = null
           }),
       )
+    // v6 (US-011) : série (streak) embarquée sur les contrats. Pas d'index
+    // nouveau (`currentStreak`/`bestStreak` non interrogés) → schéma v5 recopié
+    // + rétro-remplissage à `0` (contrats existants = série vierge).
+    this.version(6)
+      .stores({
+        contracts: 'id, factionId, status, dueDate, createdAt',
+        factions: 'id, name',
+        player: 'id',
+        demoKV: 'key',
+      })
+      .upgrade((tx) =>
+        tx
+          .table<Contract>('contracts')
+          .toCollection()
+          .modify((c) => {
+            if (c.currentStreak === undefined) c.currentStreak = 0
+            if (c.bestStreak === undefined) c.bestStreak = 0
+          }),
+      )
   }
 }
 
