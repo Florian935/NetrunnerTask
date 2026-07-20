@@ -406,6 +406,33 @@ du socle** avant d'investir.
   typecheck + lint + build/PWA + **tests 93/93**. Maquette (`docs/maquettes/US-020/`,
   proto JSX) **non versionnée** (convention #007) — supprimée après implémentation.
 
+### 024 — Daemons & automatisation (US-021, A2, 20/07/2026)
+
+2ᵉ brique de la Phase A (pivot #022). **Généralisation** du builder d'un seul
+daemon vers un **catalogue** + **upgrade par type** + **déblocage chaîné**.
+
+- **Catalogue data-driven `GENERATORS`** (4 daemons : scraper / sifter / wraith /
+  oracle) : coût base+croissance, production/u, `upgrade` {baseCost, costGrowth,
+  multiplier}, `unlockAfter`, icône, clés i18n. **Ajouter un daemon = une entrée de
+  données** (zéro migration) — bénéfice de la généralisation anticipée en US-020.
+- **Modèle** : `BuilderState.generatorCount` → maps **`generators`** (compte/type)
+  + **`upgrades`** (niveau/type). **Migration Dexie v11** (`generatorCount` →
+  `generators.scraper`, `upgrades:{}`) : SCRAPER-01 + cycles **préservés**.
+- **Logique pure `game/builder.ts`** (**testée 18/18**) : `generatorCost`,
+  `upgradeCost`, `upgradeMultiplier`, `generatorProduction`, `productionPerSec`
+  (somme), `isUnlocked` (chaîné), `nextLockedGenerator`, `buyGenerator(id)`,
+  `buyUpgrade(id)`, `tick`.
+- **Store** : `buyGenerator(id)` / `buyUpgrade(id)` (persistance immédiate) ;
+  `useBuilderTick` inchangé.
+- **UI** : `DaemonCard` paramétré sur le composant DS **`<Card hud brackets halo>`**
+  (2 boutons **Compiler** / **Améliorer**, flash au level-up) ; **`TeaserCard`**
+  (daemon verrouillé : « ??? » + scanline + condition de déblocage) ; bandeau
+  **« Production réseau »** ; liste en grille 2 colonnes (desktop). i18n
+  `builder.generators.*`/`upgrade`/`teaser`/`total` FR/EN ; icônes `filter`/`ghost`/
+  `radar`/`key-round`. `prefers-reduced-motion` respecté (P9).
+- Vérifs : typecheck + lint + build/PWA + **tests 100/100**. Recette **10/10 PO**.
+  Maquette (`docs/maquettes/US-021/`) non versionnée (convention #007) — supprimée.
+
 ### 022 — Pivot produit : de « to-do gamifié » vers « jeu builder social » (19/07/2026)
 
 Décision structurante actée après un brainstorming PO ↔ Claude (voir

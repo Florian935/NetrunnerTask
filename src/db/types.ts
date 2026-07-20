@@ -140,8 +140,10 @@ export interface BuilderState {
   id: 'me'
   /** Ressource courante (cycles) ; peut être fractionnaire, plancher 0. */
   cycles: number
-  /** Nombre de daemons générateurs possédés (production automatique). */
-  generatorCount: number
+  /** Daemons possédés, par type (`id` du catalogue → compte). US-021. */
+  generators: Record<string, number>
+  /** Niveau d'upgrade, par type (`id` → niveau ; absent = 0). US-021. */
+  upgrades: Record<string, number>
   /**
    * Dernier instant de mise à jour (epoch ms) — base du tick. Socle du futur
    * calcul de production hors-ligne (reporté à A5/US-024).

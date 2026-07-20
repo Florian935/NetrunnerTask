@@ -3,6 +3,34 @@
 > Tests de recette par US. Chaque test reprend un critère d'acceptation de l'US.
 > Statuts : `à faire` / `validé` / `échoué`.
 
+## US-021 — A2 : Daemons & automatisation
+
+Recette du 20/07/2026. Critères de `us/archive/US-021-daemons-automatisation.md`.
+**Vérifs automatiques** : `typecheck` + `lint` + `build`/PWA + tests Vitest
+**100/100** (dont `game/builder.ts` **18/18** ; 93 → 100). **Recette visuelle &
+interactive navigateur (`npm run dev`) confirmée par le PO : tout OK.**
+
+| # | Critère (action → résultat attendu) | Méthode | Statut | Date |
+|---|-------------------------------------|---------|--------|------|
+| C1 | **≥ 3 types de daemons**, chacun nom/production/coût propres | catalogue `GENERATORS` + `BuilderView` + PO | validé | 20/07/2026 |
+| C2 | Coûts/productions **indépendants par type** | fonctions par `def` + PO | validé | 20/07/2026 |
+| C3 | Coût d'un type **monte à chaque achat** ; **refusé** si solde insuffisant | `generatorCost` (escalade) + bouton `disabled` ; `builder.test.ts` **18/18** + PO | validé | 20/07/2026 |
+| C4 | **Déblocage progressif** : teaser « ??? » → débloqué en possédant ≥ 1 du précédent | `isUnlocked` chaîné + `TeaserCard` + PO | validé | 20/07/2026 |
+| C5 | **Upgrade par type** ×2 la prod ; effet immédiat sur `cycles/s` | `buyUpgrade` + `upgradeMultiplier` + PO | validé | 20/07/2026 |
+| C6 | **Débit total** = somme daemons × upgrades ; bandeau « Production réseau » exact | `productionPerSec(state)` + PO | validé | 20/07/2026 |
+| C7 | **Migration v11** : SCRAPER-01 + cycles d'A1 **préservés** au rechargement | upgrade Dexie v11 + PO (sauvegarde A1 réelle) | validé | 20/07/2026 |
+| C8 | Types possédés **+** niveaux d'upgrade **persistent** (F5) | `builderRepo.save` (maps) + PO | validé | 20/07/2026 |
+| C9 | **HACK manuel** inchangé | `hack` + PO | validé | 20/07/2026 |
+| C10 | Non-régression : hors-ligne OK, **to-do intact** | local-first + zéro modif `Contract`/`Faction`/`Player` + PO | validé | 20/07/2026 |
+| — | i18n FR/EN (`generators`/`upgrade`/`teaser`/`total`), aucune chaîne en dur | clés FR+EN via `t()` | validé | 20/07/2026 |
+| — | `DaemonCard` sur le composant DS `<Card>` (repères d'angle cohérents) | revue | validé | 20/07/2026 |
+
+**Verdict : recette US-021 validée (10/10 critères).** Dexie **v11** (maps
+`generators`/`upgrades`). Catalogue **data-driven** → ajouter un daemon = **une
+entrée de données** (zéro migration), bénéfice de la généralisation anticipée en
+US-020. Déblocage chaîné + teaser (frisson « il y en a d'autres »). `prefers-
+reduced-motion` respecté (P9).
+
 ## US-020 — A1 : Noyau du builder (« Réseau »)
 
 Recette du 20/07/2026. Critères d'acceptation de `us/archive/US-020-noyau-builder.md`.

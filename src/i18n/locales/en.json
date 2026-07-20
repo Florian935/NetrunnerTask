@@ -233,15 +233,37 @@
     "hackSub": "inject",
     "hackAria": "Hack",
     "daemonsHeading": "Daemons",
-    "daemonName": "SCRAPER-01",
-    "daemonRole": "Passive mining node",
+    "daemonCount": "×{{count}}",
     "daemonYield": "+{{n}} cycle/s",
     "daemonOwned": "owned {{value}}/s",
-    "daemonCount": "×{{count}}",
     "buy": "Compile",
     "buyCost": "{{cost}} cyc",
     "insufficient": "Insufficient balance",
     "insufficientHint": "+{{n}}/s next",
-    "hint": "Hammer HACK to bootstrap · compile a daemon to automate production"
+    "hint": "Hammer HACK to bootstrap · compile a daemon to automate production",
+    "generators": {
+      "scraper": { "name": "SCRAPER-01", "role": "Passive mining node" },
+      "sifter": { "name": "SIFTER-07", "role": "Packet filter" },
+      "wraith": { "name": "WRAITH-2X", "role": "Stealth injector" },
+      "oracle": { "name": "ORACLE-00", "role": "Encrypted signal" }
+    },
+    "upgrade": {
+      "label": "Upgrade",
+      "level": "Lv.{{level}}",
+      "boost": "Lv.{{level}} · ×{{mult}}",
+      "effect": "Upgrade: ×{{mult}} type prod ({{from}} → {{to}}/u)"
+    },
+    "teaser": {
+      "locked": "Locked",
+      "name": "???",
+      "signature": "Signature ▓▓▓▓ encrypted",
+      "estimate": "≈ +{{value}}/u · unknown signal",
+      "unlock": "Unlocked by owning 1× {{prev}}"
+    },
+    "total": {
+      "label": "Network output",
+      "types_one": "{{count}} type",
+      "types_other": "{{count}} types"
+    }
   }
 }

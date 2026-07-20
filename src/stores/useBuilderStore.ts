@@ -2,25 +2,27 @@ import { create } from 'zustand'
 import { builderRepo } from '../db'
 import {
   buyGenerator as buyGeneratorPure,
+  buyUpgrade as buyUpgradePure,
   hack as hackPure,
   tick as tickPure,
   type BuilderCore,
 } from '../game/builder'
 
 /**
- * Store réactif du builder « Réseau » (US-020). État persisté (`builderState`).
- * Les mutations passent par la logique pure `game/builder.ts`. Persistance :
- * **immédiate à l'achat** (rare, important — on ne perd pas des cycles dépensés)
- * et **throttlée** pour hack/tick (fréquents) — le hook `useBuilderTick` appelle
- * `persist()` périodiquement et au masquage de l'onglet.
+ * Store réactif du builder « Réseau » (US-020, généralisé US-021). État persisté
+ * (`builderState`) : `cycles` + maps `generators`/`upgrades` par type de daemon.
+ * Mutations via la logique pure `game/builder.ts`. Persistance **immédiate** à
+ * l'achat (daemon/upgrade) ; hack/tick throttlés par `useBuilderTick`.
  */
 interface BuilderStoreState extends BuilderCore {
   loaded: boolean
   load: () => Promise<void>
   /** HACK manuel : ajoute des cycles (persistance différée par le hook). */
   hack: () => void
-  /** Achète un daemon si le solde suffit (no-op sinon) ; persiste aussitôt. */
-  buyGenerator: () => void
+  /** Achète un exemplaire du daemon `id` (no-op si solde <) ; persiste aussitôt. */
+  buyGenerator: (id: string) => void
+  /** Achète le prochain niveau d'upgrade du daemon `id` (no-op si solde <). */
+  buyUpgrade: (id: string) => void
   /** Avance la production automatique de `dtMs` ms (persistance différée). */
   applyTick: (dtMs: number) => void
   /** Écrit l'état courant en base (`updatedAt` = maintenant). */
@@ -29,19 +31,22 @@ interface BuilderStoreState extends BuilderCore {
 
 const core = (s: BuilderCore): BuilderCore => ({
   cycles: s.cycles,
-  generatorCount: s.generatorCount,
+  generators: s.generators,
+  upgrades: s.upgrades,
 })
 
 export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
   cycles: 0,
-  generatorCount: 0,
+  generators: {},
+  upgrades: {},
   loaded: false,
 
   load: async () => {
     const state = await builderRepo.get()
     set({
       cycles: state?.cycles ?? 0,
-      generatorCount: state?.generatorCount ?? 0,
+      generators: state?.generators ?? {},
+      upgrades: state?.upgrades ?? {},
       loaded: true,
     })
   },
@@ -50,9 +55,17 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
     set(hackPure(core(get())))
   },
 
-  buyGenerator: () => {
+  buyGenerator: (id) => {
     const current = core(get())
-    const next = buyGeneratorPure(current)
+    const next = buyGeneratorPure(current, id)
+    if (next === current) return // solde insuffisant → no-op
+    set(next)
+    void get().persist()
+  },
+
+  buyUpgrade: (id) => {
+    const current = core(get())
+    const next = buyUpgradePure(current, id)
     if (next === current) return // solde insuffisant → no-op
     set(next)
     void get().persist()
@@ -66,7 +79,7 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
   },
 
   persist: async () => {
-    const { cycles, generatorCount } = get()
-    await builderRepo.save({ cycles, generatorCount, updatedAt: Date.now() })
+    const { cycles, generators, upgrades } = get()
+    await builderRepo.save({ cycles, generators, upgrades, updatedAt: Date.now() })
   },
 }))
