@@ -61,6 +61,11 @@ interface FeedbackState {
   stakeLosses: StakeLossItem[]
   /** Rattrapage US-014 : nb d'échéances arrivées pendant l'absence (bandeau). */
   dueCatchup: number | null
+  /**
+   * Rattrapage US-024 : production créditée pendant l'absence (bandeau
+   * hors-ligne). `null` = rien à signaler. `awayMs` = durée d'absence.
+   */
+  offlineCatchup: { cycles: number; data: number; awayMs: number } | null
 
   pushToast: (kind: ToastItem['kind'], title: string, label: string) => void
   dismiss: (id: string) => void
@@ -77,6 +82,10 @@ interface FeedbackState {
   setDueCatchup: (count: number) => void
   /** Ferme le bandeau de rattrapage. */
   clearDueCatchup: () => void
+  /** Signale un rattrapage de production hors-ligne (US-024) — bandeau `Alert`. */
+  setOfflineCatchup: (gain: { cycles: number; data: number; awayMs: number }) => void
+  /** Ferme le bandeau de rattrapage hors-ligne. */
+  clearOfflineCatchup: () => void
 }
 
 export const useFeedbackStore = create<FeedbackState>((set, get) => ({
@@ -88,6 +97,7 @@ export const useFeedbackStore = create<FeedbackState>((set, get) => ({
   flashingId: null,
   stakeLosses: [],
   dueCatchup: null,
+  offlineCatchup: null,
 
   pushToast: (kind, title, label) => {
     const id = crypto.randomUUID()
@@ -157,4 +167,7 @@ export const useFeedbackStore = create<FeedbackState>((set, get) => ({
 
   setDueCatchup: (count) => set({ dueCatchup: count }),
   clearDueCatchup: () => set({ dueCatchup: null }),
+
+  setOfflineCatchup: (gain) => set({ offlineCatchup: gain }),
+  clearOfflineCatchup: () => set({ offlineCatchup: null }),
 }))

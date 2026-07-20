@@ -168,8 +168,16 @@ export interface BuilderState {
    */
   acceleratorBoost: { id: string; endsAt: number } | null
   /**
-   * Dernier instant de mise à jour (epoch ms) — base du tick. Socle du futur
-   * calcul de production hors-ligne (reporté à A5/US-024).
+   * Nombre de renaissances effectuées (US-024, prestige). `0` par défaut ;
+   * ne diminue jamais. Détermine le bonus permanent de production
+   * (`prestigeMultiplier`, voir `game/prestige.ts`). Survit aux resets.
+   */
+  prestigeCount: number
+  /**
+   * Dernier instant de mise à jour (epoch ms) — base du tick **et** du calcul
+   * de production hors-ligne (US-024) : à la réouverture, la production écoulée
+   * depuis cet instant est créditée d'un coup (voir `game/builder.ts`
+   * `offlineTick` + `useBuilderStore.load()`).
    */
   updatedAt: number
 }

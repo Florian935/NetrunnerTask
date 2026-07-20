@@ -117,3 +117,60 @@ export function boostMultiplier(
   const def = ACCELERATOR_BY_ID[boost.id]
   return { cycles: 1 + (def.boostEffect.cycles ?? 0), data: 1 + (def.boostEffect.data ?? 0) }
 }
+
+/** Un segment d'effet de boost dans le temps (US-024). `untilMs` = borne de fin. */
+export interface BoostWindow {
+  untilMs: number
+  /** Multiplicateur cycles sur ce segment (`1` = pas de boost). */
+  cycles: number
+  /** Multiplicateur data sur ce segment (`1` = pas de boost). */
+  data: number
+}
+
+/**
+ * Calendrier du **boost accélérateur** à partir de `fromMs` (US-024,
+ * rattrapage hors-ligne) : découpe la fenêtre en segments selon l'effet du
+ * boost, en tenant compte qu'un `run` en cours à `fromMs` se **terminera** à
+ * son `endsAt` et déclenchera une SURCADENCE qui expirera à son tour. Renvoie
+ * toujours au moins 1 segment, le dernier borné à `Infinity` (état neutre
+ * final). Ne connaît **pas** `builder.ts` — les multiplicateurs sont composés
+ * par la couche store avec ceux de l'arbre et du prestige.
+ *
+ * Cas couverts (état à `fromMs`) :
+ * - ni run ni boost → `[{Infinity, 1, 1}]`.
+ * - boost seul en cours → `[{boost.endsAt, m}, {Infinity, 1, 1}]`.
+ * - run en cours → `[{run.endsAt, 1, 1}, {run.endsAt+boostDur, m}, {Infinity, 1, 1}]`.
+ * (les bornes ≤ `fromMs`, boost déjà expiré, sont élidées → segment neutre.)
+ */
+export function boostWindows(core: AcceleratorCore, fromMs: number): BoostWindow[] {
+  const windows: BoostWindow[] = []
+  const run = core.acceleratorRun
+  const boost = core.acceleratorBoost
+
+  // 1) Boost déjà actif à `fromMs` : segment boosté jusqu'à son expiration.
+  if (boost && boost.endsAt > fromMs) {
+    const def = ACCELERATOR_BY_ID[boost.id]
+    windows.push({
+      untilMs: boost.endsAt,
+      cycles: 1 + (def.boostEffect.cycles ?? 0),
+      data: 1 + (def.boostEffect.data ?? 0),
+    })
+  }
+
+  // 2) Run en cours : segment neutre jusqu'à sa fin, puis segment boosté
+  //    (la SURCADENCE qu'il déclenchera) jusqu'à l'expiration de ce boost.
+  if (run) {
+    const def = ACCELERATOR_BY_ID[run.id]
+    const runEnd = Math.max(run.endsAt, fromMs)
+    windows.push({ untilMs: runEnd, cycles: 1, data: 1 })
+    windows.push({
+      untilMs: runEnd + def.boostDurationMs,
+      cycles: 1 + (def.boostEffect.cycles ?? 0),
+      data: 1 + (def.boostEffect.data ?? 0),
+    })
+  }
+
+  // 3) Segment neutre final, ouvert.
+  windows.push({ untilMs: Infinity, cycles: 1, data: 1 })
+  return windows
+}

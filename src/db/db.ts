@@ -252,6 +252,25 @@ export class NetrunnerDB extends Dexie {
             },
           ),
       )
+    // v14 (US-024) : renaissance (prestige). Table inchangée (même clé `id`) →
+    // schéma v13 recopié + valeur par défaut sur la rangée singleton existante
+    // (même modèle que les migrations v11→v13).
+    this.version(14)
+      .stores({
+        contracts: 'id, factionId, status, dueDate, createdAt',
+        factions: 'id, name',
+        player: 'id',
+        builderState: 'id',
+        demoKV: 'key',
+      })
+      .upgrade((tx) =>
+        tx
+          .table('builderState')
+          .toCollection()
+          .modify((b: { prestigeCount?: number }) => {
+            if (b.prestigeCount === undefined) b.prestigeCount = 0
+          }),
+      )
   }
 }
 

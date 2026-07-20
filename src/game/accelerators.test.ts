@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   ACCELERATOR_BY_ID,
   boostMultiplier,
+  boostWindows,
   cancel,
   canStart,
   resolve,
@@ -93,5 +94,36 @@ describe('boostMultiplier', () => {
   it('défensif : neutre si le boost est en réalité expiré (non résolu)', () => {
     const s = mk(null, { id: 'focus', endsAt: 1000 })
     expect(boostMultiplier(s, 1000)).toEqual({ cycles: 1, data: 1 })
+  })
+})
+
+describe('boostWindows — calendrier hors-ligne (US-024)', () => {
+  const m = 1 + (focus.boostEffect.cycles ?? 0)
+
+  it('ni run ni boost → un seul segment neutre ouvert', () => {
+    const w = boostWindows(mk(), 0)
+    expect(w).toEqual([{ untilMs: Infinity, cycles: 1, data: 1 }])
+  })
+
+  it('boost seul en cours → segment boosté puis segment neutre', () => {
+    const w = boostWindows(mk(null, { id: 'focus', endsAt: 5000 }), 1000)
+    expect(w).toEqual([
+      { untilMs: 5000, cycles: m, data: 1 },
+      { untilMs: Infinity, cycles: 1, data: 1 },
+    ])
+  })
+
+  it('run en cours → neutre jusqu’à runEnd, boosté (SURCADENCE), puis neutre', () => {
+    const w = boostWindows(mk({ id: 'focus', endsAt: 4000 }), 1000)
+    expect(w).toEqual([
+      { untilMs: 4000, cycles: 1, data: 1 },
+      { untilMs: 4000 + focus.boostDurationMs, cycles: m, data: 1 },
+      { untilMs: Infinity, cycles: 1, data: 1 },
+    ])
+  })
+
+  it('garde défensive : boost déjà expiré à fromMs → segment neutre seul', () => {
+    const w = boostWindows(mk(null, { id: 'focus', endsAt: 500 }), 1000)
+    expect(w).toEqual([{ untilMs: Infinity, cycles: 1, data: 1 }])
   })
 })

@@ -13,6 +13,8 @@ import {
   hack,
   isUnlocked,
   nextLockedGenerator,
+  offlineTick,
+  type ProductionSegment,
   productionPerSec,
   tick,
   unlockedGenerators,
@@ -178,5 +180,60 @@ describe('tick — US-022 (data + multiplicateurs)', () => {
   it('défaut (pas de multiplicateur passé) = comportement inchangé', () => {
     const s = mk(0, { scraper: 3 })
     expect(tick(s, 2000).cycles).toBeCloseTo(6)
+  })
+})
+
+describe('offlineTick — rattrapage hors-ligne US-024', () => {
+  const neutral: ProductionSegment[] = [{ untilMs: Infinity, cycles: 1, data: 1 }]
+
+  it('toMs ≤ fromMs → no-op (même référence)', () => {
+    const s = mk(0, { scraper: 3 })
+    expect(offlineTick(s, 1000, 1000, neutral)).toBe(s)
+    expect(offlineTick(s, 2000, 1000, neutral)).toBe(s)
+  })
+
+  it('segment unique neutre = équivalent à un tick sur toute la durée', () => {
+    const s = mk(0, { scraper: 3 }) // 3/s
+    const next = offlineTick(s, 0, 10_000, neutral) // 10 s
+    expect(next.cycles).toBeCloseTo(30)
+  })
+
+  it('2 segments : boost puis neutre (borne intermédiaire respectée)', () => {
+    const s = mk(0, { scraper: 3 }) // 3/s
+    // de 0 à 10 s : 0→4 s ×2 (24) + 4→10 s ×1 (18) = 42
+    const schedule: ProductionSegment[] = [
+      { untilMs: 4000, cycles: 2, data: 1 },
+      { untilMs: Infinity, cycles: 1, data: 1 },
+    ]
+    expect(offlineTick(s, 0, 10_000, schedule).cycles).toBeCloseTo(42)
+  })
+
+  it('3 segments : neutre → boosté → neutre (run devenu SURCADENCE hors-ligne)', () => {
+    const s = mk(0, { scraper: 10 }) // 10/s
+    // 0→2 s ×1 (20) + 2→5 s ×2 (60) + 5→8 s ×1 (30) = 110
+    const schedule: ProductionSegment[] = [
+      { untilMs: 2000, cycles: 1, data: 1 },
+      { untilMs: 5000, cycles: 2, data: 1 },
+      { untilMs: Infinity, cycles: 1, data: 1 },
+    ]
+    expect(offlineTick(s, 0, 8000, schedule).cycles).toBeCloseTo(110)
+  })
+
+  it('crédite aussi `data` selon les multiplicateurs par segment', () => {
+    const s = mk(0, { oracle: 1 }) // data active
+    const base = oracle.baseYieldPerSec * BUILDER_CONFIG.dataRate // data/s à ×1
+    // 0→10 s ×3 data
+    const schedule: ProductionSegment[] = [{ untilMs: Infinity, cycles: 1, data: 3 }]
+    expect(offlineTick(s, 0, 10_000, schedule).data).toBeCloseTo(base * 3 * 10)
+  })
+
+  it('un segment entièrement avant fromMs est ignoré', () => {
+    const s = mk(0, { scraper: 3 })
+    // 1er segment se termine à 500 (< fromMs 1000) → ignoré ; on tick 1000→3000 ×1
+    const schedule: ProductionSegment[] = [
+      { untilMs: 500, cycles: 99, data: 1 },
+      { untilMs: Infinity, cycles: 1, data: 1 },
+    ]
+    expect(offlineTick(s, 1000, 3000, schedule).cycles).toBeCloseTo(6) // 3/s × 2 s
   })
 })
