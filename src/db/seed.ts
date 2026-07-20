@@ -47,7 +47,8 @@ export async function ensureSeeded(): Promise<void> {
     await db.builderState.add({
       id: 'me',
       cycles: 0,
-      generatorCount: 0,
+      generators: {},
+      upgrades: {},
       updatedAt: Date.now(),
     })
   }

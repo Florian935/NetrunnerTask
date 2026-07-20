@@ -5,19 +5,25 @@
 
 ## US active
 
-_Aucune US active._ Dernière US clôturée : **US-020 — A1 : Noyau du builder**
-(commit + merge sur `develop`, décision **#023**, **recette 9/9 PO** le 20/07/2026,
-archivée dans `us/archive/`). **Prochaine : US-021 — A2** (daemons &
-automatisation : générateurs auto, upgrades, montée exponentielle).
+_Aucune US active._ Dernière US clôturée : **US-021 — A2 : Daemons & automatisation**
+(commit + merge sur `develop`, décision **#024**, **recette 10/10 PO** le 20/07/2026,
+archivée). **Prochaine : US-022 — A3** (2ᵉ couche de ressource + arbre de déblocage
++ 1ᵉʳ reveal caché).
 
-Réalisé US-020 : Dexie **v10** + entité `BuilderState` + `builderRepo` + seed
-idempotent ; logique pure **`game/builder.ts`** (**testée 11/11**) ;
-**`useBuilderStore`** + hook **`useBuilderTick`** (pause `visibilitychange`, pas de
-rattrapage hors-ligne → A5) ; écran **`/network`** (`BuilderView` + `HackZone` +
-`DaemonCard` sur le composant DS `<Card>`) + onglet **Réseau** ; i18n `builder.*` +
-`nav.network*` FR/EN ; icônes `cpu`/`share-2` ; fond immersif hérité de `.nav-main`
-(#017). **Vérifs vertes : typecheck + lint + build/PWA + tests 93/93** (82 → 93).
-Maquettes `docs/maquettes/` **supprimées** (non versionnées, convention #007).
+Réalisé US-021 : `game/builder.ts` généralisé en **catalogue `GENERATORS`** (4
+daemons, **upgrade par type**, déblocage chaîné) — **testé 18/18** ; `BuilderState`
+→ maps `generators`/`upgrades` + **migration Dexie v11** (SCRAPER-01 + cycles
+préservés) ; store `buyGenerator(id)`/`buyUpgrade(id)` ; `DaemonCard` (2 boutons
+sur `<Card>` DS) + `TeaserCard` (verrouillé) + bandeau « Production réseau » ;
+i18n FR/EN ; icônes `filter`/`ghost`/`radar`/`key-round`. **tests 100/100.**
+
+## US précédente (clôturée)
+
+**US-020 — A1 : Noyau du builder** clôturée le 20/07/2026 (décision **#023**,
+recette **9/9 PO**, mergée sur `develop`, archivée). Réalisé : Dexie **v10** +
+`BuilderState` + `builderRepo` ; `game/builder.ts` (**11/11**) ; `useBuilderStore`
++ `useBuilderTick` ; écran `/network` (`BuilderView`/`HackZone`/`DaemonCard` sur
+`<Card>` DS) + onglet Réseau ; i18n `builder.*`. **tests 93/93.**
 
 ## Contexte — pivot builder (#022) acté & commité
 
@@ -188,10 +194,9 @@ référencées mais absentes de `decisions.md`). Backlog MVP 2 : échéances hor
 
 ## Prochaine action
 
-**Démarrer US-021 — A2 (daemons & automatisation)** via le skill `nouvelle-us` :
-généraliser le builder à **plusieurs générateurs** (data-driven, sur 2 cas réels
-comme prévu au cadrage US-020), upgrades/multiplicateurs, montée exponentielle.
-Roadmap produit complète : `docs/roadmap.md` (Phase A A1–A6 / Phase B B1–B4).
+**Démarrer US-022 — A3** via le skill `nouvelle-us` : 2ᵉ couche de ressource +
+**arbre de déblocage** + **1ᵉʳ reveal caché** (P6) — le premier « recadrage » façon
+Paperclips. Roadmap produit : `docs/roadmap.md` (Phase A A1–A6 / Phase B B1–B4).
 
 > À reconstruire sur NIGHTWIRE dans leur US métier : composants `game/`
 > (ContractCard, RarityBadge, CosmeticCard, FactionBadge) + rampe de rareté

@@ -53,15 +53,14 @@
   box-shadow: 0 0 6px var(--mint-500);
 }
 
-/* Corps : colonne centrée ; sur large, deux colonnes (stage | daemon). */
+/* Corps : flux vertical — hero + HACK en haut (centré), puis la section daemons. */
 .builder__body {
   flex: 1;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 26px;
-  align-content: center;
-  justify-items: center;
-  padding: 26px 18px 34px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  padding: 26px 18px 40px;
 }
 .builder__stage {
   display: flex;
@@ -71,20 +70,7 @@
 }
 .builder__side {
   width: 100%;
-  max-width: 360px;
-}
-@media (min-width: 860px) {
-  .builder__body {
-    grid-template-columns: 1.1fr 0.9fr;
-    align-items: center;
-    justify-items: stretch;
-    gap: 34px;
-    padding: 30px 40px;
-  }
-  .builder__side {
-    max-width: 420px;
-    justify-self: center;
-  }
+  max-width: 760px;
 }
 
 /* Compteur héros */
@@ -299,76 +285,225 @@
   color: var(--text-muted);
 }
 
-/* Bouton d'achat */
-.builder__buy {
-  width: 100%;
-  margin-top: 14px;
-  height: 44px;
-  cursor: pointer;
-  border: 1px solid var(--cyan-500);
-  clip-path: var(--clip-bevel-sm);
-  background: linear-gradient(
-    120deg,
-    rgba(0, 240, 255, 0.16),
-    rgba(168, 85, 247, 0.16)
-  );
-  box-shadow: 0 0 16px -6px var(--cyan-500);
+/* Rangée d'action : Compiler (achat) + Améliorer (upgrade par type) */
+.builder__actions {
   display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+.builder__buy,
+.builder__upgrade {
+  flex: 1 1 50%;
+  min-width: 0;
+  height: 46px;
+  cursor: pointer;
+  clip-path: var(--clip-bevel-sm);
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 9px;
+  gap: 1px;
   font-family: var(--font-display);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--frost-100);
   transition:
     filter var(--dur-fast) var(--ease-out),
     transform var(--dur-instant) var(--ease-out);
 }
-.builder__buy:hover:not(:disabled) {
+.builder__btn-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.builder__buy {
+  border: 1px solid var(--cyan-500);
+  background: linear-gradient(120deg, rgba(0, 240, 255, 0.16), rgba(168, 85, 247, 0.16));
+  box-shadow: 0 0 16px -6px var(--cyan-500);
+}
+.builder__upgrade {
+  border: 1px solid var(--mint-500);
+  background: linear-gradient(120deg, rgba(46, 255, 194, 0.15), rgba(255, 176, 32, 0.1));
+  box-shadow: 0 0 16px -6px var(--mint-500);
+}
+.builder__buy:hover:not(:disabled),
+.builder__upgrade:hover:not(:disabled) {
   filter: brightness(1.12);
 }
-.builder__buy:active:not(:disabled) {
+.builder__buy:active:not(:disabled),
+.builder__upgrade:active:not(:disabled) {
   transform: translateY(1px);
 }
-.builder__buy:disabled {
+.builder__buy:disabled,
+.builder__upgrade:disabled {
   cursor: not-allowed;
   border-color: var(--border-strong);
   background: var(--bg-inset);
   box-shadow: none;
   color: var(--text-muted);
 }
-.builder__buy-cost {
+.builder__buy-cost,
+.builder__upgrade-cost {
   font-family: var(--font-mono);
   font-weight: 700;
   letter-spacing: 0.06em;
+}
+.builder__buy-cost {
   color: var(--cyan-400);
 }
-.builder__buy:disabled .builder__buy-cost {
+.builder__upgrade-cost {
+  color: var(--mint-500);
+}
+.builder__buy:disabled .builder__buy-cost,
+.builder__upgrade:disabled .builder__upgrade-cost {
   color: var(--red-400);
 }
-.builder__insufficient {
+/* Ligne d'effet de l'upgrade, sous les boutons */
+.builder__effect {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 9.5px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--red-400);
+  color: var(--text-muted);
   margin-top: 8px;
+  text-align: center;
 }
-.builder__hint {
+/* Préfixe « Nv.N · ×M » dans la ligne de production */
+.builder__daemon-boost {
+  color: var(--amber-400);
+}
+.builder__daemon-icon--flash {
+  animation: nw-lvl-flash 0.4s var(--ease-out);
+}
+
+/* Liste des daemons — 1 colonne (mobile) / 2 colonnes (≥ 720px) */
+.builder__daemon-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+@media (min-width: 720px) {
+  .builder__daemon-list {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Bandeau « Production réseau » (reflète les upgrades) */
+.builder__total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 16px;
+  background: linear-gradient(120deg, rgba(0, 240, 255, 0.08), transparent);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  clip-path: var(--clip-bevel-sm);
+  margin-bottom: 16px;
+}
+.builder__total-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-family: var(--font-mono);
   font-size: 10px;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cyan-400);
+}
+.builder__total-value {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.builder__total-rate {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--mint-500);
+  text-shadow: var(--text-glow-mint);
+  font-variant-numeric: tabular-nums;
+}
+.builder__total-types {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
   color: var(--text-muted);
-  text-align: center;
-  line-height: 1.7;
-  margin-top: 16px;
+}
+
+/* Carte teaser (daemon verrouillé) */
+.builder__teaser {
+  position: relative;
+  overflow: hidden;
+  background: var(--void-800);
+  border: 1px dashed var(--border-strong);
+  clip-path: var(--clip-bevel-md);
+  padding: 16px;
+}
+.builder__teaser-scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 40%;
+  background: linear-gradient(180deg, transparent, rgba(0, 240, 255, 0.06), transparent);
+  animation: nw-teaser-scan 3.6s linear infinite;
+  pointer-events: none;
+}
+.builder__teaser-icon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--steel-600);
+  background: rgba(139, 155, 180, 0.06);
+  border: 1px solid var(--border);
+  clip-path: var(--clip-bevel-sm);
+}
+.builder__teaser-name {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--steel-400);
+  letter-spacing: 0.32em;
+  animation: nw-breathe 2.4s ease-in-out infinite;
+}
+.builder__teaser-locked {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--steel-600);
+}
+.builder__teaser-estimate {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--steel-400);
+  margin-top: 8px;
+  letter-spacing: 0.04em;
+}
+.builder__teaser-unlock {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  clip-path: var(--clip-bevel-sm);
+  background: rgba(0, 240, 255, 0.04);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
 }
 
 /* Animations */
@@ -404,14 +539,40 @@
   }
 }
 
+@keyframes nw-lvl-flash {
+  0% {
+    box-shadow: none;
+  }
+  40% {
+    box-shadow: var(--glow-violet);
+  }
+  100% {
+    box-shadow: none;
+  }
+}
+@keyframes nw-teaser-scan {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(320%);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .builder__hack-halo,
   .builder__readout-pulse,
   .builder__hack-ring,
-  .builder__hack-float {
+  .builder__hack-float,
+  .builder__daemon-icon--flash,
+  .builder__teaser-scan,
+  .builder__teaser-name {
     animation: none !important;
   }
   .builder__hack-halo {
     opacity: 0.7;
+  }
+  .builder__teaser-scan {
+    display: none;
   }
 }

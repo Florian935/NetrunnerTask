@@ -1,30 +1,44 @@
 import { useTranslation } from 'react-i18next'
 import {
   BUILDER_CONFIG,
-  canBuyGenerator,
+  GENERATORS,
+  nextLockedGenerator,
   productionPerSec,
+  unlockedGenerators,
 } from '../../game/builder'
 import { useBuilderStore } from '../../stores/useBuilderStore'
 import { DaemonCard } from './DaemonCard'
 import { formatCycles, formatRate } from './format'
 import { HackZone } from './HackZone'
+import { TeaserCard } from './TeaserCard'
 import './builder.css'
 
 /**
- * Écran « Réseau » (US-020, builder A1). Le noyau incrémental jouable : compteur
- * de cycles + débit, HACK manuel, achat d'un daemon générateur. Toute la logique
- * vit dans `useBuilderStore` / `game/builder.ts` ; cette vue ne fait qu'afficher
- * et déclencher les actions. Le fond immersif est hérité de `.nav-main` (#017).
+ * Écran « Réseau » (US-020, généralisé US-021). Compteur de cycles + débit,
+ * HACK manuel, puis la **section daemons** : bandeau « Production réseau », liste
+ * des daemons **débloqués** (chaînés) et **teaser** du prochain verrouillé. Toute
+ * la logique vit dans `useBuilderStore` / `game/builder.ts`.
  */
 export function BuilderView() {
   const { t } = useTranslation()
   const cycles = useBuilderStore((s) => s.cycles)
-  const generatorCount = useBuilderStore((s) => s.generatorCount)
+  const generators = useBuilderStore((s) => s.generators)
+  const upgrades = useBuilderStore((s) => s.upgrades)
   const hack = useBuilderStore((s) => s.hack)
   const buyGenerator = useBuilderStore((s) => s.buyGenerator)
+  const buyUpgrade = useBuilderStore((s) => s.buyUpgrade)
 
-  const rate = productionPerSec(generatorCount)
-  const affordable = canBuyGenerator({ cycles, generatorCount })
+  const core = { cycles, generators, upgrades }
+  const rate = productionPerSec(core)
+  const unlocked = unlockedGenerators(core)
+  const locked = nextLockedGenerator(core)
+  const lockedIdx = locked
+    ? GENERATORS.findIndex((d) => d.id === locked.id)
+    : -1
+  const prevName =
+    lockedIdx > 0
+      ? t(`builder.generators.${GENERATORS[lockedIdx - 1].id}.name`)
+      : ''
 
   return (
     <div className="builder">
@@ -56,16 +70,40 @@ export function BuilderView() {
         </div>
 
         <div className="builder__side">
+          <div className="builder__total">
+            <span className="builder__total-label">
+              <span className="builder__dot" /> {t('builder.total.label')}
+            </span>
+            <span className="builder__total-value">
+              <span className="builder__total-rate">
+                {t('builder.perSecond', { value: formatRate(rate) })}
+              </span>
+              <span className="builder__total-types">
+                {' · '}
+                {t('builder.total.types', { count: unlocked.length })}
+              </span>
+            </span>
+          </div>
+
           <div className="builder__daemons-heading">
             <span className="builder__rule" /> {t('builder.daemonsHeading')}{' '}
             <span className="builder__rule" />
           </div>
-          <DaemonCard
-            owned={generatorCount}
-            affordable={affordable}
-            onBuy={buyGenerator}
-          />
-          <p className="builder__hint">{t('builder.hint')}</p>
+
+          <div className="builder__daemon-list">
+            {unlocked.map((def) => (
+              <DaemonCard
+                key={def.id}
+                def={def}
+                owned={generators[def.id] ?? 0}
+                level={upgrades[def.id] ?? 0}
+                cycles={cycles}
+                onBuy={() => buyGenerator(def.id)}
+                onUpgrade={() => buyUpgrade(def.id)}
+              />
+            ))}
+            {locked && <TeaserCard def={locked} prevName={prevName} />}
+          </div>
         </div>
       </div>
     </div>

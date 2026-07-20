@@ -233,15 +233,37 @@
     "hackSub": "injecter",
     "hackAria": "Hack",
     "daemonsHeading": "Daemons",
-    "daemonName": "SCRAPER-01",
-    "daemonRole": "Nœud de minage passif",
+    "daemonCount": "×{{count}}",
     "daemonYield": "+{{n}} cycle/s",
     "daemonOwned": "possédé {{value}}/s",
-    "daemonCount": "×{{count}}",
     "buy": "Compiler",
     "buyCost": "{{cost}} cyc",
     "insufficient": "Solde insuffisant",
     "insufficientHint": "+{{n}}/s au prochain",
-    "hint": "Martèle HACK pour amorcer · compile un daemon pour automatiser la production"
+    "hint": "Martèle HACK pour amorcer · compile un daemon pour automatiser la production",
+    "generators": {
+      "scraper": { "name": "SCRAPER-01", "role": "Nœud de minage passif" },
+      "sifter": { "name": "SIFTER-07", "role": "Filtre de paquets" },
+      "wraith": { "name": "WRAITH-2X", "role": "Injecteur furtif" },
+      "oracle": { "name": "ORACLE-00", "role": "Signal chiffré" }
+    },
+    "upgrade": {
+      "label": "Améliorer",
+      "level": "Nv.{{level}}",
+      "boost": "Nv.{{level}} · ×{{mult}}",
+      "effect": "Améliorer : ×{{mult}} prod du type ({{from}} → {{to}}/u)"
+    },
+    "teaser": {
+      "locked": "Verrouillé",
+      "name": "???",
+      "signature": "Signature ▓▓▓▓ chiffrée",
+      "estimate": "≈ +{{value}}/u · signal inconnu",
+      "unlock": "Débloqué en possédant 1× {{prev}}"
+    },
+    "total": {
+      "label": "Production réseau",
+      "types_one": "{{count}} type",
+      "types_other": "{{count}} types"
+    }
   }
 }

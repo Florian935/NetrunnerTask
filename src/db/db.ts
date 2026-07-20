@@ -175,6 +175,38 @@ export class NetrunnerDB extends Dexie {
       builderState: 'id',
       demoKV: 'key',
     })
+    // v11 (US-021) : catalogue de daemons + upgrades par type. Le champ scalaire
+    // `generatorCount` (le SCRAPER-01 d'A1) devient la map `generators:
+    // { scraper: <count> }` + `upgrades: {}`. Table inchangée (même clé `id`) →
+    // schéma v10 recopié + conversion de la rangée singleton (SCRAPER-01 + cycles
+    // préservés).
+    this.version(11)
+      .stores({
+        contracts: 'id, factionId, status, dueDate, createdAt',
+        factions: 'id, name',
+        player: 'id',
+        builderState: 'id',
+        demoKV: 'key',
+      })
+      .upgrade((tx) =>
+        tx
+          .table('builderState')
+          .toCollection()
+          .modify(
+            (b: {
+              generatorCount?: number
+              generators?: Record<string, number>
+              upgrades?: Record<string, number>
+            }) => {
+              if (b.generators === undefined) {
+                const count = b.generatorCount ?? 0
+                b.generators = count > 0 ? { scraper: count } : {}
+                b.upgrades = {}
+                delete b.generatorCount
+              }
+            },
+          ),
+      )
   }
 }
 

@@ -1,82 +1,140 @@
 import { describe, expect, it } from 'vitest'
 import {
-  BUILDER_CONFIG,
+  type BuilderCore,
   buyGenerator,
+  buyUpgrade,
   canBuyGenerator,
+  canBuyUpgrade,
+  GENERATOR_BY_ID,
+  generatorCost,
+  generatorProduction,
   hack,
-  nextGeneratorCost,
+  isUnlocked,
+  nextLockedGenerator,
   productionPerSec,
   tick,
+  unlockedGenerators,
+  upgradeCost,
+  upgradeMultiplier,
 } from './builder'
 
-describe('nextGeneratorCost — coût escaladé', () => {
-  it('1ᵉʳ daemon = coût de base', () => {
-    expect(nextGeneratorCost(0)).toBe(BUILDER_CONFIG.generator.baseCost) // 15
-  })
+const mk = (
+  cycles: number,
+  generators: Record<string, number> = {},
+  upgrades: Record<string, number> = {},
+): BuilderCore => ({ cycles, generators, upgrades })
 
-  it('monte géométriquement (×growth, arrondi au supérieur)', () => {
-    expect(nextGeneratorCost(1)).toBe(18) // 15 × 1,15 = 17,25 → 18
-    expect(nextGeneratorCost(2)).toBe(20) // 15 × 1,15² = 19,84 → 20
-  })
-})
+const scraper = GENERATOR_BY_ID.scraper
+const sifter = GENERATOR_BY_ID.sifter
 
-describe('productionPerSec', () => {
-  it('0 daemon → 0/s', () => {
-    expect(productionPerSec(0)).toBe(0)
+describe('generatorCost — escalade par type', () => {
+  it('1ᵉʳ exemplaire = coût de base ; monte géométriquement', () => {
+    expect(generatorCost(scraper, 0)).toBe(15)
+    expect(generatorCost(scraper, 1)).toBe(18) // 15 × 1,15 = 17,25 → 18
+    expect(generatorCost(scraper, 2)).toBe(20) // 15 × 1,15² = 19,84 → 20
   })
-
-  it('linéaire avec le nombre possédé', () => {
-    expect(productionPerSec(5)).toBe(5 * BUILDER_CONFIG.generator.yieldPerSec)
-  })
-})
-
-describe('hack — production manuelle', () => {
-  it('ajoute manualYield cycles sans toucher aux daemons', () => {
-    expect(hack({ cycles: 0, generatorCount: 0 }).cycles).toBe(
-      BUILDER_CONFIG.manualYield,
-    )
-    expect(hack({ cycles: 41, generatorCount: 2 })).toEqual({
-      cycles: 41 + BUILDER_CONFIG.manualYield,
-      generatorCount: 2,
-    })
+  it('coûts indépendants par type', () => {
+    expect(generatorCost(sifter, 0)).toBe(180)
   })
 })
 
-describe('canBuyGenerator / buyGenerator', () => {
-  it('achat impossible si solde < coût → no-op (référence inchangée)', () => {
-    const s = { cycles: 10, generatorCount: 0 } // coût 15
-    expect(canBuyGenerator(s)).toBe(false)
-    expect(buyGenerator(s)).toBe(s)
+describe('upgrades — coût, multiplicateur, production', () => {
+  it('coût d’upgrade escaladé par niveau', () => {
+    expect(upgradeCost(scraper, 0)).toBe(120)
+    expect(upgradeCost(scraper, 1)).toBe(384) // 120 × 3,2
   })
-
-  it('achat possible : débite le coût et incrémente', () => {
-    const s = { cycles: 20, generatorCount: 0 } // coût 15
-    expect(canBuyGenerator(s)).toBe(true)
-    expect(buyGenerator(s)).toEqual({ cycles: 5, generatorCount: 1 })
+  it('multiplicateur = mult^niveau', () => {
+    expect(upgradeMultiplier(scraper, 0)).toBe(1)
+    expect(upgradeMultiplier(scraper, 1)).toBe(2)
+    expect(upgradeMultiplier(scraper, 2)).toBe(4)
   })
+  it('production d’un type = possédés × base × multiplicateur', () => {
+    expect(generatorProduction(scraper, 5, 0)).toBe(5) // 5 × 1 × 1
+    expect(generatorProduction(scraper, 5, 2)).toBe(20) // 5 × 1 × 4
+    expect(generatorProduction(sifter, 2, 1)).toBe(32) // 2 × 8 × 2
+  })
+})
 
-  it('solde exactement égal au coût → achetable', () => {
-    expect(canBuyGenerator({ cycles: 15, generatorCount: 0 })).toBe(true)
-    expect(buyGenerator({ cycles: 15, generatorCount: 0 })).toEqual({
-      cycles: 0,
-      generatorCount: 1,
-    })
+describe('productionPerSec — somme de tous les types', () => {
+  it('additionne les productions par type (avec upgrades)', () => {
+    // scraper ×3 (lvl0) = 3 ; sifter ×1 (lvl1 → ×2) = 16 → total 19
+    expect(
+      productionPerSec(mk(0, { scraper: 3, sifter: 1 }, { sifter: 1 })),
+    ).toBe(19)
+  })
+  it('état vierge → 0', () => {
+    expect(productionPerSec(mk(0))).toBe(0)
+  })
+})
+
+describe('déblocage chaîné', () => {
+  it('le 1ᵉʳ type est toujours débloqué', () => {
+    expect(isUnlocked(scraper, mk(0))).toBe(true)
+  })
+  it('un type se débloque en possédant ≥ 1 du précédent', () => {
+    expect(isUnlocked(sifter, mk(0))).toBe(false)
+    expect(isUnlocked(sifter, mk(0, { scraper: 1 }))).toBe(true)
+  })
+  it('unlockedGenerators / nextLockedGenerator suivent la chaîne', () => {
+    expect(unlockedGenerators(mk(0)).map((d) => d.id)).toEqual(['scraper'])
+    expect(nextLockedGenerator(mk(0))?.id).toBe('sifter')
+    expect(unlockedGenerators(mk(0, { scraper: 1 })).map((d) => d.id)).toEqual([
+      'scraper',
+      'sifter',
+    ])
+    expect(nextLockedGenerator(mk(0, { scraper: 1 }))?.id).toBe('wraith')
+  })
+})
+
+describe('hack', () => {
+  it('ajoute manualYield cycle(s), maps inchangées', () => {
+    const s = mk(41, { scraper: 2 })
+    expect(hack(s).cycles).toBe(42)
+    expect(hack(s).generators).toEqual({ scraper: 2 })
+  })
+})
+
+describe('buyGenerator', () => {
+  it('achat impossible si solde < coût → no-op', () => {
+    const s = mk(10) // scraper coûte 15
+    expect(canBuyGenerator(s, 'scraper')).toBe(false)
+    expect(buyGenerator(s, 'scraper')).toBe(s)
+  })
+  it('achat : débite le coût et incrémente le type', () => {
+    const s = mk(20)
+    expect(canBuyGenerator(s, 'scraper')).toBe(true)
+    const next = buyGenerator(s, 'scraper')
+    expect(next.cycles).toBe(5)
+    expect(next.generators.scraper).toBe(1)
+  })
+})
+
+describe('buyUpgrade', () => {
+  it('achat impossible si solde < coût → no-op', () => {
+    const s = mk(50, { scraper: 3 }) // upgrade scraper lvl0 coûte 120
+    expect(canBuyUpgrade(s, 'scraper')).toBe(false)
+    expect(buyUpgrade(s, 'scraper')).toBe(s)
+  })
+  it('achat : débite le coût et incrémente le niveau du type', () => {
+    const s = mk(200, { scraper: 3 })
+    expect(canBuyUpgrade(s, 'scraper')).toBe(true)
+    const next = buyUpgrade(s, 'scraper')
+    expect(next.cycles).toBe(80) // 200 − 120
+    expect(next.upgrades.scraper).toBe(1)
   })
 })
 
 describe('tick — production automatique', () => {
-  it('sans daemon → inchangé (no-op)', () => {
-    const s = { cycles: 100, generatorCount: 0 }
+  it('sans production → no-op', () => {
+    const s = mk(100)
     expect(tick(s, 1000)).toBe(s)
   })
-
   it('crédite production/s × dt', () => {
-    // 3 daemons × 1/s × 2 s = 6
-    expect(tick({ cycles: 0, generatorCount: 3 }, 2000).cycles).toBeCloseTo(6)
+    // scraper ×3 (lvl0) = 3/s × 2 s = 6
+    expect(tick(mk(0, { scraper: 3 }), 2000).cycles).toBeCloseTo(6)
   })
-
-  it('dt ≤ 0 → no-op (horloge qui recule)', () => {
-    const s = { cycles: 10, generatorCount: 5 }
+  it('dt ≤ 0 → no-op', () => {
+    const s = mk(10, { scraper: 5 })
     expect(tick(s, 0)).toBe(s)
     expect(tick(s, -500)).toBe(s)
   })
