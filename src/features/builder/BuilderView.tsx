@@ -1,35 +1,46 @@
 import { useTranslation } from 'react-i18next'
 import {
   BUILDER_CONFIG,
+  dataPerSec,
   GENERATORS,
   nextLockedGenerator,
   productionPerSec,
   unlockedGenerators,
 } from '../../game/builder'
+import { cycleMultiplier, dataMultiplier } from '../../game/unlockTree'
 import { useBuilderStore } from '../../stores/useBuilderStore'
 import { DaemonCard } from './DaemonCard'
+import { DataReadout } from './DataReadout'
 import { formatCycles, formatRate } from './format'
 import { HackZone } from './HackZone'
 import { TeaserCard } from './TeaserCard'
+import { UnlockTreeSection } from './UnlockTreeSection'
 import './builder.css'
 
 /**
- * Écran « Réseau » (US-020, généralisé US-021). Compteur de cycles + débit,
- * HACK manuel, puis la **section daemons** : bandeau « Production réseau », liste
- * des daemons **débloqués** (chaînés) et **teaser** du prochain verrouillé. Toute
- * la logique vit dans `useBuilderStore` / `game/builder.ts`.
+ * Écran « Réseau » (US-020, généralisé US-021, US-022). Compteur de cycles +
+ * débit, HACK manuel, puis la **section daemons** : bandeau « Production
+ * réseau », liste des daemons **débloqués** (chaînés) et **teaser** du
+ * prochain verrouillé. Une fois `oracle` possédé : lecteur `data` (US-022) +
+ * **arbre de déblocage**. Toute la logique vit dans `useBuilderStore` /
+ * `game/builder.ts` / `game/unlockTree.ts`.
  */
 export function BuilderView() {
   const { t } = useTranslation()
   const cycles = useBuilderStore((s) => s.cycles)
   const generators = useBuilderStore((s) => s.generators)
   const upgrades = useBuilderStore((s) => s.upgrades)
+  const data = useBuilderStore((s) => s.data)
+  const unlockedNodes = useBuilderStore((s) => s.unlockedNodes)
   const hack = useBuilderStore((s) => s.hack)
   const buyGenerator = useBuilderStore((s) => s.buyGenerator)
   const buyUpgrade = useBuilderStore((s) => s.buyUpgrade)
 
-  const core = { cycles, generators, upgrades }
-  const rate = productionPerSec(core)
+  const core = { cycles, generators, upgrades, data, unlockedNodes }
+  const treeMultipliers = { cycles: cycleMultiplier(core), data: dataMultiplier(core) }
+  const rate = productionPerSec(core) * treeMultipliers.cycles
+  const dataUnlocked = (generators[BUILDER_CONFIG.dataUnlockGenerator] ?? 0) >= 1
+  const dataRate = dataPerSec(core, treeMultipliers.data)
   const unlocked = unlockedGenerators(core)
   const locked = nextLockedGenerator(core)
   const lockedIdx = locked
@@ -66,6 +77,7 @@ export function BuilderView() {
               {t('builder.perSecond', { value: formatRate(rate) })}
             </div>
           </div>
+          <DataReadout unlocked={dataUnlocked} data={data} rate={dataRate} />
           <HackZone onHack={hack} gain={BUILDER_CONFIG.manualYield} />
         </div>
 
@@ -104,6 +116,8 @@ export function BuilderView() {
             ))}
             {locked && <TeaserCard def={locked} prevName={prevName} />}
           </div>
+
+          <UnlockTreeSection unlocked={dataUnlocked} />
         </div>
       </div>
     </div>

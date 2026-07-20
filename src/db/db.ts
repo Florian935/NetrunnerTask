@@ -207,6 +207,26 @@ export class NetrunnerDB extends Dexie {
             },
           ),
       )
+    // v12 (US-022) : 2ᵉ ressource `data` + arbre de déblocage. Table inchangée
+    // (même clé `id`) → schéma v11 recopié + valeurs par défaut sur la rangée
+    // singleton existante (même modèle que la migration v11).
+    this.version(12)
+      .stores({
+        contracts: 'id, factionId, status, dueDate, createdAt',
+        factions: 'id, name',
+        player: 'id',
+        builderState: 'id',
+        demoKV: 'key',
+      })
+      .upgrade((tx) =>
+        tx
+          .table('builderState')
+          .toCollection()
+          .modify((b: { data?: number; unlockedNodes?: string[] }) => {
+            if (b.data === undefined) b.data = 0
+            if (b.unlockedNodes === undefined) b.unlockedNodes = []
+          }),
+      )
   }
 }
 

@@ -2,6 +2,10 @@
 // US-020 (A1) : noyau incrémental « Réseau ». US-021 (A2) : généralisation en
 // **catalogue de daemons** (data-driven) + **upgrade par type** + déblocage
 // chaîné. Ajouter un daemon = une entrée dans GENERATORS (aucune migration).
+// US-022 (A3) : 2ᵉ ressource `data` (dérivée de la production, une fois
+// `oracle` possédé) + `unlockedNodes` (arbre de déblocage, voir
+// `game/unlockTree.ts` — module volontairement découplé de celui-ci, voir
+// `tick()`).
 
 /** État minimal manipulé par les règles pures (sous-ensemble de `BuilderState`). */
 export interface BuilderCore {
@@ -11,6 +15,10 @@ export interface BuilderCore {
   generators: Record<string, number>
   /** Niveau d'upgrade, par type (`id` → niveau ; 0 par défaut). */
   upgrades: Record<string, number>
+  /** 2ᵉ ressource (US-022), fractionnaire possible, plancher 0. */
+  data: number
+  /** `id` des nœuds de l'arbre de déblocage déjà achetés (US-022). */
+  unlockedNodes: string[]
 }
 
 /** Définition d'un type de daemon (donnée du catalogue). Libellés via i18n (`id`). */
@@ -34,6 +42,10 @@ export interface GeneratorDef {
 export const BUILDER_CONFIG = {
   /** Cycles produits par HACK manuel. */
   manualYield: 1,
+  /** `id` du daemon qui débloque l'extraction de données (US-022). */
+  dataUnlockGenerator: 'oracle',
+  /** Proportion de `productionPerSec` convertie en `data`/s, avant nœuds. */
+  dataRate: 0.1,
 } as const
 
 /**
@@ -102,6 +114,18 @@ export function nextLockedGenerator(core: BuilderCore): GeneratorDef | null {
   return GENERATORS.find((def) => !isUnlocked(def, core)) ?? null
 }
 
+/**
+ * Production de `data`/s (US-022) : `0` tant que le daemon
+ * `BUILDER_CONFIG.dataUnlockGenerator` n'est pas possédé (mécanique
+ * invisible) ; sinon une proportion (`dataRate`) de `productionPerSec`,
+ * modulée par `dataMult` (multiplicateur composé par l'arbre de déblocage,
+ * voir `game/unlockTree.ts` — appliqué depuis la couche store, pas ici).
+ */
+export function dataPerSec(core: BuilderCore, dataMult = 1): number {
+  if (owned(core, BUILDER_CONFIG.dataUnlockGenerator) < 1) return 0
+  return productionPerSec(core) * BUILDER_CONFIG.dataRate * dataMult
+}
+
 /** Un HACK manuel : ajoute `manualYield` cycles. */
 export function hack(core: BuilderCore): BuilderCore {
   return { ...core, cycles: core.cycles + BUILDER_CONFIG.manualYield }
@@ -148,10 +172,20 @@ export function buyUpgrade(core: BuilderCore, id: string): BuilderCore {
 /**
  * Avance la production automatique de `dtMs` ms. `dt ≤ 0` = no-op (horloge qui
  * recule). Pas de rattrapage hors-ligne ici — le hook borne `dt` (A5/US-024).
+ * `mult` (US-022) : multiplicateurs composés par l'arbre de déblocage
+ * (`game/unlockTree.ts`) et fournis par la couche store — `builder.ts` ne
+ * connaît pas `unlockTree.ts` (découplage volontaire, voir cadrage
+ * technique US-022). Défaut = `1` → comportement A1/A2 inchangé.
  */
-export function tick(core: BuilderCore, dtMs: number): BuilderCore {
+export function tick(
+  core: BuilderCore,
+  dtMs: number,
+  mult: { cycles?: number; data?: number } = {},
+): BuilderCore {
   if (dtMs <= 0) return core
-  const gain = productionPerSec(core) * (dtMs / 1000)
-  if (gain === 0) return core
-  return { ...core, cycles: core.cycles + gain }
+  const dtSec = dtMs / 1000
+  const cyclesGain = productionPerSec(core) * (mult.cycles ?? 1) * dtSec
+  const dataGain = dataPerSec(core, mult.data ?? 1) * dtSec
+  if (cyclesGain === 0 && dataGain === 0) return core
+  return { ...core, cycles: core.cycles + cyclesGain, data: core.data + dataGain }
 }

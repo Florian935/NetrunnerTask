@@ -3,6 +3,54 @@
 > Tests de recette par US. Chaque test reprend un critère d'acceptation de l'US.
 > Statuts : `à faire` / `validé` / `échoué`.
 
+## US-022 — A3 : 2ᵉ couche de ressource + arbre de déblocage + 1ᵉʳ reveal caché
+
+Recette du 20/07/2026. Critères de `us/archive/US-022-arbre-deblocage.md` §1.
+**Vérifs automatiques** : `typecheck` + `lint` + `build`/PWA + tests Vitest
+**126/126** (dont `game/builder.ts` **25/25** et nouveau `game/unlockTree.ts`
+**19/19**). **Recette visuelle & interactive navigateur (`npm run dev`)
+confirmée par le PO : fonctionnel OK, rendu conforme à la maquette.** Seuils
+de daemons temporairement abaissés pour la recette (wraith/oracle) puis
+**remis à leurs valeurs d'origine** après validation PO.
+
+| # | Critère (action → résultat attendu) | Méthode | Statut | Date |
+|---|-------------------------------------|---------|--------|------|
+| C1 | Avant `oracle` : aucune info `data` visible (tout au plus l'ambiance « scellé ») | `dataPerSec` = 0 tant qu'`oracle` absent, **testé** + `DataReadout` (branche scellée) + PO | validé | 20/07/2026 |
+| C2 | Achat du 1ᵉʳ `oracle` → mécanique `data` visible/active, compteur apparaît | `BUILDER_CONFIG.dataUnlockGenerator` + `DataReadout` + PO live | validé | 20/07/2026 |
+| C3 | Compteur `data` augmente dans le temps, cohérent avec la production | `tick()` accrue `data` via `dataPerSec`, **testé** + PO live | validé | 20/07/2026 |
+| C4 | Section « Arbre » : ≥ 2 nœuds achetables, coût + état affichés | `UNLOCK_NODES` (4 nœuds) + `UnlockTreeSection`/`UnlockNodeCard` + PO (capture) | validé | 20/07/2026 |
+| C5 | Achat d'un nœud : solde suffisant → débite + effet ; insuffisant → refusé | `canBuyNode`/`buyNode` (no-op), **testé** + bouton `disabled` + PO | validé | 20/07/2026 |
+| C6 | Nœud caché : aucune info avant condition remplie ; apparition avec traitement dédié | `visibleNodes` (filtre `hidden`), **testé** + `HiddenNodeCard` (irruption glitch) + PO (capture `GHOST://ROGUE.AI` révélé) | validé | 20/07/2026 |
+| C7 | Persistance : `data` + nœuds débloqués conservés au rechargement | migration **Dexie v12** + `builderRepo`/`useBuilderStore` (même mécanisme que `cycles`/`generators`) | validé | 20/07/2026 |
+| C8 | Non-régression : HACK, achat/upgrade des 4 daemons, cycles/s inchangés | `builder.test.ts` **25/25** (cas existants + nouveaux) + PO | validé | 20/07/2026 |
+| — | i18n FR/EN (`builder.data.*`, `builder.unlockTree.*`), aucune chaîne en dur | clés FR+EN via `t()` | validé | 20/07/2026 |
+| — | Cartes de nœuds sur le composant DS `<Card hud brackets>` (repères d'angle cohérents) | revue + correction PO (voir ajustement ci-dessous) | validé | 20/07/2026 |
+
+### Ajustement issu de la recette (résolu dans l'US)
+
+- **Repères d'angle des cartes de nœuds** : 1ʳᵉ version avec 4 repères custom
+  (`position: absolute`, décollés du bord) au lieu de réutiliser le composant DS
+  **`<Card hud brackets halo="…">`** (2 repères diagonaux, collés au bord — déjà
+  utilisé par `DaemonCard`). Signalé par le PO capture à l'appui, corrigé en
+  remplaçant `UnlockNodeCard`/`HiddenNodeCard` par `<Card hud brackets>` (états
+  `acquired`/`available`/nœud caché révélé) ; `locked`/`sealed` restent des
+  cartes pointillées custom sans repères, sur le modèle de `TeaserCard`.
+  CSS des 4 repères custom supprimée. Validé PO (nouvelle capture).
+
+### Note (hors bug, observation PO pour plus tard)
+
+- Mise en page encore **linéaire verticalement**, ne remplit pas toute la
+  largeur disponible. Le PO considère que c'est attendu à ce stade (contenu
+  qui s'étoffera avec A4-A6) — **pas un défaut à corriger maintenant**, pas de
+  ticket ouvert.
+
+**Verdict : recette US-022 validée (8/8 critères + vérifs annexes).** Dexie
+**v12** (`data` + `unlockedNodes`, 2 champs). Nouveau module pur
+`game/unlockTree.ts` (**19/19**) découplé de `game/builder.ts` (composition
+des multiplicateurs faite par `useBuilderStore`). 1ᵉʳ reveal caché (P6) livré :
+absence totale d'indice puis irruption visuelle dédiée. `prefers-reduced-motion`
+respecté (P9).
+
 ## US-021 — A2 : Daemons & automatisation
 
 Recette du 20/07/2026. Critères de `us/archive/US-021-daemons-automatisation.md`.
