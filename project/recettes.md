@@ -3,6 +3,32 @@
 > Tests de recette par US. Chaque test reprend un critère d'acceptation de l'US.
 > Statuts : `à faire` / `validé` / `échoué`.
 
+## US-023 — A4 : Accélérateurs réels au choix
+
+Recette du 20/07/2026. Critères de `us/US-023-accelerateurs-choix.md` §1.
+**Vérifs automatiques** : `typecheck` + `lint` + `build`/PWA + tests Vitest
+**142/142** (dont nouveau `game/accelerators.ts` **16/16**). **Recette visuelle
+& interactive navigateur (`npm run dev`, port 5180) confirmée par le PO :
+fonctionnel OK, rendu conforme à la maquette `network-accelerators`.** Durées
+temporairement réduites pour la recette (focus 20 s / SURCADENCE 30 s) puis
+**remises à leurs valeurs d'origine** (25 min / 15 min) après validation PO.
+
+| # | Critère (action → résultat attendu) | Méthode | Statut | Date |
+|---|-------------------------------------|---------|--------|------|
+| C1 | `/network` : catalogue avec ≥ 1 accélérateur, principe + engagement (durée/effet/boost) affichés avant lancement | `AcceleratorPanel` (état repos) + `ACCELERATORS` + PO live | validé | 20/07/2026 |
+| C2 | Ne rien lancer : aucune relance intrusive, aucun compteur pénalisant l'inaction | Panneau passif + teaser discret (dashed, sans pastille) + PO | validé | 20/07/2026 |
+| C3 | « Lancer » → chrono tenu par l'app, état « en cours » visible (compte à rebours + barre + abandon) | `start()` + `acceleratorRun` + `AccRunning` (`<ProgressBar>`) + PO | validé | 20/07/2026 |
+| C4 | Chrono mené au bout → overclock temporaire appliqué (prod ×2), indicateur actif + temps restant | `resolve()` (run→boost), `boostMultiplier` composé dans `applyTick`, `AccBoost` + toast succès + PO (prod doublée observée) | validé | 20/07/2026 |
+| C5 | Abandon avant la fin → aucun boost, message neutre sans culpabilisation | `cancel()` (no-op sur boost) + toast `info` « Focus interrompu · aucune pénalité » + PO | validé | 20/07/2026 |
+| C6 | Pas d'empilement : relance impossible tant que session/boost en cours | `canStart` (run+boost null) → bouton absent en cours/boost + PO | validé | 20/07/2026 |
+| C7 | État (en cours / boost / dispo) survit au rechargement | `endsAt` **instant absolu** + migration **Dexie v13** + `resolve()` au `load()` (rattrapage) + PO (F5 pendant chrono & boost) | validé | 20/07/2026 |
+| C8 | `prefers-reduced-motion` respecté sur les animations d'overclock | anneau focus + glow SURCADENCE repliés en statique (media query) + PO | validé | 20/07/2026 |
+| — | i18n FR/EN (`builder.accelerators.*`), aucune chaîne en dur ; boost « SURCADENCE » (FR) / « OVERDRIVE » (EN), distinct du nœud permanent « OVERCLOCK » | clés FR+EN via `t()` | validé | 20/07/2026 |
+| — | Panneau sur composants DS (`<Card hud brackets halo="cyan">`, `<Button>`, `<ProgressBar>`), accent cyan réservé | revue + PO (rendu conforme maquette) | validé | 20/07/2026 |
+
+**Synthèse : recette 8/8 PO — US-023 passe la recette.** Aucun bug ouvert.
+Prochaine étape : commit + merge + push (skill `commit`).
+
 ## US-022 — A3 : 2ᵉ couche de ressource + arbre de déblocage + 1ᵉʳ reveal caché
 
 Recette du 20/07/2026. Critères de `us/archive/US-022-arbre-deblocage.md` §1.

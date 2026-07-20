@@ -475,6 +475,52 @@ est livré.
 - Vérifs : typecheck + lint + build/PWA + **tests 126/126**. Recette **8/8
   PO**. Maquette (`network-datatree`) non versionnée (convention #007).
 
+### 026 — Accélérateurs réels au choix (US-023, A4, 20/07/2026)
+
+4ᵉ brique de la Phase A (pivot #022). 1ʳᵉ concrétisation de la **« Voie 2 »**
+(`vision-plateforme.md` §3ter.2) : l'effort réel n'est **pas** une corvée
+obligatoire mais un **accélérateur optionnel** d'un builder qui tient déjà
+debout seul (A1→A3). Livré : le **cadre extensible** + **1 accélérateur**
+(focus chronométré, niveau 1 « l'app est l'arbitre »).
+
+- **Nouveau module pur `game/accelerators.ts`** (**testé 16/16**), **découplé**
+  de `game/builder.ts` et `game/unlockTree.ts` (aucun import croisé — la couche
+  store compose les trois) : catalogue data-driven `ACCELERATORS` (1 entrée
+  `focus`, extensible comme `GENERATORS`), machine d'état `canStart`/`start`/
+  `cancel`/`resolve`/`boostMultiplier`.
+- **Instant absolu** : `acceleratorRun`/`acceleratorBoost` portent un `endsAt`
+  epoch ms **indépendant du 1ᵉʳ plan de l'app** — choix délibéré (permet
+  d'éteindre l'écran pendant le focus, cohérent avec §3ter.4 « écran éteint » ;
+  évite un mur technique de détection de 1ᵉʳ plan hors périmètre A4). `resolve`
+  enchaîne `run→boost→null` en un appel (rattrapage app fermée), invoqué à
+  chaque `applyTick` **et** au `load()`.
+- **Anti-empilement (AC6)** : `canStart` exige `run === null && boost === null`
+  — une seule session/boost à la fois. **Abandon sans pénalité (AC5)** : `cancel`
+  vide seulement `run` (no-op sur un boost), aucune conséquence au-delà de
+  l'absence de bonus.
+- **Réglages placeholder** (affinables en recette, comme `BUILDER_CONFIG`) :
+  focus 25 min → **SURCADENCE** ×2 sur les cycles pendant 15 min.
+- **Collision de nom tranchée** : le boost temporaire s'appelle **« SURCADENCE »**
+  (FR) / **« OVERDRIVE »** (EN), **distinct** du nœud d'arbre permanent
+  **« OVERCLOCK »** (US-022) — le code/i18n d'`accelerators.ts` n'emploie jamais
+  le terme `overclock`.
+- **Migration Dexie v13** : `acceleratorRun` + `acceleratorBoost` (2 champs
+  nullables), même modèle que v11/v12.
+- **Store** : `startAccelerator(id)`/`cancelAccelerator()` (persistance
+  immédiate) ; `applyTick` compose `boostMultiplier` avec `cycleMultiplier`/
+  `dataMultiplier` (arbre) avant `tick()`. Toast succès (apparition du boost,
+  via `useBuilderTick`, visible depuis tout écran) / toast neutre (abandon).
+- **UI** : `AcceleratorPanel` (3 états repos/en cours/SURCADENCE) sur les
+  composants DS **`<Card hud brackets halo="cyan">`** + **`<Button>`** +
+  **`<ProgressBar accent="cyan">`** — **accent cyan réservé** (violet =
+  daemons, magenta = data/arbre). Layout **Option A** (colonne stage, sous
+  `HackZone`). Anneau de focus + glow SURCADENCE, `prefers-reduced-motion`
+  respecté (P9). Teaser d'extensibilité discret (« d'autres accélérateurs en
+  développement »). 2 icônes ajoutées (`play`, `brain`) ; helper
+  `formatCountdown`. i18n `builder.accelerators.*` FR/EN.
+- Vérifs : typecheck + lint + build/PWA + **tests 142/142**. Recette **8/8
+  PO**. Maquette (`network-accelerators`) non versionnée (convention #007).
+
 ### 022 — Pivot produit : de « to-do gamifié » vers « jeu builder social » (19/07/2026)
 
 Décision structurante actée après un brainstorming PO ↔ Claude (voir

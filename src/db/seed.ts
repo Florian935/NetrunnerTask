@@ -51,6 +51,8 @@ export async function ensureSeeded(): Promise<void> {
       upgrades: {},
       data: 0,
       unlockedNodes: [],
+      acceleratorRun: null,
+      acceleratorBoost: null,
       updatedAt: Date.now(),
     })
   }

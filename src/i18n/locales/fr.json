@@ -295,6 +295,35 @@
         "description": "Une IA dormante s'éveille dans le réseau. ×3 sur la production de données, jusque-là invisible.",
         "buy": "Contenir l'anomalie"
       }
+    },
+    "accelerators": {
+      "heading": "ACCÉLÉRATEURS",
+      "subOptional": "optionnel",
+      "subRunning": "focus en cours",
+      "subBoost": "production dopée",
+      "catalog": {
+        "focus": {
+          "name": "FOCUS CHRONOMÉTRÉ",
+          "principle": "Une session de concentration vérifiée par l'app. Optionnel — le réseau tourne très bien sans."
+        }
+      },
+      "statDuration": "durée",
+      "statEffect": "effet",
+      "statEffectValue": "×{{mult}} prod",
+      "statBoost": "boost",
+      "start": "Lancer",
+      "abort": "Abandonner",
+      "remaining": "Temps restant",
+      "rewardAtEnd": "récompense ×{{mult}} à l'arrivée",
+      "boostActive": "SURCADENCE active",
+      "boostProd": "production réseau",
+      "boostRemaining": "reste",
+      "boostFootnote": "SURCADENCE distincte du nœud permanent OVERCLOCK",
+      "teaser": "D'autres accélérateurs en développement",
+      "toastInterruptTitle": "Focus interrompu",
+      "toastInterruptBody": "Aucune pénalité · relançable quand tu veux",
+      "toastBoostTitle": "SURCADENCE active",
+      "toastBoostBody": "Production dopée ×{{mult}} pendant {{minutes}} min"
     }
   }
 }

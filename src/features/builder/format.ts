@@ -19,3 +19,11 @@ export function formatCycles(n: number): string {
 export function formatRate(r: number): string {
   return r % 1 === 0 ? String(r) : r.toFixed(1).replace('.', ',')
 }
+
+/** Durée restante en `mm:ss` (US-023, accélérateurs). `ms ≤ 0` → `00:00`. */
+export function formatCountdown(ms: number): string {
+  const totalSec = Math.max(0, Math.round(ms / 1000))
+  const mm = Math.floor(totalSec / 60)
+  const ss = totalSec % 60
+  return `${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}`
+}
