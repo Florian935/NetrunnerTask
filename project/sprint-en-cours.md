@@ -5,11 +5,40 @@
 
 ## US active
 
-_Aucune US active._ Dernière US clôturée : **US-022 — A3 : 2ᵉ couche de
-ressource + arbre de déblocage + 1ᵉʳ reveal caché** (cycle complet — cadrages
-+ maquette `network-datatree` + plan validés PO, implémentation faite,
-**recette 8/8 PO** le 20/07/2026). Reste à faire : **commit + merge + push**
-(skill `commit`).
+_Aucune US active._ Dernière US clôturée : **US-023 — A4 : Accélérateurs réels
+au choix** (cycle complet — cadrages fonctionnel + technique validés PO,
+maquette `network-accelerators` validée PO, plan 10 étapes validé PO,
+implémentation faite, **recette 8/8 PO** le 20/07/2026, décision **#026**,
+commit + merge sur `develop` + push).
+
+Réalisé US-023 : 1ʳᵉ concrétisation de la **« Voie 2 »** — l'effort réel devient
+un **accélérateur optionnel** (jamais imposé) d'un builder autonome. Nouveau
+module pur **`game/accelerators.ts`** (**testé 16/16**), découplé de
+`builder.ts`/`unlockTree.ts` : catalogue `ACCELERATORS` (1 entrée `focus`
+extensible), machine d'état `canStart`/`start`/`cancel`/`resolve`/
+`boostMultiplier`, `endsAt` en **instant absolu** (indépendant du 1ᵉʳ plan,
+rattrapage app fermée via `resolve` au `load()` + à chaque `applyTick`).
+Migration **Dexie v13** (`acceleratorRun`/`acceleratorBoost`). Store
+`startAccelerator`/`cancelAccelerator` + composition `boostMultiplier` ×
+multiplicateurs d'arbre avant `tick()` ; toasts succès (apparition boost, via
+`useBuilderTick`) / neutre (abandon). UI `AcceleratorPanel` (3 états
+repos/en cours/**SURCADENCE**) sur les composants DS `<Card hud brackets
+halo="cyan">`/`<Button>`/`<ProgressBar>` — **accent cyan réservé**, layout
+Option A (colonne stage, sous `HackZone`) ; anneau focus + glow SURCADENCE,
+`prefers-reduced-motion` respecté ; i18n FR/EN ; 2 icônes (`play`/`brain`) +
+helper `formatCountdown`. Réglages focus 25 min → SURCADENCE ×2 pendant 15 min
+(placeholder). **Tests 142/142.** Recette PO : les 8 critères conformes,
+**aucun bug ouvert**.
+
+**Prochaine US : US-024 — A5** (hors-ligne & temps écoulé + embryon de prestige)
+via le skill `nouvelle-us`. Roadmap produit : `docs/roadmap.md` (Phase A A1–A6 /
+Phase B B1–B4).
+
+Dernière US clôturée : **US-022 — A3 : 2ᵉ couche de ressource + arbre de
+déblocage + 1ᵉʳ reveal caché** (cycle complet — cadrages + maquette
+`network-datatree` + plan validés PO, implémentation faite, **recette 8/8 PO**
+le 20/07/2026, **commit + merge + push faits** — `874ca89`/`d41d7eb`,
+`develop` à jour sur `origin`).
 
 Réalisé US-022 : `game/builder.ts` étendu (`data`, `unlockedNodes`,
 `dataPerSec()`, `tick()` avec multiplicateurs optionnels) ; nouveau module pur
@@ -211,10 +240,10 @@ référencées mais absentes de `decisions.md`). Backlog MVP 2 : échéances hor
 - [x] US-010 — Tableau de bord / HUD (**fait**, décision #015 — routeur & app-shell).
 - [x] US-006 — Récurrence des contrats (**fait** ; modèle « validé jusqu'à réactivation », Dexie v5).
 
-**Commit + merge + push de US-022 — A3** via le skill `commit` (recette 8/8 PO
-faite). Ensuite, **démarrer US-023 — A4** (accélérateurs réels au choix) via
-le skill `nouvelle-us`. Roadmap produit : `docs/roadmap.md` (Phase A A1–A6 /
-Phase B B1–B4).
+**US-023 — A4** (accélérateurs réels au choix) **clôturée** le 20/07/2026
+(recette 8/8 PO, décision #026, commit + merge + push). **Prochaine : US-024 —
+A5** (hors-ligne & temps écoulé + embryon de prestige). Roadmap produit :
+`docs/roadmap.md` (Phase A A1–A6 / Phase B B1–B4).
 
 > À reconstruire sur NIGHTWIRE dans leur US métier : composants `game/`
 > (ContractCard, RarityBadge, CosmeticCard, FactionBadge) + rampe de rareté

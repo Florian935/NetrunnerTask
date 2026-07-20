@@ -227,6 +227,31 @@ export class NetrunnerDB extends Dexie {
             if (b.unlockedNodes === undefined) b.unlockedNodes = []
           }),
       )
+    // v13 (US-023) : accélérateurs réels au choix. Table inchangée (même clé
+    // `id`) → schéma v12 recopié + valeurs par défaut sur la rangée singleton
+    // existante (même modèle que les migrations v11/v12).
+    this.version(13)
+      .stores({
+        contracts: 'id, factionId, status, dueDate, createdAt',
+        factions: 'id, name',
+        player: 'id',
+        builderState: 'id',
+        demoKV: 'key',
+      })
+      .upgrade((tx) =>
+        tx
+          .table('builderState')
+          .toCollection()
+          .modify(
+            (b: {
+              acceleratorRun?: { id: string; endsAt: number } | null
+              acceleratorBoost?: { id: string; endsAt: number } | null
+            }) => {
+              if (b.acceleratorRun === undefined) b.acceleratorRun = null
+              if (b.acceleratorBoost === undefined) b.acceleratorBoost = null
+            },
+          ),
+      )
   }
 }
 

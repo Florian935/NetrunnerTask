@@ -155,6 +155,19 @@ export interface BuilderState {
    */
   unlockedNodes: string[]
   /**
+   * Accélérateur réel en cours d'exécution (US-023) : chrono tenu par l'app,
+   * `endsAt` = instant absolu (epoch ms) de fin annoncée. `null` = aucun en
+   * cours. Voir `game/accelerators.ts`.
+   */
+  acceleratorRun: { id: string; endsAt: number } | null
+  /**
+   * Boost temporaire (« SURCADENCE », US-023) obtenu en menant un
+   * accélérateur à son terme : `endsAt` = instant absolu (epoch ms) de fin du
+   * boost. `null` = aucun boost actif. Distinct du nœud permanent `overclock`
+   * de `game/unlockTree.ts`.
+   */
+  acceleratorBoost: { id: string; endsAt: number } | null
+  /**
    * Dernier instant de mise à jour (epoch ms) — base du tick. Socle du futur
    * calcul de production hors-ligne (reporté à A5/US-024).
    */

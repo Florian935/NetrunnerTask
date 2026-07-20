@@ -207,6 +207,262 @@
   z-index: 3;
 }
 
+/* Panneau « Accélérateurs réels » (US-023) — accent cyan réservé, distinct
+   des daemons (violet) et de l'arbre/data (magenta). Colonne stage, sous
+   HACK (layout Option A, maquette `network-accelerators`). */
+.builder__acc-wrap {
+  width: 100%;
+  max-width: 340px;
+}
+.builder__acc-head-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.builder__acc-heading {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  color: var(--cyan-400);
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
+}
+.builder__acc-sub {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* État repos */
+.builder__acc-head {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.builder__acc-icon {
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cyan-400);
+  background: rgba(0, 240, 255, 0.1);
+  border: 1px solid rgba(0, 240, 255, 0.4);
+  clip-path: var(--clip-bevel-sm);
+}
+.builder__acc-meta {
+  min-width: 0;
+  flex: 1;
+}
+.builder__acc-name {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--frost-100);
+  letter-spacing: 0.03em;
+}
+.builder__acc-principle {
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  margin-top: 5px;
+  line-height: 1.5;
+}
+.builder__acc-stats {
+  display: flex;
+  gap: 8px;
+  margin-top: 13px;
+}
+.builder__acc-stat {
+  flex: 1;
+  padding: 9px 6px;
+  text-align: center;
+  background: var(--void-900);
+  border: 1px solid var(--border);
+  clip-path: var(--clip-bevel-sm);
+  color: var(--cyan-400);
+}
+.builder__acc-stat-value {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--frost-100);
+  margin-top: 4px;
+  letter-spacing: 0.04em;
+}
+.builder__acc-stat-cap {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.builder__acc-cta {
+  width: 100%;
+  margin-top: 13px;
+}
+
+/* État en cours — cyan calme, aucune urgence anxiogène (AC5) */
+.builder__acc-run-row {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+.builder__acc-ring-wrap {
+  position: relative;
+  width: 58px;
+  height: 58px;
+  flex-shrink: 0;
+}
+.builder__acc-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: var(--cyan-500);
+  border-right-color: rgba(0, 240, 255, 0.3);
+  box-shadow: 0 0 10px -2px var(--cyan-500);
+  animation: nw-acc-ring 6s linear infinite;
+}
+.builder__acc-ring-core {
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cyan-400);
+}
+.builder__acc-run-body {
+  flex: 1;
+  min-width: 0;
+}
+.builder__acc-remaining-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cyan-400);
+}
+.builder__acc-remaining-value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 34px;
+  line-height: 1;
+  color: var(--frost-100);
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  text-shadow: var(--text-glow-cyan);
+}
+.builder__acc-run-caption {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-top: 7px;
+  text-align: center;
+}
+
+/* État SURCADENCE active — glow pulsé doux (AC4) */
+.builder__acc-boost {
+  animation: nw-acc-boost-glow 2.6s ease-in-out infinite;
+}
+.builder__acc-boost-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.builder__acc-boost-icon {
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cyan-400);
+  background: rgba(0, 240, 255, 0.14);
+  border: 1px solid var(--cyan-500);
+  clip-path: var(--clip-bevel-sm);
+  box-shadow: 0 0 14px -2px var(--cyan-500);
+}
+.builder__acc-boost-body {
+  flex: 1;
+  min-width: 0;
+}
+.builder__acc-boost-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cyan-400);
+}
+.builder__acc-boost-mult-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.builder__acc-boost-mult {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 1;
+  color: var(--frost-100);
+  text-shadow: var(--text-glow-cyan);
+}
+.builder__acc-boost-prod {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--cyan-400);
+}
+.builder__acc-boost-remaining {
+  text-align: right;
+}
+.builder__acc-boost-remaining-label {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.builder__acc-boost-remaining-value {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  color: var(--frost-100);
+  font-variant-numeric: tabular-nums;
+}
+.builder__acc-boost-footnote {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-top: 7px;
+  text-align: center;
+}
+
+/* Teaser d'extensibilité — léger, jamais intrusif (AC1/AC2) */
+.builder__acc-teaser {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 10px 14px;
+  border: 1px dashed var(--border);
+  clip-path: var(--clip-bevel-sm);
+  color: var(--steel-600);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
 /* En-tête de section « Daemons » */
 .builder__daemons-heading {
   display: flex;
@@ -1047,6 +1303,26 @@
   }
 }
 
+/* Accélérateurs (US-023) : anneau de focus (rotation lente, apaisée) + glow
+   pulsé doux de la SURCADENCE. Repliés en statique sous prefers-reduced-motion. */
+@keyframes nw-acc-ring {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes nw-acc-boost-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px -6px var(--cyan-500), inset 0 0 26px -14px var(--cyan-500);
+  }
+  50% {
+    box-shadow: 0 0 30px -2px var(--cyan-500), inset 0 0 30px -10px var(--cyan-500);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .builder__hack-halo,
   .builder__readout-pulse,
@@ -1059,7 +1335,9 @@
   .builder__tree-dot--ghost,
   .builder__node--ghost,
   .builder__node--revealing,
-  .builder__node--revealing .builder__node-name--ghost {
+  .builder__node--revealing .builder__node-name--ghost,
+  .builder__acc-ring,
+  .builder__acc-boost {
     animation: none !important;
   }
   .builder__node--revealing {

@@ -9,6 +9,7 @@ import {
 } from '../../game/builder'
 import { cycleMultiplier, dataMultiplier } from '../../game/unlockTree'
 import { useBuilderStore } from '../../stores/useBuilderStore'
+import { AcceleratorPanel } from './AcceleratorPanel'
 import { DaemonCard } from './DaemonCard'
 import { DataReadout } from './DataReadout'
 import { formatCycles, formatRate } from './format'
@@ -18,12 +19,14 @@ import { UnlockTreeSection } from './UnlockTreeSection'
 import './builder.css'
 
 /**
- * Écran « Réseau » (US-020, généralisé US-021, US-022). Compteur de cycles +
- * débit, HACK manuel, puis la **section daemons** : bandeau « Production
- * réseau », liste des daemons **débloqués** (chaînés) et **teaser** du
- * prochain verrouillé. Une fois `oracle` possédé : lecteur `data` (US-022) +
- * **arbre de déblocage**. Toute la logique vit dans `useBuilderStore` /
- * `game/builder.ts` / `game/unlockTree.ts`.
+ * Écran « Réseau » (US-020, généralisé US-021, US-022, US-023). Compteur de
+ * cycles + débit, HACK manuel, puis le panneau **Accélérateurs réels**
+ * (US-023 — geste actif du joueur, jamais imposé), avant la **section
+ * daemons** : bandeau « Production réseau », liste des daemons **débloqués**
+ * (chaînés) et **teaser** du prochain verrouillé. Une fois `oracle` possédé :
+ * lecteur `data` (US-022) + **arbre de déblocage**. Toute la logique vit dans
+ * `useBuilderStore` / `game/builder.ts` / `game/unlockTree.ts` /
+ * `game/accelerators.ts`.
  */
 export function BuilderView() {
   const { t } = useTranslation()
@@ -79,6 +82,7 @@ export function BuilderView() {
           </div>
           <DataReadout unlocked={dataUnlocked} data={data} rate={dataRate} />
           <HackZone onHack={hack} gain={BUILDER_CONFIG.manualYield} />
+          <AcceleratorPanel />
         </div>
 
         <div className="builder__side">
