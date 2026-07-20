@@ -5,7 +5,8 @@
 // US-022 (A3) : 2ᵉ ressource `data` (dérivée de la production, une fois
 // `oracle` possédé) + `unlockedNodes` (arbre de déblocage, voir
 // `game/unlockTree.ts` — module volontairement découplé de celui-ci, voir
-// `tick()`).
+// `tick()`). US-024 (A5) : `offlineTick()` rejoue la production sur un
+// calendrier de multiplicateurs (rattrapage hors-ligne, composé par le store).
 
 /** État minimal manipulé par les règles pures (sous-ensemble de `BuilderState`). */
 export interface BuilderCore {
@@ -171,8 +172,9 @@ export function buyUpgrade(core: BuilderCore, id: string): BuilderCore {
 
 /**
  * Avance la production automatique de `dtMs` ms. `dt ≤ 0` = no-op (horloge qui
- * recule). Pas de rattrapage hors-ligne ici — le hook borne `dt` (A5/US-024).
- * `mult` (US-022) : multiplicateurs composés par l'arbre de déblocage
+ * recule). Le hook borne `dt` en marche « app ouverte » ; le rattrapage
+ * hors-ligne passe par `offlineTick()` (US-024). `mult` (US-022) :
+ * multiplicateurs composés par l'arbre de déblocage
  * (`game/unlockTree.ts`) et fournis par la couche store — `builder.ts` ne
  * connaît pas `unlockTree.ts` (découplage volontaire, voir cadrage
  * technique US-022). Défaut = `1` → comportement A1/A2 inchangé.
@@ -188,4 +190,42 @@ export function tick(
   const dataGain = dataPerSec(core, mult.data ?? 1) * dtSec
   if (cyclesGain === 0 && dataGain === 0) return core
   return { ...core, cycles: core.cycles + cyclesGain, data: core.data + dataGain }
+}
+
+/** Un segment du calendrier de production : multiplicateurs actifs **jusqu'à** `untilMs`. */
+export interface ProductionSegment {
+  /** Borne de fin (epoch ms) du segment ; le dernier segment vaut `Infinity`. */
+  untilMs: number
+  /** Multiplicateur cycles effectif sur ce segment. */
+  cycles: number
+  /** Multiplicateur data effectif sur ce segment. */
+  data: number
+}
+
+/**
+ * Rattrapage de production **hors-ligne** (US-024) : rejoue `tick()` de `fromMs`
+ * à `toMs` sur un **calendrier de multiplicateurs** (segments chronologiques
+ * triés par `untilMs` croissant). Domaine-agnostique — d'où viennent les
+ * multiplicateurs (arbre de déblocage, boost accélérateur, prestige…) ne
+ * concerne pas ce module ; la couche store compose le calendrier. Chaque
+ * segment applique ses multiplicateurs constants sur sa portion de la fenêtre
+ * ∩ `[fromMs, toMs]`. `toMs ≤ fromMs` = no-op (même référence).
+ */
+export function offlineTick(
+  core: BuilderCore,
+  fromMs: number,
+  toMs: number,
+  schedule: readonly ProductionSegment[],
+): BuilderCore {
+  if (toMs <= fromMs) return core
+  let acc = core
+  let cursor = fromMs
+  for (const seg of schedule) {
+    if (cursor >= toMs) break
+    const segEnd = Math.min(seg.untilMs, toMs)
+    if (segEnd <= cursor) continue // segment déjà dépassé par le curseur
+    acc = tick(acc, segEnd - cursor, { cycles: seg.cycles, data: seg.data })
+    cursor = segEnd
+  }
+  return acc
 }

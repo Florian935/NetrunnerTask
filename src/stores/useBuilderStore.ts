@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { builderRepo } from '../db'
 import {
   boostMultiplier,
+  boostWindows,
   cancel as cancelAcceleratorPure,
   resolve as resolveAcceleratorPure,
   start as startAcceleratorPure,
@@ -11,14 +12,25 @@ import {
   buyGenerator as buyGeneratorPure,
   buyUpgrade as buyUpgradePure,
   hack as hackPure,
+  offlineTick as offlineTickPure,
+  type ProductionSegment,
   tick as tickPure,
   type BuilderCore,
 } from '../game/builder'
+import {
+  prestige as prestigePure,
+  prestigeMultiplier,
+  type PrestigeCore,
+} from '../game/prestige'
 import {
   buyNode as buyNodePure,
   cycleMultiplier,
   dataMultiplier,
 } from '../game/unlockTree'
+import { useFeedbackStore } from './useFeedbackStore'
+
+/** Seuil d'affichage du bandeau de rattrapage hors-ligne (US-024) : gain notable. */
+const OFFLINE_NOTABLE = 1
 
 /**
  * Store réactif du builder « Réseau » (US-020, généralisé US-021, US-022,
@@ -33,6 +45,8 @@ import {
  * (lancement/abandon/résolution) ; hack/tick throttlés par `useBuilderTick`.
  */
 interface BuilderStoreState extends BuilderCore, AcceleratorCore {
+  /** Nombre de renaissances (US-024) — bonus permanent `prestigeMultiplier`. */
+  prestigeCount: number
   loaded: boolean
   load: () => Promise<void>
   /** HACK manuel : ajoute des cycles (persistance différée par le hook). */
@@ -47,6 +61,8 @@ interface BuilderStoreState extends BuilderCore, AcceleratorCore {
   startAccelerator: (id: string) => void
   /** Abandonne la session en cours (no-op sinon), aucune pénalité ; persiste aussitôt. */
   cancelAccelerator: () => void
+  /** Renaissance (US-024) : reset du Réseau + bonus permanent (no-op si seuil <) ; persiste aussitôt. */
+  prestige: () => void
   /** Avance la production automatique de `dtMs` ms (persistance différée) ; résout aussi les transitions d'accélérateur. */
   applyTick: (dtMs: number) => void
   /** Écrit l'état courant en base (`updatedAt` = maintenant). */
@@ -66,6 +82,15 @@ const accelerators = (s: AcceleratorCore): AcceleratorCore => ({
   acceleratorBoost: s.acceleratorBoost,
 })
 
+const prestigeCore = (s: BuilderStoreState): PrestigeCore => ({
+  cycles: s.cycles,
+  generators: s.generators,
+  upgrades: s.upgrades,
+  data: s.data,
+  unlockedNodes: s.unlockedNodes,
+  prestigeCount: s.prestigeCount,
+})
+
 export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
   cycles: 0,
   generators: {},
@@ -74,27 +99,71 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
   unlockedNodes: [],
   acceleratorRun: null,
   acceleratorBoost: null,
+  prestigeCount: 0,
   loaded: false,
 
   load: async () => {
     const state = await builderRepo.get()
-    const current: AcceleratorCore = {
-      acceleratorRun: state?.acceleratorRun ?? null,
-      acceleratorBoost: state?.acceleratorBoost ?? null,
-    }
-    // Rattrapage : si l'app était fermée quand une session/un boost a expiré.
-    const resolved = resolveAcceleratorPure(current, Date.now())
-    set({
+    const now = Date.now()
+
+    const loadedCore: BuilderCore = {
       cycles: state?.cycles ?? 0,
       generators: state?.generators ?? {},
       upgrades: state?.upgrades ?? {},
       data: state?.data ?? 0,
       unlockedNodes: state?.unlockedNodes ?? [],
-      acceleratorRun: resolved.acceleratorRun,
-      acceleratorBoost: resolved.acceleratorBoost,
+    }
+    const accAtClose: AcceleratorCore = {
+      acceleratorRun: state?.acceleratorRun ?? null,
+      acceleratorBoost: state?.acceleratorBoost ?? null,
+    }
+    const prestigeCount = state?.prestigeCount ?? 0
+    const fromMs = state?.updatedAt ?? now
+
+    // --- Rattrapage hors-ligne (US-024) ---
+    // Calendrier de multiplicateurs : arbre (constant) × prestige (constant) ×
+    // fenêtres de boost (variables — un `run` en cours peut devenir SURCADENCE
+    // puis expirer pendant l'absence). Composé ici ; `offlineTick` rejoue.
+    const treeC = cycleMultiplier(loadedCore)
+    const treeD = dataMultiplier(loadedCore)
+    const pMult = prestigeMultiplier(prestigeCount)
+    const schedule: ProductionSegment[] = boostWindows(accAtClose, fromMs).map((w) => ({
+      untilMs: w.untilMs,
+      cycles: treeC * pMult * w.cycles,
+      data: treeD * pMult * w.data,
+    }))
+    const caught = offlineTickPure(loadedCore, fromMs, now, schedule)
+    const gainCycles = caught.cycles - loadedCore.cycles
+    const gainData = caught.data - loadedCore.data
+
+    // État de l'accélérateur au retour (résolution des transitions échues).
+    const resolvedAcc = resolveAcceleratorPure(accAtClose, now)
+
+    set({
+      cycles: caught.cycles,
+      generators: caught.generators,
+      upgrades: caught.upgrades,
+      data: caught.data,
+      unlockedNodes: caught.unlockedNodes,
+      acceleratorRun: resolvedAcc.acceleratorRun,
+      acceleratorBoost: resolvedAcc.acceleratorBoost,
+      prestigeCount,
       loaded: true,
     })
-    if (resolved !== current) void get().persist()
+
+    // Bandeau de rattrapage seulement si le gain est notable (AC3/AC4).
+    if (gainCycles >= OFFLINE_NOTABLE || gainData >= OFFLINE_NOTABLE) {
+      useFeedbackStore.getState().setOfflineCatchup({
+        cycles: gainCycles,
+        data: gainData,
+        awayMs: now - fromMs,
+      })
+    }
+
+    // Persiste si le rattrapage ou la résolution a changé quelque chose.
+    if (gainCycles > 0 || gainData > 0 || resolvedAcc !== accAtClose) {
+      void get().persist()
+    }
   },
 
   hack: () => {
@@ -141,6 +210,22 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
     void get().persist()
   },
 
+  prestige: () => {
+    const current = prestigeCore(get())
+    const next = prestigePure(current)
+    if (next === current) return // seuil non atteint → no-op
+    set({
+      cycles: next.cycles,
+      generators: next.generators,
+      upgrades: next.upgrades,
+      data: next.data,
+      unlockedNodes: next.unlockedNodes,
+      prestigeCount: next.prestigeCount,
+      // acceleratorRun/acceleratorBoost intacts (engagement réel du joueur).
+    })
+    void get().persist()
+  },
+
   applyTick: (dtMs) => {
     const now = Date.now()
     const state = get()
@@ -150,9 +235,10 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
 
     const current = core(state) // champs builder non affectés par la résolution accélérateur
     const boost = boostMultiplier(accNext, now)
+    const pMult = prestigeMultiplier(state.prestigeCount)
     const next = tickPure(current, dtMs, {
-      cycles: cycleMultiplier(current) * boost.cycles,
-      data: dataMultiplier(current) * boost.data,
+      cycles: cycleMultiplier(current) * boost.cycles * pMult,
+      data: dataMultiplier(current) * boost.data * pMult,
     })
     if (next !== current) set({ cycles: next.cycles, data: next.data })
 
@@ -168,6 +254,7 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
       unlockedNodes,
       acceleratorRun,
       acceleratorBoost,
+      prestigeCount,
     } = get()
     await builderRepo.save({
       cycles,
@@ -177,6 +264,7 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
       unlockedNodes,
       acceleratorRun,
       acceleratorBoost,
+      prestigeCount,
       updatedAt: Date.now(),
     })
   },

@@ -5,11 +5,38 @@
 
 ## US active
 
-_Aucune US active._ Dernière US clôturée : **US-023 — A4 : Accélérateurs réels
-au choix** (cycle complet — cadrages fonctionnel + technique validés PO,
-maquette `network-accelerators` validée PO, plan 10 étapes validé PO,
-implémentation faite, **recette 8/8 PO** le 20/07/2026, décision **#026**,
+_Aucune US active._ Dernière US clôturée : **US-024 — A5 : Hors-ligne & temps
+écoulé + embryon de prestige** (cycle complet — cadrages fonctionnel + technique
+validés PO, maquette `network-renaissance` validée PO, plan 17 étapes validé PO,
+implémentation faite, **recette 9/9 PO** le 21/07/2026, décision **#027**,
 commit + merge sur `develop` + push).
+
+Réalisé US-024 : ferme la boucle « reviens demain ». **Rattrapage hors-ligne** —
+`offlineTick` (`game/builder.ts`, calendrier de segments de multiplicateurs,
+domaine-agnostique) + `boostWindows` (`game/accelerators.ts`, 0-3 segments) ;
+le store compose **arbre × boost × prestige** au `load()` depuis `updatedAt`
+(anti double-comptage : calcul 1 fois, tick réamorcé indépendamment ; pas de
+plafond, linéaire P5) ; bandeau `OfflineCatchupBanner` (`<Alert success>`) si
+gain notable. **Embryon de prestige** — nouveau module pur **`game/prestige.ts`**
+(seuil flat **1 000 000**, `prestigeMultiplier` **composé** `1,5 ** count`,
+`prestige()` reset ciblé sans toucher l'accélérateur en cours) ; migration
+**Dexie v14** (`prestigeCount`) ; bonus permanent composé dans `applyTick`
+**et** le rattrapage **et** le débit affiché. UI `PrestigePanel` unique/permanent
+sur **`<Card halo="red">`** (accent rouge réservé) en fin de colonne side,
+confirmation via **`ConfirmDialog` étendu** (rétrocompatible : `icon`/`iconColor`
++ slot `children`). **Tests 159/159.** Recette PO : 9 critères conformes +
+**correction du débit affiché** (n'intégrait pas le prestige) ; limite « seuil
+flat » assumée (embryon) → approfondissement **US-026** au backlog.
+
+**Prochaine US : US-025 — A6** (rebrancher le module perso : to-do/habitudes/
+factions → économie privée) via le skill `nouvelle-us`. Roadmap produit :
+`docs/roadmap.md` (Phase A A1–A6 / Phase B B1–B4).
+
+Dernière US clôturée (antérieure) : **US-023 — A4 : Accélérateurs réels au choix** (cycle
+complet — cadrages fonctionnel + technique validés PO, maquette
+`network-accelerators` validée PO, plan 10 étapes validé PO, implémentation
+faite, **recette 8/8 PO** le 20/07/2026, décision **#026**, commit + merge sur
+`develop` + push).
 
 Réalisé US-023 : 1ʳᵉ concrétisation de la **« Voie 2 »** — l'effort réel devient
 un **accélérateur optionnel** (jamais imposé) d'un builder autonome. Nouveau
@@ -30,9 +57,10 @@ helper `formatCountdown`. Réglages focus 25 min → SURCADENCE ×2 pendant 15 m
 (placeholder). **Tests 142/142.** Recette PO : les 8 critères conformes,
 **aucun bug ouvert**.
 
-**Prochaine US : US-024 — A5** (hors-ligne & temps écoulé + embryon de prestige)
-via le skill `nouvelle-us`. Roadmap produit : `docs/roadmap.md` (Phase A A1–A6 /
-Phase B B1–B4).
+**US-024 — A5** (hors-ligne & temps écoulé + embryon de prestige) **clôturée**
+le 21/07/2026 (recette 9/9 PO, décision #027, commit + merge + push).
+**Prochaine : US-025 — A6.** Roadmap produit : `docs/roadmap.md` (Phase A
+A1–A6 / Phase B B1–B4).
 
 Dernière US clôturée : **US-022 — A3 : 2ᵉ couche de ressource + arbre de
 déblocage + 1ᵉʳ reveal caché** (cycle complet — cadrages + maquette
@@ -241,9 +269,10 @@ référencées mais absentes de `decisions.md`). Backlog MVP 2 : échéances hor
 - [x] US-006 — Récurrence des contrats (**fait** ; modèle « validé jusqu'à réactivation », Dexie v5).
 
 **US-023 — A4** (accélérateurs réels au choix) **clôturée** le 20/07/2026
-(recette 8/8 PO, décision #026, commit + merge + push). **Prochaine : US-024 —
-A5** (hors-ligne & temps écoulé + embryon de prestige). Roadmap produit :
-`docs/roadmap.md` (Phase A A1–A6 / Phase B B1–B4).
+(recette 8/8 PO, décision #026, commit + merge + push). **US-024 — A5**
+(hors-ligne & temps écoulé + embryon de prestige) **clôturée** le 21/07/2026
+(recette 9/9 PO, décision #027, commit + merge + push). **Prochaine : US-025 —
+A6.** Roadmap produit : `docs/roadmap.md` (Phase A A1–A6 / Phase B B1–B4).
 
 > À reconstruire sur NIGHTWIRE dans leur US métier : composants `game/`
 > (ContractCard, RarityBadge, CosmeticCard, FactionBadge) + rampe de rareté

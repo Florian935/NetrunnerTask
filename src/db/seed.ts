@@ -53,6 +53,7 @@ export async function ensureSeeded(): Promise<void> {
       unlockedNodes: [],
       acceleratorRun: null,
       acceleratorBoost: null,
+      prestigeCount: 0,
       updatedAt: Date.now(),
     })
   }

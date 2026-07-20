@@ -1303,6 +1303,240 @@
   }
 }
 
+/* Bandeau de rattrapage hors-ligne (US-024) — contenu de l'Alert success. */
+.builder__offline-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+.builder__offline-away {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+.builder__offline-gain {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--cyan-400);
+}
+.builder__offline-value {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--frost-100);
+}
+.builder__offline-unit {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.builder__offline-unit--cyan {
+  color: var(--cyan-400);
+}
+.builder__offline-unit--magenta {
+  color: var(--magenta-400);
+}
+
+/* Panneau « Renaissance » (US-024, prestige) — accent rouge réservé. */
+.builder__prestige-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+  margin-bottom: 12px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--red-400);
+}
+.builder__prestige-rule {
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 46, 91, 0.3);
+}
+.builder__prestige--ready .nw-card-halo {
+  animation: nw-prestige-glow 2.8s ease-in-out infinite;
+}
+.builder__prestige-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.builder__prestige-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  color: var(--red-400);
+  text-shadow: 0 0 10px rgba(255, 46, 91, 0.4);
+}
+.builder__prestige-sub {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.builder__prestige-bonus {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--void-900);
+  border: 1px solid var(--border);
+  clip-path: var(--clip-bevel-sm);
+}
+.builder__prestige-bonus-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+.builder__prestige-bonus-icon--on {
+  color: var(--red-400);
+}
+.builder__prestige-bonus-body {
+  flex: 1;
+  min-width: 0;
+}
+.builder__prestige-bonus-label {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.builder__prestige-bonus-value {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--frost-100);
+}
+.builder__prestige-bonus-mult {
+  color: var(--red-400);
+  font-weight: 700;
+}
+.builder__prestige-bonus-none {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.builder__prestige-next {
+  margin-top: 12px;
+}
+.builder__prestige-tier {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+.builder__prestige-tier-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--red-400);
+}
+.builder__prestige-tier-value {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--frost-100);
+}
+.builder__prestige-tier-value strong {
+  color: var(--red-400);
+  font-weight: 700;
+}
+.builder__prestige-cta {
+  width: 100%;
+  margin-top: 12px;
+}
+.builder__prestige-hint {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-top: 8px;
+  text-align: center;
+}
+.builder__prestige-progress-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 7px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+.builder__prestige-progress-next {
+  color: var(--red-400);
+}
+.builder__prestige-locked {
+  margin-top: 10px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid var(--border);
+  clip-path: var(--clip-bevel-sm);
+  background: var(--void-900);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* Grille « Perdu / Conservé » de la confirmation de renaissance. */
+.builder__prestige-ledger {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.builder__prestige-col {
+  padding: 11px;
+  clip-path: var(--clip-bevel-sm);
+}
+.builder__prestige-col--lost {
+  border: 1px solid rgba(255, 46, 91, 0.35);
+  background: rgba(255, 46, 91, 0.05);
+}
+.builder__prestige-col--kept {
+  border: 1px solid rgba(46, 255, 194, 0.35);
+  background: rgba(46, 255, 194, 0.05);
+}
+.builder__prestige-col-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 7px;
+}
+.builder__prestige-col--lost .builder__prestige-col-head {
+  color: var(--red-400);
+}
+.builder__prestige-col--kept .builder__prestige-col-head {
+  color: var(--mint-500);
+}
+.builder__prestige-col-item {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 3px;
+}
+
 /* Accélérateurs (US-023) : anneau de focus (rotation lente, apaisée) + glow
    pulsé doux de la SURCADENCE. Repliés en statique sous prefers-reduced-motion. */
 @keyframes nw-acc-ring {
@@ -1322,6 +1556,15 @@
     box-shadow: 0 0 30px -2px var(--cyan-500), inset 0 0 30px -10px var(--cyan-500);
   }
 }
+@keyframes nw-prestige-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 22px -8px var(--red-500), inset 0 0 24px -16px var(--red-500);
+  }
+  50% {
+    box-shadow: 0 0 32px -4px var(--red-500), inset 0 0 28px -12px var(--red-500);
+  }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .builder__hack-halo,
@@ -1337,7 +1580,8 @@
   .builder__node--revealing,
   .builder__node--revealing .builder__node-name--ghost,
   .builder__acc-ring,
-  .builder__acc-boost {
+  .builder__acc-boost,
+  .builder__prestige--ready .nw-card-halo {
     animation: none !important;
   }
   .builder__node--revealing {

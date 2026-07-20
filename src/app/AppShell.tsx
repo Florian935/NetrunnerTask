@@ -4,7 +4,7 @@ import { Outlet } from 'react-router'
 import { Alert, Toast } from '../components/ui'
 import { NavRail } from '../components/layout/NavRail'
 import { StatusBar } from '../components/layout/StatusBar'
-import { useBuilderTick } from '../features/builder'
+import { OfflineCatchupBanner, useBuilderTick } from '../features/builder'
 import { LevelUpToast } from '../features/progression/LevelUpToast'
 import { useReminders } from '../features/reminders/useReminders'
 import { RankUpToast } from '../features/reputation/RankUpToast'
@@ -37,6 +37,8 @@ export function AppShell() {
   const clearStakeLosses = useFeedbackStore((s) => s.clearStakeLosses)
   const dueCatchup = useFeedbackStore((s) => s.dueCatchup)
   const clearDueCatchup = useFeedbackStore((s) => s.clearDueCatchup)
+  const offlineCatchup = useFeedbackStore((s) => s.offlineCatchup)
+  const clearOfflineCatchup = useFeedbackStore((s) => s.clearOfflineCatchup)
 
   // US-014 : service de rappels (tick + rattrapage), best-effort local.
   useReminders()
@@ -81,6 +83,28 @@ export function AppShell() {
           <Outlet />
         </main>
       </div>
+
+      {/* Rattrapage de production hors-ligne (US-024) : bandeau au montage si le
+          Réseau a produit pendant l'absence (gain notable). */}
+      {offlineCatchup !== null && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 18,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: 'min(560px, calc(100vw - 36px))',
+            zIndex: 1200,
+          }}
+        >
+          <OfflineCatchupBanner
+            cycles={offlineCatchup.cycles}
+            data={offlineCatchup.data}
+            awayMs={offlineCatchup.awayMs}
+            onClose={clearOfflineCatchup}
+          />
+        </div>
+      )}
 
       {/* Rattrapage d'échéances (US-014) : bandeau au montage si l'app a été
           fermée pendant que des échéances horodatées passaient. */}

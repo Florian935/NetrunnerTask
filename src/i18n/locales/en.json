@@ -324,6 +324,40 @@
       "toastInterruptBody": "No penalty · relaunch anytime",
       "toastBoostTitle": "OVERDRIVE active",
       "toastBoostBody": "Output boosted ×{{mult}} for {{minutes}} min"
+    },
+    "offline": {
+      "title": "Your network kept running while you were away",
+      "away": "Away {{duration}} · credited at once"
+    },
+    "prestige": {
+      "divider": "Final tier",
+      "heading": "REBIRTH",
+      "subReady": "threshold reached",
+      "subRare": "rare action",
+      "bonusLabel": "Permanent bonus acquired",
+      "bonusValue_one": "output · {{count}} rebirth",
+      "bonusValue_other": "output · {{count}} rebirths",
+      "bonusNone": "None — first rebirth ahead",
+      "nextTier": "Next tier",
+      "atTier": "at tier",
+      "progressLabel": "Toward next rebirth",
+      "locked": "Threshold not reached",
+      "reborn": "Rebirth",
+      "rebornHint": "burns current progress · the bonus survives",
+      "lost": {
+        "resources": "Accumulated cycles & data",
+        "daemons": "All daemons (units + levels)",
+        "tree": "Unlock tree nodes"
+      },
+      "confirm": {
+        "title": "Confirm rebirth",
+        "message": "You will reset everything to restart with a higher production bonus. It's irreversible — but a strategic choice, not a loss.",
+        "cancel": "Cancel",
+        "lostHead": "Lost",
+        "keptHead": "Kept",
+        "keptBonus": "Permanent bonus: {{from}} → {{to}}",
+        "keptSurvive": "The bonus survives every future rebirth"
+      }
     }
   }
 }

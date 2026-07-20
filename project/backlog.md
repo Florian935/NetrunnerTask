@@ -80,8 +80,17 @@ Les US-005 à US-007 enrichissent le to-do.
 | US-021 | A2 — Daemons & automatisation (générateurs auto, upgrades, montée exponentielle) | A | haute | fait | US-020 |
 | US-022 | A3 — 2ᵉ couche de ressource + arbre de déblocage + 1ᵉʳ reveal caché | A | haute | fait | US-021 |
 | US-023 | A4 — Accélérateurs réels **au choix** (catalogue vérifiable : focus + 1) | A | haute | fait | US-021 |
-| US-024 | A5 — Hors-ligne & temps écoulé + embryon de prestige | A | moyenne | à faire | US-021 |
+| US-024 | A5 — Hors-ligne & temps écoulé + embryon de prestige | A | moyenne | en cours | US-021 |
 | US-025 | A6 — Rebrancher le module perso (to-do/habitudes/factions → économie privée) | A | moyenne | à faire | US-020, module perso |
+| US-026 | Approfondissement prestige : seuil de renaissance **incrémental** + équilibrage de la courbe | A | basse | à faire | US-024 |
+
+> **US-026** reprend une limite identifiée à la recette d'US-024 (21/07/2026) :
+> le seuil de renaissance (`PRESTIGE_CONFIG.threshold`) est aujourd'hui **flat**
+> (choix assumé pour l'embryon A5). Dans un système de prestige mature, il doit
+> **monter à chaque renaissance** (sinon, la production accélérant en ×1,5
+> composé, atteindre le même seuil devient trivial → renaissances en boucle,
+> bonus qui gonfle trop vite). À traiter avec l'équilibrage global de la courbe
+> de prestige (formule de seuil, valeur de `nextMult`), dans une tranche dédiée.
 
 ## MVP 3 — Rétention profonde & identité
 

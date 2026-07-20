@@ -9,6 +9,15 @@ export interface ConfirmDialogProps {
   /** Rappel de l'élément concerné (optionnel) : légende + libellé. */
   itemCaption?: ReactNode
   itemLabel?: ReactNode
+  /** Icône en tête du message (registre Lucide). @default "shield-alert" */
+  icon?: string
+  /** Couleur de l'icône. @default "var(--red-500)" */
+  iconColor?: string
+  /**
+   * Contenu libre inséré entre le bloc `itemLabel` et les boutons (US-024 :
+   * grille « Perdu / Conservé » de la renaissance). Optionnel.
+   */
+  children?: ReactNode
   cancelLabel: string
   confirmLabel: string
   onCancel: () => void
@@ -26,6 +35,9 @@ export function ConfirmDialog({
   message,
   itemCaption,
   itemLabel,
+  icon = 'shield-alert',
+  iconColor = 'var(--red-500)',
+  children,
   cancelLabel,
   confirmLabel,
   onCancel,
@@ -66,8 +78,8 @@ export function ConfirmDialog({
         <HudPanel accent="magenta" title={title} status={status}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-              <span style={{ color: 'var(--red-500)', flex: 'none', marginTop: 1 }}>
-                <Icon name="shield-alert" size={22} color="var(--red-500)" />
+              <span style={{ color: iconColor, flex: 'none', marginTop: 1 }}>
+                <Icon name={icon} size={22} color={iconColor} />
               </span>
               <p
                 style={{
@@ -114,6 +126,7 @@ export function ConfirmDialog({
                 </div>
               </div>
             )}
+            {children}
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
               <Button variant="ghost" size="md" onClick={onCancel}>
                 {cancelLabel}

@@ -3,6 +3,50 @@
 > Tests de recette par US. Chaque test reprend un critère d'acceptation de l'US.
 > Statuts : `à faire` / `validé` / `échoué`.
 
+## US-024 — A5 : Hors-ligne & temps écoulé + embryon de prestige
+
+Recette du 21/07/2026. Critères de `us/US-024-hors-ligne-prestige.md` §1.
+**Vérifs automatiques** : `typecheck` + `lint` + `build`/PWA + tests Vitest
+**159/159** (dont `game/builder.ts` `offlineTick`, `game/accelerators.ts`
+`boostWindows`, nouveau `game/prestige.ts`). **Recette visuelle & interactive
+navigateur (`npm run dev`, port 5181) confirmée par le PO : fonctionnel OK,
+rendu conforme à la maquette `network-renaissance`.** Seuil de renaissance
+temporairement abaissé pour la recette (500 cycles) puis **remis à sa valeur
+d'origine** (1 000 000) après validation PO.
+
+| # | Critère (action → résultat attendu) | Méthode | Statut | Date |
+|---|-------------------------------------|---------|--------|------|
+| C1 | Absence prolongée → cycles (+ data si `oracle`) crédités sur le temps réel écoulé | `offlineTick` (calendrier de segments) au `load()`, **testé** + PO live (fermeture/réouverture) | validé | 21/07/2026 |
+| C2 | Le rattrapage tient compte des multiplicateurs actifs (arbre) à la fermeture | store compose arbre × boost × prestige dans le calendrier, **testé** (`offlineTick` multi-segments) + PO | validé | 21/07/2026 |
+| C3 | Feedback visible à la réouverture (bandeau, pas de hausse muette) | `OfflineCatchupBanner` (`<Alert kind="success">`) + `useFeedbackStore.offlineCatchup` + PO | validé | 21/07/2026 |
+| C4 | Absence très courte → pas de rattrapage anormal ni double-comptage | rattrapage calculé **1 fois** au `load()` depuis `updatedAt`, tick réamorcé indépendamment ; seuil d'affichage notable + PO (F5 rapproché) | validé | 21/07/2026 |
+| C5 | Sous le seuil : renaissance indisponible + progression/explication visible | `PrestigePanel` variante verrouillée (`<ProgressBar>` + « Seuil non atteint », pas de bouton) + PO | validé | 21/07/2026 |
+| C6 | Seuil atteint : action disponible + confirmation explicite (irréversible) | `canPrestige` → bouton « Renaître » → `ConfirmDialog` étendu (grille Perdu/Conservé) + PO | validé | 21/07/2026 |
+| C7 | Après confirmation : reset complet + bonus permanent acquis, visible, appliqué | `prestige()` (reset ciblé, `prestigeCount + 1`), `prestigeMultiplier` composé dans `applyTick` **et** dans le débit affiché (voir correction) + PO | validé | 21/07/2026 |
+| C8 | Recharger après renaissance conserve le bonus **et** l'état remis à zéro | migration **Dexie v14** (`prestigeCount`) + persistance immédiate + PO (F5) | validé | 21/07/2026 |
+| C9 | Non-régression : HACK, daemons, arbre, accélérateur OK après rattrapage/renaissance ; focus non effacé par la renaissance | `prestige` ne touche pas `acceleratorRun`/`acceleratorBoost`, **testé** + tests A1→A4 verts + PO | validé | 21/07/2026 |
+| — | i18n FR/EN (`builder.offline.*`, `builder.prestige.*`), aucune chaîne en dur ; « SURCADENCE/OVERDRIVE » et « RENAISSANCE/REBIRTH » distincts | clés FR+EN via `t()` | validé | 21/07/2026 |
+| — | Composants DS (`<Card hud brackets halo="red">`, `<Alert>`, `<ProgressBar>`, `ConfirmDialog` **étendu** rétrocompatible), accent rouge réservé | revue + PO (rendu conforme maquette) | validé | 21/07/2026 |
+
+### Correction issue de la recette (résolue dans l'US)
+
+- **Débit affiché n'intégrait pas le bonus de prestige** : le multiplicateur de
+  renaissance était bien appliqué à la **production réelle** (`applyTick`), mais
+  le débit affiché (« +X/s » + total « Production réseau ») était calculé
+  `productionPerSec × multiplicateur d'arbre` **sans** le prestige — donnant
+  l'impression que le ×1,5 était inactif. Signalé par le PO à la recette,
+  corrigé en composant `prestigeMultiplier(prestigeCount)` dans le débit affiché
+  (`BuilderView.tsx`), cohérent avec ce qui est réellement crédité. Le boost
+  temporaire SURCADENCE reste volontairement hors du débit affiché (convention
+  héritée d'US-023, inchangée). Validé PO.
+
+### Note (hors bug, amélioration backlog)
+
+- **Seuil de renaissance flat** : identifié à la recette (le seuil ne monte pas
+  d'une renaissance à l'autre — choix assumé pour l'embryon A5). Amélioration
+  « seuil incrémental + équilibrage de la courbe de prestige » ajoutée au
+  backlog (**US-026**, priorité basse).
+
 ## US-023 — A4 : Accélérateurs réels au choix
 
 Recette du 20/07/2026. Critères de `us/US-023-accelerateurs-choix.md` §1.

@@ -521,6 +521,51 @@ debout seul (A1→A3). Livré : le **cadre extensible** + **1 accélérateur**
 - Vérifs : typecheck + lint + build/PWA + **tests 142/142**. Recette **8/8
   PO**. Maquette (`network-accelerators`) non versionnée (convention #007).
 
+### 027 — Hors-ligne & temps écoulé + embryon de prestige (US-024, A5, 21/07/2026)
+
+5ᵉ brique de la Phase A (pivot #022). Ferme la boucle de rétention « reviens
+demain » : la production tourne **pendant l'absence**, et un **embryon de
+prestige** (reset contre bonus permanent) pose la mécanique de renaissance.
+
+- **Rattrapage hors-ligne** : nouvelle fonction pure `offlineTick(core, fromMs,
+  toMs, schedule)` dans `game/builder.ts` — rejoue `tick()` sur un **calendrier
+  de segments de multiplicateurs**, domaine-agnostique. `game/accelerators.ts`
+  gagne `boostWindows(core, fromMs)` (0-3 segments : un `run` en cours peut
+  devenir SURCADENCE puis expirer pendant l'absence). La couche store compose
+  **arbre × prestige (constants) × fenêtres de boost (variables)** et appelle
+  `offlineTick` au `load()`, à partir de `updatedAt` (déjà persisté au
+  masquage/`pagehide`, US-020). **Anti double-comptage** : calcul **une seule
+  fois** au `load()`, le tick « app ouverte » réamorce son horloge
+  indépendamment. Pas de plafond de durée (linéaire, cohérent P5).
+- **Feedback** : `useFeedbackStore.offlineCatchup` + `OfflineCatchupBanner`
+  (habillage `<Alert kind="success">`, ton positif) affiché par `AppShell` si
+  le gain est notable (≥ 1).
+- **Embryon de prestige** : nouveau module pur `game/prestige.ts` (**testé**),
+  découplé — `PRESTIGE_CONFIG` (seuil **flat 1 000 000** cycles, `nextMult 1,5`),
+  `canPrestige`, `prestigeMultiplier(count) = nextMult ** count` (**composé**,
+  ×1,5 → ×2,25 → ×3,375…), `prestige(core)` (reset cycles/generators/upgrades/
+  data/unlockedNodes + `count+1`, **ne touche pas** `acceleratorRun`/
+  `acceleratorBoost` — engagement réel du joueur). Bonus permanent composé dans
+  `applyTick` **et** dans le rattrapage hors-ligne.
+- **Migration Dexie v14** : `prestigeCount` (1 champ), même modèle que v11→v13.
+- **UI** : `PrestigePanel` (**unique et permanent**) sur **`<Card hud brackets
+  halo="red">`** (accent rouge réservé) — bonus acquis toujours visible + état
+  verrouillé (`<ProgressBar>` vers le seuil) ou éligible (bouton « Renaître »,
+  glow pulsé). Placé en **fin de colonne side** (après l'arbre, séparateur
+  « Palier final »). Confirmation via **`ConfirmDialog` étendu** (props `icon`/
+  `iconColor` + slot `children`, **rétrocompatible** — la suppression de contrat
+  ne change pas) portant la grille « Perdu / Conservé ». `prefers-reduced-motion`
+  respecté (P9). Aucune icône nouvelle. i18n `builder.offline.*`/
+  `builder.prestige.*` FR/EN (« RENAISSANCE » / « REBIRTH »).
+- **Correction issue de la recette** : le débit **affiché** (« +X/s », total)
+  n'intégrait pas le bonus de prestige (appliqué pourtant à la production
+  réelle) → composé désormais dans `BuilderView` (le boost temporaire SURCADENCE
+  reste hors du débit affiché, convention héritée d'US-023).
+- **Limite assumée** (embryon) : seuil de renaissance **flat**. Approfondissement
+  (seuil incrémental + équilibrage de courbe) → **US-026** au backlog.
+- Vérifs : typecheck + lint + build/PWA + **tests 159/159**. Recette **9/9
+  PO**. Maquette (`network-renaissance`) non versionnée (convention #007).
+
 ### 022 — Pivot produit : de « to-do gamifié » vers « jeu builder social » (19/07/2026)
 
 Décision structurante actée après un brainstorming PO ↔ Claude (voir

@@ -27,3 +27,14 @@ export function formatCountdown(ms: number): string {
   const ss = totalSec % 60
   return `${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}`
 }
+
+/**
+ * Durée d'absence lisible (US-024, rattrapage hors-ligne) : `Xh YY` au-delà
+ * d'une heure, sinon `Y min` (plancher 1 min pour un gain notable mais court).
+ */
+export function formatElapsed(ms: number): string {
+  const totalMin = Math.max(1, Math.round(ms / 60_000))
+  const h = Math.floor(totalMin / 60)
+  const m = totalMin % 60
+  return h > 0 ? `${h} h ${String(m).padStart(2, '0')}` : `${m} min`
+}

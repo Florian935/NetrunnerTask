@@ -324,6 +324,40 @@
       "toastInterruptBody": "Aucune pénalité · relançable quand tu veux",
       "toastBoostTitle": "SURCADENCE active",
       "toastBoostBody": "Production dopée ×{{mult}} pendant {{minutes}} min"
+    },
+    "offline": {
+      "title": "Ton réseau a tourné en ton absence",
+      "away": "Absent {{duration}} · crédité d'un coup"
+    },
+    "prestige": {
+      "divider": "Palier final",
+      "heading": "RENAISSANCE",
+      "subReady": "seuil atteint",
+      "subRare": "action rare",
+      "bonusLabel": "Bonus permanent acquis",
+      "bonusValue_one": "production · {{count}} renaissance",
+      "bonusValue_other": "production · {{count}} renaissances",
+      "bonusNone": "Aucun — première renaissance à venir",
+      "nextTier": "Prochain palier",
+      "atTier": "au palier",
+      "progressLabel": "Vers la prochaine renaissance",
+      "locked": "Seuil non atteint",
+      "reborn": "Renaître",
+      "rebornHint": "brûle la progression actuelle · le bonus survit",
+      "lost": {
+        "resources": "Cycles & data accumulés",
+        "daemons": "Tous les daemons (unités + niveaux)",
+        "tree": "Nœuds de l'arbre de déblocage"
+      },
+      "confirm": {
+        "title": "Confirmer la renaissance",
+        "message": "Tu vas tout réinitialiser pour repartir avec un bonus de production plus élevé. C'est irréversible — mais c'est un choix stratégique, pas une perte.",
+        "cancel": "Annuler",
+        "lostHead": "Perdu",
+        "keptHead": "Conservé",
+        "keptBonus": "Bonus permanent : {{from}} → {{to}}",
+        "keptSurvive": "Le bonus survit à toutes les renaissances futures"
+      }
     }
   }
 }

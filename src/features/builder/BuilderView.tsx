@@ -7,6 +7,7 @@ import {
   productionPerSec,
   unlockedGenerators,
 } from '../../game/builder'
+import { prestigeMultiplier } from '../../game/prestige'
 import { cycleMultiplier, dataMultiplier } from '../../game/unlockTree'
 import { useBuilderStore } from '../../stores/useBuilderStore'
 import { AcceleratorPanel } from './AcceleratorPanel'
@@ -14,6 +15,7 @@ import { DaemonCard } from './DaemonCard'
 import { DataReadout } from './DataReadout'
 import { formatCycles, formatRate } from './format'
 import { HackZone } from './HackZone'
+import { PrestigePanel } from './PrestigePanel'
 import { TeaserCard } from './TeaserCard'
 import { UnlockTreeSection } from './UnlockTreeSection'
 import './builder.css'
@@ -35,15 +37,20 @@ export function BuilderView() {
   const upgrades = useBuilderStore((s) => s.upgrades)
   const data = useBuilderStore((s) => s.data)
   const unlockedNodes = useBuilderStore((s) => s.unlockedNodes)
+  const prestigeCount = useBuilderStore((s) => s.prestigeCount)
   const hack = useBuilderStore((s) => s.hack)
   const buyGenerator = useBuilderStore((s) => s.buyGenerator)
   const buyUpgrade = useBuilderStore((s) => s.buyUpgrade)
 
   const core = { cycles, generators, upgrades, data, unlockedNodes }
   const treeMultipliers = { cycles: cycleMultiplier(core), data: dataMultiplier(core) }
-  const rate = productionPerSec(core) * treeMultipliers.cycles
+  // Débit **effectif** affiché : production de base × arbre × bonus de prestige
+  // (US-024) — reflète ce que `applyTick` crédite réellement (le boost temporaire
+  // SURCADENCE reste hors du débit affiché, comme depuis US-023).
+  const pMult = prestigeMultiplier(prestigeCount)
+  const rate = productionPerSec(core) * treeMultipliers.cycles * pMult
   const dataUnlocked = (generators[BUILDER_CONFIG.dataUnlockGenerator] ?? 0) >= 1
-  const dataRate = dataPerSec(core, treeMultipliers.data)
+  const dataRate = dataPerSec(core, treeMultipliers.data) * pMult
   const unlocked = unlockedGenerators(core)
   const locked = nextLockedGenerator(core)
   const lockedIdx = locked
@@ -122,6 +129,12 @@ export function BuilderView() {
           </div>
 
           <UnlockTreeSection unlocked={dataUnlocked} />
+
+          <div className="builder__prestige-heading">
+            <span className="builder__prestige-rule" /> {t('builder.prestige.divider')}{' '}
+            <span className="builder__prestige-rule" />
+          </div>
+          <PrestigePanel />
         </div>
       </div>
     </div>
