@@ -264,6 +264,37 @@
       "label": "Production réseau",
       "types_one": "{{count}} type",
       "types_other": "{{count}} types"
+    },
+    "data": {
+      "label": "Data",
+      "new": "NOUVEAU FLUX",
+      "sealed": "flux data · scellé"
+    },
+    "unlockTree": {
+      "heading": "Arbre",
+      "balance": "{{value}} data",
+      "state": {
+        "acquired": "● Acquis",
+        "available": "Dispo",
+        "locked": "Verrouillé"
+      },
+      "acquiredHint": "Intégré au réseau",
+      "buy": "Injecter",
+      "buyCost": "{{cost}} data",
+      "requiresGenerator": "Requiert {{count}}× {{name}}",
+      "requiresNode": "Requiert {{name}}",
+      "nodes": {
+        "overclock": { "name": "OVERCLOCK", "effect": "+25 % sur la production de cycles globale." },
+        "parallelism": { "name": "PARALLÉLISME", "effect": "+50 % sur la production de données." },
+        "cryo-cache": { "name": "CRYO-CACHE", "effect": "+40 % sur la production de données." }
+      },
+      "ghost": {
+        "banner": "Anomalie détectée · intrusion non répertoriée",
+        "sealedHint": "secteur scellé · aucun signal",
+        "name": "GHOST://ROGUE.AI",
+        "description": "Une IA dormante s'éveille dans le réseau. ×3 sur la production de données, jusque-là invisible.",
+        "buy": "Contenir l'anomalie"
+      }
     }
   }
 }

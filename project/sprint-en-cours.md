@@ -5,10 +5,29 @@
 
 ## US active
 
-_Aucune US active._ Dernière US clôturée : **US-021 — A2 : Daemons & automatisation**
-(commit + merge sur `develop`, décision **#024**, **recette 10/10 PO** le 20/07/2026,
-archivée). **Prochaine : US-022 — A3** (2ᵉ couche de ressource + arbre de déblocage
-+ 1ᵉʳ reveal caché).
+_Aucune US active._ Dernière US clôturée : **US-022 — A3 : 2ᵉ couche de
+ressource + arbre de déblocage + 1ᵉʳ reveal caché** (cycle complet — cadrages
++ maquette `network-datatree` + plan validés PO, implémentation faite,
+**recette 8/8 PO** le 20/07/2026). Reste à faire : **commit + merge + push**
+(skill `commit`).
+
+Réalisé US-022 : `game/builder.ts` étendu (`data`, `unlockedNodes`,
+`dataPerSec()`, `tick()` avec multiplicateurs optionnels) ; nouveau module pur
+**`game/unlockTree.ts`** (catalogue `UNLOCK_NODES` à 4 nœuds — `overclock`,
+`parallelism`, `cryo-cache`, `ghost-protocol` caché ×3 data —, dépendance
+`requiresNode`/`requiresGenerator`, **testé 19/19**) ; migration **Dexie v12**
+(`data` + `unlockedNodes`, 2 champs) ; store `buyNode(id)` + composition des
+multiplicateurs avant `tick()` ; UI `DataReadout` (panneau magenta
+conditionnel) + `UnlockTreeSection`/`UnlockNodeCard`/`HiddenNodeCard` sur le
+composant DS **`<Card hud brackets>`** (repères d'angle corrigés en recette,
+voir `project/recettes.md`), irruption glitch du nœud caché,
+`prefers-reduced-motion` respecté ; i18n FR/EN ; icônes `gauge`/`split`/
+`snowflake`/`skull`/`triangle-alert`/`unlock`/`download`/`minus`. **Tests
+126/126.** Recette PO : fonctionnel + rendu conformes ; note non-bloquante sur
+la mise en page (linéaire, s'étoffera avec A4-A6).
+
+Dernière US clôturée : **US-021 — A2 : Daemons & automatisation** (commit + merge
+sur `develop`, décision **#024**, **recette 10/10 PO** le 20/07/2026, archivée).
 
 Réalisé US-021 : `game/builder.ts` généralisé en **catalogue `GENERATORS`** (4
 daemons, **upgrade par type**, déblocage chaîné) — **testé 18/18** ; `BuilderState`
@@ -192,11 +211,10 @@ référencées mais absentes de `decisions.md`). Backlog MVP 2 : échéances hor
 - [x] US-010 — Tableau de bord / HUD (**fait**, décision #015 — routeur & app-shell).
 - [x] US-006 — Récurrence des contrats (**fait** ; modèle « validé jusqu'à réactivation », Dexie v5).
 
-## Prochaine action
-
-**Démarrer US-022 — A3** via le skill `nouvelle-us` : 2ᵉ couche de ressource +
-**arbre de déblocage** + **1ᵉʳ reveal caché** (P6) — le premier « recadrage » façon
-Paperclips. Roadmap produit : `docs/roadmap.md` (Phase A A1–A6 / Phase B B1–B4).
+**Commit + merge + push de US-022 — A3** via le skill `commit` (recette 8/8 PO
+faite). Ensuite, **démarrer US-023 — A4** (accélérateurs réels au choix) via
+le skill `nouvelle-us`. Roadmap produit : `docs/roadmap.md` (Phase A A1–A6 /
+Phase B B1–B4).
 
 > À reconstruire sur NIGHTWIRE dans leur US métier : composants `game/`
 > (ContractCard, RarityBadge, CosmeticCard, FactionBadge) + rampe de rareté

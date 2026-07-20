@@ -264,6 +264,37 @@
       "label": "Network output",
       "types_one": "{{count}} type",
       "types_other": "{{count}} types"
+    },
+    "data": {
+      "label": "Data",
+      "new": "NEW FEED",
+      "sealed": "data feed · sealed"
+    },
+    "unlockTree": {
+      "heading": "Tree",
+      "balance": "{{value}} data",
+      "state": {
+        "acquired": "● Acquired",
+        "available": "Available",
+        "locked": "Locked"
+      },
+      "acquiredHint": "Integrated into the network",
+      "buy": "Inject",
+      "buyCost": "{{cost}} data",
+      "requiresGenerator": "Requires {{count}}× {{name}}",
+      "requiresNode": "Requires {{name}}",
+      "nodes": {
+        "overclock": { "name": "OVERCLOCK", "effect": "+25% on global cycle production." },
+        "parallelism": { "name": "PARALLELISM", "effect": "+50% on data production." },
+        "cryo-cache": { "name": "CRYO-CACHE", "effect": "+40% on data production." }
+      },
+      "ghost": {
+        "banner": "Anomaly detected · unlisted intrusion",
+        "sealedHint": "sealed sector · no signal",
+        "name": "GHOST://ROGUE.AI",
+        "description": "A dormant AI stirs in the network. ×3 on data production, invisible until now.",
+        "buy": "Contain the anomaly"
+      }
     }
   }
 }

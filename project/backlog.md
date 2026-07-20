@@ -78,7 +78,7 @@ Les US-005 à US-007 enrichissent le to-do.
 |----|-------|-----|----------|--------|-----------|
 | US-020 | A1 — Noyau du builder (ressource `cycles`, hack manuel, 1ᵉʳ générateur) | A | haute | fait | — |
 | US-021 | A2 — Daemons & automatisation (générateurs auto, upgrades, montée exponentielle) | A | haute | fait | US-020 |
-| US-022 | A3 — 2ᵉ couche de ressource + arbre de déblocage + 1ᵉʳ reveal caché | A | haute | à faire | US-021 |
+| US-022 | A3 — 2ᵉ couche de ressource + arbre de déblocage + 1ᵉʳ reveal caché | A | haute | fait | US-021 |
 | US-023 | A4 — Accélérateurs réels **au choix** (catalogue vérifiable : focus + 1) | A | haute | à faire | US-021 |
 | US-024 | A5 — Hors-ligne & temps écoulé + embryon de prestige | A | moyenne | à faire | US-021 |
 | US-025 | A6 — Rebrancher le module perso (to-do/habitudes/factions → économie privée) | A | moyenne | à faire | US-020, module perso |

@@ -145,6 +145,16 @@ export interface BuilderState {
   /** Niveau d'upgrade, par type (`id` → niveau ; absent = 0). US-021. */
   upgrades: Record<string, number>
   /**
+   * 2ᵉ ressource (US-022) : produite en dérivant une part de la production de
+   * cycles, une fois le daemon `oracle` possédé. Fractionnaire, plancher 0.
+   */
+  data: number
+  /**
+   * `id` des nœuds de l'arbre de déblocage déjà achetés (US-022). Voir
+   * `game/unlockTree.ts`.
+   */
+  unlockedNodes: string[]
+  /**
    * Dernier instant de mise à jour (epoch ms) — base du tick. Socle du futur
    * calcul de production hors-ligne (reporté à A5/US-024).
    */

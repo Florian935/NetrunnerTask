@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import {
+  BUILDER_CONFIG,
   type BuilderCore,
   buyGenerator,
   buyUpgrade,
   canBuyGenerator,
   canBuyUpgrade,
+  dataPerSec,
   GENERATOR_BY_ID,
   generatorCost,
   generatorProduction,
@@ -22,10 +24,13 @@ const mk = (
   cycles: number,
   generators: Record<string, number> = {},
   upgrades: Record<string, number> = {},
-): BuilderCore => ({ cycles, generators, upgrades })
+  data = 0,
+  unlockedNodes: string[] = [],
+): BuilderCore => ({ cycles, generators, upgrades, data, unlockedNodes })
 
 const scraper = GENERATOR_BY_ID.scraper
 const sifter = GENERATOR_BY_ID.sifter
+const oracle = GENERATOR_BY_ID.oracle
 
 describe('generatorCost — escalade par type', () => {
   it('1ᵉʳ exemplaire = coût de base ; monte géométriquement', () => {
@@ -137,5 +142,41 @@ describe('tick — production automatique', () => {
     const s = mk(10, { scraper: 5 })
     expect(tick(s, 0)).toBe(s)
     expect(tick(s, -500)).toBe(s)
+  })
+})
+
+describe('dataPerSec — US-022 (2ᵉ ressource)', () => {
+  it('nul tant que le daemon de déblocage (oracle) n’est pas possédé', () => {
+    expect(dataPerSec(mk(0, { scraper: 5 }))).toBe(0)
+  })
+  it('proportionnel à productionPerSec × dataRate une fois oracle possédé', () => {
+    const s = mk(0, { scraper: 3, oracle: 1 }) // 3/s scraper + 260/s oracle = 263/s
+    expect(dataPerSec(s)).toBeCloseTo(263 * BUILDER_CONFIG.dataRate)
+  })
+  it('accepte un multiplicateur (composé par l’arbre de déblocage)', () => {
+    const s = mk(0, { oracle: 1 })
+    expect(dataPerSec(s, 2)).toBeCloseTo(oracle.baseYieldPerSec * BUILDER_CONFIG.dataRate * 2)
+  })
+})
+
+describe('tick — US-022 (data + multiplicateurs)', () => {
+  it('accrue aussi `data` une fois oracle possédé', () => {
+    const s = mk(0, { oracle: 1 })
+    const next = tick(s, 1000)
+    expect(next.data).toBeCloseTo(oracle.baseYieldPerSec * BUILDER_CONFIG.dataRate)
+  })
+  it('sans oracle, `data` reste à 0 (non-régression A1/A2)', () => {
+    expect(tick(mk(0, { scraper: 3 }), 1000).data).toBe(0)
+  })
+  it('applique les multiplicateurs cycles/data fournis', () => {
+    const s = mk(0, { scraper: 3, oracle: 1 })
+    const withoutMult = tick(s, 1000)
+    const withMult = tick(s, 1000, { cycles: 2, data: 3 })
+    expect(withMult.cycles).toBeCloseTo((withoutMult.cycles - s.cycles) * 2 + s.cycles)
+    expect(withMult.data).toBeCloseTo((withoutMult.data - s.data) * 3 + s.data)
+  })
+  it('défaut (pas de multiplicateur passé) = comportement inchangé', () => {
+    const s = mk(0, { scraper: 3 })
+    expect(tick(s, 2000).cycles).toBeCloseTo(6)
   })
 })

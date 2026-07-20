@@ -433,6 +433,48 @@ daemon vers un **catalogue** + **upgrade par type** + **déblocage chaîné**.
 - Vérifs : typecheck + lint + build/PWA + **tests 100/100**. Recette **10/10 PO**.
   Maquette (`docs/maquettes/US-021/`) non versionnée (convention #007) — supprimée.
 
+### 025 — 2ᵉ couche de ressource + arbre de déblocage + 1ᵉʳ reveal caché (US-022, A3, 20/07/2026)
+
+3ᵉ brique de la Phase A (pivot #022). **1ᵉʳ recadrage** façon Paperclips : la
+chaîne des 4 daemons (achevable depuis A2) ne plafonne plus le jeu — une 2ᵉ
+ressource ouvre un nouvel axe de progression, et le **1ᵉʳ reveal caché** (P6)
+est livré.
+
+- **2ᵉ ressource `data`** : dérivée de `productionPerSec` (proportion
+  `BUILDER_CONFIG.dataRate`), activée seulement une fois `oracle` possédé
+  (`BUILDER_CONFIG.dataUnlockGenerator`). `game/builder.ts` gagne `data` +
+  `unlockedNodes` sur `BuilderCore`, `dataPerSec()`, et `tick()` accepte des
+  **multiplicateurs optionnels** (`{cycles?, data?}`, défaut 1 → A1/A2
+  inchangés).
+- **Nouveau module pur `game/unlockTree.ts`** (**testé 19/19**), **découplé**
+  de `game/builder.ts` (aucun import croisé — la couche store compose les
+  deux) : catalogue data-driven `UNLOCK_NODES` (4 nœuds : `overclock`,
+  `parallelism`, `cryo-cache`, `ghost-protocol` caché), dépendance de nœud
+  **généralisée** à `requiresNode` **et/ou** `requiresGenerator` (chaîne
+  d'arbre et/ou condition sur `generators`/`upgrades`), `visibleNodes`/
+  `canBuyNode`/`buyNode`/`cycleMultiplier`/`dataMultiplier`.
+- **Reveal caché (P6)** : `ghost-protocol` est **filtré de `visibleNodes`**
+  tant que sa condition (12× `wraith`) n'est pas remplie — aucune info
+  communiquée, contrairement au teaser des daemons (A2). Une fois révélé :
+  bonus fort (+200 % `dataPerSec`, soit ×3) et **indépendant** du reste de
+  l'arbre (surgit d'un axe différent, plus surprenant).
+- **Migration Dexie v12** : `data` + `unlockedNodes` (2 champs — un 3ᵉ champ
+  `dataEarnedTotal` envisagé en cadrage a été **abandonné** après la maquette,
+  la condition du reveal reposant finalement sur `generators`).
+- **Store** : `buyNode(id)` (persistance immédiate) ; `applyTick` compose
+  `cycleMultiplier`/`dataMultiplier` avant `tick()`.
+- **UI** : `DataReadout` (panneau magenta conditionnel, badge « nouveau
+  flux ») + `UnlockTreeSection`/`UnlockNodeCard`/`HiddenNodeCard` sur le
+  composant DS **`<Card hud brackets halo>`** (états `acquired`/`available`/
+  nœud caché révélé ; `locked`/`sealed` restent des cartes pointillées custom,
+  sans repères, sur le modèle de `TeaserCard`) ; irruption glitch du nœud
+  caché (clip-path saccadé + aberration chromatique), `prefers-reduced-motion`
+  respecté (P9). i18n `builder.data.*`/`unlockTree.*` FR/EN ; icônes
+  `gauge`/`split`/`snowflake`/`skull`/`triangle-alert`/`unlock`/`download`/
+  `minus`.
+- Vérifs : typecheck + lint + build/PWA + **tests 126/126**. Recette **8/8
+  PO**. Maquette (`network-datatree`) non versionnée (convention #007).
+
 ### 022 — Pivot produit : de « to-do gamifié » vers « jeu builder social » (19/07/2026)
 
 Décision structurante actée après un brainstorming PO ↔ Claude (voir

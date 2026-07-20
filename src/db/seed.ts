@@ -49,6 +49,8 @@ export async function ensureSeeded(): Promise<void> {
       cycles: 0,
       generators: {},
       upgrades: {},
+      data: 0,
+      unlockedNodes: [],
       updatedAt: Date.now(),
     })
   }

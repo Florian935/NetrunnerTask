@@ -506,6 +506,428 @@
   line-height: 1.4;
 }
 
+/* ---- Lecteur DATA (US-022, 2ᵉ ressource) ---- */
+.builder__data-sealed {
+  margin-top: 20px;
+  padding: 8px 14px;
+  border: 1px dashed var(--border);
+  clip-path: var(--clip-bevel-sm);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--steel-600);
+  text-align: center;
+  opacity: 0.6;
+}
+.builder__data {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  max-width: 300px;
+  margin: 16px auto 0;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, rgba(255, 45, 149, 0.14), rgba(255, 45, 149, 0.03) 70%),
+    var(--void-800);
+  border: 1px solid rgba(255, 45, 149, 0.5);
+  clip-path: var(--clip-bevel-sm);
+  box-shadow: inset 0 0 24px -14px var(--magenta-500);
+}
+.builder__data::before,
+.builder__data::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--magenta-400);
+  opacity: 0.8;
+  pointer-events: none;
+}
+.builder__data::before {
+  top: 4px;
+  left: 4px;
+  border-right: none;
+  border-bottom: none;
+}
+.builder__data::after {
+  bottom: 4px;
+  right: 4px;
+  border-left: none;
+  border-top: none;
+}
+.builder__data--in {
+  animation: nw-data-in 0.6s var(--ease-out);
+}
+.builder__data-icon {
+  color: var(--magenta-400);
+  display: inline-flex;
+  filter: drop-shadow(0 0 8px var(--magenta-500));
+}
+.builder__data-body {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+.builder__data-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--magenta-400);
+}
+.builder__data-badge {
+  padding: 1px 6px;
+  background: var(--magenta-500);
+  color: var(--void-900);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.14em;
+  clip-path: var(--clip-bevel-sm);
+}
+.builder__data-value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 26px;
+  line-height: 1;
+  color: var(--magenta-300, #ff8fc4);
+  text-shadow: 0 0 14px rgba(255, 45, 149, 0.55);
+  font-variant-numeric: tabular-nums;
+  margin-top: 2px;
+}
+.builder__data-rate {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--magenta-400);
+  text-align: right;
+}
+
+/* ---- Arbre de déblocage (US-022) ---- */
+.builder__tree {
+  width: 100%;
+  margin-top: 24px;
+}
+.builder__tree-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.builder__tree-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--frost-100);
+}
+.builder__tree-balance {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--magenta-400);
+}
+.builder__tree-row {
+  display: flex;
+  gap: 12px;
+}
+.builder__tree-spine {
+  width: 18px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.builder__tree-dot {
+  width: 11px;
+  height: 11px;
+  margin-top: 18px;
+  border: 2px solid var(--steel-600);
+  background: transparent;
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+  flex-shrink: 0;
+}
+.builder__tree-dot--acquired {
+  border-color: var(--mint-500);
+  background: var(--mint-500);
+  box-shadow: 0 0 8px var(--mint-500);
+}
+.builder__tree-dot--available {
+  border-color: var(--magenta-400);
+  background: var(--magenta-400);
+  box-shadow: 0 0 8px var(--magenta-400);
+}
+.builder__tree-dot--ghost {
+  border-color: var(--magenta-500);
+  background: var(--magenta-500);
+  box-shadow: 0 0 12px var(--magenta-500);
+  animation: nw-breathe 1.4s ease-in-out infinite;
+}
+.builder__tree-dot--sealed {
+  width: 6px;
+  height: 6px;
+  margin-top: 20px;
+  border: none;
+  border-radius: 999px;
+  clip-path: none;
+  background: var(--border-strong);
+}
+.builder__tree-line {
+  flex: 1;
+  width: 2px;
+  margin-top: 4px;
+  opacity: 0.6;
+  background: linear-gradient(var(--border-strong), var(--border));
+}
+.builder__tree-card {
+  flex: 1;
+  min-width: 0;
+  margin-bottom: 12px;
+}
+
+/*
+ * Carte d'un nœud. `acquired`/`available`/`ghost` réutilisent la surface +
+ * repères d'angle du DS **`<Card hud brackets halo="…">`** (voir
+ * `UnlockNodeCard`/`HiddenNodeCard`, comme `DaemonCard`) — ce bloc ne porte
+ * que les teintes des éléments internes, plus les animations propres au
+ * reveal. `locked`/`sealed` restent des cartes pointillées custom (sans
+ * repères), sur le modèle de `TeaserCard`.
+ */
+.builder__node--locked {
+  position: relative;
+  padding: 14px;
+  clip-path: var(--clip-bevel-md);
+  background: var(--void-800);
+  border: 1px dashed var(--border-strong);
+  opacity: 0.92;
+}
+.builder__node--sealed {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px dashed var(--border);
+  clip-path: var(--clip-bevel-md);
+  background: transparent;
+  color: var(--steel-600);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+.builder__node--ghost {
+  animation: nw-anom-glow 2.4s ease-in-out infinite;
+}
+.builder__node--revealing {
+  animation:
+    nw-reveal-clip 0.9s steps(1, end) forwards,
+    nw-anom-glow 2.4s ease-in-out 0.9s infinite;
+}
+
+.builder__node-head {
+  display: flex;
+  gap: 11px;
+  align-items: flex-start;
+}
+.builder__node-icon {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  clip-path: var(--clip-bevel-sm);
+}
+.builder__node--acquired .builder__node-icon {
+  color: var(--mint-500);
+  background: rgba(46, 255, 194, 0.12);
+  border: 1px solid rgba(46, 255, 194, 0.4);
+}
+.builder__node--available .builder__node-icon {
+  color: var(--magenta-400);
+  background: rgba(255, 45, 149, 0.12);
+  border: 1px solid rgba(255, 45, 149, 0.4);
+}
+.builder__node--locked .builder__node-icon {
+  color: var(--steel-600);
+  background: rgba(139, 155, 180, 0.08);
+  border: 1px solid var(--border);
+}
+.builder__node-icon--ghost {
+  width: 40px;
+  height: 40px;
+  color: var(--magenta-300, #ff8fc4);
+  background: rgba(255, 45, 149, 0.14);
+  border: 1px solid var(--magenta-500);
+  box-shadow: 0 0 14px -2px var(--magenta-500);
+}
+.builder__node-meta {
+  min-width: 0;
+  flex: 1;
+}
+.builder__node-title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.builder__node-name {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--frost-100);
+}
+.builder__node--locked .builder__node-name {
+  color: var(--steel-400);
+}
+.builder__node-name--ghost {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--frost-100);
+  text-shadow: 2px 0 rgba(255, 45, 149, 0.4), -2px 0 rgba(0, 240, 255, 0.4);
+}
+.builder__node--revealing .builder__node-name--ghost {
+  animation: nw-chroma-jit 0.5s steps(1, end) 3;
+}
+.builder__node-state {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.builder__node--acquired .builder__node-state {
+  color: var(--mint-500);
+}
+.builder__node--available .builder__node-state {
+  color: var(--magenta-400);
+}
+.builder__node--locked .builder__node-state {
+  color: var(--steel-600);
+}
+.builder__node-effect {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 6px;
+  line-height: 1.4;
+}
+.builder__node--locked .builder__node-effect {
+  color: var(--text-muted);
+}
+.builder__node-ghost-banner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--cyan-400);
+  margin-bottom: 8px;
+}
+
+.builder__node-acquired {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 12px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--mint-500);
+}
+
+.builder__node-buy {
+  width: 100%;
+  margin-top: 12px;
+  height: 40px;
+  cursor: pointer;
+  clip-path: var(--clip-bevel-sm);
+  border: 1px solid var(--magenta-500);
+  background: linear-gradient(120deg, rgba(255, 45, 149, 0.18), rgba(168, 85, 247, 0.14));
+  box-shadow: 0 0 16px -6px var(--magenta-500);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--frost-100);
+  transition:
+    filter var(--dur-fast) var(--ease-out),
+    transform var(--dur-instant) var(--ease-out);
+}
+.builder__node-buy-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.builder__node-buy:hover:not(:disabled) {
+  filter: brightness(1.12);
+}
+.builder__node-buy:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.builder__node-buy:disabled {
+  cursor: not-allowed;
+  border-color: var(--border-strong);
+  background: var(--void-800);
+  box-shadow: none;
+  color: var(--text-muted);
+}
+.builder__node-buy-cost {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--magenta-300, #ff8fc4);
+}
+.builder__node-buy:disabled .builder__node-buy-cost {
+  color: var(--red-400);
+}
+.builder__node-buy--ghost {
+  height: 42px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  background: linear-gradient(120deg, rgba(255, 45, 149, 0.22), rgba(0, 240, 255, 0.16));
+  box-shadow: 0 0 20px -4px var(--magenta-500);
+  text-shadow: var(--text-glow-cyan);
+}
+
+.builder__node-locked {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  clip-path: var(--clip-bevel-sm);
+  background: rgba(139, 155, 180, 0.05);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+}
+
 /* Animations */
 @keyframes nw-hack-ring {
   from {
@@ -558,6 +980,72 @@
     transform: translateY(320%);
   }
 }
+@keyframes nw-data-in {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+    filter: blur(3px);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+/* Reveal du nœud caché (US-022) — irruption glitch : découpe saccadée. */
+@keyframes nw-reveal-clip {
+  0% {
+    clip-path: inset(50% 0 50% 0);
+    opacity: 0;
+    transform: translateX(-6px);
+  }
+  18% {
+    clip-path: inset(0 0 82% 0);
+    opacity: 1;
+    transform: translateX(5px);
+  }
+  34% {
+    clip-path: inset(64% 0 4% 0);
+    transform: translateX(-4px);
+  }
+  52% {
+    clip-path: inset(12% 0 40% 0);
+    transform: translateX(3px);
+  }
+  70% {
+    clip-path: inset(38% 0 12% 0);
+    transform: translateX(-2px);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes nw-chroma-jit {
+  0%,
+  100% {
+    text-shadow: 2px 0 var(--magenta-500), -2px 0 var(--cyan-500);
+  }
+  25% {
+    text-shadow: -3px 0 var(--magenta-500), 3px 0 var(--cyan-500);
+  }
+  50% {
+    text-shadow: 2px 0 var(--cyan-500), -2px 0 var(--magenta-500);
+  }
+  75% {
+    text-shadow: -1px 0 var(--magenta-500), 4px 0 var(--cyan-500);
+  }
+}
+@keyframes nw-anom-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 30px -6px var(--magenta-500), inset 0 0 30px -12px var(--cyan-500);
+  }
+  50% {
+    box-shadow: 0 0 44px 0 var(--magenta-500), inset 0 0 36px -8px var(--cyan-500);
+  }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .builder__hack-halo,
@@ -566,8 +1054,16 @@
   .builder__hack-float,
   .builder__daemon-icon--flash,
   .builder__teaser-scan,
-  .builder__teaser-name {
+  .builder__teaser-name,
+  .builder__data--in,
+  .builder__tree-dot--ghost,
+  .builder__node--ghost,
+  .builder__node--revealing,
+  .builder__node--revealing .builder__node-name--ghost {
     animation: none !important;
+  }
+  .builder__node--revealing {
+    clip-path: var(--clip-bevel-md) !important;
   }
   .builder__hack-halo {
     opacity: 0.7;
