@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Finaliser et intégrer'
+  short_description: 'Finaliser, committer et intégrer une livraison'
+  default_prompt: 'Utilise $commit pour relire, committer et intégrer le travail prêt.'
