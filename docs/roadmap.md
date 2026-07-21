@@ -87,8 +87,48 @@ progresse.
   **cadre extensible + 1-2 accélérateurs** d'abord, en ajouter au fil du temps.
 - **A5 — Hors-ligne & temps écoulé** : production calculée au retour, sauvegarde
   locale robuste, embryon de **prestige/renaissance**. Le « reviens demain ».
-- **A6 — Rebrancher le module perso** : to-do + habitudes + factions existants →
-  accélérateurs perso + **économie privée**. Réutilise l'acquis.
+- ~~**A6 — Rebrancher le module perso**~~ **gelée (décision #028, 21/07/2026)** :
+  brancher le to-do/habitudes **auto-déclarés** sur la production du Réseau
+  créerait un canal farmable (contraire à P1/P5) et fait doublon avec les
+  accélérateurs **vérifiés** d'A4. Le module perso reste **découplé**, autonome
+  (rien n'est perdu, P8). Pourrait reprendre sens plus tard côté
+  identité/cosmétique (P1), pas garanti. **A1→A5 = Phase A jouée comme
+  suffisante pour prouver le fun** ; la suite passe par le **polish/
+  approfondissement du builder** et la réflexion rétention (voir journal
+  `vision-plateforme.md`), pas par A6.
+
+### Phase A2 — Approfondissement & rétention (décision #029, 21/07/2026)
+*Objectif : approfondir le contenu et la fidélisation du builder existant —
+A1→A5 a prouvé le fun, il faut maintenant qu'il tienne dans la durée. Pas une
+nouvelle promesse produit, un enrichissement de l'existant.*
+
+Née d'une session de brainstorming PO ↔ Claude (21/07/2026, voir journal
+`vision-plateforme.md`) partant d'une analyse fonctionnelle du builder : peu de
+contenu (4 daemons, 4 nœuds, 1 seul reveal), aucun jalon de progression, aucune
+visualisation qui grandit, 1 seul accélérateur réel, prestige encore sec.
+
+- **US-027 — Marché crypto** : 3ᵉ ressource, comportement **différent** des
+  deux premières (pas d'accumulation passive — conversion manuelle de `data`
+  à un **cours fluctuant**, 1ʳᵉ vraie décision de timing du jeu). Cours calculé
+  par une **fonction déterministe du temps réel** (cohérent avec l'« instant
+  absolu » déjà établi — accélérateurs A4, rattrapage hors-ligne A5 — donc
+  aucune complexité de rattrapage supplémentaire). Débloqué par un nœud de
+  l'arbre `data` existant (chaîne daemons→data→nœud→crypto). Finance une **2ᵉ
+  branche** de l'arbre de déblocage (réutilise `UnlockTreeSection`/
+  `UnlockNodeCard`), avec un 2ᵉ reveal caché possible. Suite explicite de la
+  progression **compute → data → crypto → influence → ???** envisagée dans
+  `vision-plateforme.md` §3ter.3.
+- **US-028 — Jalons / accomplissements** : liste de milestones (1ᵉʳ daemon,
+  seuils de cycles, 1ʳᵉ renaissance…) avec petit feedback dédié. Effort faible,
+  impact rétention élevé.
+- **US-029 — Visualisation du Réseau** : une représentation qui **grandit
+  visuellement** avec la progression, au lieu de panneaux de stats seuls. Le
+  plus gros potentiel « wow », le plus gros effort — à cadrer en détail le
+  moment venu.
+- **US-030 — Catalogue d'accélérateurs élargi** : 2ᵉ/3ᵉ accélérateur réel
+  (podométrie, **détox numérique** — la « pépite » de `vision-plateforme.md`
+  §3ter.4, jamais construite).
+- **US-026 — Prestige : seuil incrémental** *(déjà backloguée, rattachée ici)*.
 
 ### Phase B — Couche connectée (backend requis, après la preuve du fun)
 

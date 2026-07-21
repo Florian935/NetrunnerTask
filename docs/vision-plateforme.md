@@ -521,3 +521,24 @@ inscrite** dans `docs/decisions.md`, pas une dérive.
 - **19/07/2026** — Reco métaphore monde 1 (§3ter.5) : **Réseau + Daemons**. Réponse
   archi (§6) : pas une refonte totale mais un **nouveau produit** ; **phasage** clé
   = Phase A jeu **local-first sans backend** (valider le fun), Phase B connectée.
+- **21/07/2026** — A1→A5 livrés (US-020→024). **A6 gelée** (décision **#028**,
+  `docs/decisions.md`) : brancher le to-do auto-déclaré sur la production du
+  Réseau violerait P1/P5 (canal farmable) et fait doublon avec les
+  accélérateurs vérifiés d'A4 ; le module perso reste autonome, découplé, rien
+  n'est perdu (P8). **Phase A considérée jouée** pour prouver le fun. Ouverture
+  d'une **phase de brainstorming polish/rétention** sur le builder existant
+  (PO ↔ Claude) — objectif : identifier ce qui manque/mériterait d'être
+  approfondi avant de redéfinir la prochaine tranche.
+- **21/07/2026** — Issue du brainstorming : analyse fonctionnelle du builder →
+  4 manques identifiés (**profondeur de contenu**, aucun **jalon/
+  accomplissement**, aucune **visualisation** qui grandit, un seul
+  **accélérateur réel**). Choix de creuser d'abord la profondeur de contenu
+  via un **nouveau recadrage** (dans l'esprit A3) plutôt qu'un simple ajout de
+  daemons/nœuds. Direction retenue : un **marché crypto** — 3ᵉ ressource
+  convertie manuellement depuis `data` à un **cours fluctuant** (calculé par
+  une fonction déterministe du temps réel, cohérent avec l'« instant absolu »
+  déjà établi), débloqué par un nœud de l'arbre existant, finançant une **2ᵉ
+  branche** de l'arbre de déblocage. Reprend explicitement la progression
+  **compute→data→crypto→influence→???** de §3ter.3. **Phase A2 —
+  Approfondissement & rétention** cadrée (décision **#029**) : 5 tranches
+  (US-026→030), chemin critique US-027 (marché crypto) en premier.

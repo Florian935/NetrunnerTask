@@ -566,6 +566,59 @@ prestige** (reset contre bonus permanent) pose la mécanique de renaissance.
 - Vérifs : typecheck + lint + build/PWA + **tests 159/159**. Recette **9/9
   PO**. Maquette (`network-renaissance`) non versionnée (convention #007).
 
+### 028 — US-025 (A6) gelée ; fin de la Phase A « preuve du fun », place au polish/rétention (21/07/2026)
+
+Après A1→A5 (US-020→024), le builder tient debout seul, a un geste manuel
+(HACK), une automatisation (daemons), un recadrage (2ᵉ ressource + arbre), un
+accélérateur réel vérifié (focus/SURCADENCE) et une boucle de rétention
+(hors-ligne + prestige). **A6 (« rebrancher le module perso ») est gelée** —
+retirée du chemin actif, pas juste reportée sans raison :
+
+- **Pourquoi geler** : brancher le to-do/habitudes **auto-déclarés** sur la
+  production du Réseau ouvrirait un canal **farmable** (cocher « fait » sans
+  effort réel crédite quand même le builder) — contraire à **P1** (l'économie
+  auto-déclarée doit rester **privée**, incheatable seulement parce qu'elle ne
+  compte que pour soi) et **P5** (santé/anti-triche). Ça fait aussi doublon
+  avec les accélérateurs **vérifiés** d'US-023, qui remplissent déjà
+  proprement le rôle « effort réel → boost ».
+- **Rien n'est perdu (P8)** : le module perso (to-do, habitudes, streaks,
+  factions, réputation) reste tel quel, autonome, disponible. Il n'est
+  simplement **plus dans le plan actif**. Il pourrait reprendre sens plus tard
+  en alimentant de l'**identité/cosmétique** (P1 : l'auto-déclaré nourrit « le
+  niveau perso et les cosmétiques », jamais la puissance) — mais ces systèmes
+  n'existent pas encore (post-MVP 3, gelés depuis #022) ; **pas garanti**.
+- **Conséquence de planning** : la Phase A (« prouver que le builder est fun »)
+  est considérée **jouée et suffisante** avec A1→A5. La suite n'est **pas**
+  A6 : place à une phase de **polish/approfondissement du builder existant**
+  et de **réflexion rétention** (brainstorming PO ↔ Claude à partir du
+  21/07/2026, voir `docs/vision-plateforme.md` journal), avant de redéfinir la
+  prochaine US.
+
+### 029 — Phase A2 « Approfondissement & rétention » définie (5 tranches, 21/07/2026)
+
+Issue de la session de brainstorming PO ↔ Claude ouverte par #028 : analyse
+fonctionnelle du builder existant (A1→A5) → 4 manques identifiés (contenu,
+jalons, visualisation, catalogue d'accélérateurs) + la limite de prestige déjà
+notée (US-026). Cadrés en **Phase A2** (`docs/roadmap.md`, `project/backlog.md`),
+chemin critique **US-027** en premier :
+
+- **US-027 — Marché crypto** (priorité haute, retenue en premier) : 3ᵉ
+  ressource au comportement **différent** de `cycles`/`data` — conversion
+  manuelle à un **cours fluctuant**, calculé par une **fonction déterministe
+  du temps réel** (cohérent avec l'« instant absolu » déjà établi en A4/A5 —
+  aucune complexité de rattrapage nouvelle). Débloquée par un nœud de l'arbre
+  `data` existant (chaîne daemons→data→nœud→crypto) ; finance une **2ᵉ
+  branche** de l'arbre (réutilise `UnlockTreeSection`/`UnlockNodeCard`).
+  Suite explicite de la progression **compute→data→crypto→influence→???**
+  envisagée dans `vision-plateforme.md` §3ter.3.
+- **US-028 — Jalons/accomplissements**, **US-029 — Visualisation du Réseau**,
+  **US-030 — Catalogue d'accélérateurs élargi** : priorité moyenne/basse,
+  cadrage détaillé reporté à leur tour.
+- **US-026** (seuil de prestige incrémental, déjà backloguée) rattachée à
+  cette phase.
+
+**Prochaine étape** : cadrage fonctionnel d'US-027 via le skill `nouvelle-us`.
+
 ### 022 — Pivot produit : de « to-do gamifié » vers « jeu builder social » (19/07/2026)
 
 Décision structurante actée après un brainstorming PO ↔ Claude (voir

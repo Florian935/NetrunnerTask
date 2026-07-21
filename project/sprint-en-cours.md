@@ -5,6 +5,13 @@
 
 ## US active
 
+**Session de brainstorming PO ↔ Claude (21/07/2026)** — US-025 (A6) gelée
+(décision #028), Phase A close (A1→A5 jouée). Analyse fonctionnelle du builder
+→ **Phase A2 « Approfondissement & rétention »** cadrée (décision #029, voir
+`docs/roadmap.md`/`project/backlog.md`) : 5 tranches (US-026→030), chemin
+critique **US-027 — Marché crypto** en premier. Démarrage du cycle de vie
+US-027 ci-dessous.
+
 _Aucune US active._ Dernière US clôturée : **US-024 — A5 : Hors-ligne & temps
 écoulé + embryon de prestige** (cycle complet — cadrages fonctionnel + technique
 validés PO, maquette `network-renaissance` validée PO, plan 17 étapes validé PO,
@@ -28,9 +35,17 @@ confirmation via **`ConfirmDialog` étendu** (rétrocompatible : `icon`/`iconCol
 **correction du débit affiché** (n'intégrait pas le prestige) ; limite « seuil
 flat » assumée (embryon) → approfondissement **US-026** au backlog.
 
-**Prochaine US : US-025 — A6** (rebrancher le module perso : to-do/habitudes/
-factions → économie privée) via le skill `nouvelle-us`. Roadmap produit :
-`docs/roadmap.md` (Phase A A1–A6 / Phase B B1–B4).
+**US-025 (A6) gelée** (décision **#028**, 21/07/2026) : brancher le to-do
+auto-déclaré sur la production du Réseau serait farmable (viole P1/P5) et fait
+doublon avec les accélérateurs vérifiés d'US-023 ; module perso laissé
+découplé, tel quel (rien perdu, P8). **Phase A considérée jouée** (A1→A5
+suffisent à prouver le fun).
+
+**Pas de cycle de vie US en cours.** Phase de **brainstorming polish/rétention**
+ouverte (PO ↔ Claude, à partir du 21/07/2026) : analyse fonctionnelle du
+builder existant + pistes d'amélioration, avant de redéfinir la prochaine
+tranche. Roadmap produit : `docs/roadmap.md` (Phase A A1–A5 jouée / Phase B
+B1–B4 à venir).
 
 Dernière US clôturée (antérieure) : **US-023 — A4 : Accélérateurs réels au choix** (cycle
 complet — cadrages fonctionnel + technique validés PO, maquette
