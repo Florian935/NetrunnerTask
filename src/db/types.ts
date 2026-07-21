@@ -150,8 +150,15 @@ export interface BuilderState {
    */
   data: number
   /**
-   * `id` des nœuds de l'arbre de déblocage déjà achetés (US-022). Voir
-   * `game/unlockTree.ts`.
+   * 3ᵉ ressource (US-027) : jamais accumulée passivement — créditée
+   * uniquement par conversion manuelle de `data` au cours du marché (voir
+   * `game/crypto.ts`). Fractionnaire, plancher 0.
+   */
+  crypto: number
+  /**
+   * `id` des nœuds de l'arbre de déblocage déjà achetés (US-022). **Tableau
+   * partagé** entre la branche `data` et la branche `crypto` (US-027) — les
+   * `id` sont uniques dans tout le catalogue. Voir `game/unlockTree.ts`.
    */
   unlockedNodes: string[]
   /**

@@ -11,6 +11,7 @@ import { prestigeMultiplier } from '../../game/prestige'
 import { cycleMultiplier, dataMultiplier } from '../../game/unlockTree'
 import { useBuilderStore } from '../../stores/useBuilderStore'
 import { AcceleratorPanel } from './AcceleratorPanel'
+import { CryptoPanel } from './CryptoPanel'
 import { DaemonCard } from './DaemonCard'
 import { DataReadout } from './DataReadout'
 import { formatCycles, formatRate } from './format'
@@ -21,14 +22,15 @@ import { UnlockTreeSection } from './UnlockTreeSection'
 import './builder.css'
 
 /**
- * Écran « Réseau » (US-020, généralisé US-021, US-022, US-023). Compteur de
- * cycles + débit, HACK manuel, puis le panneau **Accélérateurs réels**
- * (US-023 — geste actif du joueur, jamais imposé), avant la **section
+ * Écran « Réseau » (US-020, généralisé US-021→US-024, US-027). Compteur de
+ * cycles + débit, HACK manuel, le panneau **Accélérateurs réels** (US-023) et
+ * le **Marché crypto** (US-027 — geste actif du joueur), avant la **section
  * daemons** : bandeau « Production réseau », liste des daemons **débloqués**
  * (chaînés) et **teaser** du prochain verrouillé. Une fois `oracle` possédé :
- * lecteur `data` (US-022) + **arbre de déblocage**. Toute la logique vit dans
- * `useBuilderStore` / `game/builder.ts` / `game/unlockTree.ts` /
- * `game/accelerators.ts`.
+ * lecteur `data` (US-022) + **arbre de déblocage** (branche `data`, puis
+ * branche `crypto` une fois le marché débloqué) + **Renaissance** (US-024).
+ * Toute la logique vit dans `useBuilderStore` / `game/builder.ts` /
+ * `game/unlockTree.ts` / `game/accelerators.ts` / `game/crypto.ts`.
  */
 export function BuilderView() {
   const { t } = useTranslation()
@@ -36,6 +38,7 @@ export function BuilderView() {
   const generators = useBuilderStore((s) => s.generators)
   const upgrades = useBuilderStore((s) => s.upgrades)
   const data = useBuilderStore((s) => s.data)
+  const crypto = useBuilderStore((s) => s.crypto)
   const unlockedNodes = useBuilderStore((s) => s.unlockedNodes)
   const prestigeCount = useBuilderStore((s) => s.prestigeCount)
   const hack = useBuilderStore((s) => s.hack)
@@ -43,13 +46,15 @@ export function BuilderView() {
   const buyUpgrade = useBuilderStore((s) => s.buyUpgrade)
 
   const core = { cycles, generators, upgrades, data, unlockedNodes }
-  const treeMultipliers = { cycles: cycleMultiplier(core), data: dataMultiplier(core) }
+  const tree = { data, crypto, generators, upgrades, unlockedNodes }
+  const treeMultipliers = { cycles: cycleMultiplier(tree), data: dataMultiplier(tree) }
   // Débit **effectif** affiché : production de base × arbre × bonus de prestige
   // (US-024) — reflète ce que `applyTick` crédite réellement (le boost temporaire
   // SURCADENCE reste hors du débit affiché, comme depuis US-023).
   const pMult = prestigeMultiplier(prestigeCount)
   const rate = productionPerSec(core) * treeMultipliers.cycles * pMult
   const dataUnlocked = (generators[BUILDER_CONFIG.dataUnlockGenerator] ?? 0) >= 1
+  const cryptoUnlocked = unlockedNodes.includes('breach-market')
   const dataRate = dataPerSec(core, treeMultipliers.data) * pMult
   const unlocked = unlockedGenerators(core)
   const locked = nextLockedGenerator(core)
@@ -90,6 +95,7 @@ export function BuilderView() {
           <DataReadout unlocked={dataUnlocked} data={data} rate={dataRate} />
           <HackZone onHack={hack} gain={BUILDER_CONFIG.manualYield} />
           <AcceleratorPanel />
+          <CryptoPanel unlocked={cryptoUnlocked} />
         </div>
 
         <div className="builder__side">
@@ -128,7 +134,8 @@ export function BuilderView() {
             {locked && <TeaserCard def={locked} prevName={prevName} />}
           </div>
 
-          <UnlockTreeSection unlocked={dataUnlocked} />
+          <UnlockTreeSection currency="data" unlocked={dataUnlocked} />
+          <UnlockTreeSection currency="crypto" unlocked={cryptoUnlocked} />
 
           <div className="builder__prestige-heading">
             <span className="builder__prestige-rule" /> {t('builder.prestige.divider')}{' '}

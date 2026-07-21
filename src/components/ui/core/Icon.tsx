@@ -2,6 +2,7 @@ import type { CSSProperties, HTMLAttributes } from 'react'
 import {
   Activity,
   AlertTriangle,
+  ArrowLeftRight,
   ArrowRight,
   Bell,
   BellOff,
@@ -32,6 +33,7 @@ import {
   Ghost,
   Info,
   KeyRound,
+  Landmark,
   LayoutDashboard,
   ListChecks,
   Lock,
@@ -78,6 +80,7 @@ import {
 const REGISTRY: Record<string, LucideIcon> = {
   activity: Activity,
   'alert-triangle': AlertTriangle,
+  'arrow-left-right': ArrowLeftRight,
   'arrow-right': ArrowRight,
   bell: Bell,
   'bell-off': BellOff,
@@ -108,6 +111,7 @@ const REGISTRY: Record<string, LucideIcon> = {
   ghost: Ghost,
   info: Info,
   'key-round': KeyRound,
+  landmark: Landmark,
   'layout-dashboard': LayoutDashboard,
   'list-checks': ListChecks,
   lock: Lock,

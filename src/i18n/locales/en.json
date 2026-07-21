@@ -272,7 +272,12 @@
     },
     "unlockTree": {
       "heading": "Tree",
-      "balance": "{{value}} data",
+      "headingCrypto": "Crypto tree",
+      "balance": "{{value}} {{unit}}",
+      "unit": {
+        "data": "data",
+        "crypto": "CR"
+      },
       "state": {
         "acquired": "● Acquired",
         "available": "Available",
@@ -280,19 +285,23 @@
       },
       "acquiredHint": "Integrated into the network",
       "buy": "Inject",
-      "buyCost": "{{cost}} data",
+      "buyCost": "{{cost}} {{unit}}",
       "requiresGenerator": "Requires {{count}}× {{name}}",
       "requiresNode": "Requires {{name}}",
       "nodes": {
         "overclock": { "name": "OVERCLOCK", "effect": "+25% on global cycle production." },
         "parallelism": { "name": "PARALLELISM", "effect": "+50% on data production." },
-        "cryo-cache": { "name": "CRYO-CACHE", "effect": "+40% on data production." }
+        "cryo-cache": { "name": "CRYO-CACHE", "effect": "+40% on data production." },
+        "ghost-protocol": { "name": "GHOST://ROGUE.AI", "effect": "A dormant AI stirs in the network. ×3 on data production, invisible until now." },
+        "breach-market": { "name": "MARKET RELAY", "effect": "Opens an encrypted channel to the crypto market. Unlocks data→crypto conversion and its branch." },
+        "arbitrage-auto": { "name": "AUTO ARBITRAGE", "effect": "+15% on global cycle production." },
+        "rate-floor": { "name": "RATE FLOOR", "effect": "The rate never drops below 1.40 CR / 1,000 data." },
+        "ghost-laundry": { "name": "GHOST LAUNDRY", "effect": "+18% on global cycle production." },
+        "dark-pool": { "name": "CARTEL://DARK.POOL", "effect": "A hidden pool is manipulating the rate. Containing it stabilizes the market — floor raised to 1.80 CR / 1,000 data." }
       },
-      "ghost": {
+      "reveal": {
         "banner": "Anomaly detected · unlisted intrusion",
         "sealedHint": "sealed sector · no signal",
-        "name": "GHOST://ROGUE.AI",
-        "description": "A dormant AI stirs in the network. ×3 on data production, invisible until now.",
         "buy": "Contain the anomaly"
       }
     },
@@ -345,9 +354,9 @@
       "reborn": "Rebirth",
       "rebornHint": "burns current progress · the bonus survives",
       "lost": {
-        "resources": "Accumulated cycles & data",
+        "resources": "Accumulated cycles, data & crypto",
         "daemons": "All daemons (units + levels)",
-        "tree": "Unlock tree nodes"
+        "tree": "Unlock tree nodes (data and crypto)"
       },
       "confirm": {
         "title": "Confirm rebirth",
@@ -358,6 +367,20 @@
         "keptBonus": "Permanent bonus: {{from}} → {{to}}",
         "keptSurvive": "The bonus survives every future rebirth"
       }
+    },
+    "crypto": {
+      "heading": "Crypto market",
+      "subheading": "current rate · CR / 1,000 data",
+      "unit": "CR",
+      "trendUp": "RISING",
+      "trendDown": "FALLING",
+      "trendFlat": "STABLE",
+      "balanceData": "Data",
+      "balanceCrypto": "Crypto",
+      "convertLabel": "Share of balance to convert",
+      "convertButton": "Convert at current rate",
+      "convertHint": "Crypto never accumulates on its own — you only earn it here.",
+      "convertHintTrend": "The rate moves: it's up to you to pick the moment."
     }
   }
 }

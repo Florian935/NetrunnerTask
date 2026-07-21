@@ -619,6 +619,54 @@ chemin critique **US-027** en premier :
 
 **Prochaine étape** : cadrage fonctionnel d'US-027 via le skill `nouvelle-us`.
 
+### 030 — Marché crypto (US-027, Phase A2, 22/07/2026)
+
+1ʳᵉ tranche de la Phase A2 (#029). Introduit une **3ᵉ ressource, le crypto**,
+au comportement délibérément différent de `cycles`/`data` : jamais accumulée
+passivement, uniquement convertie **manuellement** depuis `data` à un cours
+qui fluctue — 1ʳᵉ vraie décision de **timing** du jeu. Suite explicite de la
+progression **compute→data→crypto→influence→???** de `vision-plateforme.md`
+§3ter.3.
+
+- **Cours du marché** : nouveau module pur `game/crypto.ts` (**testé 10/10**)
+  — **pas de persistance**, fonction déterministe de l'horodatage réel (3
+  oscillations de périodes/amplitudes différentes autour d'une moyenne),
+  exprimée en **CR / 1 000 data**. Aucune interaction avec le rattrapage
+  hors-ligne (US-024) : le crypto ne varie jamais app fermée.
+- **`game/unlockTree.ts` généralisé multi-devise** (**testé 29/29**, dont 19
+  non-régression) plutôt que dupliqué pour une 2ᵉ branche : chaque nœud porte
+  `currency: 'data' | 'crypto'` ; `unlockedNodes` reste un **seul tableau
+  partagé** entre les deux branches, ce qui permet de réutiliser `requiresNode`
+  **tel quel** pour chaîner la branche crypto à un nœud data (aucun mécanisme
+  nouveau). Nouveau 3ᵉ type d'effet de nœud, `cryptoFloor` (plancher de cours),
+  composé via `cryptoFloorBonus`. 5 nouveaux nœuds : RELAIS DE MARCHÉ (data,
+  déblocage), ARBITRAGE AUTO, PLANCHER DE COURS, LAVERIE FANTÔME (crypto), et
+  **CARTEL://DARK.POOL** (crypto, caché — 2ᵉ reveal du jeu après
+  `ghost-protocol`, glitch amber/cyan distinct).
+- **`game/prestige.ts` ajusté** (**testé 7/7**) : `crypto` fait désormais
+  partie du reset de renaissance — sans ça, un solde crypto orphelin
+  survivrait alors que le nœud qui débloque le marché disparaît avec le reste
+  de l'arbre (incohérence identifiée en cours d'implémentation, pas au
+  cadrage initial).
+- **Migration Dexie v15** : `crypto` (1 champ), même modèle que v11→v14.
+- **DS étendu** : accent **`amber`** ajouté à `Card` (1 ligne — les 5 accents
+  existants étaient tous pris) ; 2 icônes (`arrow-left-right`, `landmark`).
+  Cartes de nœuds standardisées sur **2 repères d'angle** (`<Card brackets>`),
+  pas les 4 de la maquette — cohérence avec le reste de l'app.
+- **UI** : `UnlockNodeCard`/`HiddenNodeCard`/`UnlockTreeSection` **généralisés**
+  (`balance`/`unit`/`currency`) et réutilisés pour les 2 branches — pas de
+  duplication de composants. Nouveau `CryptoPanel` (ticker + tendance +
+  `<Slider>` DS + conversion) en **colonne stage** (layout Option A : geste
+  actif délibéré, comme HACK/accélérateurs) ; 2ᵉ arbre en colonne side.
+  `prefers-reduced-motion` respecté. i18n FR/EN complet.
+- **Ajustement recette (pas un bug code)** : le nœud caché est apparu
+  immédiatement lors du 1ᵉʳ passage recette — cause : condition de recette
+  réduite à 1 oracle, déjà garanti dès que la branche crypto est atteinte
+  (`data` l'exige depuis A3). La vraie valeur (2 oracles) n'a pas ce problème ;
+  logique confirmée correcte, aucune correction de code nécessaire.
+- Vérifs : typecheck + lint + build/PWA + **tests 179/179**. Recette **9/9
+  PO**. Maquette (`network-crypto`) non versionnée (convention #007).
+
 ### 022 — Pivot produit : de « to-do gamifié » vers « jeu builder social » (19/07/2026)
 
 Décision structurante actée après un brainstorming PO ↔ Claude (voir

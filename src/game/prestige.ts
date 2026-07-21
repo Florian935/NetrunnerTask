@@ -13,6 +13,8 @@ export interface PrestigeCore {
   generators: Record<string, number>
   upgrades: Record<string, number>
   data: number
+  /** 3ᵉ ressource (US-027) — remise à zéro comme le reste de l'économie du Réseau. */
+  crypto: number
   unlockedNodes: string[]
   prestigeCount: number
 }
@@ -39,11 +41,13 @@ export function prestigeMultiplier(count: number): number {
 }
 
 /**
- * Renaissance : réinitialise la progression du Réseau et incrémente
- * `prestigeCount`. **No-op** (même référence) si le seuil n'est pas atteint.
- * Ne touche **pas** `acceleratorRun`/`acceleratorBoost` (hors de
- * `PrestigeCore`) : un focus en cours est un engagement réel du joueur,
- * indépendant de l'économie remise à zéro.
+ * Renaissance : réinitialise la progression du Réseau (dont `crypto` et
+ * l'arbre partagé US-027 — un solde crypto orphelin sans le nœud qui
+ * débloque le marché serait incohérent) et incrémente `prestigeCount`.
+ * **No-op** (même référence) si le seuil n'est pas atteint. Ne touche
+ * **pas** `acceleratorRun`/`acceleratorBoost` (hors de `PrestigeCore`) : un
+ * focus en cours est un engagement réel du joueur, indépendant de
+ * l'économie remise à zéro.
  */
 export function prestige<T extends PrestigeCore>(core: T): T {
   if (!canPrestige(core)) return core
@@ -53,6 +57,7 @@ export function prestige<T extends PrestigeCore>(core: T): T {
     generators: {},
     upgrades: {},
     data: 0,
+    crypto: 0,
     unlockedNodes: [],
     prestigeCount: core.prestigeCount + 1,
   }

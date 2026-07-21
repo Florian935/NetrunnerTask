@@ -5,6 +5,7 @@ import {
   nodeState,
   UNLOCK_NODES,
   visibleNodes,
+  type Currency,
   type UnlockTreeCore,
 } from '../../game/unlockTree'
 import { useBuilderStore } from '../../stores/useBuilderStore'
@@ -34,14 +35,22 @@ function TreeRow({
 }
 
 /**
- * Section « Arbre de déblocage » (US-022) — épine verticale + cartes des
- * nœuds visibles (dont, le cas échéant, le nœud caché révélé), branchée sur
- * `useBuilderStore`. Rendue uniquement une fois la mécanique `data`
- * débloquée (AC1) ; `null` sinon — même contrat que `DataReadout`.
+ * Section « Arbre de déblocage » (US-022, généralisée multi-devise US-027) —
+ * épine verticale + cartes des nœuds **de la branche `currency`** (dont, le
+ * cas échéant, le nœud caché de cette branche révélé), branchée sur
+ * `useBuilderStore`. Rendue uniquement une fois la branche débloquée
+ * (`unlocked`) ; `null` sinon — même contrat que `DataReadout`/`CryptoPanel`.
  */
-export function UnlockTreeSection({ unlocked }: { unlocked: boolean }) {
+export function UnlockTreeSection({
+  currency,
+  unlocked,
+}: {
+  currency: Currency
+  unlocked: boolean
+}) {
   const { t } = useTranslation()
   const data = useBuilderStore((s) => s.data)
+  const crypto = useBuilderStore((s) => s.crypto)
   const generators = useBuilderStore((s) => s.generators)
   const upgrades = useBuilderStore((s) => s.upgrades)
   const unlockedNodes = useBuilderStore((s) => s.unlockedNodes)
@@ -49,20 +58,30 @@ export function UnlockTreeSection({ unlocked }: { unlocked: boolean }) {
 
   if (!unlocked) return null
 
-  const core: UnlockTreeCore = { data, generators, upgrades, unlockedNodes }
-  const shown = visibleNodes(core)
+  const core: UnlockTreeCore = { data, crypto, generators, upgrades, unlockedNodes }
+  const balance = currency === 'crypto' ? crypto : data
+  const shown = visibleNodes(core, currency)
   const normalNodes = shown.filter((n) => !n.hidden)
-  const ghostDef = UNLOCK_NODES.find((n) => n.hidden) ?? null
+  const ghostDef = UNLOCK_NODES.find((n) => n.hidden && n.currency === currency) ?? null
   const ghostVisible = ghostDef ? shown.some((n) => n.id === ghostDef.id) : false
   const ghostState = ghostDef ? nodeState(ghostDef, core) : null
 
   return (
     <div className="builder__tree">
       <div className="builder__tree-head">
-        <span className="builder__tree-title">{t('builder.unlockTree.heading')}</span>
+        <span className="builder__tree-title">
+          {t(
+            currency === 'crypto'
+              ? 'builder.unlockTree.headingCrypto'
+              : 'builder.unlockTree.heading',
+          )}
+        </span>
         <span className="builder__tree-balance">
-          <Icon name="database" size={13} />
-          {t('builder.unlockTree.balance', { value: formatCycles(data) })}
+          <Icon name={currency === 'crypto' ? 'coins' : 'database'} size={13} />
+          {t('builder.unlockTree.balance', {
+            value: formatCycles(balance),
+            unit: t(`builder.unlockTree.unit.${currency}`),
+          })}
         </span>
       </div>
 
@@ -74,7 +93,8 @@ export function UnlockTreeSection({ unlocked }: { unlocked: boolean }) {
             <UnlockNodeCard
               node={node}
               state={state}
-              data={data}
+              balance={balance}
+              unit={currency}
               onBuy={() => buyNode(node.id)}
             />
           </TreeRow>
@@ -90,7 +110,8 @@ export function UnlockTreeSection({ unlocked }: { unlocked: boolean }) {
             node={ghostDef}
             visible={ghostVisible}
             state={ghostState ?? 'locked'}
-            data={data}
+            balance={balance}
+            unit={currency}
             onBuy={() => buyNode(ghostDef.id)}
           />
         </TreeRow>

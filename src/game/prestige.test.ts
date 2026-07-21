@@ -12,6 +12,7 @@ const mk = (over: Partial<PrestigeCore> = {}): PrestigeCore => ({
   generators: {},
   upgrades: {},
   data: 0,
+  crypto: 0,
   unlockedNodes: [],
   prestigeCount: 0,
   ...over,
@@ -42,13 +43,14 @@ describe('prestige', () => {
     const s = mk({ cycles: 10 })
     expect(prestige(s)).toBe(s)
   })
-  it('réinitialise la progression du Réseau et incrémente le compteur', () => {
+  it('réinitialise la progression du Réseau (dont crypto) et incrémente le compteur', () => {
     const s = mk({
       cycles: PRESTIGE_CONFIG.threshold + 500,
       generators: { scraper: 12, oracle: 1 },
       upgrades: { scraper: 3 },
       data: 800,
-      unlockedNodes: ['overclock', 'parallelism'],
+      crypto: 120,
+      unlockedNodes: ['overclock', 'parallelism', 'breach-market'],
       prestigeCount: 1,
     })
     const next = prestige(s)
@@ -56,6 +58,7 @@ describe('prestige', () => {
     expect(next.generators).toEqual({})
     expect(next.upgrades).toEqual({})
     expect(next.data).toBe(0)
+    expect(next.crypto).toBe(0)
     expect(next.unlockedNodes).toEqual([])
     expect(next.prestigeCount).toBe(2)
   })
