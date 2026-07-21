@@ -1,29 +1,33 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Card, Icon } from '../../components/ui'
-import type { NodeState, UnlockNodeDef } from '../../game/unlockTree'
+import type { Currency, NodeState, UnlockNodeDef } from '../../game/unlockTree'
 import { formatCycles } from './format'
 
 /**
- * Carte du nœud **caché** (`ghost-protocol`, US-022 — 1ᵉʳ reveal P6). Absente
- * tant que `visible` est faux (placeholder d'ambiance neutre, ne révèle rien
- * du nœud — AC6). Au passage à `visible`, joue une **irruption** transitoire
- * (glitch), puis se stabilise en carte « anomalie » sur le composant DS
- * **`<Card hud brackets halo="magenta">`** (2 repères d'angle, comme les
- * autres cartes du builder) — traitement visuel réservé (bandeau + animations
- * dédiées), distinct des nœuds normaux (y compris une fois acquis).
+ * Carte d'un nœud **caché** (US-022 « reveal » P6, généralisée multi-nœud et
+ * multi-devise US-027 — `ghost-protocol` sur la branche `data`, `dark-pool`
+ * sur la branche `crypto`). Absente tant que `visible` est faux (placeholder
+ * d'ambiance neutre, ne révèle rien du nœud — AC6). Au passage à `visible`,
+ * joue une **irruption** transitoire (glitch), puis se stabilise en carte
+ * « anomalie » sur le composant DS **`<Card hud brackets>`** — accent mint si
+ * acquis, sinon magenta (`data`) ou ambre (`crypto`, US-027, glitch
+ * amber/cyan distinct du glitch magenta de la branche data).
  */
 export function HiddenNodeCard({
   node,
   visible,
   state,
-  data,
+  balance,
+  unit,
   onBuy,
 }: {
   node: UnlockNodeDef
   visible: boolean
   state: NodeState
-  data: number
+  /** Solde disponible dans la devise du nœud (`data` ou `crypto`). */
+  balance: number
+  unit: Currency
   onBuy: () => void
 }) {
   const { t } = useTranslation()
@@ -44,34 +48,35 @@ export function HiddenNodeCard({
     return (
       <div className="builder__node--sealed">
         <Icon name="minus" size={16} />
-        {t('builder.unlockTree.ghost.sealedHint')}
+        {t('builder.unlockTree.reveal.sealedHint')}
       </div>
     )
   }
 
-  const affordable = state === 'available' && data >= node.cost
+  const affordable = state === 'available' && balance >= node.cost
+  const cryptoGlitch = unit === 'crypto'
 
   return (
     <Card
       hud
       brackets
-      halo="magenta"
+      halo={state === 'acquired' ? 'mint' : cryptoGlitch ? 'amber' : 'magenta'}
       padding="14px"
-      className={`builder__node--ghost${revealing ? ' builder__node--revealing' : ''}`}
+      className={`builder__node--ghost${cryptoGlitch ? ' builder__node--ghost-crypto' : ''}${revealing ? ' builder__node--revealing' : ''}`}
     >
       <div className="builder__node-ghost-banner">
-        <Icon name="triangle-alert" size={11} /> {t('builder.unlockTree.ghost.banner')}
+        <Icon name="triangle-alert" size={11} /> {t('builder.unlockTree.reveal.banner')}
       </div>
       <div className="builder__node-head">
         <span className="builder__node-icon builder__node-icon--ghost">
-          <Icon name="skull" size={20} />
+          <Icon name={node.icon} size={20} />
         </span>
         <div className="builder__node-meta">
           <span className="builder__node-name builder__node-name--ghost">
-            {t('builder.unlockTree.ghost.name')}
+            {t(`builder.unlockTree.nodes.${node.id}.name`)}
           </span>
           <div className="builder__node-effect">
-            {t('builder.unlockTree.ghost.description')}
+            {t(`builder.unlockTree.nodes.${node.id}.effect`)}
           </div>
         </div>
       </div>
@@ -89,10 +94,13 @@ export function HiddenNodeCard({
         >
           <span className="builder__node-buy-line">
             <Icon name={affordable ? 'unlock' : 'lock'} size={14} />{' '}
-            {t('builder.unlockTree.ghost.buy')}
+            {t('builder.unlockTree.reveal.buy')}
           </span>
           <span className="builder__node-buy-cost">
-            {t('builder.unlockTree.buyCost', { cost: formatCycles(node.cost) })}
+            {t('builder.unlockTree.buyCost', {
+              cost: formatCycles(node.cost),
+              unit: t(`builder.unlockTree.unit.${unit}`),
+            })}
           </span>
         </button>
       )}

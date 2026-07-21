@@ -50,6 +50,7 @@ export async function ensureSeeded(): Promise<void> {
       generators: {},
       upgrades: {},
       data: 0,
+      crypto: 0,
       unlockedNodes: [],
       acceleratorRun: null,
       acceleratorBoost: null,

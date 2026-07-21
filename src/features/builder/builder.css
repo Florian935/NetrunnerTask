@@ -1184,6 +1184,308 @@
   line-height: 1.4;
 }
 
+/* Variante ambre — branche crypto (US-027), distincte du magenta data. */
+.builder__node--available.builder__node--crypto .builder__node-icon {
+  color: var(--amber-400);
+  background: rgba(255, 176, 32, 0.12);
+  border: 1px solid rgba(255, 176, 32, 0.4);
+}
+.builder__node--available.builder__node--crypto .builder__node-state {
+  color: var(--amber-400);
+}
+.builder__node--crypto .builder__node-buy {
+  border-color: var(--amber-500);
+  background: linear-gradient(120deg, rgba(255, 176, 32, 0.2), rgba(255, 176, 32, 0.08));
+  box-shadow: 0 0 16px -6px var(--amber-500);
+}
+.builder__node--crypto .builder__node-buy-cost {
+  color: var(--amber-400);
+}
+.builder__node--crypto .builder__node-buy:disabled {
+  border-color: var(--border-strong);
+  background: var(--void-800);
+  box-shadow: none;
+}
+.builder__node--crypto .builder__node-buy:disabled .builder__node-buy-cost {
+  color: var(--red-400);
+}
+/* Reveal caché crypto (dark-pool) : glitch ambre/cyan, distinct du magenta/cyan de ghost-protocol. */
+.builder__node--ghost-crypto .builder__node-icon--ghost {
+  color: var(--amber-400);
+  background: rgba(255, 176, 32, 0.16);
+  border: 1px solid var(--amber-500);
+  box-shadow: 0 0 14px -2px var(--amber-500);
+}
+.builder__node--ghost-crypto .builder__node-name--ghost {
+  text-shadow: 2px 0 rgba(255, 176, 32, 0.4), -2px 0 rgba(0, 240, 255, 0.4);
+}
+.builder__node--ghost-crypto.builder__node--ghost {
+  animation: nw-anom-glow-amber 2.4s ease-in-out infinite;
+}
+.builder__node--ghost-crypto.builder__node--revealing {
+  animation:
+    nw-reveal-clip 0.9s steps(1, end) forwards,
+    nw-anom-glow-amber 2.4s ease-in-out 0.9s infinite;
+}
+.builder__node--ghost-crypto .builder__node-buy--ghost {
+  background: linear-gradient(120deg, rgba(255, 176, 32, 0.24), rgba(0, 240, 255, 0.16));
+  box-shadow: 0 0 20px -4px var(--amber-500);
+}
+
+/* Panneau « Marché crypto » (US-027) — accent ambre réservé. */
+.builder__crypto {
+  width: 100%;
+  max-width: 360px;
+  position: relative;
+  overflow: hidden;
+}
+.builder__crypto::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(255, 176, 32, 0.05) 0,
+    rgba(255, 176, 32, 0.05) 2px,
+    transparent 2px,
+    transparent 9px
+  );
+  pointer-events: none;
+}
+.builder__crypto-head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.builder__crypto-icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--amber-400);
+  background: rgba(255, 176, 32, 0.14);
+  border: 1px solid rgba(255, 176, 32, 0.5);
+  clip-path: var(--clip-bevel-sm);
+  box-shadow: 0 0 14px -3px var(--amber-500);
+}
+.builder__crypto-heading {
+  flex: 1;
+  min-width: 0;
+}
+.builder__crypto-title {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--amber-400);
+}
+.builder__crypto-sub {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.builder__crypto-rate {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 14px;
+  background: var(--void-800);
+  border: 1px solid var(--border);
+  clip-path: var(--clip-bevel-sm);
+}
+.builder__crypto-rate-value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 34px;
+  line-height: 0.95;
+  color: var(--frost-100);
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 16px rgba(255, 176, 32, 0.5);
+}
+.builder__crypto-rate-unit {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--amber-400);
+  margin-left: 6px;
+}
+.builder__crypto-trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  clip-path: var(--clip-bevel-sm);
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid currentColor;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+.builder__crypto-trend--up {
+  color: var(--mint-500);
+}
+.builder__crypto-trend--down {
+  color: var(--red-400);
+}
+.builder__crypto-trend--flat {
+  color: var(--steel-400);
+}
+.builder__crypto-balances {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+.builder__crypto-balance {
+  padding: 9px 12px;
+  background: var(--void-800);
+  clip-path: var(--clip-bevel-sm);
+}
+.builder__crypto-balance--data {
+  background: linear-gradient(135deg, rgba(255, 45, 149, 0.1), transparent 70%), var(--void-800);
+  border: 1px solid rgba(255, 45, 149, 0.4);
+}
+.builder__crypto-balance--crypto {
+  background: linear-gradient(135deg, rgba(255, 176, 32, 0.12), transparent 70%), var(--void-800);
+  border: 1px solid rgba(255, 176, 32, 0.45);
+}
+.builder__crypto-balance-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+.builder__crypto-balance--data .builder__crypto-balance-label {
+  color: var(--magenta-400);
+}
+.builder__crypto-balance--crypto .builder__crypto-balance-label {
+  color: var(--amber-400);
+}
+.builder__crypto-balance-value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.1;
+  color: var(--frost-100);
+  font-variant-numeric: tabular-nums;
+  margin-top: 2px;
+}
+.builder__crypto-balance-unit {
+  font-size: 11px;
+}
+.builder__crypto-convert {
+  position: relative;
+  margin-top: 16px;
+}
+.builder__crypto-convert-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+.builder__crypto-convert-pct {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--amber-400);
+}
+.builder__crypto-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 10px 14px;
+  background: var(--void-800);
+  border: 1px dashed rgba(255, 176, 32, 0.5);
+  clip-path: var(--clip-bevel-sm);
+  color: var(--amber-400);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.builder__crypto-preview-data {
+  color: var(--magenta-300, #ff8fc4);
+  font-size: 11px;
+}
+.builder__crypto-preview-crypto {
+  font-size: 15px;
+  font-weight: 700;
+  text-shadow: 0 0 12px rgba(255, 176, 32, 0.5);
+}
+.builder__crypto-cta {
+  position: relative;
+  width: 100%;
+  margin-top: 12px;
+  height: 46px;
+  cursor: pointer;
+  border: 1px solid var(--amber-500);
+  clip-path: var(--clip-bevel-sm);
+  background: linear-gradient(120deg, rgba(255, 176, 32, 0.24), rgba(255, 176, 32, 0.1));
+  box-shadow: 0 0 18px -4px var(--amber-500);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--frost-100);
+  text-shadow: 0 0 10px rgba(255, 176, 32, 0.5);
+  transition:
+    filter var(--dur-fast) var(--ease-out),
+    transform var(--dur-instant) var(--ease-out);
+}
+.builder__crypto-cta:hover:not(:disabled) {
+  filter: brightness(1.12);
+}
+.builder__crypto-cta:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.builder__crypto-cta:disabled {
+  cursor: not-allowed;
+  border-color: var(--border-strong);
+  background: var(--void-800);
+  box-shadow: none;
+  color: var(--text-muted);
+  text-shadow: none;
+}
+.builder__crypto-hint {
+  position: relative;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.03em;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 9px;
+  line-height: 1.5;
+}
+.builder__crypto-hint-trend--up {
+  color: var(--mint-500);
+}
+.builder__crypto-hint-trend--down {
+  color: var(--red-400);
+}
+
 /* Animations */
 @keyframes nw-hack-ring {
   from {
@@ -1300,6 +1602,16 @@
   }
   50% {
     box-shadow: 0 0 44px 0 var(--magenta-500), inset 0 0 36px -8px var(--cyan-500);
+  }
+}
+/* Variante ambre du glow d'irruption — reveal caché crypto (dark-pool, US-027). */
+@keyframes nw-anom-glow-amber {
+  0%,
+  100% {
+    box-shadow: 0 0 30px -6px var(--amber-500), inset 0 0 30px -12px var(--cyan-500);
+  }
+  50% {
+    box-shadow: 0 0 44px 0 var(--amber-500), inset 0 0 36px -8px var(--cyan-500);
   }
 }
 

@@ -5,14 +5,44 @@
 
 ## US active
 
-**Session de brainstorming PO ↔ Claude (21/07/2026)** — US-025 (A6) gelée
-(décision #028), Phase A close (A1→A5 jouée). Analyse fonctionnelle du builder
-→ **Phase A2 « Approfondissement & rétention »** cadrée (décision #029, voir
-`docs/roadmap.md`/`project/backlog.md`) : 5 tranches (US-026→030), chemin
-critique **US-027 — Marché crypto** en premier. Démarrage du cycle de vie
-US-027 ci-dessous.
+_Aucune US active._ Dernière US clôturée : **US-027 — Marché crypto (Phase
+A2)** (cycle complet — cadrages fonctionnel + technique validés PO, maquette
+`network-crypto` validée PO, plan 14 étapes validé PO, implémentation faite,
+**recette 9/9 PO** le 22/07/2026, décision **#030**, commit + merge sur
+`develop` + push).
 
-_Aucune US active._ Dernière US clôturée : **US-024 — A5 : Hors-ligne & temps
+Réalisé US-027 : 1ʳᵉ tranche de la Phase A2. **3ᵉ ressource, le crypto** —
+comportement délibérément différent de `cycles`/`data` : jamais accumulée
+passivement, convertie **manuellement** à un cours fluctuant. Nouveau module
+pur **`game/crypto.ts`** (`marketRate` déterministe à 3 oscillations, **jamais
+persisté**, aucune interaction avec le hors-ligne — **testé 10/10**).
+**`game/unlockTree.ts` généralisé multi-devise** (`currency` par nœud,
+`unlockedNodes` **partagé** entre branches → `requiresNode` réutilisé tel quel
+pour le lien inter-branches, nouveau 3ᵉ type d'effet `cryptoFloor` — **testé
+29/29**, 19 non-régression + 10 nouveaux) : 5 nœuds (RELAIS DE MARCHÉ,
+ARBITRAGE AUTO, PLANCHER DE COURS, LAVERIE FANTÔME, **CARTEL://DARK.POOL**
+caché — 2ᵉ reveal du jeu). **`game/prestige.ts` ajusté** (`crypto` fait
+désormais partie du reset — **testé 7/7**). Migration **Dexie v15**
+(`crypto`). **DS étendu** : accent `amber` (`Card` +1 ligne), 2 icônes
+(`arrow-left-right`/`landmark`). UI : `UnlockNodeCard`/`HiddenNodeCard`/
+`UnlockTreeSection` **généralisés** (réutilisés pour les 2 branches, pas de
+duplication) ; nouveau `CryptoPanel` (ticker + tendance + `<Slider>` DS +
+conversion) en colonne stage (layout Option A) ; 2ᵉ arbre en colonne side.
+**Tests 179/179.** Recette PO : 9 critères conformes ; 1 ajustement de recette
+(condition du reveal caché mal calibrée pour le test, pas un bug de code —
+corrigé et rejoué en direct).
+
+**Prochaine US : US-028 — Jalons/accomplissements** (Phase A2) via le skill
+`nouvelle-us`. Roadmap produit : `docs/roadmap.md` (Phase A2, chemin
+US-027→030 / US-026 rattachée).
+
+Contexte : **session de brainstorming PO ↔ Claude (21/07/2026)** — US-025 (A6)
+gelée (décision #028), Phase A close (A1→A5 jouée). Analyse fonctionnelle du
+builder → **Phase A2 « Approfondissement & rétention »** cadrée (décision
+#029, voir `docs/roadmap.md`/`project/backlog.md`) : 5 tranches (US-026→030),
+chemin critique US-027 en premier.
+
+Dernière US clôturée : **US-024 — A5 : Hors-ligne & temps
 écoulé + embryon de prestige** (cycle complet — cadrages fonctionnel + technique
 validés PO, maquette `network-renaissance` validée PO, plan 17 étapes validé PO,
 implémentation faite, **recette 9/9 PO** le 21/07/2026, décision **#027**,

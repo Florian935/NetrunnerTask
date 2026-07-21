@@ -17,6 +17,7 @@ import {
   tick as tickPure,
   type BuilderCore,
 } from '../game/builder'
+import { convert as convertPure, marketRate, type CryptoCore } from '../game/crypto'
 import {
   prestige as prestigePure,
   prestigeMultiplier,
@@ -24,8 +25,10 @@ import {
 } from '../game/prestige'
 import {
   buyNode as buyNodePure,
+  cryptoFloorBonus,
   cycleMultiplier,
   dataMultiplier,
+  type UnlockTreeCore,
 } from '../game/unlockTree'
 import { useFeedbackStore } from './useFeedbackStore'
 
@@ -33,18 +36,22 @@ import { useFeedbackStore } from './useFeedbackStore'
 const OFFLINE_NOTABLE = 1
 
 /**
- * Store réactif du builder « Réseau » (US-020, généralisé US-021, US-022,
- * US-023). État persisté (`builderState`) : `cycles` + maps `generators`/
- * `upgrades` par type de daemon + `data` + `unlockedNodes` (arbre de
- * déblocage) + `acceleratorRun`/`acceleratorBoost` (accélérateurs réels).
+ * Store réactif du builder « Réseau » (US-020, généralisé US-021→US-024,
+ * US-027). État persisté (`builderState`) : `cycles` + maps `generators`/
+ * `upgrades` par type de daemon + `data` + `crypto` (US-027) +
+ * `unlockedNodes` (arbre de déblocage, **partagé** entre branches data/crypto)
+ * + `acceleratorRun`/`acceleratorBoost` (accélérateurs réels).
  * Mutations via la logique pure `game/builder.ts` (daemons/cycles/data),
- * `game/unlockTree.ts` (arbre) et `game/accelerators.ts` (accélérateurs) —
- * les trois modules sont **découplés** ; c'est ce store qui compose les
- * multiplicateurs (arbre × boost) avant `tick()`. Persistance **immédiate** à
- * l'achat (daemon/upgrade/nœud) et aux transitions d'accélérateur
- * (lancement/abandon/résolution) ; hack/tick throttlés par `useBuilderTick`.
+ * `game/unlockTree.ts` (arbre multi-devise), `game/accelerators.ts`
+ * (accélérateurs) et `game/crypto.ts` (marché) — modules **découplés** ;
+ * c'est ce store qui compose les multiplicateurs (arbre × boost × prestige)
+ * avant `tick()`. Persistance **immédiate** à l'achat (daemon/upgrade/nœud),
+ * à la conversion crypto et aux transitions d'accélérateur ; hack/tick
+ * throttlés par `useBuilderTick`.
  */
 interface BuilderStoreState extends BuilderCore, AcceleratorCore {
+  /** 3ᵉ ressource (US-027) — jamais accumulée passivement, voir `convertToCrypto`. */
+  crypto: number
   /** Nombre de renaissances (US-024) — bonus permanent `prestigeMultiplier`. */
   prestigeCount: number
   loaded: boolean
@@ -55,8 +62,10 @@ interface BuilderStoreState extends BuilderCore, AcceleratorCore {
   buyGenerator: (id: string) => void
   /** Achète le prochain niveau d'upgrade du daemon `id` (no-op si solde <). */
   buyUpgrade: (id: string) => void
-  /** Achète le nœud `id` de l'arbre de déblocage (no-op si non éligible) ; persiste aussitôt. */
+  /** Achète le nœud `id` de l'arbre (devise selon le nœud, no-op si non éligible) ; persiste aussitôt. */
   buyNode: (id: string) => void
+  /** Convertit `dataAmount` de `data` en crypto au cours effectif du moment (no-op si invalide) ; persiste aussitôt. */
+  convertToCrypto: (dataAmount: number) => void
   /** Lance l'accélérateur `id` (no-op si une session/boost est déjà en cours) ; persiste aussitôt. */
   startAccelerator: (id: string) => void
   /** Abandonne la session en cours (no-op sinon), aucune pénalité ; persiste aussitôt. */
@@ -77,6 +86,21 @@ const core = (s: BuilderCore): BuilderCore => ({
   unlockedNodes: s.unlockedNodes,
 })
 
+/** Vue `UnlockTreeCore` (US-027 : gagne `crypto`) pour les appels à `unlockTree.ts`. */
+const treeCore = (s: BuilderStoreState): UnlockTreeCore => ({
+  data: s.data,
+  crypto: s.crypto,
+  generators: s.generators,
+  upgrades: s.upgrades,
+  unlockedNodes: s.unlockedNodes,
+})
+
+/** Vue `CryptoCore` pour les appels à `game/crypto.ts`. */
+const cryptoCore = (s: BuilderStoreState): CryptoCore => ({
+  data: s.data,
+  crypto: s.crypto,
+})
+
 const accelerators = (s: AcceleratorCore): AcceleratorCore => ({
   acceleratorRun: s.acceleratorRun,
   acceleratorBoost: s.acceleratorBoost,
@@ -87,6 +111,7 @@ const prestigeCore = (s: BuilderStoreState): PrestigeCore => ({
   generators: s.generators,
   upgrades: s.upgrades,
   data: s.data,
+  crypto: s.crypto,
   unlockedNodes: s.unlockedNodes,
   prestigeCount: s.prestigeCount,
 })
@@ -96,6 +121,7 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
   generators: {},
   upgrades: {},
   data: 0,
+  crypto: 0,
   unlockedNodes: [],
   acceleratorRun: null,
   acceleratorBoost: null,
@@ -113,6 +139,7 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
       data: state?.data ?? 0,
       unlockedNodes: state?.unlockedNodes ?? [],
     }
+    const crypto = state?.crypto ?? 0
     const accAtClose: AcceleratorCore = {
       acceleratorRun: state?.acceleratorRun ?? null,
       acceleratorBoost: state?.acceleratorBoost ?? null,
@@ -124,8 +151,10 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
     // Calendrier de multiplicateurs : arbre (constant) × prestige (constant) ×
     // fenêtres de boost (variables — un `run` en cours peut devenir SURCADENCE
     // puis expirer pendant l'absence). Composé ici ; `offlineTick` rejoue.
-    const treeC = cycleMultiplier(loadedCore)
-    const treeD = dataMultiplier(loadedCore)
+    // `crypto` n'entre jamais dans ce calcul : il ne s'accumule jamais
+    // passivement (seule une conversion active le fait varier, US-027).
+    const treeC = cycleMultiplier({ ...loadedCore, crypto })
+    const treeD = dataMultiplier({ ...loadedCore, crypto })
     const pMult = prestigeMultiplier(prestigeCount)
     const schedule: ProductionSegment[] = boostWindows(accAtClose, fromMs).map((w) => ({
       untilMs: w.untilMs,
@@ -144,6 +173,7 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
       generators: caught.generators,
       upgrades: caught.upgrades,
       data: caught.data,
+      crypto,
       unlockedNodes: caught.unlockedNodes,
       acceleratorRun: resolvedAcc.acceleratorRun,
       acceleratorBoost: resolvedAcc.acceleratorBoost,
@@ -187,10 +217,21 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
   },
 
   buyNode: (id) => {
-    const current = core(get())
+    const current = treeCore(get())
     const next = buyNodePure(current, id)
     if (next === current) return // condition non remplie ou solde insuffisant → no-op
-    set(next)
+    set({ data: next.data, crypto: next.crypto, unlockedNodes: next.unlockedNodes })
+    void get().persist()
+  },
+
+  convertToCrypto: (dataAmount) => {
+    const state = get()
+    const now = Date.now()
+    const effectiveRate = Math.max(marketRate(now), cryptoFloorBonus(treeCore(state)))
+    const current = cryptoCore(state)
+    const next = convertPure(current, dataAmount, effectiveRate)
+    if (next === current) return // montant invalide ou solde insuffisant → no-op
+    set({ data: next.data, crypto: next.crypto })
     void get().persist()
   },
 
@@ -219,6 +260,7 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
       generators: next.generators,
       upgrades: next.upgrades,
       data: next.data,
+      crypto: next.crypto,
       unlockedNodes: next.unlockedNodes,
       prestigeCount: next.prestigeCount,
       // acceleratorRun/acceleratorBoost intacts (engagement réel du joueur).
@@ -234,11 +276,12 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
     if (accNext !== accCurrent) set(accNext)
 
     const current = core(state) // champs builder non affectés par la résolution accélérateur
+    const tree = treeCore(state)
     const boost = boostMultiplier(accNext, now)
     const pMult = prestigeMultiplier(state.prestigeCount)
     const next = tickPure(current, dtMs, {
-      cycles: cycleMultiplier(current) * boost.cycles * pMult,
-      data: dataMultiplier(current) * boost.data * pMult,
+      cycles: cycleMultiplier(tree) * boost.cycles * pMult,
+      data: dataMultiplier(tree) * boost.data * pMult,
     })
     if (next !== current) set({ cycles: next.cycles, data: next.data })
 
@@ -251,6 +294,7 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
       generators,
       upgrades,
       data,
+      crypto,
       unlockedNodes,
       acceleratorRun,
       acceleratorBoost,
@@ -261,6 +305,7 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
       generators,
       upgrades,
       data,
+      crypto,
       unlockedNodes,
       acceleratorRun,
       acceleratorBoost,

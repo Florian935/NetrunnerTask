@@ -272,7 +272,12 @@
     },
     "unlockTree": {
       "heading": "Arbre",
-      "balance": "{{value}} data",
+      "headingCrypto": "Arbre crypto",
+      "balance": "{{value}} {{unit}}",
+      "unit": {
+        "data": "data",
+        "crypto": "CR"
+      },
       "state": {
         "acquired": "● Acquis",
         "available": "Dispo",
@@ -280,19 +285,23 @@
       },
       "acquiredHint": "Intégré au réseau",
       "buy": "Injecter",
-      "buyCost": "{{cost}} data",
+      "buyCost": "{{cost}} {{unit}}",
       "requiresGenerator": "Requiert {{count}}× {{name}}",
       "requiresNode": "Requiert {{name}}",
       "nodes": {
         "overclock": { "name": "OVERCLOCK", "effect": "+25 % sur la production de cycles globale." },
         "parallelism": { "name": "PARALLÉLISME", "effect": "+50 % sur la production de données." },
-        "cryo-cache": { "name": "CRYO-CACHE", "effect": "+40 % sur la production de données." }
+        "cryo-cache": { "name": "CRYO-CACHE", "effect": "+40 % sur la production de données." },
+        "ghost-protocol": { "name": "GHOST://ROGUE.AI", "effect": "Une IA dormante s'éveille dans le réseau. ×3 sur la production de données, jusque-là invisible." },
+        "breach-market": { "name": "RELAIS DE MARCHÉ", "effect": "Ouvre un canal chiffré vers le marché crypto. Débloque la conversion data→crypto et sa branche." },
+        "arbitrage-auto": { "name": "ARBITRAGE AUTO", "effect": "+15 % sur la production de cycles globale." },
+        "rate-floor": { "name": "PLANCHER DE COURS", "effect": "Le cours ne descend plus sous 1,40 CR / 1 000 data." },
+        "ghost-laundry": { "name": "LAVERIE FANTÔME", "effect": "+18 % sur la production de cycles globale." },
+        "dark-pool": { "name": "CARTEL://DARK.POOL", "effect": "Un pool occulte manipule le cours. Le contenir stabilise le marché — plancher remonté à 1,80 CR / 1 000 data." }
       },
-      "ghost": {
+      "reveal": {
         "banner": "Anomalie détectée · intrusion non répertoriée",
         "sealedHint": "secteur scellé · aucun signal",
-        "name": "GHOST://ROGUE.AI",
-        "description": "Une IA dormante s'éveille dans le réseau. ×3 sur la production de données, jusque-là invisible.",
         "buy": "Contenir l'anomalie"
       }
     },
@@ -345,9 +354,9 @@
       "reborn": "Renaître",
       "rebornHint": "brûle la progression actuelle · le bonus survit",
       "lost": {
-        "resources": "Cycles & data accumulés",
+        "resources": "Cycles, data & crypto accumulés",
         "daemons": "Tous les daemons (unités + niveaux)",
-        "tree": "Nœuds de l'arbre de déblocage"
+        "tree": "Nœuds de l'arbre de déblocage (data et crypto)"
       },
       "confirm": {
         "title": "Confirmer la renaissance",
@@ -358,6 +367,20 @@
         "keptBonus": "Bonus permanent : {{from}} → {{to}}",
         "keptSurvive": "Le bonus survit à toutes les renaissances futures"
       }
+    },
+    "crypto": {
+      "heading": "Marché crypto",
+      "subheading": "cours du moment · CR / 1 000 data",
+      "unit": "CR",
+      "trendUp": "EN HAUSSE",
+      "trendDown": "EN BAISSE",
+      "trendFlat": "STABLE",
+      "balanceData": "Data",
+      "balanceCrypto": "Crypto",
+      "convertLabel": "Part du solde à convertir",
+      "convertButton": "Convertir au cours actuel",
+      "convertHint": "Le crypto ne s'accumule jamais seul — il se gagne uniquement ici.",
+      "convertHintTrend": "Le cours bouge : c'est à toi de choisir le moment."
     }
   }
 }

@@ -1,7 +1,7 @@
 import type { CSSProperties, HTMLAttributes, ReactNode } from 'react'
 import './card.css'
 
-export type CardAccent = 'cyan' | 'magenta' | 'mint' | 'violet' | 'red'
+export type CardAccent = 'cyan' | 'magenta' | 'mint' | 'violet' | 'red' | 'amber'
 
 export interface CardProps {
   children?: ReactNode

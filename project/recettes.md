@@ -3,6 +3,43 @@
 > Tests de recette par US. Chaque test reprend un critère d'acceptation de l'US.
 > Statuts : `à faire` / `validé` / `échoué`.
 
+## US-027 — Marché crypto (Phase A2)
+
+Recette du 21-22/07/2026. Critères de `us/US-027-marche-crypto.md` §1.
+**Vérifs automatiques** : `typecheck` + `lint` + `build`/PWA + tests Vitest
+**179/179** (dont nouveau `game/crypto.ts` **10/10**, `game/unlockTree.ts`
+généralisé **29/29**, `game/prestige.ts` ajusté **7/7**). **Recette visuelle &
+interactive navigateur (`npm run dev`, port 5182) confirmée par le PO :
+fonctionnel OK, rendu conforme à la maquette `network-crypto`.** Coûts/seuil
+temporairement réduits pour la recette (RELAIS DE MARCHÉ, CARTEL://DARK.POOL,
+seuil de prestige) puis **remis à leurs valeurs d'origine** après validation PO.
+
+| # | Critère (action → résultat attendu) | Méthode | Statut | Date |
+|---|-------------------------------------|---------|--------|------|
+| C1 | Avant le nœud de déblocage : aucune info sur le marché crypto visible | `cryptoUnlocked` (`unlockedNodes.includes('breach-market')`) gate `CryptoPanel`/branche crypto + PO | validé | 22/07/2026 |
+| C2 | Achat du nœud RELAIS DE MARCHÉ → panneau marché **et** 2ᵉ branche d'arbre apparaissent | `buyNode` généralisé + PO live | validé | 22/07/2026 |
+| C3 | Cours qui varie dans le temps, observable sans action du joueur | `marketRate` déterministe (3 oscillations), **testé** + PO (ticker observé) | validé | 22/07/2026 |
+| C4 | Montant crédité dépend du cours au moment de la conversion | `convertToCrypto` recalcule `marketRate(Date.now())` à chaque appel, **testé** + PO (2 conversions à cours différents) | validé | 22/07/2026 |
+| C5 | 2ᵉ branche : ≥ 3 nœuds crypto, coût + état affichés | `UnlockNodeCard`/`UnlockTreeSection` généralisés (`unit='crypto'`) + PO | validé | 22/07/2026 |
+| C6 | Achat d'un nœud crypto débite crypto (pas data), applique l'effet ; solde < → refusé | `buyNode`/`canBuyNode` devise-aware, **testé** + PO | validé | 22/07/2026 |
+| C7 | Nœud caché crypto sans info avant condition remplie ; reveal dédié à l'apparition | `visibleNodes` (filtre `hidden`+`currency`), **testé** + `HiddenNodeCard` généralisé (glitch amber/cyan) + PO (voir bug ci-dessous, corrigé en cours de recette) | validé | 22/07/2026 |
+| C8 | Persistance : solde crypto + nœuds crypto conservés au reload, cours cohérent | migration **Dexie v15** + `marketRate` recalculé à la volée (aucune incohérence possible) + PO (F5) | validé | 22/07/2026 |
+| C9 | Non-régression (HACK/daemons/arbre data/accélérateur/prestige) ; renaissance remet aussi `crypto` à 0 | `game/prestige.ts` ajusté (`PrestigeCore` +`crypto`), **testé** + PO (renaissance déclenchée, crypto revenu à 0) | validé | 22/07/2026 |
+| — | Composants DS (`<Card halo="amber">`, `<Slider>`, `<Icon>`), accent ambre réservé | revue + PO (rendu conforme maquette) | validé | 22/07/2026 |
+| — | i18n FR/EN (`builder.crypto.*`, `unlockTree` généralisé), aucune chaîne en dur | clés FR+EN via `t()` | validé | 22/07/2026 |
+
+### Ajustement issu de la recette (résolu, pas un bug de code)
+
+- **Nœud caché CARTEL://DARK.POOL apparaissait immédiatement, non cliquable** :
+  causé par la **valeur de recette** de sa condition (réduite à 1 oracle), alors
+  qu'atteindre la branche crypto garantit déjà 1 oracle (`data` l'exige depuis
+  A3) — la condition était donc trivialement remplie avant même l'apparition de
+  la branche. La logique (`isConditionMet`/`visibleNodes`) était correcte ; la
+  **vraie valeur de production (2 oracles)** n'a pas ce problème (atteindre la
+  branche ne garantit qu'1 oracle). Recette rejouée avec la condition à 2 —
+  reveal confirmé conforme (irruption glitch ambre/cyan). Aucune correction de
+  code nécessaire.
+
 ## US-024 — A5 : Hors-ligne & temps écoulé + embryon de prestige
 
 Recette du 21/07/2026. Critères de `us/US-024-hors-ligne-prestige.md` §1.

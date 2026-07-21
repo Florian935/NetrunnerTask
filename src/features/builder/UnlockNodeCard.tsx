@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { Card, Icon } from '../../components/ui'
-import type { NodeState, UnlockNodeDef } from '../../game/unlockTree'
+import type { Currency, NodeState, UnlockNodeDef } from '../../game/unlockTree'
 import { formatCycles } from './format'
 
 /** Libellé de condition d'un nœud verrouillé (chaîne d'arbre et/ou daemon). */
@@ -26,26 +26,31 @@ function useLockedHint(node: UnlockNodeDef): string {
 }
 
 /**
- * Carte d'un nœud de l'arbre de déblocage **non caché** (US-022) — 3 états :
- * `acquired` / `available` / `locked`. `acquired`/`available` réutilisent le
- * composant DS **`<Card hud brackets>`** (2 repères d'angle diagonaux, collés
- * aux coins — comme `DaemonCard`) ; `locked` reste une carte pointillée sans
- * repères, sur le modèle de `TeaserCard`.
+ * Carte d'un nœud de l'arbre de déblocage **non caché** (US-022, généralisée
+ * multi-devise US-027) — 3 états : `acquired` / `available` / `locked`.
+ * `acquired`/`available` réutilisent le composant DS **`<Card hud brackets>`**
+ * (2 repères d'angle diagonaux, collés aux coins — comme `DaemonCard`) ;
+ * `locked` reste une carte pointillée sans repères, sur le modèle de
+ * `TeaserCard`. Accent : mint si acquis, sinon **magenta** (branche `data`)
+ * ou **ambre** (branche `crypto`, US-027) selon `unit`.
  */
 export function UnlockNodeCard({
   node,
   state,
-  data,
+  balance,
+  unit,
   onBuy,
 }: {
   node: UnlockNodeDef
   state: NodeState
-  data: number
+  /** Solde disponible dans la devise du nœud (`data` ou `crypto`). */
+  balance: number
+  unit: Currency
   onBuy: () => void
 }) {
   const { t } = useTranslation()
   const lockedHint = useLockedHint(node)
-  const affordable = state === 'available' && data >= node.cost
+  const affordable = state === 'available' && balance >= node.cost
 
   const head = (
     <div className="builder__node-head">
@@ -84,9 +89,9 @@ export function UnlockNodeCard({
     <Card
       hud
       brackets
-      halo={state === 'acquired' ? 'mint' : 'magenta'}
+      halo={state === 'acquired' ? 'mint' : unit === 'crypto' ? 'amber' : 'magenta'}
       padding="14px"
-      className={`builder__node--${state}`}
+      className={`builder__node--${state}${unit === 'crypto' ? ' builder__node--crypto' : ''}`}
     >
       {head}
 
@@ -106,7 +111,10 @@ export function UnlockNodeCard({
             {t('builder.unlockTree.buy')}
           </span>
           <span className="builder__node-buy-cost">
-            {t('builder.unlockTree.buyCost', { cost: formatCycles(node.cost) })}
+            {t('builder.unlockTree.buyCost', {
+              cost: formatCycles(node.cost),
+              unit: t(`builder.unlockTree.unit.${unit}`),
+            })}
           </span>
         </button>
       )}

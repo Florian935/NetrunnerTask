@@ -271,6 +271,25 @@ export class NetrunnerDB extends Dexie {
             if (b.prestigeCount === undefined) b.prestigeCount = 0
           }),
       )
+    // v15 (US-027) : marché crypto (3ᵉ ressource). Table inchangée (même clé
+    // `id`) → schéma v14 recopié + valeur par défaut sur la rangée singleton
+    // existante (même modèle que les migrations v11→v14).
+    this.version(15)
+      .stores({
+        contracts: 'id, factionId, status, dueDate, createdAt',
+        factions: 'id, name',
+        player: 'id',
+        builderState: 'id',
+        demoKV: 'key',
+      })
+      .upgrade((tx) =>
+        tx
+          .table('builderState')
+          .toCollection()
+          .modify((b: { crypto?: number }) => {
+            if (b.crypto === undefined) b.crypto = 0
+          }),
+      )
   }
 }
 

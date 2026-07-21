@@ -4,10 +4,17 @@
 // Volontairement découplé de `game/builder.ts` (types structurels minimaux,
 // aucun import) pour éviter toute dépendance circulaire : c'est la couche
 // store (`useBuilderStore`) qui compose les deux (multiplicateurs → `tick()`).
+// US-027 (Phase A2) : **généralisé multi-devise**. Un nœud coûte `data` OU
+// `crypto` (`currency`) ; `unlockedNodes` reste un **seul tableau partagé**
+// entre les deux branches (les `id` sont uniques dans tout le catalogue) —
+// ça permet de réutiliser `requiresNode` tel quel pour chaîner la branche
+// crypto à un nœud de la branche data, sans mécanisme nouveau.
 
 /** État minimal nécessaire à ce module (sous-ensemble de `BuilderCore`). */
 export interface UnlockTreeCore {
   data: number
+  /** 3ᵉ ressource (US-027) — nécessaire pour les nœuds `currency: 'crypto'`. */
+  crypto: number
   generators: Record<string, number>
   upgrades: Record<string, number>
   unlockedNodes: string[]
@@ -20,12 +27,17 @@ export interface GeneratorRequirement {
   upgradeLevel?: number
 }
 
+/** Devise qui finance un nœud (US-027). */
+export type Currency = 'data' | 'crypto'
+
 /** Définition d'un nœud (donnée du catalogue). Libellés via i18n (`id`). */
 export interface UnlockNodeDef {
   id: string
   /** Icône du registre (lucide kebab-case). */
   icon: string
-  /** Coût en `data`. */
+  /** Devise du coût (US-027). */
+  currency: Currency
+  /** Coût, dans `currency`. */
   cost: number
   /** Reveal caché (P6) : absent de `visibleNodes` tant que sa condition n'est pas remplie. */
   hidden: boolean
@@ -34,7 +46,16 @@ export interface UnlockNodeDef {
   /** Condition sur les daemons (US-021) ; `null` = aucune. Cumulable avec `requiresNode` (ET). */
   requiresGenerator: GeneratorRequirement | null
   /** Bonus multiplicatif apporté (fraction ajoutée au multiplicateur de base 1). */
-  effect: { cycles?: number; data?: number }
+  effect: {
+    cycles?: number
+    data?: number
+    /**
+     * Plancher de cours crypto (US-027, CR / 1 000 data) — voir
+     * `cryptoFloorBonus`. Distinct de `cycles`/`data` : ne touche jamais la
+     * production, seulement le cours minimal garanti à la conversion.
+     */
+    cryptoFloor?: number
+  }
 }
 
 /**
@@ -43,11 +64,17 @@ export interface UnlockNodeDef {
  * `ghost-protocol` (caché) est **indépendant** du reste de l'arbre
  * (`requiresNode: null`) — son reveal ne dépend pas d'avoir fini la branche
  * visible, il surgit d'un axe différent (l'investissement en `wraith`).
+ *
+ * Branche **crypto** (US-027) : `breach-market` (data) ouvre le marché ;
+ * `arbitrage-auto` → `rate-floor` → `ghost-laundry` (crypto) forment sa
+ * chaîne visible ; `dark-pool` (crypto, caché) est le 2ᵉ reveal du jeu,
+ * indépendant du reste de la branche (comme `ghost-protocol`).
  */
 export const UNLOCK_NODES: readonly UnlockNodeDef[] = [
   {
     id: 'overclock',
     icon: 'gauge',
+    currency: 'data',
     cost: 40,
     hidden: false,
     requiresNode: null,
@@ -57,6 +84,7 @@ export const UNLOCK_NODES: readonly UnlockNodeDef[] = [
   {
     id: 'parallelism',
     icon: 'split',
+    currency: 'data',
     cost: 90,
     hidden: false,
     requiresNode: 'overclock',
@@ -66,6 +94,7 @@ export const UNLOCK_NODES: readonly UnlockNodeDef[] = [
   {
     id: 'cryo-cache',
     icon: 'snowflake',
+    currency: 'data',
     cost: 220,
     hidden: false,
     requiresNode: null,
@@ -78,11 +107,62 @@ export const UNLOCK_NODES: readonly UnlockNodeDef[] = [
   {
     id: 'ghost-protocol',
     icon: 'skull',
+    currency: 'data',
     cost: 500,
     hidden: true,
     requiresNode: null,
     requiresGenerator: { id: 'wraith', count: 12 },
     effect: { data: 2 },
+  },
+  {
+    id: 'breach-market',
+    icon: 'radio-tower',
+    currency: 'data',
+    cost: 800,
+    hidden: false,
+    requiresNode: 'cryo-cache',
+    requiresGenerator: null,
+    effect: {},
+  },
+  {
+    id: 'arbitrage-auto',
+    icon: 'share-2',
+    currency: 'crypto',
+    cost: 30,
+    hidden: false,
+    requiresNode: 'breach-market',
+    requiresGenerator: null,
+    effect: { cycles: 0.15 },
+  },
+  {
+    id: 'rate-floor',
+    icon: 'trending-up',
+    currency: 'crypto',
+    cost: 90,
+    hidden: false,
+    requiresNode: 'arbitrage-auto',
+    requiresGenerator: null,
+    effect: { cryptoFloor: 1.4 },
+  },
+  {
+    id: 'ghost-laundry',
+    icon: 'radio-tower',
+    currency: 'crypto',
+    cost: 220,
+    hidden: false,
+    requiresNode: 'rate-floor',
+    requiresGenerator: null,
+    effect: { cycles: 0.18 },
+  },
+  {
+    id: 'dark-pool',
+    icon: 'landmark',
+    currency: 'crypto',
+    cost: 260,
+    hidden: true,
+    requiresNode: null,
+    requiresGenerator: { id: 'oracle', count: 2 },
+    effect: { cryptoFloor: 1.8 },
   },
 ] as const
 
@@ -92,6 +172,11 @@ export const UNLOCK_NODE_BY_ID: Record<string, UnlockNodeDef> = Object.fromEntri
 )
 
 const acquired = (core: UnlockTreeCore, id: string) => core.unlockedNodes.includes(id)
+
+/** Solde disponible pour la devise du nœud. */
+function balanceFor(core: UnlockTreeCore, node: UnlockNodeDef): number {
+  return node.currency === 'crypto' ? core.crypto : core.data
+}
 
 /** La condition du nœud (chaîne d'arbre + état des daemons) est-elle remplie ? */
 export function isConditionMet(node: UnlockNodeDef, core: UnlockTreeCore): boolean {
@@ -113,15 +198,17 @@ export function nodeState(node: UnlockNodeDef, core: UnlockTreeCore): NodeState 
 }
 
 /**
- * Nœuds à afficher, dans l'ordre du catalogue : tous les non cachés (quel
- * que soit leur état) + les cachés dont la condition est déjà remplie
- * (reveal, AC6 US-022). Un nœud caché n'apparaît jamais en état `locked` —
- * dès qu'il est visible, sa condition est nécessairement remplie (état
- * `available` ou `acquired`).
+ * Nœuds **de la branche `currency`** à afficher, dans l'ordre du catalogue :
+ * tous les non cachés (quel que soit leur état) + les cachés dont la
+ * condition est déjà remplie (reveal, AC6 US-022/US-027). Un nœud caché
+ * n'apparaît jamais en état `locked` — dès qu'il est visible, sa condition
+ * est nécessairement remplie (état `available` ou `acquired`).
  */
-export function visibleNodes(core: UnlockTreeCore): UnlockNodeDef[] {
+export function visibleNodes(core: UnlockTreeCore, currency: Currency): UnlockNodeDef[] {
   return UNLOCK_NODES.filter(
-    (n) => !n.hidden || acquired(core, n.id) || isConditionMet(n, core),
+    (n) =>
+      n.currency === currency &&
+      (!n.hidden || acquired(core, n.id) || isConditionMet(n, core)),
   )
 }
 
@@ -129,20 +216,21 @@ export function visibleNodes(core: UnlockTreeCore): UnlockNodeDef[] {
 export function canBuyNode(core: UnlockTreeCore, id: string): boolean {
   const node = UNLOCK_NODE_BY_ID[id]
   if (!node) return false
-  return nodeState(node, core) === 'available' && core.data >= node.cost
+  return nodeState(node, core) === 'available' && balanceFor(core, node) >= node.cost
 }
 
 /**
- * Achète le nœud `id` si possible : débite `data`, ajoute l'`id` à
- * `unlockedNodes`. Sinon **no-op** (même référence).
+ * Achète le nœud `id` si possible : débite sa devise (`data` ou `crypto`),
+ * ajoute l'`id` à `unlockedNodes`. Sinon **no-op** (même référence).
  */
 export function buyNode<T extends UnlockTreeCore>(core: T, id: string): T {
   if (!canBuyNode(core, id)) return core
-  return {
-    ...core,
-    data: core.data - UNLOCK_NODE_BY_ID[id].cost,
-    unlockedNodes: [...core.unlockedNodes, id],
-  }
+  const node = UNLOCK_NODE_BY_ID[id]
+  const debited =
+    node.currency === 'crypto'
+      ? { crypto: core.crypto - node.cost }
+      : { data: core.data - node.cost }
+  return { ...core, ...debited, unlockedNodes: [...core.unlockedNodes, id] }
 }
 
 /** Multiplicateur composé sur la production de cycles (`1` = neutre). */
@@ -164,5 +252,21 @@ export function dataMultiplier(core: UnlockTreeCore): number {
       (sum, n) => sum + (acquired(core, n.id) ? (n.effect.data ?? 0) : 0),
       0,
     )
+  )
+}
+
+/**
+ * Plancher de cours crypto (US-027, CR / 1 000 data) apporté par les nœuds
+ * acquis portant `effect.cryptoFloor` — **maximum** des planchers acquis
+ * (pas cumulatif : un 2ᵉ plancher plus faible n'ajoute rien), `0` si aucun
+ * (pas de plancher, le cours de `game/crypto.ts` s'applique tel quel).
+ */
+export function cryptoFloorBonus(core: UnlockTreeCore): number {
+  return UNLOCK_NODES.reduce(
+    (max, n) =>
+      acquired(core, n.id) && n.effect.cryptoFloor !== undefined
+        ? Math.max(max, n.effect.cryptoFloor)
+        : max,
+    0,
   )
 }
