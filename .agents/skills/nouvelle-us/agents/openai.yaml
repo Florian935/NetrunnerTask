@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Nouvelle US'
+  short_description: 'Démarrer et cadrer la prochaine user story'
+  default_prompt: 'Utilise $nouvelle-us pour sélectionner et cadrer la prochaine user story.'

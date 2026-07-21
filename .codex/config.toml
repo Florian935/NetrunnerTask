@@ -1,0 +1,3 @@
+# Partage les instructions du projet avec Codex tant qu'aucun AGENTS.md
+# plus spécifique n'est présent.
+project_doc_fallback_filenames = ["CLAUDE.md"]

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Recette d'une US"
+  short_description: "Vérifier et consigner les critères d'acceptation"
+  default_prompt: "Utilise $recette pour vérifier les critères d'acceptation de l'US en cours."
