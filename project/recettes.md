@@ -3,6 +3,34 @@
 > Tests de recette par US. Chaque test reprend un critère d'acceptation de l'US.
 > Statuts : `à faire` / `validé` / `échoué`.
 
+## US-026 — Prestige incrémental : seuil de renaissance + équilibrage (Phase A2)
+
+Recette du 22/07/2026. Critères de `us/US-026-prestige-incremental.md` §1.
+**Vérifs automatiques** : `typecheck` + `lint` + `build`/PWA + tests Vitest
+**213/213** (+6 sur `game/prestige.ts` : base, géométrie 2,5M/6,25M/15,6M,
+monotonie C3, invariant anti-boucle C4, ré-éligibilité C6). **Recette
+fonctionnelle navigateur** (`npm run dev`, port 5180) confirmée par le PO :
+**9/9 critères conformes, validé à 100 %**. États de test injectés dans
+IndexedDB (helper console : `cycles` / `prestigeCount`) pour dérouler le flux de
+renaissance et la compatibilité d'une sauvegarde existante. Équilibrage retenu :
+**`growth = 2,5`** (seuils 1M → 2,5M → 6,25M → 15,6M…), bonus `×1,5` composé
+conservé. **Aucune migration Dexie** (seuil dérivé de `prestigeCount`).
+
+| # | Critère (action → résultat attendu) | Méthode | Statut | Date |
+|---|-------------------------------------|---------|--------|------|
+| C1 | Partie neuve → panneau affiche progression vers **1 000 000** cycles | `prestigeThreshold(0)===1_000_000` + PO (état frais) | validé | 22/07/2026 |
+| C2 | Après 1 renaissance → seuil affiché **2 500 000** (> précédent) | `prestigeThreshold(prestigeCount)` dans `PrestigePanel` + PO | validé | 22/07/2026 |
+| C3 | Seuil strictement croissant `seuil(n+1) > seuil(n)` | test unitaire (n=0..10) | validé | 22/07/2026 |
+| C4 | Anti-boucle : `seuil(n)/bonus(n)` non décroissant (jamais plus rapide) | test unitaire (rapport strictement croissant, `growth>nextMult`) | validé | 22/07/2026 |
+| C5 | Cycles ≥ seuil → « Renaître » → reset économie, `prestigeCount+1`, **nouveau seuil plus haut** | `canPrestige`/`prestige` + PO (renaissance live) | validé | 22/07/2026 |
+| C6 | Juste après renaissance, solde < nouveau seuil → **non éligible** (bouton masqué, barre repartie) | `canPrestige(prestigeThreshold(count))` + PO | validé | 22/07/2026 |
+| C7 | Bonus permanent suit `1,5^count`, toujours appliqué (prod/hors-ligne/débit) — non-régr. US-024 | `prestigeMultiplier` inchangé + PO | validé | 22/07/2026 |
+| C8 | Sauvegarde `prestigeCount>0` → count + bonus conservés, seuil = seuil incrémental du count, rien perdu | seuil dérivé, pas de migration + PO (injection count=3 → ×3,38, seuil 15 625 000) | validé | 22/07/2026 |
+| C9 | `typecheck` + `lint` + `build` + tests au vert | vérifs automatiques 213/213 | validé | 22/07/2026 |
+
+**Aucun bug ouvert.** Aucun ajustement de code nécessaire en recette (équilibrage
+`growth = 2,5` figé au cadrage technique, non contesté à la recette).
+
 ## US-029 — Visualisation du Réseau (Phase A2)
 
 Recette du 22/07/2026. Critères de `us/US-029-visualisation-reseau.md` §1.

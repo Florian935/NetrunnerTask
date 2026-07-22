@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button, Card, Icon, ProgressBar } from '../../components/ui'
-import { PRESTIGE_CONFIG, prestigeMultiplier } from '../../game/prestige'
+import { prestigeMultiplier, prestigeThreshold } from '../../game/prestige'
 import { useBuilderStore } from '../../stores/useBuilderStore'
 import { ConfirmDialog } from '../common/ConfirmDialog'
 import { formatCycles } from './format'
@@ -27,10 +27,12 @@ export function PrestigePanel() {
   const [confirming, setConfirming] = useState(false)
 
   // Gate d'affichage ; le store revalide via `canPrestige` (source de vérité).
-  const eligible = cycles >= PRESTIGE_CONFIG.threshold
+  // Seuil incrémental (US-026) : dérivé du nombre de renaissances déjà faites.
+  const threshold = prestigeThreshold(prestigeCount)
+  const eligible = cycles >= threshold
   const currentMult = prestigeMultiplier(prestigeCount)
   const nextMult = prestigeMultiplier(prestigeCount + 1)
-  const pct = Math.min(100, (cycles / PRESTIGE_CONFIG.threshold) * 100)
+  const pct = Math.min(100, (cycles / threshold) * 100)
 
   const confirm = () => {
     doPrestige()
@@ -113,7 +115,7 @@ export function PrestigePanel() {
               />
               <div className="builder__prestige-progress-row">
                 <span>
-                  {formatCycles(cycles)} / {formatCycles(PRESTIGE_CONFIG.threshold)}{' '}
+                  {formatCycles(cycles)} / {formatCycles(threshold)}{' '}
                   {t('builder.cyclesLabel')}
                 </span>
                 <span className="builder__prestige-progress-next">

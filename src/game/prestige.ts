@@ -3,6 +3,9 @@
 // irréversible réinitialise la progression du Réseau (cycles, daemons,
 // upgrades, data, arbre de déblocage) en échange d'un **bonus permanent** de
 // production (`prestigeMultiplier`) qui survit à toutes les renaissances.
+// US-026 (A2) : le seuil de renaissance devient **incrémental** — il monte à
+// chaque renaissance (`prestigeThreshold`, croissance géométrique) pour que les
+// renaissances restent rares et significatives malgré le bonus composé.
 // Volontairement **découplé** de `builder.ts`/`unlockTree.ts`/`accelerators.ts`
 // (types structurels minimaux) — la couche store compose ce multiplicateur
 // avec ceux de l'arbre et du boost avant `tick()`/`offlineTick()`.
@@ -19,17 +22,37 @@ export interface PrestigeCore {
   prestigeCount: number
 }
 
-/** Réglage global (placeholder, affinable en recette). */
+/** Réglage global (valeurs affinables en recette). */
 export const PRESTIGE_CONFIG = {
-  /** Seuil de cycles requis pour renaître (flat — ne progresse pas avec `prestigeCount`). */
-  threshold: 1_000_000,
+  /** Seuil de base : cycles requis pour la **1ʳᵉ** renaissance (`prestigeCount = 0`). */
+  base: 1_000_000,
+  /**
+   * Facteur de croissance **géométrique** du seuil par renaissance (US-026).
+   * Doit rester `> nextMult` pour que l'effort d'atteinte croisse d'une
+   * renaissance à l'autre (invariant anti-boucle) — voir `prestigeThreshold`.
+   */
+  growth: 2.5,
   /** Facteur de bonus **par** renaissance (composé/géométrique). */
   nextMult: 1.5,
 } as const
 
-/** Peut-on renaître ? (solde de cycles courant ≥ seuil). */
+/**
+ * Seuil de cycles requis pour la renaissance suivante, **incrémental** (US-026) :
+ * `base × growth ** count`. Source de vérité du seuil — dérivé de `prestigeCount`,
+ * jamais persisté (compatibilité ascendante : une sauvegarde recalcule son seuil
+ * au chargement). `count = 0` → `base`. Strictement croissant en `count`.
+ *
+ * Comme `growth (2,5) > nextMult (1,5)`, le rapport `seuil / bonus permanent`
+ * (`prestigeMultiplier`) **croît** avec `count` : chaque renaissance demande plus
+ * d'effort relatif que la précédente — pas de boucle triviale (limite US-024).
+ */
+export function prestigeThreshold(count: number): number {
+  return PRESTIGE_CONFIG.base * PRESTIGE_CONFIG.growth ** count
+}
+
+/** Peut-on renaître ? (solde de cycles courant ≥ seuil incrémental du `prestigeCount` courant). */
 export function canPrestige(core: PrestigeCore): boolean {
-  return core.cycles >= PRESTIGE_CONFIG.threshold
+  return core.cycles >= prestigeThreshold(core.prestigeCount)
 }
 
 /**

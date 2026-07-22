@@ -798,3 +798,34 @@ rendue visuellement jusque-là (A1→A5 = panneaux de stats).
   par propagation, gating de branche, chevauchement labels/hint) + halos
   d'ambiance adoucis (`ellipse closest-side`) sur retour PO. Recette **9/9 PO,
   validée à 100 %**. Maquette (`network-map`) non versionnée (convention #007).
+
+### 033 — Prestige : seuil de renaissance incrémental (US-026, Phase A2, 22/07/2026)
+
+4ᵉ tranche de la Phase A2 (#029). Corrige une **limite connue** relevée à la
+recette d'US-024 (#027) : le seuil de renaissance était **flat** (`1 000 000`
+cycles, choix assumé pour l'embryon A5). Face au bonus permanent **composé**
+`×1,5` par renaissance, un seuil fixe rendait chaque renaissance plus rapide que
+la précédente → boucle triviale, bonus qui gonfle sans effort.
+
+- **Seuil devenu fonction pure de `prestigeCount`** : nouvelle fonction
+  `prestigeThreshold(count) = base × growth ** count` dans `game/prestige.ts`
+  (source de vérité, remplace la constante `PRESTIGE_CONFIG.threshold`).
+  `canPrestige` compare au seuil dérivé ; `prestige()` inchangé.
+- **Équilibrage retenu (PO) : `growth = 2,5`** (seuils 1M → 2,5M → 6,25M →
+  15,6M…), bonus `nextMult = 1,5` composé **conservé**. Contrainte structurelle
+  posée en test : **`growth > nextMult`** ⇒ le rapport `seuil / bonus permanent`
+  **croît** avec `count` (invariant anti-boucle : chaque renaissance demande
+  plus d'effort relatif que la précédente).
+- **Aucune migration Dexie, aucun nouveau champ** : le seuil est **dérivé** de
+  `prestigeCount` (déjà persisté depuis v14), jamais stocké → compatibilité
+  ascendante automatique (une sauvegarde recalcule son seuil au chargement).
+- **Impact UI mineur** (pas de maquette, validé PO) : `PrestigePanel` lit
+  `prestigeThreshold(prestigeCount)` au lieu de la constante (3 lignes) ; le
+  reste du panneau inchangé.
+- Périmètre strict : agit sur la **courbe** (seuil), pas sur les mécaniques
+  (pas de nouvelle ressource ni de nouveau bonus de prestige).
+- Vérifs : typecheck + lint + build/PWA + **tests 213/213** (+6 sur
+  `prestige.ts` : base, géométrie, monotonie, anti-boucle, ré-éligibilité).
+  Vérification visuelle Playwright **non réalisable dans la session** (pas
+  d'outil navigateur connecté) → recette PO déroulée sur `:5180` (états injectés
+  via helper console IndexedDB). Recette **9/9 PO, validée à 100 %**, aucun bug.
