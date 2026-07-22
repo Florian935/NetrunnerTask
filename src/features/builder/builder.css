@@ -1878,6 +1878,296 @@
   }
 }
 
+/* Registre des jalons (US-028, maquette `network-milestones`) — chrome
+   neutre frost (pas de halo de système), mint par ligne atteinte. */
+.builder__milestones {
+  margin-top: 24px;
+}
+.builder__milestones-head {
+  position: relative;
+  padding: 15px 16px 13px;
+  border-bottom: 1px solid var(--border);
+}
+.builder__milestones-head-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+.builder__milestones-badge {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--frost-100);
+  background: rgba(224, 242, 255, 0.08);
+  border: 1px solid var(--border-strong);
+  clip-path: var(--clip-bevel-sm);
+}
+.builder__milestones-heading {
+  flex: 1;
+  min-width: 0;
+}
+.builder__milestones-kicker {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.builder__milestones-title {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--frost-100);
+  margin-top: 1px;
+}
+.builder__milestones-count {
+  text-align: right;
+  flex-shrink: 0;
+}
+.builder__milestones-count-value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--frost-100);
+  font-variant-numeric: tabular-nums;
+}
+.builder__milestones-count-total {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.builder__milestones-count-label {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--mint-500);
+  margin-top: 2px;
+}
+.builder__milestones-head > div:last-child {
+  margin-top: 12px;
+}
+
+.builder__milestones-list {
+  position: relative;
+}
+.builder__milestones-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 13px;
+  border-bottom: 1px solid var(--border);
+  opacity: 0.58;
+}
+.builder__milestones-row:last-child {
+  border-bottom: none;
+}
+.builder__milestones-row--achieved {
+  opacity: 1;
+  background: linear-gradient(100deg, rgba(46, 255, 194, 0.1), transparent 72%);
+}
+.builder__milestones-row-bar {
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: var(--mint-500);
+  box-shadow: 0 0 8px var(--mint-500);
+}
+.builder__milestones-row-icon {
+  position: relative;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--steel-500, #6c7a92);
+  background: rgba(139, 155, 180, 0.06);
+  border: 1px solid rgba(139, 155, 180, 0.3);
+  clip-path: var(--clip-bevel-sm);
+}
+.builder__milestones-row--achieved .builder__milestones-row-icon {
+  color: var(--mint-500);
+  background: rgba(46, 255, 194, 0.14);
+  border-color: rgba(46, 255, 194, 0.5);
+  box-shadow: 0 0 12px -3px var(--mint-500);
+}
+.builder__milestones-row-body {
+  min-width: 0;
+  flex: 1;
+}
+.builder__milestones-row-name {
+  font-family: var(--font-display);
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--steel-400, #8b9bb4);
+}
+.builder__milestones-row--achieved .builder__milestones-row-name {
+  color: var(--frost-100);
+}
+.builder__milestones-row-name--sealed {
+  font-family: var(--font-mono);
+  letter-spacing: 0.02em;
+  color: var(--steel-600);
+}
+.builder__milestones-row-desc {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  margin-top: 3px;
+  line-height: 1.4;
+}
+.builder__milestones-row--achieved .builder__milestones-row-desc {
+  color: var(--text-secondary);
+}
+.builder__milestones-row-desc--sealed {
+  font-style: italic;
+}
+.builder__milestones-row-status {
+  flex-shrink: 0;
+  display: inline-flex;
+  color: var(--steel-500, #6c7a92);
+  opacity: 0.7;
+}
+.builder__milestones-row--achieved .builder__milestones-row-status {
+  color: var(--mint-500);
+  opacity: 1;
+}
+
+/* Toast « Jalon atteint » (US-028) — bespoke, distinct du toast générique :
+   sceau hexagonal, double liseré, eyebrow mint, balayage sheen. */
+.builder__milestone-toast {
+  position: relative;
+  width: 320px;
+  overflow: hidden;
+  background: linear-gradient(150deg, rgba(46, 255, 194, 0.12), rgba(16, 21, 31, 0.98) 46%),
+    var(--bg-surface);
+  border: 1px solid rgba(46, 255, 194, 0.55);
+  clip-path: var(--clip-bevel-md);
+  box-shadow: 0 12px 40px -10px rgba(0, 0, 0, 0.7), 0 0 26px -6px var(--mint-500);
+  cursor: pointer;
+}
+.builder__milestone-toast-line1 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--mint-500);
+  box-shadow: 0 0 10px var(--mint-500);
+}
+.builder__milestone-toast-line2 {
+  position: absolute;
+  top: 4px;
+  left: 10px;
+  right: 10px;
+  height: 1px;
+  background: rgba(46, 255, 194, 0.4);
+}
+.builder__milestone-toast-corner {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border: 2px solid rgba(224, 242, 255, 0.7);
+}
+.builder__milestone-toast-corner--tl {
+  top: 5px;
+  left: 5px;
+  border-right: none;
+  border-bottom: none;
+}
+.builder__milestone-toast-corner--tr {
+  top: 5px;
+  right: 5px;
+  border-left: none;
+  border-bottom: none;
+}
+.builder__milestone-toast-corner--bl {
+  bottom: 5px;
+  left: 5px;
+  border-right: none;
+  border-top: none;
+}
+.builder__milestone-toast-corner--br {
+  bottom: 5px;
+  right: 5px;
+  border-left: none;
+  border-top: none;
+}
+.builder__milestone-toast-sheen {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40%;
+  background: linear-gradient(100deg, transparent, rgba(224, 242, 255, 0.16), transparent);
+  animation: nw-milestone-sheen 2.4s ease-in-out 0.4s infinite;
+  pointer-events: none;
+}
+@keyframes nw-milestone-sheen {
+  0% {
+    transform: translateX(-160%) skewX(-14deg);
+  }
+  55%,
+  100% {
+    transform: translateX(420%) skewX(-14deg);
+  }
+}
+.builder__milestone-toast-body {
+  position: relative;
+  display: flex;
+  gap: 13px;
+  padding: 13px 15px 14px;
+  align-items: center;
+}
+.builder__milestone-toast-seal {
+  position: relative;
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  clip-path: polygon(50% 0, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+  background: radial-gradient(circle at 50% 36%, rgba(46, 255, 194, 0.35), rgba(16, 21, 31, 0.9) 74%);
+  box-shadow: 0 0 18px -3px var(--mint-500), inset 0 0 16px -6px var(--mint-500);
+  color: var(--mint-500);
+}
+.builder__milestone-toast-text {
+  flex: 1;
+  min-width: 0;
+}
+.builder__milestone-toast-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--mint-500);
+}
+.builder__milestone-toast-name {
+  font-family: var(--font-display);
+  font-size: 15.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--frost-100);
+  margin-top: 3px;
+  text-shadow: 0 0 12px rgba(46, 255, 194, 0.4);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .builder__hack-halo,
   .builder__readout-pulse,
@@ -1893,7 +2183,8 @@
   .builder__node--revealing .builder__node-name--ghost,
   .builder__acc-ring,
   .builder__acc-boost,
-  .builder__prestige--ready .nw-card-halo {
+  .builder__prestige--ready .nw-card-halo,
+  .builder__milestone-toast-sheen {
     animation: none !important;
   }
   .builder__node--revealing {

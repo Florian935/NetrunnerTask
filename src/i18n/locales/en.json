@@ -381,6 +381,61 @@
       "convertButton": "Convert at current rate",
       "convertHint": "Crypto never accumulates on its own — you only earn it here.",
       "convertHintTrend": "The rate moves: it's up to you to pick the moment."
+    },
+    "milestones": {
+      "heading": "REGISTRY",
+      "kicker": "trace://milestones",
+      "countLabel": "milestones",
+      "notAchieved": "Not yet reached.",
+      "sealedName": "█████████████",
+      "sealedDesc": "Signal sealed — untracked trace.",
+      "toastEyebrow": "Milestone reached",
+      "items": {
+        "hack": {
+          "name": "FIRST HACK",
+          "desc": "First cycle compiled by hand."
+        },
+        "daemon": {
+          "name": "DAEMON ONLINE",
+          "desc": "A daemon compiles for you, continuously."
+        },
+        "roster": {
+          "name": "DAEMON SWARM",
+          "desc": "Multiple daemon types active at once."
+        },
+        "upgrade": {
+          "name": "FIRST UPGRADE",
+          "desc": "An upgraded daemon — output ×2."
+        },
+        "data": {
+          "name": "DATA FLOW",
+          "desc": "2nd resource online: data starts flowing."
+        },
+        "tree": {
+          "name": "TREE OPENED",
+          "desc": "First unlock-tree node acquired."
+        },
+        "accel": {
+          "name": "OVERDRIVE",
+          "desc": "First overdrive run completed — timed ×2 boost."
+        },
+        "crypto": {
+          "name": "CRYPTO MARKET",
+          "desc": "First data → crypto conversion at the going rate."
+        },
+        "reborn": {
+          "name": "REBIRTH",
+          "desc": "Prestige reset embraced — permanent bonus acquired."
+        },
+        "ghost": {
+          "name": "GHOST://ROGUE.AI",
+          "desc": "Anomaly contained: the rogue AI joins the network."
+        },
+        "cartel": {
+          "name": "CARTEL://DARK.POOL",
+          "desc": "Occult pool neutralized: floor rate stabilized."
+        }
+      }
     }
   }
 }

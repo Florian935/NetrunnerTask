@@ -30,6 +30,16 @@ export interface RankUpItem {
   threshold: number
 }
 
+/**
+ * Jalon de progression franchi (US-028) — feedback one-shot dédié, distinct
+ * des toasts génériques. `milestoneId` = `id` du catalogue `game/milestones.ts`
+ * (résout icône + libellés i18n `builder.milestones.items.<id>.*`).
+ */
+export interface MilestoneItem {
+  id: string
+  milestoneId: string
+}
+
 /** Mise perdue détectée au chargement (US-013) — remontée en toast danger. */
 export interface StakeLossItem {
   id: string
@@ -55,6 +65,12 @@ interface FeedbackState {
   repGain: RepGainItem | null
   /** Passage de rang à afficher (US-012) ; `null` si aucun. */
   rankUp: RankUpItem | null
+  /**
+   * File des jalons franchis à afficher (US-028) — **file**, pas un
+   * singleton comme `levelUp`/`rankUp` : plusieurs jalons peuvent tomber au
+   * même tick (ex. une renaissance en débloque plusieurs d'un coup).
+   */
+  milestones: MilestoneItem[]
   /** Contrat qui vient d'encaisser sa récompense → flash transitoire. */
   flashingId: string | null
   /** Mises perdues au chargement (US-013), à transformer en toasts (AppShell). */
@@ -73,6 +89,10 @@ interface FeedbackState {
   triggerLevelUp: (level: number) => void
   triggerRepGain: (item: Omit<RepGainItem, 'id'>) => void
   triggerRankUp: (item: Omit<RankUpItem, 'id'>) => void
+  /** Empile un jalon franchi (US-028) ; auto-effacement individuel (~4 s). */
+  triggerMilestone: (milestoneId: string) => void
+  /** Ferme un jalon affiché avant son auto-effacement (clic). */
+  dismissMilestone: (id: string) => void
   flash: (id: string) => void
   /** File des mises perdues au chargement (déduplique par appel). */
   pushStakeLosses: (items: Omit<StakeLossItem, 'id'>[]) => void
@@ -94,6 +114,7 @@ export const useFeedbackStore = create<FeedbackState>((set, get) => ({
   levelUp: null,
   repGain: null,
   rankUp: null,
+  milestones: [],
   flashingId: null,
   stakeLosses: [],
   dueCatchup: null,
@@ -144,6 +165,18 @@ export const useFeedbackStore = create<FeedbackState>((set, get) => ({
       4000,
     )
   },
+
+  triggerMilestone: (milestoneId) => {
+    const item: MilestoneItem = { id: crypto.randomUUID(), milestoneId }
+    set((s) => ({ milestones: [...s.milestones, item] }))
+    window.setTimeout(
+      () => set((s) => ({ milestones: s.milestones.filter((m) => m.id !== item.id) })),
+      4000,
+    )
+  },
+
+  dismissMilestone: (id) =>
+    set((s) => ({ milestones: s.milestones.filter((m) => m.id !== id) })),
 
   flash: (id) => {
     set({ flashingId: id })

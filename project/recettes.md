@@ -3,6 +3,37 @@
 > Tests de recette par US. Chaque test reprend un critère d'acceptation de l'US.
 > Statuts : `à faire` / `validé` / `échoué`.
 
+## US-028 — Jalons / accomplissements du Réseau (Phase A2)
+
+Recette du 22/07/2026. Critères de `us/US-028-jalons-accomplissements.md` §1.
+**Vérifs automatiques** : `typecheck` + `lint` + `build`/PWA + tests Vitest
+**194/194** (dont nouveau `game/milestones.ts` **15/15**). **Vérification
+visuelle navigateur** (Playwright headless) en amont de la recette PO : 2 bugs
+trouvés et corrigés en direct (9 icônes manquantes au registre DS
+`components/ui/core/Icon.tsx` ; toast de jalon chevauchant la `StatusBar`,
+repositionné). **Recette PO : 10/10 critères conformes, aucun bug trouvé.**
+Contenu concret des 11 jalons **ajusté par rapport au cadrage fonctionnel
+initial** suite à la maquette validée (§3 de l'US) : remplace les jalons
+« sifter/wraith/oracle débloqués » + « seuils de cycles 1k/1M » par PREMIER
+HACK, ESSAIM DE DAEMONS, PREMIÈRE AMÉLIO, FLUX DE DATA, et ajoute SURCADENCE
+(système accélérateurs US-023, absent du cadrage initial).
+
+| # | Critère (action → résultat attendu) | Méthode | Statut | Date |
+|---|-------------------------------------|---------|--------|------|
+| C1 | Achat du 1ᵉʳ daemon → jalon DAEMON EN LIGNE atteint + toast dédié une seule fois | `checkMilestones`/`checkAndApplyMilestones` dans `buyGenerator`, **testé** + PO live | validé | 22/07/2026 |
+| C2 | ≥ 2 types de daemons distincts possédés → jalon ESSAIM DE DAEMONS atteint | prédicat `roster` (`Object.keys(generators).length ≥ 2`), **testé** + PO | validé | 22/07/2026 |
+| C3 | 1ᵉʳ hack manuel → jalon PREMIER HACK ; 1ʳᵉ amélioration achetée → jalon PREMIÈRE AMÉLIO | `checkHackMilestone` (événementiel, `hack()`) + prédicat `upgrade`, **testés** + PO | validé | 22/07/2026 |
+| C4 | 1ᵉʳ nœud de l'arbre débloqué → jalon ARBRE OUVERT atteint | prédicat `tree` (`unlockedNodes.length ≥ 1`), **testé** + PO | validé | 22/07/2026 |
+| C5 | Reveal d'un nœud caché (`ghost-protocol`/`dark-pool`) → jalon GHOST/CARTEL atteint, masqué avant | prédicats `ghost`/`cartel`, **testés** + `MilestonesPanel` masque nom+desc avant reveal + PO | validé | 22/07/2026 |
+| C6 | 1ʳᵉ conversion `data`→`crypto` → jalon MARCHÉ CRYPTO atteint | prédicat `crypto` (`crypto > 0`), **testé** + PO | validé | 22/07/2026 |
+| C7 | 1ʳᵉ renaissance → jalon RENAISSANCE atteint | prédicat `reborn` (`prestigeCount ≥ 1`), **testé** + PO (renaissance déclenchée) | validé | 22/07/2026 |
+| C8 | Reload conserve les jalons atteints, y compris après renaissance | `BuilderState.achievedMilestones` (Dexie **v16**, append-only, non touché par `prestige()`) + PO (F5 + renaissance) | validé | 22/07/2026 |
+| C9 | Panneau REGISTRE : liste complète atteint/non atteint, pas de spoil sur les cachés | `MilestonesPanel` + PO (rendu conforme maquette `network-milestones`) | validé | 22/07/2026 |
+| C10 | Jalon déjà atteint franchi à nouveau → aucun nouveau toast | garde `achievedMilestones` dans `checkMilestones`/`checkHackMilestone` (ids déjà présents ignorés), **testé** + PO | validé | 22/07/2026 |
+| — | Jalon SURCADENCE (hors périmètre initial, ajouté via maquette) : 1ᵉʳ boost accélérateur obtenu → toast dédié | prédicat `accel` (`acceleratorBoost !== null`), vérifié dans `applyTick`/`load()`, **testé** + PO | validé | 22/07/2026 |
+| — | Composants DS (`<Card hud brackets>` sans halo — chrome neutre volontaire, `<ProgressBar accent="mint">`, `<Icon>`), pattern bespoke toast comme `RankUpToast` | revue + PO (rendu conforme maquette) | validé | 22/07/2026 |
+| — | i18n FR/EN (`builder.milestones.*`), aucune chaîne en dur | clés FR+EN via `t()` | validé | 22/07/2026 |
+
 ## US-027 — Marché crypto (Phase A2)
 
 Recette du 21-22/07/2026. Critères de `us/US-027-marche-crypto.md` §1.

@@ -4,7 +4,7 @@ import { Outlet } from 'react-router'
 import { Alert, Toast } from '../components/ui'
 import { NavRail } from '../components/layout/NavRail'
 import { StatusBar } from '../components/layout/StatusBar'
-import { OfflineCatchupBanner, useBuilderTick } from '../features/builder'
+import { MilestoneToast, OfflineCatchupBanner, useBuilderTick } from '../features/builder'
 import { LevelUpToast } from '../features/progression/LevelUpToast'
 import { useReminders } from '../features/reminders/useReminders'
 import { RankUpToast } from '../features/reputation/RankUpToast'
@@ -49,6 +49,8 @@ export function AppShell() {
   const repGain = useFeedbackStore((s) => s.repGain)
   const rankUp = useFeedbackStore((s) => s.rankUp)
   const clearRankUp = () => useFeedbackStore.setState({ rankUp: null })
+  const milestones = useFeedbackStore((s) => s.milestones)
+  const dismissMilestone = useFeedbackStore((s) => s.dismissMilestone)
 
   useEffect(() => {
     // Séquencement : contrats → factions (les pénalités de réputation dues aux
@@ -150,6 +152,27 @@ export function AppShell() {
           {rankUp !== null && (
             <RankUpToast item={rankUp} onClose={clearRankUp} />
           )}
+        </div>
+      )}
+
+      {/* Jalons franchis (US-028, coin haut-droit) : file empilable, distincte
+          des moments de palier (haut-centre, singletons) et des toasts
+          génériques (bas-droite). */}
+      {milestones.length > 0 && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 74, // sous la StatusBar (56px) + même marge que les autres zones fixes
+            right: 18,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 10,
+            zIndex: 1100,
+          }}
+        >
+          {milestones.map((item) => (
+            <MilestoneToast key={item.id} item={item} onClose={() => dismissMilestone(item.id)} />
+          ))}
         </div>
       )}
 
