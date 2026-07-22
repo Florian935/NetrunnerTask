@@ -110,7 +110,7 @@ Les US-005 à US-007 enrichissent le to-do.
 | US-028 | Jalons / accomplissements du Réseau (milestones + feedback dédié) | A2 | moyenne | fait | — |
 | US-029 | Visualisation du Réseau (représentation qui grandit avec la progression) | A2 | moyenne | fait | — |
 | US-030 | Catalogue d'accélérateurs réels élargi (2ᵉ/3ᵉ accélérateur — podométrie, détox numérique…) | A2 | basse | à faire | US-023 |
-| US-026 | Approfondissement prestige : seuil de renaissance **incrémental** + équilibrage de la courbe | A2 | basse | à faire | US-024 |
+| US-026 | Approfondissement prestige : seuil de renaissance **incrémental** + équilibrage de la courbe | A2 | basse | fait | US-024 |
 
 > **US-027** — le marché n'est **pas aléatoire** : cours calculé par une
 > **fonction déterministe du temps réel** (même principe que le chrono des

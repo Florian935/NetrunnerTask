@@ -5,7 +5,35 @@
 
 ## US active
 
-_Aucune US active._ Dernière US clôturée : **US-029 — Visualisation du Réseau
+_Aucune US active._ Dernière US clôturée : **US-026 — Approfondissement
+prestige : seuil de renaissance incrémental + équilibrage de la courbe**
+(Phase A2, priorité basse ; cycle complet — cadrages fonctionnel + technique
+validés PO, H5 = pas de maquette, plan 10 étapes validé PO, implémentation faite,
+**recette 9/9 PO validée à 100 %** le 22/07/2026, décision **#033**, commit +
+merge sur `develop` + push).
+
+Réalisé US-026 : corrige la limite du prestige flat (recette US-024). Le seuil
+de renaissance devient **incrémental** — nouvelle fonction pure
+**`prestigeThreshold(count) = base × growth ** count`** dans `game/prestige.ts`
+(source de vérité, remplace la constante `PRESTIGE_CONFIG.threshold` par
+`base`/`growth`/`nextMult`), `canPrestige` comparant au seuil dérivé,
+`prestige()` inchangé. **Équilibrage PO : `growth = 2,5`** (seuils 1M → 2,5M →
+6,25M → 15,6M…), bonus `×1,5` composé conservé ; invariant **anti-boucle** posé
+en test (`growth > nextMult` ⇒ rapport `seuil / bonus` strictement croissant :
+chaque renaissance coûte plus d'effort relatif). **Aucune migration Dexie, aucun
+nouveau champ** (seuil dérivé de `prestigeCount` déjà persisté v14 → compat
+ascendante). UI : `PrestigePanel` lit `prestigeThreshold(prestigeCount)` (3
+lignes). **Tests 213/213** (+6 : base, géométrie, monotonie C3, anti-boucle C4,
+ré-éligibilité C6). Vérif visuelle Playwright **non réalisable dans la session**
+(pas d'outil navigateur) → recette PO sur `:5180` (états injectés via helper
+console IndexedDB : flux de renaissance + compat sauvegarde `prestigeCount>0`).
+Aucun bug, aucun ajustement de code.
+
+**Phase A2 : 4 tranches sur 5 livrées** (US-027, US-028, US-029, US-026). Reste
+**US-030** (catalogue d'accélérateurs élargi, priorité basse) — dernière tranche.
+Prochaine US via `nouvelle-us`.
+
+Dernière US clôturée (antérieure) : **US-029 — Visualisation du Réseau
 (Phase A2)** (cycle complet — cadrages fonctionnel + technique validés PO,
 maquette `network-map` reçue + analysée en profondeur avec le PO, plan 14
 étapes validé PO, implémentation faite, **recette 9/9 PO validée à 100 %** le
@@ -33,9 +61,9 @@ daemon = Compiler + Améliorer, nœud d'arbre = Débloquer). **Gating de branche
 (popover/propagation, gating, chevauchement labels) + halos d'ambiance adoucis
 (`ellipse closest-side`) sur retour PO. Recette **9/9 PO, 100 %**.
 
-**Phase A2 : 3 tranches sur 5 livrées** (US-027, US-028, US-029). Restent
-**US-030** (catalogue d'accélérateurs élargi, priorité basse) et **US-026**
-(prestige : seuil incrémental, priorité basse). Prochaine US via `nouvelle-us`.
+**Phase A2 : 4 tranches sur 5 livrées** (US-027, US-028, US-029, US-026). Reste
+**US-030** (catalogue d'accélérateurs élargi, priorité basse). Prochaine US via
+`nouvelle-us`.
 
 Dernière US clôturée (antérieure) : **US-028 — Jalons /
 accomplissements du Réseau (Phase A2)** (cycle complet — cadrages fonctionnel
