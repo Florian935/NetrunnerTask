@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   ACCELERATOR_BY_ID,
+  ACCELERATORS,
   boostMultiplier,
   boostWindows,
   cancel,
@@ -11,15 +12,37 @@ import {
 } from './accelerators'
 
 const focus = ACCELERATOR_BY_ID.focus
+const deep = ACCELERATOR_BY_ID['deep-analysis']
 
 const mk = (
   acceleratorRun: AcceleratorCore['acceleratorRun'] = null,
   acceleratorBoost: AcceleratorCore['acceleratorBoost'] = null,
 ): AcceleratorCore => ({ acceleratorRun, acceleratorBoost })
 
+describe('catalogue (US-030) — élargi à plusieurs protocoles', () => {
+  it('contient au moins 2 accélérateurs, dont focus et deep-analysis', () => {
+    expect(ACCELERATORS.length).toBeGreaterThanOrEqual(2)
+    expect(ACCELERATOR_BY_ID.focus).toBeDefined()
+    expect(ACCELERATOR_BY_ID['deep-analysis']).toBeDefined()
+  })
+  it('deep-analysis : session longue qui cible la data (pas les cycles)', () => {
+    expect(deep.durationMs).toBe(50 * 60 * 1000)
+    expect(deep.boostDurationMs).toBe(30 * 60 * 1000)
+    expect(deep.boostEffect).toEqual({ data: 1 })
+    expect(deep.boostEffect.cycles ?? 0).toBe(0)
+  })
+})
+
 describe('canStart', () => {
   it('vrai au repos, pour un accélérateur du catalogue', () => {
     expect(canStart(mk(), 'focus')).toBe(true)
+    expect(canStart(mk(), 'deep-analysis')).toBe(true)
+  })
+  it('anti-empilement inter-accélérateurs : un run focus bloque le lancement de deep-analysis', () => {
+    expect(canStart(mk({ id: 'focus', endsAt: 1000 }), 'deep-analysis')).toBe(false)
+  })
+  it('anti-empilement inter-accélérateurs : un boost deep-analysis bloque le lancement de focus', () => {
+    expect(canStart(mk(null, { id: 'deep-analysis', endsAt: 1000 }), 'focus')).toBe(false)
   })
   it('faux pour un id inconnu', () => {
     expect(canStart(mk(), 'nope')).toBe(false)
@@ -95,6 +118,10 @@ describe('boostMultiplier', () => {
     const s = mk(null, { id: 'focus', endsAt: 1000 })
     expect(boostMultiplier(s, 1000)).toEqual({ cycles: 1, data: 1 })
   })
+  it('deep-analysis booste la data ×2, laisse les cycles neutres (US-030)', () => {
+    const s = mk(null, { id: 'deep-analysis', endsAt: 1000 })
+    expect(boostMultiplier(s, 500)).toEqual({ cycles: 1, data: 2 })
+  })
 })
 
 describe('boostWindows — calendrier hors-ligne (US-024)', () => {
@@ -125,5 +152,13 @@ describe('boostWindows — calendrier hors-ligne (US-024)', () => {
   it('garde défensive : boost déjà expiré à fromMs → segment neutre seul', () => {
     const w = boostWindows(mk(null, { id: 'focus', endsAt: 500 }), 1000)
     expect(w).toEqual([{ untilMs: Infinity, cycles: 1, data: 1 }])
+  })
+
+  it('deep-analysis : segment boosté sur la data (pas les cycles) — US-030', () => {
+    const w = boostWindows(mk(null, { id: 'deep-analysis', endsAt: 5000 }), 1000)
+    expect(w).toEqual([
+      { untilMs: 5000, cycles: 1, data: 2 },
+      { untilMs: Infinity, cycles: 1, data: 1 },
+    ])
   })
 })

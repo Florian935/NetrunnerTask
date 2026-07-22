@@ -307,32 +307,61 @@
     },
     "accelerators": {
       "heading": "ACCÉLÉRATEURS",
-      "subOptional": "optionnel",
-      "subRunning": "focus en cours",
-      "subBoost": "production dopée",
+      "subChoose": "choisis un protocole",
+      "subLocked": "session en cours",
+      "subRunning": "session en cours",
+      "boostActive": "SURCADENCE active",
+      "antiStack": "Une seule à la fois — termine ou abandonne la session active pour en relancer une.",
+      "chooseHint": "optionnel · SURCADENCE ≠ nœud permanent OVERCLOCK",
+      "locked": "indisponible",
+      "lockedBadge": "VERROUILLÉ",
       "catalog": {
         "focus": {
-          "name": "FOCUS CHRONOMÉTRÉ",
-          "principle": "Une session de concentration vérifiée par l'app. Optionnel — le réseau tourne très bien sans."
+          "name": "FOCUS",
+          "tag": "session courte",
+          "principle": "Concentration vérifiée par l'app. Le réseau tourne sans — c'est un bonus."
+        },
+        "deep-analysis": {
+          "name": "ANALYSE EN PROFONDEUR",
+          "tag": "session longue",
+          "principle": "Exploration soutenue du Réseau. Récompense la présence : on tient, la moisson double."
         }
       },
-      "statDuration": "durée",
-      "statEffect": "effet",
-      "statEffectValue": "×{{mult}} prod",
-      "statBoost": "boost",
+      "resource": {
+        "cycles": "CYCLES",
+        "data": "DATA"
+      },
+      "capSession": "session",
+      "capEffect": "effet",
+      "capBoost": "surcadence",
       "start": "Lancer",
       "abort": "Abandonner",
       "remaining": "Temps restant",
-      "rewardAtEnd": "récompense ×{{mult}} à l'arrivée",
-      "boostActive": "SURCADENCE active",
-      "boostProd": "production réseau",
-      "boostRemaining": "reste",
+      "pctRemaining": "restant · {{pct}}%",
+      "protocolLong": "protocole long · {{min}} min",
+      "protocolShort": "protocole court · {{min}} min",
+      "phaseLabel": "PHASE {{n}}/{{total}} · {{name}}",
+      "phases": {
+        "priming": { "name": "AMORÇAGE", "short": "AMORÇ", "sub": "ouverture des flux" },
+        "indexing": { "name": "INDEXATION", "short": "INDEX", "sub": "cartographie des nœuds" },
+        "correlation": { "name": "CORRÉLATION", "short": "CORRÉL", "sub": "recoupement des signaux" },
+        "synthesis": { "name": "SYNTHÈSE", "short": "SYNTH", "sub": "agrégation des données" },
+        "extraction": { "name": "EXTRACTION", "short": "EXTR", "sub": "consolidation ×2" }
+      },
+      "rewardTitle": "SURCADENCE · {{res}} ×{{mult}}",
+      "rewardReady": "prête à {{pct}}%",
+      "rewardBuildup": "l'intensité monte vers 100% → révélation de la SURCADENCE au terme",
+      "rewardAtEnd": "récompense : {{res}} ×{{mult}} à l'arrivée",
+      "boostVerb": {
+        "cycles": "les cycles tombent au double",
+        "data": "les données affluent au double"
+      },
+      "boostRemainingLabel": "temps restant",
       "boostFootnote": "SURCADENCE distincte du nœud permanent OVERCLOCK",
-      "teaser": "D'autres accélérateurs en développement",
-      "toastInterruptTitle": "Focus interrompu",
+      "toastInterruptTitle": "Session interrompue",
       "toastInterruptBody": "Aucune pénalité · relançable quand tu veux",
       "toastBoostTitle": "SURCADENCE active",
-      "toastBoostBody": "Production dopée ×{{mult}} pendant {{minutes}} min"
+      "toastBoostBody": "Production {{res}} dopée ×{{mult}} pendant {{minutes}} min"
     },
     "offline": {
       "title": "Ton réseau a tourné en ton absence",

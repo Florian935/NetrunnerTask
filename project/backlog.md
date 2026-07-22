@@ -109,7 +109,7 @@ Les US-005 à US-007 enrichissent le to-do.
 | US-027 | Marché crypto — 3ᵉ ressource (conversion `data`→crypto à cours fluctuant) + 2ᵉ branche de l'arbre de déblocage | A2 | haute | fait | US-022 |
 | US-028 | Jalons / accomplissements du Réseau (milestones + feedback dédié) | A2 | moyenne | fait | — |
 | US-029 | Visualisation du Réseau (représentation qui grandit avec la progression) | A2 | moyenne | fait | — |
-| US-030 | Catalogue d'accélérateurs réels élargi (2ᵉ/3ᵉ accélérateur — podométrie, détox numérique…) | A2 | basse | à faire | US-023 |
+| US-030 | Catalogue d'accélérateurs réels élargi (2ᵉ/3ᵉ accélérateur — podométrie, détox numérique…) | A2 | basse | fait | US-023 |
 | US-026 | Approfondissement prestige : seuil de renaissance **incrémental** + équilibrage de la courbe | A2 | basse | fait | US-024 |
 
 > **US-027** — le marché n'est **pas aléatoire** : cours calculé par une
@@ -128,6 +128,18 @@ Les US-005 à US-007 enrichissent le to-do.
 > composé, atteindre le même seuil devient trivial → renaissances en boucle,
 > bonus qui gonfle trop vite). À traiter avec l'équilibrage global de la courbe
 > de prestige (formule de seuil, valeur de `nextMult`).
+>
+> **US-030 (livrée en Option A, décision #034)** : seul un 2ᵉ accélérateur
+> **chrono** (`deep-analysis`, booste la data) a été ajouté. Deux pistes du
+> titre initial **écartées** faute d'être vérifiables par l'app (invariant P1/P5,
+> cf. gel d'US-025) → à rouvrir seulement si un moyen de vérification fiable
+> existe :
+> - **Détox numérique** — vérifiable *en théorie* via la présence au premier plan
+>   (Page Visibility API, échec si l'app passe en arrière-plan) ; introduit un
+>   **état d'échec** de session (nouveau mécanisme). Reportée (candidate crédible).
+> - **Podométrie** — **non vérifiable** de façon fiable en PWA local-first (pas
+>   d'API santé stable) → reviendrait à de l'auto-déclaré. Gelée sauf accès
+>   capteur/API fiable.
 
 ## MVP 3 — Rétention profonde & identité
 

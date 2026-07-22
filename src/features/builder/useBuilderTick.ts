@@ -1,6 +1,10 @@
 import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ACCELERATOR_BY_ID } from '../../game/accelerators'
+import {
+  ACCELERATOR_BY_ID,
+  acceleratorMultiplier,
+  acceleratorResource,
+} from '../../game/accelerators'
 import { useBuilderStore } from '../../stores/useBuilderStore'
 import { useFeedbackStore } from '../../stores/useFeedbackStore'
 
@@ -37,14 +41,17 @@ export function useBuilderTick(): void {
   useEffect(() => {
     if (acceleratorBoost && !prevBoostId.current) {
       const def = ACCELERATOR_BY_ID[acceleratorBoost.id]
-      pushToast(
-        'success',
-        t('builder.accelerators.toastBoostTitle'),
-        t('builder.accelerators.toastBoostBody', {
-          mult: 1 + (def?.boostEffect.cycles ?? 0),
-          minutes: Math.round((def?.boostDurationMs ?? 0) / 60_000),
-        }),
-      )
+      if (def) {
+        pushToast(
+          'success',
+          t('builder.accelerators.toastBoostTitle'),
+          t('builder.accelerators.toastBoostBody', {
+            mult: acceleratorMultiplier(def),
+            res: t(`builder.accelerators.resource.${acceleratorResource(def)}`),
+            minutes: Math.round(def.boostDurationMs / 60_000),
+          }),
+        )
+      }
     }
     prevBoostId.current = acceleratorBoost?.id ?? null
   }, [acceleratorBoost, pushToast, t])
