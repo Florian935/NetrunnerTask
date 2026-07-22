@@ -694,3 +694,56 @@ pity) sont **gelés**.
 - **Statut** : vision **adoptée comme cap** ; **roadmap produit détaillée (Phases
   A/B) à valider** ; puis cadrage de la 1ʳᵉ tranche jouable (cycle de vie US
   inchangé, portes de validation maintenues).
+
+### 031 — Jalons / accomplissements du Réseau (US-028, Phase A2, 22/07/2026)
+
+2ᵉ tranche de la Phase A2 (#029). Introduit le **REGISTRE** : une liste fixe de
+**11 jalons** de progression du Réseau, marqués atteints la 1ʳᵉ fois que leur
+condition est remplie, avec un feedback dédié — « effort faible, impact
+rétention élevé » (roadmap). Aucune nouvelle mécanique de gameplay, aucune
+récompense en jeu : uniquement de la reconnaissance.
+
+- **Jalons en prédicats purs sur l'état courant, pas en seuils cumulatifs** :
+  nouveau module pur `game/milestones.ts` (**testé 15/15**) — `cycles`/`data`/
+  `crypto`/`unlockedNodes` redescendent à l'achat et se réinitialisent à la
+  renaissance, donc un jalon de seuil (ex. « 1 000 000 cycles produits ») s'y
+  serait heurté sans compteur cumulatif dédié. Choix retenu : un flag persisté
+  **append-only** (`achievedMilestones`, jamais retiré, y compris après
+  `prestige()`) + des prédicats évalués sur l'état courant après chaque action
+  pertinente. Seule exception événementielle : le jalon « premier hack » (pas
+  de condition d'état observable, c'est l'appel de l'action qui est
+  l'événement).
+- **Contenu des jalons revu pendant l'étape design** (maquette
+  `network-milestones`) : le cadrage technique initial listait des jalons par
+  daemon individuel (sifter/wraith/oracle) + 2 seuils de cycles (1k/1M) ; la
+  maquette a proposé à la place PREMIER HACK, ESSAIM DE DAEMONS (≥2 types de
+  daemons simultanés), PREMIÈRE AMÉLIO, FLUX DE DATA, et surtout
+  **SURCADENCE** (1ᵉʳ boost accélérateur obtenu) — un jalon lié au système
+  accélérateurs (US-023) **absent du cadrage initial**, identifié comme un
+  oubli en cours d'étape design. Liste validée PO, retenue telle quelle.
+- **Migration Dexie v16** : `achievedMilestones: string[]` (1 champ), même
+  modèle que v11→v15.
+- **`useFeedbackStore` gagne sa 1ʳᵉ file de toasts multi-instances**
+  (`milestones: MilestoneItem[]`) — jusqu'ici les moments de palier
+  (`levelUp`/`rankUp`) étaient des singletons ; plusieurs jalons peuvent
+  tomber au même instant (ex. une renaissance en débloque plusieurs d'un coup).
+- **`load()` fait un merge silencieux** (état seul, sans toast) des jalons
+  déjà satisfaits à l'ouverture — backfill après déploiement de la
+  fonctionnalité, ou jalon survenu hors-ligne (accélérateur résolu pendant
+  l'absence) : pas de rafale de toasts pour de la progression passée, le
+  bandeau de rattrapage hors-ligne suffit.
+- **UI** : nouveau panneau `MilestonesPanel` sur `<Card hud brackets>` **sans
+  halo** — chrome neutre frost délibéré, les 6 accents du DS étant déjà tous
+  réservés à des systèmes actifs (cyan accélérateurs, ambre crypto, rouge
+  prestige, violet daemons, mint/magenta états de nœuds) ; le registre est la
+  **carte** de tous les systèmes, pas un système de plus. Nouveau toast bespoke
+  `MilestoneToast` (sceau hexagonal, double liseré), même famille que
+  `RankUpToast`/`LevelUpToast` plutôt que le composant `Toast` générique.
+  9 icônes manquantes ajoutées au registre statique `components/ui/core/Icon.tsx`
+  (`server`, `arrow-up-circle`, `git-branch`, `gauge-circle`, `sparkles`,
+  `flag-triangle-right`, `scroll-text`, `help-circle`, `circle-dashed`).
+- Vérifs : typecheck + lint + build/PWA + **tests 194/194**. Vérification
+  visuelle navigateur (Playwright headless, temporaire) avant recette PO :
+  icônes manquantes + toast chevauchant la `StatusBar`, corrigés en direct.
+  Recette **10/10 PO**, aucun bug trouvé. Maquette (`network-milestones`) non
+  versionnée (convention #007).

@@ -19,6 +19,11 @@ import {
 } from '../game/builder'
 import { convert as convertPure, marketRate, type CryptoCore } from '../game/crypto'
 import {
+  checkHackMilestone,
+  checkMilestones,
+  type MilestoneCore,
+} from '../game/milestones'
+import {
   prestige as prestigePure,
   prestigeMultiplier,
   type PrestigeCore,
@@ -54,6 +59,8 @@ interface BuilderStoreState extends BuilderCore, AcceleratorCore {
   crypto: number
   /** Nombre de renaissances (US-024) — bonus permanent `prestigeMultiplier`. */
   prestigeCount: number
+  /** `id` des jalons de progression déjà atteints (US-028), append-only. */
+  achievedMilestones: string[]
   loaded: boolean
   load: () => Promise<void>
   /** HACK manuel : ajoute des cycles (persistance différée par le hook). */
@@ -116,7 +123,38 @@ const prestigeCore = (s: BuilderStoreState): PrestigeCore => ({
   prestigeCount: s.prestigeCount,
 })
 
-export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
+/** Vue `MilestoneCore` (US-028) pour les appels à `game/milestones.ts`. */
+const milestoneCore = (s: BuilderStoreState): MilestoneCore => ({
+  generators: s.generators,
+  upgrades: s.upgrades,
+  unlockedNodes: s.unlockedNodes,
+  crypto: s.crypto,
+  acceleratorBoost: s.acceleratorBoost,
+  prestigeCount: s.prestigeCount,
+})
+
+export const useBuilderStore = create<BuilderStoreState>((set, get) => {
+  /**
+   * US-028 : évalue les jalons à prédicat d'état, empile les nouveaux (état +
+   * toast dédié) et persiste **immédiatement** s'il y en a — écriture rare
+   * (au plus une fois par jalon sur toute la partie), contrairement à
+   * `cycles`/`data` throttlés par `useBuilderTick`. À appeler après toute
+   * action pouvant faire basculer un prédicat (achat, conversion,
+   * renaissance, résolution d'accélérateur) — **pas** au `load()`, qui
+   * effectue son propre merge silencieux (voir plus bas : pas de toast pour
+   * un jalon déjà acquis avant l'ouverture de l'app, ni pour un jalon
+   * survenu hors-ligne — l'app en informe déjà via le bandeau de rattrapage).
+   */
+  function checkAndApplyMilestones(): void {
+    const s = get()
+    const newIds = checkMilestones(milestoneCore(s), s.achievedMilestones)
+    if (newIds.length === 0) return
+    set({ achievedMilestones: [...s.achievedMilestones, ...newIds] })
+    for (const id of newIds) useFeedbackStore.getState().triggerMilestone(id)
+    void get().persist()
+  }
+
+  return {
   cycles: 0,
   generators: {},
   upgrades: {},
@@ -126,6 +164,7 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
   acceleratorRun: null,
   acceleratorBoost: null,
   prestigeCount: 0,
+  achievedMilestones: [],
   loaded: false,
 
   load: async () => {
@@ -145,6 +184,7 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
       acceleratorBoost: state?.acceleratorBoost ?? null,
     }
     const prestigeCount = state?.prestigeCount ?? 0
+    const achievedAtClose = state?.achievedMilestones ?? []
     const fromMs = state?.updatedAt ?? now
 
     // --- Rattrapage hors-ligne (US-024) ---
@@ -168,6 +208,23 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
     // État de l'accélérateur au retour (résolution des transitions échues).
     const resolvedAcc = resolveAcceleratorPure(accAtClose, now)
 
+    // Jalons (US-028) : merge **silencieux** (état seul, aucun toast) — un
+    // jalon déjà mérité avant l'ouverture (backfill après déploiement de la
+    // fonctionnalité) ou survenu hors-ligne (ex. accélérateur résolu pendant
+    // l'absence) n'a pas besoin d'un toast, le bandeau de rattrapage suffit.
+    const newMilestoneIds = checkMilestones(
+      {
+        generators: caught.generators,
+        upgrades: caught.upgrades,
+        unlockedNodes: caught.unlockedNodes,
+        crypto,
+        acceleratorBoost: resolvedAcc.acceleratorBoost,
+        prestigeCount,
+      },
+      achievedAtClose,
+    )
+    const achievedMilestones = [...achievedAtClose, ...newMilestoneIds]
+
     set({
       cycles: caught.cycles,
       generators: caught.generators,
@@ -178,6 +235,7 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
       acceleratorRun: resolvedAcc.acceleratorRun,
       acceleratorBoost: resolvedAcc.acceleratorBoost,
       prestigeCount,
+      achievedMilestones,
       loaded: true,
     })
 
@@ -190,14 +248,23 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
       })
     }
 
-    // Persiste si le rattrapage ou la résolution a changé quelque chose.
-    if (gainCycles > 0 || gainData > 0 || resolvedAcc !== accAtClose) {
+    // Persiste si le rattrapage, la résolution ou un jalon a changé quelque chose.
+    if (gainCycles > 0 || gainData > 0 || resolvedAcc !== accAtClose || newMilestoneIds.length > 0) {
       void get().persist()
     }
   },
 
   hack: () => {
     set(hackPure(core(get())))
+    // US-028 : jalon événementiel (pas de prédicat d'état, voir milestones.ts)
+    // — persisté immédiatement, contrairement au reste de hack() (throttlé).
+    const s = get()
+    const hackIds = checkHackMilestone(s.achievedMilestones)
+    if (hackIds.length > 0) {
+      set({ achievedMilestones: [...s.achievedMilestones, ...hackIds] })
+      for (const id of hackIds) useFeedbackStore.getState().triggerMilestone(id)
+      void get().persist()
+    }
   },
 
   buyGenerator: (id) => {
@@ -205,6 +272,7 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
     const next = buyGeneratorPure(current, id)
     if (next === current) return // solde insuffisant → no-op
     set(next)
+    checkAndApplyMilestones()
     void get().persist()
   },
 
@@ -213,6 +281,7 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
     const next = buyUpgradePure(current, id)
     if (next === current) return // solde insuffisant → no-op
     set(next)
+    checkAndApplyMilestones()
     void get().persist()
   },
 
@@ -221,6 +290,7 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
     const next = buyNodePure(current, id)
     if (next === current) return // condition non remplie ou solde insuffisant → no-op
     set({ data: next.data, crypto: next.crypto, unlockedNodes: next.unlockedNodes })
+    checkAndApplyMilestones()
     void get().persist()
   },
 
@@ -232,6 +302,7 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
     const next = convertPure(current, dataAmount, effectiveRate)
     if (next === current) return // montant invalide ou solde insuffisant → no-op
     set({ data: next.data, crypto: next.crypto })
+    checkAndApplyMilestones()
     void get().persist()
   },
 
@@ -265,6 +336,7 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
       prestigeCount: next.prestigeCount,
       // acceleratorRun/acceleratorBoost intacts (engagement réel du joueur).
     })
+    checkAndApplyMilestones()
     void get().persist()
   },
 
@@ -285,7 +357,12 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
     })
     if (next !== current) set({ cycles: next.cycles, data: next.data })
 
-    if (accNext !== accCurrent) void get().persist()
+    if (accNext !== accCurrent) {
+      // Seul `accel` peut basculer ici (résolution d'un boost SURCADENCE) —
+      // le seul cas de jalon pendant un tick « app ouverte ».
+      checkAndApplyMilestones()
+      void get().persist()
+    }
   },
 
   persist: async () => {
@@ -299,6 +376,7 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
       acceleratorRun,
       acceleratorBoost,
       prestigeCount,
+      achievedMilestones,
     } = get()
     await builderRepo.save({
       cycles,
@@ -310,7 +388,9 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => ({
       acceleratorRun,
       acceleratorBoost,
       prestigeCount,
+      achievedMilestones,
       updatedAt: Date.now(),
     })
   },
-}))
+  }
+})

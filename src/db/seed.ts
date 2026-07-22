@@ -56,6 +56,7 @@ export async function ensureSeeded(): Promise<void> {
       acceleratorBoost: null,
       prestigeCount: 0,
       updatedAt: Date.now(),
+      achievedMilestones: [],
     })
   }
 }

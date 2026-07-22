@@ -5,7 +5,38 @@
 
 ## US active
 
-_Aucune US active._ Dernière US clôturée : **US-027 — Marché crypto (Phase
+_Aucune US active._ Dernière US clôturée : **US-028 — Jalons /
+accomplissements du Réseau (Phase A2)** (cycle complet — cadrages fonctionnel
++ technique validés PO, maquette `network-milestones` validée PO, plan 13
+étapes validé PO, implémentation faite, **recette 10/10 PO** le 22/07/2026,
+décision **#031**, commit/merge/push restant à faire).
+
+Réalisé US-028 : **REGISTRE** des 11 jalons de progression du Réseau —
+nouveau module pur **`game/milestones.ts`** (prédicats purs sur l'état
+courant, pas de nouveau compteur cumulatif — **testé 15/15**), flag persisté
+**append-only** `BuilderState.achievedMilestones` (Dexie **v16**, survit à la
+renaissance). Câblage `useBuilderStore` (jalons vérifiés après chaque action
+pertinente + `load()` en merge silencieux pour le backfill/hors-ligne ; le
+jalon événementiel `hack` persisté immédiatement) + `useFeedbackStore`
+(nouvelle **file** de toasts `milestones`, contrairement aux singletons
+`levelUp`/`rankUp`). UI : panneau **`MilestonesPanel`** (chrome neutre frost,
+**sans halo** — les 6 accents DS étant déjà réservés à des systèmes actifs) +
+toast bespoke **`MilestoneToast`** (sceau hexagonal, comme `RankUpToast`), en
+fin de colonne side sous `PrestigePanel`. **Contenu des jalons ajusté par la
+maquette** (validé PO) : remplace les jalons individuels par daemon + seuils
+de cycles du cadrage initial par PREMIER HACK/ESSAIM DE DAEMONS/PREMIÈRE
+AMÉLIO/FLUX DE DATA, et ajoute **SURCADENCE** (système accélérateurs US-023,
+oublié au cadrage initial). **Tests 194/194.** **Vérification visuelle
+navigateur** (Playwright headless, avant recette PO) : 2 bugs trouvés et
+corrigés — icônes manquantes au registre DS (`components/ui/core/Icon.tsx`),
+toast chevauchant la `StatusBar`. Recette PO : **10 critères conformes,
+aucun bug trouvé**.
+
+**Prochaine étape : commit + merge + push** (skill `commit`). Prochaine US
+après clôture : **US-029 — Visualisation du Réseau** ou **US-030 — Catalogue
+d'accélérateurs élargi** (Phase A2, à choisir au prochain `nouvelle-us`).
+
+Dernière US clôturée (antérieure) : **US-027 — Marché crypto (Phase
 A2)** (cycle complet — cadrages fonctionnel + technique validés PO, maquette
 `network-crypto` validée PO, plan 14 étapes validé PO, implémentation faite,
 **recette 9/9 PO** le 22/07/2026, décision **#030**, commit + merge sur

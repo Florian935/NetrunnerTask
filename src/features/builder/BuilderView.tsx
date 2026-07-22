@@ -16,6 +16,7 @@ import { DaemonCard } from './DaemonCard'
 import { DataReadout } from './DataReadout'
 import { formatCycles, formatRate } from './format'
 import { HackZone } from './HackZone'
+import { MilestonesPanel } from './MilestonesPanel'
 import { PrestigePanel } from './PrestigePanel'
 import { TeaserCard } from './TeaserCard'
 import { UnlockTreeSection } from './UnlockTreeSection'
@@ -142,6 +143,7 @@ export function BuilderView() {
             <span className="builder__prestige-rule" />
           </div>
           <PrestigePanel />
+          <MilestonesPanel />
         </div>
       </div>
     </div>

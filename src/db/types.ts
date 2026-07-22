@@ -187,4 +187,11 @@ export interface BuilderState {
    * `offlineTick` + `useBuilderStore.load()`).
    */
   updatedAt: number
+  /**
+   * `id` des jalons de progression déjà atteints (US-028). **Append-only** :
+   * ne diminue jamais, y compris après une renaissance (survit au reset de
+   * `prestige()`, contrairement à `cycles`/`data`/`crypto`/`unlockedNodes`).
+   * Voir `game/milestones.ts`.
+   */
+  achievedMilestones: string[]
 }

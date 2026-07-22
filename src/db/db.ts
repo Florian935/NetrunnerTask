@@ -290,6 +290,25 @@ export class NetrunnerDB extends Dexie {
             if (b.crypto === undefined) b.crypto = 0
           }),
       )
+    // v16 (US-028) : jalons de progression. Table inchangée (même clé `id`) →
+    // schéma v15 recopié + valeur par défaut sur la rangée singleton existante
+    // (même modèle que les migrations v11→v15).
+    this.version(16)
+      .stores({
+        contracts: 'id, factionId, status, dueDate, createdAt',
+        factions: 'id, name',
+        player: 'id',
+        builderState: 'id',
+        demoKV: 'key',
+      })
+      .upgrade((tx) =>
+        tx
+          .table('builderState')
+          .toCollection()
+          .modify((b: { achievedMilestones?: string[] }) => {
+            if (b.achievedMilestones === undefined) b.achievedMilestones = []
+          }),
+      )
   }
 }
 

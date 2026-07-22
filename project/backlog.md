@@ -107,7 +107,7 @@ Les US-005 à US-007 enrichissent le to-do.
 | ID | Titre | MVP | Priorité | Statut | Dépend de |
 |----|-------|-----|----------|--------|-----------|
 | US-027 | Marché crypto — 3ᵉ ressource (conversion `data`→crypto à cours fluctuant) + 2ᵉ branche de l'arbre de déblocage | A2 | haute | fait | US-022 |
-| US-028 | Jalons / accomplissements du Réseau (milestones + feedback dédié) | A2 | moyenne | à faire | — |
+| US-028 | Jalons / accomplissements du Réseau (milestones + feedback dédié) | A2 | moyenne | fait | — |
 | US-029 | Visualisation du Réseau (représentation qui grandit avec la progression) | A2 | moyenne | à faire | — |
 | US-030 | Catalogue d'accélérateurs réels élargi (2ᵉ/3ᵉ accélérateur — podométrie, détox numérique…) | A2 | basse | à faire | US-023 |
 | US-026 | Approfondissement prestige : seuil de renaissance **incrémental** + équilibrage de la courbe | A2 | basse | à faire | US-024 |
