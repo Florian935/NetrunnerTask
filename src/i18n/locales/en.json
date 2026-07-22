@@ -307,32 +307,61 @@
     },
     "accelerators": {
       "heading": "ACCELERATORS",
-      "subOptional": "optional",
-      "subRunning": "focus running",
-      "subBoost": "output boosted",
+      "subChoose": "choose a protocol",
+      "subLocked": "session running",
+      "subRunning": "session running",
+      "boostActive": "OVERDRIVE active",
+      "antiStack": "One at a time — finish or abort the active session to launch another.",
+      "chooseHint": "optional · OVERDRIVE ≠ the permanent OVERCLOCK node",
+      "locked": "unavailable",
+      "lockedBadge": "LOCKED",
       "catalog": {
         "focus": {
-          "name": "TIMED FOCUS",
-          "principle": "A concentration session verified by the app. Optional — the network runs just fine without it."
+          "name": "FOCUS",
+          "tag": "short session",
+          "principle": "A concentration session verified by the app. The network runs without it — this is a bonus."
+        },
+        "deep-analysis": {
+          "name": "DEEP ANALYSIS",
+          "tag": "long session",
+          "principle": "Sustained exploration of the Network. Rewards presence: hold on, the harvest doubles."
         }
       },
-      "statDuration": "duration",
-      "statEffect": "effect",
-      "statEffectValue": "×{{mult}} output",
-      "statBoost": "boost",
+      "resource": {
+        "cycles": "CYCLES",
+        "data": "DATA"
+      },
+      "capSession": "session",
+      "capEffect": "effect",
+      "capBoost": "overdrive",
       "start": "Start",
       "abort": "Abort",
       "remaining": "Time left",
-      "rewardAtEnd": "×{{mult}} reward on completion",
-      "boostActive": "OVERDRIVE active",
-      "boostProd": "network output",
-      "boostRemaining": "left",
+      "pctRemaining": "left · {{pct}}%",
+      "protocolLong": "long protocol · {{min}} min",
+      "protocolShort": "short protocol · {{min}} min",
+      "phaseLabel": "PHASE {{n}}/{{total}} · {{name}}",
+      "phases": {
+        "priming": { "name": "PRIMING", "short": "PRIME", "sub": "opening the streams" },
+        "indexing": { "name": "INDEXING", "short": "INDEX", "sub": "mapping the nodes" },
+        "correlation": { "name": "CORRELATION", "short": "CORREL", "sub": "cross-checking signals" },
+        "synthesis": { "name": "SYNTHESIS", "short": "SYNTH", "sub": "aggregating the data" },
+        "extraction": { "name": "EXTRACTION", "short": "EXTR", "sub": "consolidation ×2" }
+      },
+      "rewardTitle": "OVERDRIVE · {{res}} ×{{mult}}",
+      "rewardReady": "ready at {{pct}}%",
+      "rewardBuildup": "intensity climbs to 100% → OVERDRIVE reveal on completion",
+      "rewardAtEnd": "reward: {{res}} ×{{mult}} on completion",
+      "boostVerb": {
+        "cycles": "cycles drop at double rate",
+        "data": "data flows in at double rate"
+      },
+      "boostRemainingLabel": "time left",
       "boostFootnote": "OVERDRIVE, distinct from the permanent OVERCLOCK node",
-      "teaser": "More accelerators in development",
-      "toastInterruptTitle": "Focus interrupted",
+      "toastInterruptTitle": "Session interrupted",
       "toastInterruptBody": "No penalty · relaunch anytime",
       "toastBoostTitle": "OVERDRIVE active",
-      "toastBoostBody": "Output boosted ×{{mult}} for {{minutes}} min"
+      "toastBoostBody": "{{res}} output boosted ×{{mult}} for {{minutes}} min"
     },
     "offline": {
       "title": "Your network kept running while you were away",

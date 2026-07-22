@@ -829,3 +829,43 @@ la précédente → boucle triviale, bonus qui gonfle sans effort.
   Vérification visuelle Playwright **non réalisable dans la session** (pas
   d'outil navigateur connecté) → recette PO déroulée sur `:5180` (états injectés
   via helper console IndexedDB). Recette **9/9 PO, validée à 100 %**, aucun bug.
+
+### 034 — Catalogue d'accélérateurs élargi (US-030, Phase A2, 22/07/2026)
+
+5ᵉ et **dernière** tranche de la Phase A2 (#029) — **Phase A2 close**. Élargit le
+catalogue d'accélérateurs réels de 1 (`focus`) à 2, en **Option A** (arbitrage PO
+parmi 2 périmètres proposés au cadrage).
+
+- **Invariant fondateur maintenu** : un accélérateur reste **vérifié par l'app**
+  (chrono tenu par l'app), jamais auto-déclaré — même ligne qui a fait geler
+  US-025 (#028). Filtre les pistes du titre initial : **podométrie écartée** (non
+  vérifiable en PWA local-first → auto-déclaré déguisé), **détox numérique
+  reportée** (vérifiable via présence au 1ᵉʳ plan, mais nouveau mécanisme
+  d'échec) — les deux au backlog.
+- **Nouvel accélérateur `deep-analysis`** : session **longue** (50 min) →
+  SURCADENCE **30 min** qui booste la **data ×2**, là où `focus` booste les
+  cycles → vrai arbitrage stratégique (quelle ressource accélérer), pas un
+  doublon.
+- **Zéro changement de moteur, zéro migration Dexie** : `game/accelerators.ts`
+  et le store étaient **déjà génériques par `id` et multi-ressources**
+  (`boostMultiplier`/`boostWindows`/`applyTick` composent `cycles` **et** `data`).
+  Ajout d'une entrée de catalogue + 2 helpers purs `acceleratorResource`/
+  `acceleratorMultiplier`. **Bug corrigé** au passage : le toast de SURCADENCE
+  (`useBuilderTick`) calculait le multiplicateur sur `boostEffect.cycles` en dur
+  (aurait affiché ×1 pour `deep-analysis`) → lit désormais la vraie ressource.
+- **Consigne PO — réutiliser le DS, créer seulement le manquant** : `Card` /
+  `Button` / `ProgressBar` / `Icon` réutilisés tels quels ; **nouveau composant
+  DS `ProgressRing`** (anneau SVG + balayage scan, keyframe `.nw-ring-scan` dans
+  `base.css`, `prefers-reduced-motion`), réutilisable. Refonte
+  `AcceleratorPanel` (repos = choix multi-protocoles + indisponible ; en cours =
+  session longue **vivante** [anneau/scan/flux/5 phases/aperçu de récompense qui
+  se charge] vs courte sobre ; SURCADENCE = ressource boostée colorée data
+  magenta / cycles cyan). Feedback de la session longue **purement cosmétique** :
+  la récompense reste **tout-ou-rien** (abandon = zéro boost). Bloc CSS orphelin
+  `builder__acc-*` supprimé (pas de code mort). 4 icônes lucide ajoutées.
+- Maquette `network-accelerators-v2` (Claude Design, non versionnée, convention
+  #007). Vérifs : typecheck + lint + build/PWA + **tests 219/219** (+6 sur
+  `accelerators.ts`). Vérif visuelle PO sur `:5180` (pas d'outil navigateur en
+  session) → 1 ajustement en direct (halo de l'anneau tronqué par le
+  `overflow:hidden` par défaut du `<svg>` → `overflow:visible`). Recette **8/8
+  PO, validée à 100 %**, aucun bug ouvert.

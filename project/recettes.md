@@ -3,6 +3,47 @@
 > Tests de recette par US. Chaque test reprend un critère d'acceptation de l'US.
 > Statuts : `à faire` / `validé` / `échoué`.
 
+## US-030 — Catalogue d'accélérateurs réels élargi (Phase A2)
+
+Recette du 22/07/2026. Critères de `us/US-030-accelerateurs-elargi.md` §1
+(périmètre **Option A** : 1 accélérateur `deep-analysis`, data ×2). **Vérifs
+automatiques** : `typecheck` + `lint` + `build`/PWA + tests Vitest **219/219**
+(+6 sur `game/accelerators.ts` : catalogue ≥ 2, `deep-analysis` cible data,
+`boostMultiplier`/`boostWindows` data ×2, anti-empilement inter-accélérateurs).
+**Recette navigateur** (`npm run dev`, port 5180) confirmée par le PO : **8/8
+critères conformes, validé à 100 %**. États injectés dans IndexedDB (helper
+console : `acceleratorRun`/`acceleratorBoost`) pour dérouler en cours + SURCADENCE.
+**DS réutilisé** (Card / Button / ProgressBar / Icon) ; seul le manquant créé
+(composant DS `ProgressRing` + éléments cosmétiques). **Aucune migration Dexie,
+aucune règle de jeu nouvelle** (moteur/store déjà génériques par ressource).
+
+| # | Critère (action → résultat attendu) | Méthode | Statut | Date |
+|---|-------------------------------------|---------|--------|------|
+| C1 | Catalogue à ≥ 2 accélérateurs, ajout par donnée sans réécrire le moteur | entrée `deep-analysis` + test `ACCELERATORS`/`ACCELERATOR_BY_ID` | validé | 22/07/2026 |
+| C2 | Repos : le joueur voit et sélectionne quel accélérateur lancer (durée/effet/ressource) | `ReposView` itère `ACCELERATORS` → `startAccelerator(id)` + PO | validé | 22/07/2026 |
+| C3 | Session menée à terme → SURCADENCE ; abandon → aucun boost (pas de raccourci) | `resolve`/`cancel` inchangés + PO | validé | 22/07/2026 |
+| C4 | Boost `deep-analysis` multiplie la **data** (pas les cycles) ; `focus` les cycles | `boostMultiplier` → `{cycles:1, data:2}` (test) + PO | validé | 22/07/2026 |
+| C5 | Anti-empilement : session/boost actif → impossible d'en lancer un autre, UI reflète | `canStart` (test inter-accélérateurs) + vues en cours/SURCADENCE + PO | validé | 22/07/2026 |
+| C6 | Fermer/rouvrir pendant session/boost → état résolu correctement (tous accélérateurs) | `resolve`/hors-ligne inchangés + PO (injection) | validé | 22/07/2026 |
+| C7 | i18n FR/EN complet (catalogue, phases, libellés), DS existant, accent cyan réservé | clés FR+EN + Card/Button/ProgressBar/Icon + PO | validé | 22/07/2026 |
+| C10 | `typecheck` + `lint` + `build` + tests au vert ; `focus`/hors-ligne inchangés | vérifs automatiques 219/219 | validé | 22/07/2026 |
+| — | C8-C9 (détox numérique) **hors périmètre** (Option A) → reportés au backlog | — | s/o | 22/07/2026 |
+
+### Ajustement issu de la vérification visuelle (avant validation PO)
+
+- **Halo de l'anneau tronqué au carré** (retour PO) : un `<svg>` a `overflow:
+  hidden` par défaut (règle UA) ; le cercle de progression touchant le bord du
+  viewport, son `drop-shadow` (halo 6px) était coupé net. Corrigé par
+  `overflow: visible` sur le `<svg>` de `ProgressRing` → halo complet, pour
+  **tous** les usages du composant. Ajustement dans le périmètre (composant né
+  avec l'US) → pas d'entrée `bugs.md`.
+
+**Bug corrigé pendant l'implémentation** (avant recette) : le toast de
+SURCADENCE (`useBuilderTick`) calculait le multiplicateur sur `boostEffect.cycles`
+en dur → aurait affiché ×1 pour `deep-analysis`. Généralisé via
+`acceleratorMultiplier`/`acceleratorResource` (moteur), le toast lit la vraie
+ressource boostée.
+
 ## US-026 — Prestige incrémental : seuil de renaissance + équilibrage (Phase A2)
 
 Recette du 22/07/2026. Critères de `us/US-026-prestige-incremental.md` §1.

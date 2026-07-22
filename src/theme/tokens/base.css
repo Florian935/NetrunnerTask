@@ -89,7 +89,12 @@ a:hover{color:var(--cyan-400);text-shadow:var(--text-glow-cyan)}
 .nw-crt{position:relative;isolation:isolate}
 .nw-crt::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:var(--scanlines);background-size:100% 3px;animation:nw-scan-drift 1.1s linear infinite,nw-flicker 6s linear infinite;mix-blend-mode:overlay;opacity:.55}
 
+/* Radar sweep for the ProgressRing `scan` layer (rotating conic wedge). */
+@keyframes nw-ring-scan{to{transform:rotate(360deg)}}
+.nw-ring-scan{animation:nw-ring-scan 4.5s linear infinite}
+
 @media (prefers-reduced-motion:reduce){
   .nw-pulse-cyan,.nw-pulse-magenta,.nw-pulse-mint,.nw-pulse-violet,.nw-glitch{animation:none}
   .nw-crt::after{animation:none}
+  .nw-ring-scan{animation:none}
 }

@@ -5,7 +5,39 @@
 
 ## US active
 
-_Aucune US active._ Dernière US clôturée : **US-026 — Approfondissement
+_Aucune US active._ **Phase A2 close : 5 tranches sur 5 livrées** (US-027,
+US-028, US-029, US-026, US-030). Prochaine tranche/phase à cadrer avec le PO
+(cf. `docs/roadmap.md`) ; nouvelle US via `nouvelle-us`.
+
+Dernière US clôturée : **US-030 — Catalogue d'accélérateurs réels élargi**
+(Phase A2, priorité basse ; cycle complet — cadrages fonctionnel + technique
+validés PO, maquette `network-accelerators-v2` reçue + analysée avec plan de
+réutilisation du DS, plan 10 étapes validé PO, implémentation faite, **recette
+8/8 PO validée à 100 %** le 22/07/2026, décision **#034**, commit + merge sur
+`develop` + push).
+
+Réalisé US-030 : le catalogue d'accélérateurs passe de 1 à 2 en **Option A**
+(arbitrage PO). Nouvel accélérateur **`deep-analysis`** — session **longue**
+(50 min) → SURCADENCE **30 min** qui booste la **data ×2** (là où `focus` booste
+les cycles → vrai arbitrage). **Invariant maintenu** : vérifié par l'app (jamais
+auto-déclaré) → **podométrie écartée** (non vérifiable PWA), **détox numérique
+reportée** (backlog). **Zéro changement moteur/store, zéro migration Dexie** :
+`game/accelerators.ts` + store déjà génériques par `id` et multi-ressources ;
+ajout d'une entrée de catalogue + 2 helpers purs (`acceleratorResource`/
+`acceleratorMultiplier`). **Bug corrigé** : toast SURCADENCE (`useBuilderTick`)
+lisait `boostEffect.cycles` en dur (×1 pour deep) → lit la vraie ressource.
+**DS réutilisé** (Card/Button/ProgressBar/Icon) + **nouveau composant DS
+`ProgressRing`** (anneau SVG + scan, keyframe `.nw-ring-scan` dans `base.css`,
+reduced-motion). Refonte `AcceleratorPanel` (repos = choix multi-protocoles +
+indisponible ; en cours = deep **vivant** [anneau/scan/flux/5 phases/aperçu
+récompense qui se charge — cosmétique, récompense **tout-ou-rien**] vs focus
+sobre ; SURCADENCE = ressource boostée colorée data magenta / cycles cyan). Bloc
+CSS orphelin `builder__acc-*` supprimé, 4 icônes lucide ajoutées, i18n FR/EN.
+**Tests 219/219** (+6). Vérif visuelle PO sur `:5180` (pas d'outil navigateur) :
+1 ajustement en direct (halo de l'anneau tronqué par `overflow:hidden` par défaut
+du `<svg>` → `overflow:visible`). Recette **8/8 PO, 100 %**, aucun bug.
+
+Dernière US clôturée (antérieure) : **US-026 — Approfondissement
 prestige : seuil de renaissance incrémental + équilibrage de la courbe**
 (Phase A2, priorité basse ; cycle complet — cadrages fonctionnel + technique
 validés PO, H5 = pas de maquette, plan 10 étapes validé PO, implémentation faite,

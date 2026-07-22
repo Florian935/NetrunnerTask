@@ -31,10 +31,16 @@ export interface AcceleratorDef {
 
 /**
  * Catalogue des accélérateurs. Réglages placeholder, affinables en recette
- * (même convention que `BUILDER_CONFIG`/`UNLOCK_NODES`) — alignés sur la
- * maquette validée (`network-accelerators`, 20/07/2026). 1 seule entrée pour
- * ce lot ; catalogue **extensible** (comme `GENERATORS`), d'autres
- * accélérateurs s'ajouteront sans réécriture.
+ * (même convention que `BUILDER_CONFIG`/`UNLOCK_NODES`) — alignés sur les
+ * maquettes validées (`network-accelerators`, 20/07/2026 ;
+ * `network-accelerators-v2`, 22/07/2026). Catalogue **extensible** (comme
+ * `GENERATORS`) : chaque entrée cible sa ressource via `boostEffect`, le moteur
+ * (`boostMultiplier`/`boostWindows`) et le store restent agnostiques.
+ *
+ * - `focus` (US-023) : session **courte**, booste les **cycles**.
+ * - `deep-analysis` (US-030) : session **longue**, booste la **data** — vrai
+ *   arbitrage (accélérer les cycles vs la data), pas un doublon. Reste
+ *   **vérifié par l'app** (chrono), comme tout accélérateur (jamais auto-déclaré).
  */
 export const ACCELERATORS: readonly AcceleratorDef[] = [
   {
@@ -44,12 +50,30 @@ export const ACCELERATORS: readonly AcceleratorDef[] = [
     boostDurationMs: 15 * 60 * 1000,
     boostEffect: { cycles: 1 },
   },
+  {
+    id: 'deep-analysis',
+    icon: 'scan-search',
+    durationMs: 50 * 60 * 1000,
+    boostDurationMs: 30 * 60 * 1000,
+    boostEffect: { data: 1 },
+  },
 ] as const
 
 /** Index du catalogue par `id`. */
 export const ACCELERATOR_BY_ID: Record<string, AcceleratorDef> = Object.fromEntries(
   ACCELERATORS.map((a) => [a.id, a]),
 )
+
+/** Ressource ciblée par le boost d'un accélérateur (US-030). Un accélérateur
+ *  cible une seule ressource ; `data` prime si déclarée, sinon `cycles`. */
+export function acceleratorResource(def: AcceleratorDef): 'cycles' | 'data' {
+  return def.boostEffect.data ? 'data' : 'cycles'
+}
+
+/** Multiplicateur affiché du boost (`1 + effet` sur la ressource ciblée). */
+export function acceleratorMultiplier(def: AcceleratorDef): number {
+  return 1 + (def.boostEffect[acceleratorResource(def)] ?? 0)
+}
 
 /**
  * Peut-on lancer l'accélérateur `id` ? Anti-empilement (AC6) : une seule

@@ -40,6 +40,8 @@ export { Tooltip } from './feedback/Tooltip'
 export type { TooltipProps, TooltipPlacement } from './feedback/Tooltip'
 export { ProgressBar } from './feedback/ProgressBar'
 export type { ProgressBarProps, ProgressAccent } from './feedback/ProgressBar'
+export { ProgressRing } from './feedback/ProgressRing'
+export type { ProgressRingProps } from './feedback/ProgressRing'
 
 // ---- surfaces ----
 export { Card } from './surfaces/Card'
