@@ -5,11 +5,43 @@
 
 ## US active
 
-_Aucune US active._ Dernière US clôturée : **US-028 — Jalons /
+_Aucune US active._ Dernière US clôturée : **US-029 — Visualisation du Réseau
+(Phase A2)** (cycle complet — cadrages fonctionnel + technique validés PO,
+maquette `network-map` reçue + analysée en profondeur avec le PO, plan 14
+étapes validé PO, implémentation faite, **recette 9/9 PO validée à 100 %** le
+22/07/2026, décision **#032**, commit + merge sur `develop` + push).
+
+Réalisé US-029 : la liste des daemons + les 2 arbres en lignes fusionnent en
+**une seule carte spatiale** (graphe de 13 nœuds) qui grandit visuellement avec
+la progression — reprend enfin la métaphore « Réseau qui s'étend ». **Couche de
+présentation pure** : nouveau module pur **`networkMapModel.ts`** (layout manuel
++ arêtes dérivées des **vraies dépendances** + `buildMapNodes` qui compose les
+sélecteurs existants `builder.ts`/`unlockTree.ts` — **testé 13/13**, zéro règle
+de jeu, zéro migration Dexie, **pas de lib de graphe** — SVG inline). Structure
+= **vraie chaîne** (daemons → data → RELAIS DE MARCHÉ → crypto), pas les ailes
+symétriques de la maquette (arbitrage PO) ; **données de nœuds inventées de la
+maquette écartées** (source de vérité = catalogues + i18n). Composants
+**`NetworkMap`** (fond cyberspace, arêtes SVG, HUD, badge GÉN. + aura rouge),
+**`NetworkMapNode`** (hexagone, halos par état, reveal glitch sur transition,
+compteur ×N), **`NetworkMapDetail`** (popover sur DS **`<Card>` + `<Button>`** ;
+daemon = Compiler + Améliorer, nœud d'arbre = Débloquer). **Gating de branche**
+(recette) : un nœud reste verrouillé tant que sa ressource n'est pas ouverte
+(data via `oracle`, crypto via `breach-market`). **5 composants supprimés**
+(`DaemonCard`/`TeaserCard`/`UnlockNodeCard`/`HiddenNodeCard`/`UnlockTreeSection`)
++ CSS/keyframes orphelins nettoyés. Bande pleine largeur (casse la colonne 760).
+**Tests 207/207.** Vérif visuelle (Playwright) : 3 bugs corrigés en direct
+(popover/propagation, gating, chevauchement labels) + halos d'ambiance adoucis
+(`ellipse closest-side`) sur retour PO. Recette **9/9 PO, 100 %**.
+
+**Phase A2 : 3 tranches sur 5 livrées** (US-027, US-028, US-029). Restent
+**US-030** (catalogue d'accélérateurs élargi, priorité basse) et **US-026**
+(prestige : seuil incrémental, priorité basse). Prochaine US via `nouvelle-us`.
+
+Dernière US clôturée (antérieure) : **US-028 — Jalons /
 accomplissements du Réseau (Phase A2)** (cycle complet — cadrages fonctionnel
 + technique validés PO, maquette `network-milestones` validée PO, plan 13
 étapes validé PO, implémentation faite, **recette 10/10 PO** le 22/07/2026,
-décision **#031**, commit/merge/push restant à faire).
+décision **#031**, commit + merge sur `develop` + push).
 
 Réalisé US-028 : **REGISTRE** des 11 jalons de progression du Réseau —
 nouveau module pur **`game/milestones.ts`** (prédicats purs sur l'état

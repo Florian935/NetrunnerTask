@@ -436,6 +436,36 @@
           "desc": "Occult pool neutralized: floor rate stabilized."
         }
       }
+    },
+    "map": {
+      "title": "NETWORK MAP",
+      "kicker": "network · topology",
+      "fullWidth": "full-width section",
+      "nodesActive": "{{count}} / {{total}} active nodes",
+      "clickHint": "Click a node to open it",
+      "sealedLabel": "▓▓▓▓",
+      "gen": {
+        "label": "Generation",
+        "bonus": "perm. bonus"
+      },
+      "detail": {
+        "flow": "{{cur}} flow",
+        "cur": {
+          "daemon": "cycles",
+          "data": "data",
+          "crypto": "crypto"
+        },
+        "state": {
+          "acquired": "acquired · stable",
+          "available": "available",
+          "locked": "locked"
+        },
+        "owned": "{{count}} online",
+        "unlock": "Unlock",
+        "lockedCta": "Locked",
+        "unlocked": "Unlocked",
+        "close": "Close"
+      }
     }
   }
 }

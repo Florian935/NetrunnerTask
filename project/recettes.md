@@ -3,6 +3,49 @@
 > Tests de recette par US. Chaque test reprend un critère d'acceptation de l'US.
 > Statuts : `à faire` / `validé` / `échoué`.
 
+## US-029 — Visualisation du Réseau (Phase A2)
+
+Recette du 22/07/2026. Critères de `us/US-029-visualisation-reseau.md` §1.
+**Vérifs automatiques** : `typecheck` + `lint` + `build`/PWA + tests Vitest
+**207/207** (dont nouveau `networkMapModel.ts` **13/13** — intégrité layout +
+arêtes + états dérivés). **Recette visuelle & interactive navigateur**
+(`npm run dev`, port 5180) confirmée par le PO : **9/9 critères conformes,
+validé à 100 %**. États de test injectés dans IndexedDB (helper console) pour
+dérouler début/milieu/fin, les 2 reveals et la renaissance.
+
+| # | Critère (action → résultat attendu) | Méthode | Statut | Date |
+|---|-------------------------------------|---------|--------|------|
+| C1 | `/network` affiche une carte unique (daemons + arbre reliés), plus de liste/arbres en lignes | `NetworkMap` remplace liste daemons + 2 `UnlockTreeSection` + PO | validé | 22/07/2026 |
+| C2 | États distincts : verrouillé (assombri) / disponible (halo pulsé devise) / acquis (mint + pastille) / scellé | halos pilotés par `state` (`nodeRgb`) + PO | validé | 22/07/2026 |
+| C3 | Débloquer un nœud → carte mise à jour immédiatement (nœud illuminé, arêtes mint), sans reload | lecture réactive du store + `mapEdgeVisual` + PO (achat live) | validé | 22/07/2026 |
+| C4 | Nœuds cachés scellés (▓▓▓▓, cadenas) tant que condition non remplie ; reveal glitch à l'apparition | `sealed` dérivé de `isConditionMet` (comme `visibleNodes`) + `nw-map-reveal` sur transition + PO (GHOST via wraith×12, DARK.POOL via oracle×2) | validé | 22/07/2026 |
+| C5 | Renaissance → trace visuelle permanente sur la carte (badge GÉN. 0X + aura rouge) | `GenBadge` + aura `inset` lisant `prestigeCount` + PO (renaître → GÉN. 01) | validé | 22/07/2026 |
+| C6 | Toutes les actions restent possibles depuis la carte (daemon : Compiler + Améliorer + compte ; nœud : Débloquer, 2 devises) | `NetworkMapDetail` (popover DS `<Card>`/`<Button>`) → actions existantes du store + PO | validé | 22/07/2026 |
+| C7 | Lisible en début (1/13) comme en fin (arbre quasi complet) ; scroll horizontal sous largeur mini | layout manuel + bande `min-width` + `overflow-x` + PO (états early/rich) | validé | 22/07/2026 |
+| C8 | Reload → carte fidèle à l'état sauvegardé, sans rejouer les animations d'un contenu déjà acquis | lecture pure du store persisté + reveal gardé par transition (`useRef`, pas au 1ᵉʳ rendu) + PO (F5) | validé | 22/07/2026 |
+| C9 | `prefers-reduced-motion` : animations carte supprimées/réduites, carte lisible statique | bloc `@media (prefers-reduced-motion)` dans `networkMap.css` + PO | validé | 22/07/2026 |
+| — | Composants DS réutilisés (`<Card hud brackets halo>`, `<Button>`, `<Icon>`, `<ProgressBar>` ailleurs), accents par état/devise (pas de 7ᵉ couleur) | revue + PO (rendu conforme maquette) | validé | 22/07/2026 |
+| — | i18n FR/EN (`builder.map.*` + réutilisation `builder.generators.*`/`unlockTree.*`), aucune chaîne en dur | clés FR+EN via `t()` | validé | 22/07/2026 |
+| — | Aucune règle de jeu nouvelle, aucune migration Dexie (couche de présentation pure) | `buildMapNodes` compose les sélecteurs existants, **testé** | validé | 22/07/2026 |
+
+### Ajustements issus de la vérification visuelle (avant validation PO)
+
+- **Popover fermé aussitôt ouvert** : le clic sur un nœud remontait au conteneur
+  `.nw-map` dont le `onClick` réinitialisait la sélection. Corrigé par un test
+  `e.target === e.currentTarget` (ne referme qu'au clic sur le fond).
+- **OVERCLOCK faussement « disponible » en début de partie** : `nodeState`
+  renvoie `available` dès que la condition d'arbre est remplie (overclock n'a
+  aucun prérequis), sans tenir compte de la ressource. Ajout d'un **gating de
+  branche** dans `buildMapNodes` : un nœud reste `locked` tant que sa ressource
+  n'est pas ouverte (data via `oracle`, crypto via `breach-market`) — reproduit
+  l'ancien comportement (branche cachée avant la ressource).
+- **Chevauchement labels du bas ↔ hint** : épine des daemons remontée.
+- **Halo décoratif bloquant le clic** : passé en `pointer-events: none`.
+- **Coupures droites des blooms d'ambiance** (retour PO) : les
+  `radial-gradient(circle … transparent 68%)` gardaient de la couleur au bord
+  du div (clippé) → arêtes. Passés en `ellipse closest-side … transparent`
+  (transparent atteint pile sur chaque bord, aucune arête).
+
 ## US-028 — Jalons / accomplissements du Réseau (Phase A2)
 
 Recette du 22/07/2026. Critères de `us/US-028-jalons-accomplissements.md` §1.

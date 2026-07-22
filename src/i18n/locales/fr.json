@@ -436,6 +436,36 @@
           "desc": "Pool occulte neutralisé : cours plancher stabilisé."
         }
       }
+    },
+    "map": {
+      "title": "CARTE DU RÉSEAU",
+      "kicker": "réseau · topologie",
+      "fullWidth": "section pleine largeur",
+      "nodesActive": "{{count}} / {{total}} nœuds actifs",
+      "clickHint": "Clique un nœud pour l'ouvrir",
+      "sealedLabel": "▓▓▓▓",
+      "gen": {
+        "label": "Génération",
+        "bonus": "bonus perm."
+      },
+      "detail": {
+        "flow": "flux {{cur}}",
+        "cur": {
+          "daemon": "cycles",
+          "data": "data",
+          "crypto": "crypto"
+        },
+        "state": {
+          "acquired": "acquis · stable",
+          "available": "disponible",
+          "locked": "verrouillé"
+        },
+        "owned": "{{count}} en ligne",
+        "unlock": "Débloquer",
+        "lockedCta": "Verrouillé",
+        "unlocked": "Débloqué",
+        "close": "Fermer"
+      }
     }
   }
 }

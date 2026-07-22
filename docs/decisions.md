@@ -747,3 +747,54 @@ récompense en jeu : uniquement de la reconnaissance.
   icônes manquantes + toast chevauchant la `StatusBar`, corrigés en direct.
   Recette **10/10 PO**, aucun bug trouvé. Maquette (`network-milestones`) non
   versionnée (convention #007).
+
+### 032 — Visualisation du Réseau : carte de nœuds interconnectés (US-029, Phase A2, 22/07/2026)
+
+3ᵉ tranche de la Phase A2 (#029). Remplace la liste des daemons + les deux
+arbres de déblocage en lignes par **une seule carte spatiale** (graphe de 13
+nœuds) qui grandit visuellement avec la progression — reprend enfin la
+métaphore « Réseau qui s'étend » de `vision-plateforme.md` §3ter.5, jamais
+rendue visuellement jusque-là (A1→A5 = panneaux de stats).
+
+- **Couche de présentation pure, zéro règle de jeu, zéro migration Dexie** :
+  nouveau module `features/builder/networkMapModel.ts` (**testé 13/13**) qui
+  **compose** les sélecteurs déjà purs et testés (`isUnlocked`/`unlockedGenerators`
+  de `builder.ts`, `nodeState`/`visibleNodes`/`isConditionMet` de
+  `unlockTree.ts`) en vue-modèles positionnés. Aucun nouvel état persisté ; la
+  carte est une lecture de l'état existant.
+- **Pas de librairie de graphe** : le graphe est petit (13 nœuds) et croît
+  lentement → **layout manuel** (positions `{x,y}` par `id`, placeholder
+  affinées en recette live, même convention que les coûts des catalogues) +
+  **SVG inline** pour les arêtes (pas de dépendance ajoutée). Positionnement
+  responsive en % + bande à largeur mini avec scroll horizontal sous seuil.
+- **Structure = vraie chaîne de dépendances**, pas les ailes symétriques de la
+  maquette (arbitrage PO) : daemons (`scraper→sifter→wraith→oracle`) → nœuds
+  data → **RELAIS DE MARCHÉ** (passerelle) → nœuds crypto. Arêtes **dérivées
+  des vraies dépendances** (`unlockAfter`/`requiresNode` = branche,
+  `requiresGenerator` = transverse) donc toujours justes ; une seule arête
+  purement visuelle documentée (`oracle→overclock`, `overclock` n'ayant aucun
+  prérequis dur). **Données de nœuds inventées de la maquette écartées** —
+  source de vérité = catalogues + i18n existants (aucune nouvelle copie de
+  nœud).
+- **Gating de branche** (issu de la recette visuelle) : un nœud d'arbre reste
+  `locked` tant que sa ressource n'est pas ouverte (`data` via `oracle`,
+  `crypto` via `breach-market`), même si sa condition d'arbre est déjà remplie
+  — sinon `overclock` (sans prérequis) clignoterait « disponible » dès le
+  premier écran. Reproduit l'ancien comportement (branche cachée avant la
+  ressource).
+- **Réutilisation du design system** (consigne PO) : popover de détail/achat
+  `NetworkMapDetail` bâti sur **`<Card hud brackets halo>`** + **`<Button>`** ;
+  halos/anneaux par **état/devise** (mint acquis · violet/magenta/ambre selon
+  devise · acier scellé), **aucune 7ᵉ couleur inventée**. Reveal glitch des
+  nœuds cachés repris d'A3 (joué **uniquement à la transition** `sealed→visible`,
+  jamais au 1ᵉʳ rendu). Marqueur de renaissance = badge « GÉN. 0X » (icône
+  `orbit`) + aura rouge (accent réservé) lisant `prestigeCount`.
+- **5 composants retirés** (remplacés) : `DaemonCard`, `TeaserCard`,
+  `UnlockNodeCard`, `HiddenNodeCard`, `UnlockTreeSection` + CSS/keyframes
+  orphelins nettoyés (pas de code mort). La carte **casse la colonne 760** en
+  bande large (~1120), le reste de `/network` reste dans la colonne.
+- Vérifs : typecheck + lint + build/PWA + **tests 207/207**. Vérification
+  visuelle navigateur (Playwright) : 3 bugs corrigés en direct (popover fermé
+  par propagation, gating de branche, chevauchement labels/hint) + halos
+  d'ambiance adoucis (`ellipse closest-side`) sur retour PO. Recette **9/9 PO,
+  validée à 100 %**. Maquette (`network-map`) non versionnée (convention #007).
