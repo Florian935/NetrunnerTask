@@ -130,6 +130,41 @@ visualisation qui grandit, 1 seul accélérateur réel, prestige encore sec.
   §3ter.4, jamais construite).
 - **US-026 — Prestige : seuil incrémental** *(déjà backloguée, rattachée ici)*.
 
+### Phase A3 — Identité & Collection (décision #035, 22/07/2026)
+*Objectif : donner un **statut qui se garde** et une **raison de revenir dans un
+mois** — collectionner, s'afficher, compléter. Toujours local-first, sans
+backend. C'est la **rétention long-terme** qui manquait : A1→A2 ont donné des
+systèmes et des jalons, mais rien à collectionner ni aucune identité. **Prépare**
+la Phase B (clans/classements n'ont d'intérêt qu'avec une identité et une
+collection à montrer) plutôt que de la court-circuiter.*
+
+Née d'une session de brainstorming PO ↔ Claude (22/07/2026) à la clôture de la
+Phase A2. **Réinvente pour le builder** les thèmes gelés du MVP 2/3 historique
+(caisses, inventaire, rareté, pity, catalogue cosmétiques, aperçu de collection,
+achievements, profil runner) — recadrés, pas réactivés en l'état. **Acquisition
+hybride** : socle déterministe (accomplissements → cosmétiques garantis) +
+caisses (RNG, pity/fragments). **Cosmétiques v1** : thèmes/palettes HUD + profil
+(avatar/bannière/titre) ; effets/particules et sons **reportés**.
+
+**Garde-fous permanents** : aucun cosmétique ne donne d'avantage fonctionnel
+(pur statut) ; les caisses se **gagnent** par le jeu, jamais par une monnaie
+farmable (hasard indexé sur l'effort). Chemin critique : **US-031 → US-032**.
+
+- **US-031 — Socle cosmétique & rareté** *(fondation, en 1ᵉʳ)* : modèle de
+  données cosmétiques (catalogue typé `theme`/`avatar`/`banner`/`title`), rampe
+  de rareté `--rarity-*` + `RarityBadge` + `CosmeticCard` (**solde la dette DS
+  #008/#022**), moteur d'application d'un thème équipé, inventaire possédé/équipé
+  persisté (Dexie).
+- **US-032 — Profil / ID runner** *(la vitrine)* : écran de profil assemblant
+  avatar + bannière + titre équipés + stats runner (niveau, prestige, jalons).
+- **US-033 — Achievements-récompenses + aperçu de collection** *(voie
+  déterministe)* : achievements (dont cachés) → cosmétiques ciblés garantis,
+  reliés aux jalons d'US-028, + aperçu « X légendaires restants dans le pool ».
+- **US-034 — Caisses & rituel d'ouverture** *(voie aléatoire)* : caisses gagnées
+  par le jeu (3 qualités), rituel d'ouverture, tables de probas affichées.
+- **US-035 — Pity + fragments anti-doublon** *(approfondit les caisses)* : filet
+  anti-malchance + conversion des doublons.
+
 ### Phase B — Couche connectée (backend requis, après la preuve du fun)
 
 - **B1** — Comptes/auth + sync local↔serveur + bascule **serveur-autoritatif** (compétitif).

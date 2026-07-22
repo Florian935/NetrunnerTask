@@ -5,9 +5,24 @@
 
 ## US active
 
-_Aucune US active._ **Phase A2 close : 5 tranches sur 5 livrées** (US-027,
-US-028, US-029, US-026, US-030). Prochaine tranche/phase à cadrer avec le PO
-(cf. `docs/roadmap.md`) ; nouvelle US via `nouvelle-us`.
+_Aucune US active._ **Phase A2 close** (5/5 tranches livrées). **Phase A3
+« Identité & Collection » définie** le 22/07/2026 — **décision #035**
+(brainstorming PO ↔ Claude). Direction retenue parmi 3 options : la **couche
+identité & cosmétiques**, toujours local-first, qui **prépare** la Phase B au
+lieu de la court-circuiter. **Réinvente pour le builder** les thèmes gelés du
+MVP 2/3 historique (socle rareté, caisses, inventaire, pity, profil runner,
+achievements). **Acquisition hybride** (déterministe garanti + caisses RNG) ;
+**cosmétiques v1** = thèmes/palettes HUD + profil (avatar/bannière/titre), effets
+et sons reportés. **Garde-fous** : aucun avantage fonctionnel (pur statut) ;
+caisses gagnées par le jeu, jamais achetées.
+
+**5 tranches** (cf. `docs/roadmap.md` / `project/backlog.md`), chemin critique
+**US-031 → US-032** : US-031 (socle cosmétique & rareté, **solde la dette DS
+#008/#022**) · US-032 (profil / ID runner) · US-033 (achievements-récompenses +
+aperçu de collection) · US-034 (caisses & rituel d'ouverture) · US-035 (pity +
+fragments).
+
+**Prochaine action : cadrage fonctionnel d'US-031** via le skill `nouvelle-us`.
 
 Dernière US clôturée : **US-030 — Catalogue d'accélérateurs réels élargi**
 (Phase A2, priorité basse ; cycle complet — cadrages fonctionnel + technique

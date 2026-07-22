@@ -869,3 +869,59 @@ parmi 2 périmètres proposés au cadrage).
   session) → 1 ajustement en direct (halo de l'anneau tronqué par le
   `overflow:hidden` par défaut du `<svg>` → `overflow:visible`). Recette **8/8
   PO, validée à 100 %**, aucun bug ouvert.
+
+### 035 — Phase A3 « Identité & Collection » définie (5 tranches, 22/07/2026)
+
+Issue d'une session de brainstorming PO ↔ Claude ouverte à la clôture de la
+Phase A2 (#034). Constat : le builder est riche en **systèmes** (cycles, data,
+crypto, arbre, accélérateurs, prestige, carte du Réseau) et en **jalons**
+(US-028), mais il n'offre **rien à collectionner, aucune identité, aucune
+récompense qui se garde** — les jalons reconnaissent la progression sans rien
+débloquer d'exhibable. C'est le trou de **rétention long-terme** propre au genre
+builder/idle. Direction retenue (parmi « approfondir encore le solo » / « couche
+identité & cosmétiques » / « Phase B connectée ») : la **couche identité &
+cosmétiques**, **toujours local-first** (aucune infra), qui **prépare** la Phase B
+(des clans/classements n'ont d'intérêt que si le joueur a une identité et une
+collection à montrer) au lieu de la court-circuiter.
+
+- **Statut vis-à-vis du gel #022** : cette phase **réinvente** — sans les
+  réactiver tels quels — les thèmes gelés du MVP 2/3 historique (US-016 socle
+  rareté, US-017 caisses, US-018 inventaire, US-019 pity/fragments, + catalogue
+  cosmétiques / aperçu de collection / achievements / profil runner du MVP 3).
+  Ils reviennent **recadrés pour le builder**, pas pour le to-do.
+- **Acquisition = hybride** (arbitrage PO) : socle **déterministe** (des
+  accomplissements débloquent des cosmétiques **ciblés et garantis**) **+**
+  **caisses** (RNG avec pity/fragments) pour la rareté et le tout-venant.
+- **Cosmétiques v1 = thèmes/palettes HUD + profil (avatar/bannière/titre)**
+  (arbitrage PO). **Effets/particules et sons reportés** (coût et impact
+  identité plus faibles, à rouvrir en fin de phase ou plus tard).
+- **Deux garde-fous gravés** (à honorer au cadrage des US concernées) :
+  (1) **aucun cosmétique n'altère une valeur de jeu** — pur statut visuel
+  (contrainte permanente roadmap) ; (2) les caisses se **gagnent** par le jeu
+  (prestige, jalons, drop de retour), elles ne s'**achètent pas** contre une
+  monnaie farmable → respecte « hasard indexé sur l'effort, jamais accélérable
+  par paiement ».
+
+**Décomposition en 5 tranches** (`docs/roadmap.md`, `project/backlog.md`),
+chemin critique **US-031 → US-032**, puis 033/034/035 :
+
+- **US-031 — Socle cosmétique & rareté** (priorité haute, **fondation, en 1ᵉʳ**) :
+  modèle de données des cosmétiques (catalogue typé `theme`/`avatar`/`banner`/
+  `title`), rampe de rareté `--rarity-*` + `RarityBadge` + `CosmeticCard`
+  (**solde la dette design system #008/#022**), moteur d'application d'un thème
+  équipé (variables CSS pilotées), inventaire possédé + équipé persistés (Dexie).
+  Livrée avec 2-3 cosmétiques déjà débloqués pour prouver l'équipement.
+- **US-032 — Profil / ID runner** (la **vitrine**, paiement d'identité immédiat) :
+  écran de profil assemblant avatar + bannière + titre équipés + stats runner
+  (niveau, prestige, jalons). Consomme le socle.
+- **US-033 — Achievements-récompenses + aperçu de collection** (voie
+  **déterministe** de l'hybride) : achievements (dont cachés) débloquant des
+  cosmétiques ciblés, reliés/étendus aux jalons d'US-028, + aperçu « il te reste
+  X légendaires dans le pool ».
+- **US-034 — Caisses & rituel d'ouverture** (voie **aléatoire** de l'hybride) :
+  caisses gagnées par le jeu (3 qualités), rituel d'ouverture, tables de probas
+  affichées. Consomme le socle rareté.
+- **US-035 — Pity + fragments anti-doublon** (approfondit les caisses, comme
+  US-026 le prestige) : filet anti-malchance + conversion des doublons.
+
+**Prochaine étape** : cadrage fonctionnel d'US-031 via le skill `nouvelle-us`.

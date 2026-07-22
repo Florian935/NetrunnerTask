@@ -141,12 +141,46 @@ Les US-005 à US-007 enrichissent le to-do.
 >   d'API santé stable) → reviendrait à de l'auto-déclaré. Gelée sauf accès
 >   capteur/API fiable.
 
-## MVP 3 — Rétention profonde & identité
+## Phase A3 — Identité & Collection (décision #035, 22/07/2026)
 
-> À découper en US à l'approche du MVP 3 (voir `docs/roadmap.md`).
-> Thèmes : catalogue cosmétiques complet, aperçu de collection, achievements &
-> saisons, drops mythiques, profil / ID runner, polish & installabilité PWA.
+> Objectif : **rétention long-terme** — un statut qui se garde, une raison de
+> revenir dans un mois (collectionner / s'afficher / compléter). Toujours
+> local-first, sans backend. **Réinvente pour le builder** les thèmes gelés du
+> MVP 2/3 historique (voir plus bas) : socle rareté, caisses, inventaire, pity,
+> profil runner, achievements. **Acquisition hybride** (déterministe garanti +
+> caisses RNG). **Cosmétiques v1** : thèmes/palettes HUD + profil
+> (avatar/bannière/titre) ; effets et sons reportés. **Garde-fous** : aucun
+> avantage fonctionnel (pur statut) ; caisses **gagnées** par le jeu, jamais
+> achetées contre une monnaie farmable. Chemin critique : **US-031 → US-032**.
+
+| ID | Titre | MVP | Priorité | Statut | Dépend de |
+|----|-------|-----|----------|--------|-----------|
+| US-031 | Socle cosmétique & rareté (catalogue typé, rampe `--rarity-*`, `RarityBadge`/`CosmeticCard`, moteur de thème équipé, inventaire) | A3 | haute | à faire | design system (#008) |
+| US-032 | Profil / ID runner (avatar + bannière + titre équipés + stats runner) | A3 | moyenne | à faire | US-031 |
+| US-033 | Achievements-récompenses + aperçu de collection (voie déterministe) | A3 | moyenne | à faire | US-031, jalons (US-028) |
+| US-034 | Caisses & rituel d'ouverture (3 qualités, tables de probas, voie aléatoire) | A3 | moyenne | à faire | US-031 |
+| US-035 | Pity + fragments anti-doublon (approfondit les caisses) | A3 | basse | à faire | US-034 |
+
+> **US-031** solde la **dette design system #008/#022** : la rampe de rareté
+> `--rarity-*`, `RarityBadge` et `CosmeticCard` (retirés à la migration
+> NIGHTWIRE) sont enfin reconstruits, ici, dans l'US qui les consomme en premier.
+>
+> **Rapport aux US gelées #022** : la Phase A3 **remplace** — recadrées pour le
+> builder — les frozen US-016 (socle rareté → **US-031**), US-017 (caisses →
+> **US-034**), US-018 (inventaire → **US-031**), US-019 (pity/fragments →
+> **US-035**), et les thèmes du MVP 3 historique ci-dessous (profil runner →
+> **US-032**, achievements/collection → **US-033**). Les US-016→019 restent
+> `gelé (#022)` comme archive de la trajectoire to-do ; on n'y revient pas en
+> l'état.
+
+## MVP 3 — Rétention profonde & identité (historique, gelé #022)
+
+> **Gelé par le pivot #022, réinventé par la Phase A3 (#035) ci-dessus.** Conservé
+> comme archive de la trajectoire to-do initiale. Thèmes (catalogue cosmétiques,
+> aperçu de collection, achievements & saisons, drops mythiques, profil / ID
+> runner, polish & installabilité PWA) repris et recadrés pour le builder en
+> Phase A3 — ne pas implémenter cette section en l'état.
 
 | ID | Titre | MVP | Priorité | Statut |
 |----|-------|-----|----------|--------|
-| _—_ | _à détailler_ | 3 | _—_ | à faire |
+| _—_ | _réinventé en Phase A3 (#035)_ | 3 | _—_ | gelé (#022) |
