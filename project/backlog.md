@@ -173,6 +173,31 @@ Les US-005 à US-007 enrichissent le to-do.
 > `gelé (#022)` comme archive de la trajectoire to-do ; on n'y revient pas en
 > l'état.
 
+## Phase A4 — Corruption / Voie sombre (décision #041, 23/07/2026)
+
+> Objectif : **rétention long-terme en solo** via le levier « ça ne s'arrête
+> jamais » (**P6**). Toujours local-first, sans backend. On bâtit un **cadre de
+> reveals extensible** (`game/reveals.ts`, patron `achievedMilestones`) dont le
+> **premier reveal = la corruption / le glitch**. Contenu révélé = une **voie
+> sombre à embrasser AU CHOIX** (le pacte). Déclencheur = la **renaissance**
+> (après N renaissances, seuil 3ᵉ ajustable). **Garde-fous** : voie sombre
+> toujours un choix, jamais requise (P4/P5) ; rien de définitif détruit (P8 —
+> refus jamais bloquant, embrasser réversible) ; cosmétiques glitch gagnés,
+> jamais achetés (P4). Chemin critique : **US-036 → US-037**. Née d'un
+> brainstorming PO ↔ Claude (23/07/2026) — voir `docs/roadmap.md` /
+> `docs/vision-plateforme.md`.
+
+| ID | Titre | MVP | Priorité | Statut | Dépend de |
+|----|-------|-----|----------|--------|-----------|
+| US-036 | L'Éveil de la Corruption (moteur de reveals + déclenchement prestige + séquence glitch + pacte accepter/refuser + thème corrompu + 1er cosmétique glitch) | A4 | haute | à faire | prestige (US-024/026), cosmétiques (US-031) |
+| US-037 | La Voie Corrompue (ressource corrompue instable + production dopée + pool de cosmétiques glitch) | A4 | moyenne | à faire | US-036 |
+
+> **US-036** — impact UI significatif (séquence glitch « wahou » P9 + thème
+> corrompu) → **étape design/maquette Claude Design requise** dans son cycle. Le
+> moteur `game/reveals.ts` est l'actif réutilisable (les reveals suivants s'y
+> brancheront). Réutilise le token `--crate-blackice-chroma-rgb` (aberration
+> magenta) et le patron de re-skin `data-cosmetic-theme` d'US-031.
+
 ## MVP 3 — Rétention profonde & identité (historique, gelé #022)
 
 > **Gelé par le pivot #022, réinventé par la Phase A3 (#035) ci-dessus.** Conservé

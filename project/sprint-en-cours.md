@@ -3,14 +3,32 @@
 > Reflète l'état réel du projet à tout instant. Mis à jour après **chaque**
 > étape franchie du cycle de vie (voir `CLAUDE.md` §5).
 
-## US active
+## État courant — pas de cycle US en cours
 
+**Phase A3 « Identité & Collection » TERMINÉE (5/5 tranches)** : US-031 (socle) →
+US-032 (profil) → US-033 (voie déterministe) → US-034 (caisses) → US-035 (pity +
+fragments). Toutes clôturées, mergées sur `develop`, poussées.
+
+**Phase A4 « Corruption / Voie sombre » définie le 23/07/2026 — décision #041**
+(session de brainstorming PO ↔ Claude). Cap : rester **local-first**, prouver la
+**rétention long-terme en solo** via le levier « ça ne s'arrête jamais » (**P6**).
+On bâtit un **cadre de reveals extensible** (`game/reveals.ts`) dont le **premier
+reveal = la corruption / le glitch** (grandmapocalypse netrunner). Contenu révélé
+= une **voie sombre à embrasser AU CHOIX** (le pacte). Déclencheur = la
+**renaissance** (après N renaissances, seuil 3ᵉ ajustable). **2 tranches**, chemin
+critique **US-036 → US-037** (voir `docs/roadmap.md` / `project/backlog.md` /
+décision #041).
+
+**Prochaine action : démarrer US-036 — « L'Éveil de la Corruption »** via le skill
+`nouvelle-us` (branche depuis `develop`, cadrage fonctionnel → STOP validation PO).
+Impact UI significatif attendu → étape design/maquette Claude Design à prévoir.
+
+---
+
+_Historique de la tranche US-035._
 **US-035 — Pity + fragments anti-doublon** (Phase A3, priorité basse, dernière
 tranche — approfondit les caisses d'US-034). Branche `feature/US-035-pity-fragments`
-créée depuis `develop`. **Cadrage fonctionnel validé PO le 23/07/2026** (H1→H5 +
-invariant, 8 critères ; H4 = fragments, H5 = report caisse quotidienne). **Étape
-en cours : cadrage technique** (`us/US-035-pity-fragments.md` §2) — **STOP, en
-attente de validation PO.**
+créée depuis `develop`.
 
 Constat fondateur : US-034 garantit du neuf tant que le pool en contient (C6) et
 verse une consolation crédits à pool épuisé (couture #3 « reprise par US-035»).

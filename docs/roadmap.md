@@ -165,6 +165,42 @@ farmable (hasard indexé sur l'effort). Chemin critique : **US-031 → US-032**.
 - **US-035 — Pity + fragments anti-doublon** *(approfondit les caisses)* : filet
   anti-malchance + conversion des doublons.
 
+### Phase A4 — Corruption / Voie sombre (décision #041, 23/07/2026)
+*Objectif : prouver la **rétention long-terme en solo** en attaquant le levier
+« ça ne s'arrête jamais » (**P6**) resté inexploité. Toujours local-first, sans
+backend. On bâtit un **cadre de reveals extensible** dont le **premier moment
+« wahou » est la corruption / le glitch** (le *grandmapocalypse* de Cookie
+Clicker, version netrunner). Prépare la Phase B sans la précipiter : le cadre de
+reveals resservira, et un solo qui ne s'arrête jamais est le meilleur argument
+avant d'investir dans le connecté.*
+
+Née d'une session de brainstorming PO ↔ Claude (23/07/2026) à la clôture de la
+Phase A3. Le vrai actif de long terme est le **moteur de reveals** réutilisable
+(registre à prédicat de déclenchement pur + flag persisté append-only des reveals
+découverts, patron `achievedMilestones` d'US-028), pas la corruption seule : la
+corruption en est la **première entrée**. Contenu révélé = une **voie sombre à
+embrasser AU CHOIX** (le **pacte** : accepter = branche risquée + dopée +
+cosmétiques glitch ; refuser = Réseau propre — respecte P5 « jamais imposé »).
+Déclencheur = la **renaissance/prestige** (après **N renaissances**, seuil retenu
+3ᵉ, ajustable en recette).
+
+**Garde-fous** : la voie sombre est toujours un choix, jamais requise (P4/P5) ;
+rien de définitif n'est détruit (P8 — refuser n'est jamais un cul-de-sac, embrasser
+est réversible par une purge) ; cosmétiques glitch gagnés par la voie, jamais
+achetés (P4) ; reduced-motion + perf/PWA respectés. Chemin critique : **US-036 →
+US-037**.
+
+- **US-036 — L'Éveil de la Corruption** *(le choc + le cadre + le choix)* : moteur
+  `game/reveals.ts` + déclenchement au prestige + **séquence glitch « wahou »**
+  (aberration chromatique magenta, scanlines, message menaçant ; variante
+  `prefers-reduced-motion` obligatoire, P9) + **pacte accepter/refuser** persisté +
+  **thème corrompu** (re-skin global) + **1 cosmétique/titre glitch exclusif**.
+  Impact UI significatif → **étape design/maquette Claude Design requise**.
+- **US-037 — La Voie Corrompue** *(la profondeur mécanique)* : ressource corrompue
+  **instable** + production **dopée** avec sa contrepartie (le risque) + pool de
+  cosmétiques glitch à gagner en parcourant la voie. Lit le flag `corruption:
+  embraced` posé par US-036.
+
 ### Phase B — Couche connectée (backend requis, après la preuve du fun)
 
 - **B1** — Comptes/auth + sync local↔serveur + bascule **serveur-autoritatif** (compétitif).

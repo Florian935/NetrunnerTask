@@ -1132,3 +1132,56 @@ avec deux filets anti-frustration. **Clôt la Phase A3.**
 - Vérifs : typecheck + lint + build/PWA + **tests 272/272** (+3). Recette **8/8
   PO, validée à 100 %** le 23/07/2026. Maquette `pity-fragments` non versionnée
   (convention #007). **Phase A3 terminée (5/5 tranches).**
+
+### 041 — Phase A4 « Corruption / Voie sombre » (brainstorming PO ↔ Claude, 23/07/2026)
+
+Née d'une **session de brainstorming PO ↔ Claude** à la clôture de la Phase A3.
+Objectif toujours **local-first, sans backend** : prouver la **rétention
+long-terme en solo** (revenir dans un mois) en attaquant le levier resté
+inexploité — la **révélation « ça ne s'arrête jamais »** (principe **P6**,
+`docs/vision-plateforme.md`). Direction retenue parmi les options solo : bâtir un
+**cadre de reveals extensible** dont le **premier moment « wahou » = la corruption
+/ le glitch** (le *grandmapocalypse* de Cookie Clicker, version netrunner). Choix
+tranchés dans la session :
+
+- **Cadre avant contenu.** Le vrai actif de long terme est le **moteur de reveals**
+  réutilisable, pas la corruption seule : module pur `game/reveals.ts` — un
+  **registre** de reveals à **prédicat de déclenchement pur** + flag persisté
+  **append-only** des reveals découverts (patron `achievedMilestones` d'US-028,
+  survit à la renaissance). La corruption est la **première entrée** ; les reveals
+  suivants (réveil de l'IA, fausses limites…) se brancheront dessus sans réécriture.
+- **Contenu révélé = une voie sombre AU CHOIX** (le **pacte**, respecte P5
+  « jamais imposé », comme les accélérateurs au choix d'US-023). Accepter ouvre une
+  branche **risquée et dopée** (ressource corrompue instable + production dopée +
+  cosmétiques glitch exclusifs) ; refuser garde le Réseau propre.
+- **Déclencheur = la renaissance/prestige.** La corruption émerge après **N
+  renaissances** (`prestigeCount`, persisté v14). **Seuil retenu : 3ᵉ renaissance**
+  (assez tard pour avoir goûté au prestige « normal » → effet « à force de renaître,
+  quelque chose se dérègle… tu croyais avoir tout vu »). **Ajustable en recette.**
+- **Découpage = 2 tranches** (une US = un périmètre serré, CLAUDE.md §8) formant la
+  **Phase A4** :
+  - **US-036 — « L'Éveil de la Corruption »** (le choc + le cadre + le choix) :
+    moteur `game/reveals.ts` + déclenchement au prestige + **séquence glitch
+    « wahou »** (aberration chromatique magenta — token `--crate-blackice-chroma-rgb`
+    déjà présent —, scanlines, message menaçant ; variante `prefers-reduced-motion`
+    **obligatoire**, P9) + **pacte accepter/refuser** persisté + **thème corrompu**
+    (re-skin global, axe distinct du thème cosmétique) + **1 cosmétique/titre glitch
+    exclusif**. Récompense v1 = le look + le statut (cohérent A3 : cosmétique = pur
+    statut). **Impact UI significatif → étape design/maquette Claude Design requise.**
+  - **US-037 — « La Voie Corrompue »** (la profondeur mécanique) : ressource
+    corrompue instable + production dopée avec sa contrepartie (le risque) + pool de
+    cosmétiques glitch à gagner en parcourant la voie. Lit le flag `corruption:
+    embraced` posé par US-036.
+- **Garde-fous (invariants de la phase)** :
+  - La voie sombre est **toujours un choix, jamais requise** pour progresser (P4/P5).
+  - **Rien de définitif n'est détruit (P8)** : refuser n'est **jamais un cul-de-sac**
+    (l'offre se représente à la prochaine renaissance éligible) ; embrasser est
+    **réversible** (une « purge » délibérée).
+  - Cosmétiques glitch **gagnés par la voie, jamais achetés** ; hasard indexé sur
+    l'effort (P4).
+  - **Reduced-motion + perf/PWA respectés** ; **100 % local-first, aucun backend**.
+
+**Chemin critique : US-036 → US-037.** Prépare (sans la précipiter) la Phase B :
+le cadre de reveals resservira, et un jeu solo qui « ne s'arrête jamais » est le
+meilleur argument avant d'investir dans le connecté. Prochaine étape : démarrer
+**US-036** via le skill `nouvelle-us`.
