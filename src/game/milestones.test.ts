@@ -125,8 +125,12 @@ describe('récompenses (US-033)', () => {
     for (const id of rewards) expect(isStarter(id)).toBe(false)
   })
 
-  it('couvre tous les cosmétiques non-starter (tout est gagnable)', () => {
-    const earnable = COSMETICS.filter((c) => !isStarter(c.id)).map((c) => c.id)
+  it('couvre tous les cosmétiques déterministes (hors départ et hors caisses)', () => {
+    // US-034 : le pool exclusif caisses (`source: 'crate'`) n'est PAS gagnable
+    // par les jalons — la voie déterministe couvre le reste des non-starter.
+    const earnable = COSMETICS.filter(
+      (c) => !isStarter(c.id) && c.source !== 'crate',
+    ).map((c) => c.id)
     expect(new Set(rewards)).toEqual(new Set(earnable))
   })
 

@@ -390,6 +390,30 @@ export class NetrunnerDB extends Dexie {
             c.equipped = eq
           })
       })
+    // v20 (US-034) : stock de caisses non ouvertes par qualité sur le singleton
+    // cosmétique. Pas d'index nouveau (`crates` non interrogé) → schéma v19
+    // recopié + rétro-remplissage à zéro (patron des migrations de champ
+    // v11→v18). Aucune reconciliation de `owned` : le pool exclusif est du
+    // contenu neuf qu'aucune sauvegarde ne possède.
+    this.version(20)
+      .stores({
+        contracts: 'id, factionId, status, dueDate, createdAt',
+        factions: 'id, name',
+        player: 'id',
+        builderState: 'id',
+        cosmeticsState: 'id',
+        demoKV: 'key',
+      })
+      .upgrade((tx) =>
+        tx
+          .table('cosmeticsState')
+          .toCollection()
+          .modify((c: { crates?: Record<string, number> }) => {
+            if (c.crates === undefined) {
+              c.crates = { standard: 0, secured: 0, blackice: 0 }
+            }
+          }),
+      )
   }
 }
 

@@ -226,6 +226,8 @@
     "equippedShort": "ÉQUIPÉ",
     "unlockedBy": "DÉBLOQUÉ PAR",
     "reward": "RÉCOMPENSE",
+    "foundInCrate": "TROUVÉ EN CAISSE",
+    "foundInCrateValue": "OUVERTURE DE CAISSE",
     "collection": {
       "title": "COLLECTION",
       "unlocked": "DÉBLOQUÉS",
@@ -253,6 +255,40 @@
       "bannerRatio": "BANNIÈRE · 21:9",
       "titleTag": "‹ TITRE ›"
     },
+    "crates": {
+      "title": "CAISSES",
+      "pending_one": "{{count}} EN ATTENTE",
+      "pending_other": "{{count}} EN ATTENTE",
+      "earnedNote": "GAGNÉES EN JOUANT — JAMAIS ACHETÉES",
+      "tier": "PALIER {{tier}}/3",
+      "open": "OUVRIR",
+      "toEarn": "À GAGNER EN JOUANT",
+      "count_one": "NON OUVERTE",
+      "count_other": "NON OUVERTES",
+      "viewOdds": "VOIR LES PROBABILITÉS",
+      "quality": {
+        "standard": { "label": "STANDARD", "desc": "Récupérée sur le réseau. La plus commune." },
+        "secured": { "label": "SÉCURISÉE", "desc": "Verrouillage ICE. Meilleures probabilités." },
+        "blackice": { "label": "BLACK ICE", "desc": "Contre-mesure létale. La plus prestigieuse." }
+      },
+      "odds": {
+        "title": "TABLE DE PROBABILITÉS",
+        "sum": "Σ = {{sum}} %",
+        "note": "Taux affichés par tirage. Meilleure qualité = plus de chances de hautes raretés."
+      },
+      "ritual": {
+        "opening": "OUVERTURE…",
+        "anticipation": "DÉCHIFFREMENT · CAISSE {{quality}}",
+        "reveal": "RÉVÉLATION",
+        "result": "RÉSULTAT",
+        "instant": "RÉVÉLATION INSTANTANÉE",
+        "added": "AJOUTÉ À LA COLLECTION · EXCLUSIF CAISSE",
+        "equip": "ÉQUIPER",
+        "continue": "CONTINUER",
+        "complete": { "title": "COLLECTION COMPLÈTE", "desc": "Plus rien à débloquer dans ce pool. Conversion en crédits.", "credits": "CRÉDITS" }
+      },
+      "earned": { "title": "CAISSE GAGNÉE", "body": "Caisse {{quality}} ajoutée — à ouvrir dans la Garde-robe." }
+    },
     "items": {
       "nightwire": { "name": "Nightwire", "sub": "thème · défaut" },
       "cryo": { "name": "Cryo", "sub": "thème · froid" },
@@ -267,7 +303,17 @@
       "title-architect": { "name": "« Architecte »", "sub": "titre · builder", "text": "ARCHITECTE" },
       "title-ghost": { "name": "« Fantôme du Réseau »", "sub": "titre · furtivité", "text": "FANTÔME DU RÉSEAU" },
       "title-overdrive": { "name": "« Surcadence »", "sub": "titre · maîtrise", "text": "SURCADENCE" },
-      "title-zeroday": { "name": "« Zéro-Jour »", "sub": "titre · mythique", "text": "ZÉRO-JOUR" }
+      "title-zeroday": { "name": "« Zéro-Jour »", "sub": "titre · mythique", "text": "ZÉRO-JOUR" },
+      "crate-larva": { "name": "Larve", "sub": "avatar · parasite" },
+      "crate-null": { "name": "« Null »", "sub": "titre · anonyme", "text": "NULL" },
+      "crate-static": { "name": "Parasite", "sub": "bannière · brouillage" },
+      "crate-wraith": { "name": "Spectre", "sub": "avatar · masque" },
+      "crate-glacier": { "name": "« Glacier »", "sub": "titre · sang-froid", "text": "GLACIER" },
+      "crate-blackout": { "name": "Blackout", "sub": "bannière · panne" },
+      "crate-nemesis": { "name": "Némésis", "sub": "avatar · contamination" },
+      "crate-omega": { "name": "« Oméga »", "sub": "titre · terminal", "text": "OMÉGA" },
+      "crate-obsidian": { "name": "Obsidienne", "sub": "thème · exclusif caisse" },
+      "crate-voidsurge": { "name": "Onde du Vide", "sub": "bannière · singularité" }
     }
   },
   "dashboard": {

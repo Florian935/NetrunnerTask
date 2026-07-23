@@ -1,12 +1,26 @@
 import { create } from 'zustand'
 import { cosmeticsRepo } from '../db'
 import {
+  crateCosmetics,
   DEFAULT_COSMETICS,
   equip as equipPure,
   type CosmeticsCore,
 } from '../game/cosmetics'
+import {
+  openCrate as openCratePure,
+  type CrateDraw,
+  type CrateQuality,
+} from '../game/crates'
 import { DEFAULT_CALLSIGN, normalizeCallsign } from '../game/profile'
 import { applyCosmeticTheme, mirrorCosmeticTheme } from '../features/cosmetics/theme'
+import { usePlayerStore } from './usePlayerStore'
+
+/** Stock de caisses initial (aucune) — miroir du seed / de la migration v20. */
+const DEFAULT_CRATES: Record<CrateQuality, number> = {
+  standard: 0,
+  secured: 0,
+  blackice: 0,
+}
 
 /**
  * Store réactif de l'état cosmétique / identité (US-031, US-032). État persisté
@@ -19,6 +33,8 @@ import { applyCosmeticTheme, mirrorCosmeticTheme } from '../features/cosmetics/t
  */
 interface CosmeticsStoreState extends CosmeticsCore {
   callsign: string
+  /** Caisses non ouvertes par qualité (US-034). */
+  crates: Record<CrateQuality, number>
   loaded: boolean
   load: () => Promise<void>
   /** Équipe le cosmétique `id` (no-op si inconnu/non possédé/déjà équipé). */
@@ -31,19 +47,29 @@ interface CosmeticsStoreState extends CosmeticsCore {
   grant: (ids: readonly string[]) => string[]
   /** Change le callsign (normalisé via `game/profile.ts`) ; persiste aussitôt. */
   setCallsign: (raw: string) => void
+  /** Ajoute une caisse `quality` au stock (US-034, gagnée en jouant) ; persiste. */
+  grantCrate: (quality: CrateQuality) => void
+  /**
+   * Ouvre une caisse `quality` (US-034) : décrémente le stock, tire via
+   * `game/crates.ts`, applique le résultat (déblocage cosmétique **ou** crédits
+   * de consolation), persiste, et **renvoie le tirage** pour le rituel. No-op
+   * (renvoie `null`) si aucune caisse de cette qualité.
+   */
+  openCrate: (quality: CrateQuality) => CrateDraw | null
 }
 
 export const useCosmeticsStore = create<CosmeticsStoreState>((set, get) => {
-  /** Persiste l'état courant (owned + equipped + callsign) en base. */
+  /** Persiste l'état courant (owned + equipped + callsign + crates) en base. */
   function persist(): void {
-    const { owned, equipped, callsign } = get()
-    void cosmeticsRepo.save({ owned, equipped, callsign })
+    const { owned, equipped, callsign, crates } = get()
+    void cosmeticsRepo.save({ owned, equipped, callsign, crates })
   }
 
   return {
     owned: [...DEFAULT_COSMETICS.owned],
     equipped: { ...DEFAULT_COSMETICS.equipped },
     callsign: DEFAULT_CALLSIGN,
+    crates: { ...DEFAULT_CRATES },
     loaded: false,
 
     load: async () => {
@@ -51,7 +77,8 @@ export const useCosmeticsStore = create<CosmeticsStoreState>((set, get) => {
       const owned = state?.owned ?? [...DEFAULT_COSMETICS.owned]
       const equipped = state?.equipped ?? { ...DEFAULT_COSMETICS.equipped }
       const callsign = state?.callsign ?? DEFAULT_CALLSIGN
-      set({ owned, equipped, callsign, loaded: true })
+      const crates = state?.crates ?? { ...DEFAULT_CRATES }
+      set({ owned, equipped, callsign, crates, loaded: true })
       applyCosmeticTheme(equipped.theme)
       mirrorCosmeticTheme(equipped.theme)
     },
@@ -81,6 +108,29 @@ export const useCosmeticsStore = create<CosmeticsStoreState>((set, get) => {
       if (callsign === get().callsign) return // inchangé → no-op
       set({ callsign })
       persist()
+    },
+
+    grantCrate: (quality) => {
+      const crates = get().crates
+      set({ crates: { ...crates, [quality]: crates[quality] + 1 } })
+      persist()
+    },
+
+    openCrate: (quality) => {
+      const crates = get().crates
+      if (crates[quality] <= 0) return null // aucune caisse → no-op
+
+      const draw = openCratePure(quality, get().owned, crateCosmetics())
+      // Décrémente la caisse consommée.
+      set({ crates: { ...crates, [quality]: crates[quality] - 1 } })
+
+      if (draw.kind === 'cosmetic') {
+        get().grant([draw.id]) // ajoute aux owned (persiste l'état complet)
+      } else {
+        void usePlayerStore.getState().adjustCredits(draw.amount) // consolation
+      }
+      persist() // garantit l'écriture du stock (cas crédits : grant non appelé)
+      return draw
     },
   }
 })

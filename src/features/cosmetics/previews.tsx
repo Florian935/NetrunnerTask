@@ -15,6 +15,8 @@ const THEME_SWATCHES: Record<
   nightwire: { accent: '#00f0ff', accent2: '#ff2d95', accent3: '#2effc2', app: '#0a0e17', surface: '#161c2b', borderStrong: '#3a465f', textSec: '#8b9bb4' },
   ecarlate: { accent: '#ff2d95', accent2: '#ff2e5b', accent3: '#ffb020', app: '#120a12', surface: '#271426', borderStrong: '#57344c', textSec: '#c79ab0' },
   cryo: { accent: '#2effc2', accent2: '#a855f7', accent3: '#00f0ff', app: '#080f12', surface: '#122029', borderStrong: '#345058', textSec: '#89b4ad' },
+  // US-034 : thème exclusif caisse (noir obsidienne + accent givre/violet).
+  'crate-obsidian': { accent: '#c8b3ff', accent2: '#a855f7', accent3: '#7f8aa0', app: '#08080d', surface: '#171724', borderStrong: '#38344f', textSec: '#a49ec2' },
 }
 
 const PREVIEW_HEIGHT = 92

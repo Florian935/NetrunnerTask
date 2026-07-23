@@ -226,6 +226,8 @@
     "equippedShort": "EQUIPPED",
     "unlockedBy": "UNLOCKED BY",
     "reward": "REWARD",
+    "foundInCrate": "FOUND IN A CRATE",
+    "foundInCrateValue": "CRATE DROP",
     "collection": {
       "title": "COLLECTION",
       "unlocked": "UNLOCKED",
@@ -253,6 +255,40 @@
       "bannerRatio": "BANNER · 21:9",
       "titleTag": "‹ TITLE ›"
     },
+    "crates": {
+      "title": "CRATES",
+      "pending_one": "{{count}} PENDING",
+      "pending_other": "{{count}} PENDING",
+      "earnedNote": "EARNED BY PLAYING — NEVER BOUGHT",
+      "tier": "TIER {{tier}}/3",
+      "open": "OPEN",
+      "toEarn": "EARN BY PLAYING",
+      "count_one": "UNOPENED",
+      "count_other": "UNOPENED",
+      "viewOdds": "VIEW ODDS",
+      "quality": {
+        "standard": { "label": "STANDARD", "desc": "Scavenged off the grid. The most common." },
+        "secured": { "label": "SECURED", "desc": "ICE-locked. Better odds." },
+        "blackice": { "label": "BLACK ICE", "desc": "Lethal countermeasure. The most prestigious." }
+      },
+      "odds": {
+        "title": "DROP RATES",
+        "sum": "Σ = {{sum}} %",
+        "note": "Rates shown per draw. Higher quality = better odds for high rarities."
+      },
+      "ritual": {
+        "opening": "OPENING…",
+        "anticipation": "DECRYPTING · {{quality}} CRATE",
+        "reveal": "REVEAL",
+        "result": "RESULT",
+        "instant": "INSTANT REVEAL",
+        "added": "ADDED TO COLLECTION · CRATE-EXCLUSIVE",
+        "equip": "EQUIP",
+        "continue": "CONTINUE",
+        "complete": { "title": "COLLECTION COMPLETE", "desc": "Nothing left to unlock in this pool. Converted to credits.", "credits": "CREDITS" }
+      },
+      "earned": { "title": "CRATE EARNED", "body": "{{quality}} crate added — open it in the Wardrobe." }
+    },
     "items": {
       "nightwire": { "name": "Nightwire", "sub": "theme · default" },
       "cryo": { "name": "Cryo", "sub": "theme · cold" },
@@ -267,7 +303,17 @@
       "title-architect": { "name": "\"Architect\"", "sub": "title · builder", "text": "ARCHITECT" },
       "title-ghost": { "name": "\"Ghost of the Net\"", "sub": "title · stealth", "text": "GHOST OF THE NET" },
       "title-overdrive": { "name": "\"Overdrive\"", "sub": "title · mastery", "text": "OVERDRIVE" },
-      "title-zeroday": { "name": "\"Zero-Day\"", "sub": "title · mythic", "text": "ZERO-DAY" }
+      "title-zeroday": { "name": "\"Zero-Day\"", "sub": "title · mythic", "text": "ZERO-DAY" },
+      "crate-larva": { "name": "Larva", "sub": "avatar · parasite" },
+      "crate-null": { "name": "\"Null\"", "sub": "title · anonymous", "text": "NULL" },
+      "crate-static": { "name": "Static", "sub": "banner · jamming" },
+      "crate-wraith": { "name": "Wraith", "sub": "avatar · mask" },
+      "crate-glacier": { "name": "\"Glacier\"", "sub": "title · cold-blooded", "text": "GLACIER" },
+      "crate-blackout": { "name": "Blackout", "sub": "banner · outage" },
+      "crate-nemesis": { "name": "Nemesis", "sub": "avatar · contamination" },
+      "crate-omega": { "name": "\"Omega\"", "sub": "title · terminal", "text": "OMEGA" },
+      "crate-obsidian": { "name": "Obsidian", "sub": "theme · crate-exclusive" },
+      "crate-voidsurge": { "name": "Void Surge", "sub": "banner · singularity" }
     }
   },
   "dashboard": {

@@ -1050,3 +1050,45 @@ gagne »** : des accomplissements débloquent des cosmétiques **ciblés garanti
 - Vérifs : typecheck + lint + build/PWA + **tests 252/252** (+14). Recette
   **8/8 PO, validée à 100 %** le 23/07/2026, aucun bug. Maquette
   `cosmectic-progression` non versionnée (convention #007).
+
+### 039 — Caisses & rituel d'ouverture (US-034, Phase A3, 23/07/2026)
+
+4ᵉ tranche de la Phase A3 (#035) — la **voie aléatoire** de l'acquisition
+hybride, en complément de la voie déterministe (#038). Des **caisses gagnées en
+jouant** (jamais achetées) s'ouvrent via un rituel et lâchent un cosmétique
+**exclusif** selon une table de probabilités affichée.
+
+- **Contenu exclusif obligatoire** (H1) : le catalogue étant intégralement
+  garanti en déterministe (#038), les caisses n'ont de sens qu'avec du neuf →
+  **10 cosmétiques `source: 'crate'`** ajoutés (≥ 2 par rareté, 4 types, 1 thème
+  `crate-obsidian`), **disjoints** des départs et des récompenses de jalons.
+- **Module pur `game/crates.ts`** : 3 qualités `standard`/`secured`/`blackice`,
+  tables `CRATE_ODDS` (poids entiers **sommant à 100**), `openCrate` qui tire une
+  rareté puis un item **non possédé** de cette rareté (**anti-doublon** par
+  renormalisation sur les raretés encore disponibles). **1ʳᵉ introduction de
+  hasard dans `game/*`** → **RNG injecté** (`rng = Math.random`) pour la
+  testabilité (décision technique #1). **Testé 12/12**.
+- **Sources du gain** (décision #2, garde-fou « jamais acheté ») : **renaissance
+  → `secured`**, **jalon normal → `standard`**, **jalon caché → `blackice`** —
+  événements déjà vérifiés par l'app, indexés sur l'effort. Câblé dans
+  `useBuilderStore`, **silencieux au `load()`** (patron des récompenses #038).
+- **Pool épuisé → consolation crédits** (décision #3, `CONSOLATION_CREDITS`
+  = 120, réglable) via `adjustCredits` — **couture** que le pity + fragments
+  d'**US-035** remplacera.
+- **Persistance** : `CosmeticsState.crates` (stock non ouvert par qualité) +
+  **migration Dexie v20** (rétro-remplissage zéro). Vit sur le singleton
+  d'identité → **survit à la renaissance** par construction.
+- **UI (DS)** : `CratesPanel`/`CrateSlot` (inventaire, qualité à 0 désactivée),
+  `CrateOddsTable` (onglets + barres codées rareté), `CrateOpeningModal` (rituel
+  anticipation → révélation → résultat, **reduced-motion = révélation
+  instantanée**, Équiper/Continuer), `CrateIcon`, `CrateEarnedToast` (file
+  `crateEarned`) ; `CosmeticCard` gagne l'indice **« Trouvé en caisse »**.
+  Identité **violet → givre** (tokens `crate.css`), hors accents réservés
+  (cyan/rouge/ambre). 9 icônes lucide ; i18n FR/EN.
+- **Écarts maquette (validés PO)** : choix couleur laissé au design (violet/frost) ;
+  `CRATE_ODDS` = valeurs maquette conservées ; pool exclusif = contenu créé (items
+  maquette illustratifs). Wording « COLLECTION COMPLÈTE » du rituel = pool caisses
+  (point non bloquant relevé en recette, laissé tel quel).
+- Vérifs : typecheck + lint + build/PWA + **tests 269/269** (+18). Recette
+  **8/8 PO, validée à 100 %** le 23/07/2026, aucun bug. Maquette `crates` non
+  versionnée (convention #007).

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Button, Card, Icon } from '../../components/ui'
 import type { Cosmetic } from '../../game/cosmetics'
 import { CosmeticPreview } from './previews'
+import { CRATE_ACCENT, CRATE_ACCENT_RGB } from './crateStyle'
 import { RarityBadge } from './RarityBadge'
 import { RARITY_FILL, rarityColor, rarityGlow, rarityRgb } from './rarityStyle'
 import './cosmetics.css'
@@ -13,18 +14,23 @@ export type CosmeticCardState = 'locked' | 'unequipped' | 'equipped'
 export interface CosmeticCardProps {
   item: Cosmetic
   state: CosmeticCardState
-  /** Indice de déblocage (libellé i18n du jalon source) — requis si `locked`. */
+  /**
+   * Indice de déblocage (libellé i18n du jalon source) — pour un cosmétique
+   * verrouillé de la voie **déterministe**. Ignoré pour un cosmétique exclusif
+   * caisse (`item.source === 'crate'`), qui affiche « Trouvé en caisse ».
+   */
   hint?: string
   /** Appelé pour équiper ce cosmétique (ignoré si verrouillé/déjà équipé). */
   onEquip?: () => void
 }
 
 /**
- * Carte d'un cosmétique (US-031 + état verrouillé US-033) — sur `<Card hud
- * brackets>` + action `<Button>`. Le cadre est teinté par la rareté ; l'état
- * **verrouillé** grise l'aperçu (cadenas + hachures) et remplace l'action par
- * un indice « Débloqué par ». Le cran `legendary` respire quand la carte est
- * active (jamais verrouillée).
+ * Carte d'un cosmétique (US-031 + état verrouillé US-033 + source caisse
+ * US-034) — sur `<Card hud brackets>` + action `<Button>`. Le cadre est teinté
+ * par la rareté ; l'état **verrouillé** grise l'aperçu (cadenas + hachures) et
+ * remplace l'action par un indice : « Débloqué par ‹ jalon › » (voie
+ * déterministe) ou « Trouvé en caisse » (`source: 'crate'`). Le cran
+ * `legendary` respire quand la carte est active (jamais verrouillée).
  */
 export function CosmeticCard({ item, state, hint, onEquip }: CosmeticCardProps) {
   const { t } = useTranslation()
@@ -34,6 +40,7 @@ export function CosmeticCard({ item, state, hint, onEquip }: CosmeticCardProps) 
   const legend = item.rarity === 'legendary'
   const active = !locked && (equipped || hover)
   const rgb = rarityRgb(item.rarity)
+  const fromCrate = item.source === 'crate'
 
   return (
     <Card
@@ -61,7 +68,7 @@ export function CosmeticCard({ item, state, hint, onEquip }: CosmeticCardProps) 
           </span>
         )}
         {locked && (
-          <span style={{ display: 'inline-flex', color: 'var(--steel-400)' }}>
+          <span style={{ display: 'inline-flex', color: fromCrate ? CRATE_ACCENT : 'var(--steel-400)' }}>
             <Icon name="lock" size={15} />
           </span>
         )}
@@ -85,8 +92,20 @@ export function CosmeticCard({ item, state, hint, onEquip }: CosmeticCardProps) 
                 clipPath: 'var(--clip-bevel-sm)',
               }}
             >
-              <span style={{ width: 40, height: 40, display: 'grid', placeItems: 'center', clipPath: 'var(--clip-bevel-sm)', border: '1px solid var(--border-strong)', background: 'color-mix(in srgb, var(--bg-app) 70%, transparent)', color: 'var(--text-label)' }}>
-                <Icon name="lock" size={20} />
+              <span
+                style={{
+                  width: 40,
+                  height: 40,
+                  display: 'grid',
+                  placeItems: 'center',
+                  clipPath: 'var(--clip-bevel-sm)',
+                  border: `1px solid ${fromCrate ? `rgba(${CRATE_ACCENT_RGB}, 0.6)` : 'var(--border-strong)'}`,
+                  background: 'color-mix(in srgb, var(--bg-app) 70%, transparent)',
+                  color: fromCrate ? CRATE_ACCENT : 'var(--text-label)',
+                  boxShadow: fromCrate ? `0 0 16px -4px rgba(${CRATE_ACCENT_RGB}, 0.9)` : 'none',
+                }}
+              >
+                <Icon name={fromCrate ? 'package' : 'lock'} size={20} />
               </span>
             </span>
             <span
@@ -115,16 +134,27 @@ export function CosmeticCard({ item, state, hint, onEquip }: CosmeticCardProps) 
 
       {/* Action selon l'état */}
       {locked ? (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 9, minHeight: 'var(--control-h-md)', padding: '7px 10px', clipPath: 'var(--clip-bevel-sm)', border: '1px dashed var(--border-strong)', background: 'var(--bg-inset)' }}>
-          <span style={{ color: 'var(--amber-500)', display: 'inline-flex', flexShrink: 0 }}>
-            <Icon name="key-round" size={14} />
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 9,
+            minHeight: 'var(--control-h-md)',
+            padding: '7px 10px',
+            clipPath: 'var(--clip-bevel-sm)',
+            border: `1px dashed ${fromCrate ? `rgba(${CRATE_ACCENT_RGB}, 0.55)` : 'var(--border-strong)'}`,
+            background: fromCrate ? `rgba(${CRATE_ACCENT_RGB}, 0.06)` : 'var(--bg-inset)',
+          }}
+        >
+          <span style={{ color: fromCrate ? CRATE_ACCENT : 'var(--amber-500)', display: 'inline-flex', flexShrink: 0 }}>
+            <Icon name={fromCrate ? 'package' : 'key-round'} size={14} />
           </span>
           <span style={{ minWidth: 0 }}>
             <span style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 'var(--text-2xs)', letterSpacing: '0.2em', color: 'var(--text-muted)' }}>
-              {t('cosmetics.unlockedBy')}
+              {fromCrate ? t('cosmetics.foundInCrate') : t('cosmetics.unlockedBy')}
             </span>
-            <span style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 'var(--text-xs)', letterSpacing: '0.04em', color: 'var(--text-label)', marginTop: 2, lineHeight: 1.25 }}>
-              {hint}
+            <span style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 'var(--text-xs)', letterSpacing: '0.04em', color: fromCrate ? CRATE_ACCENT : 'var(--text-label)', marginTop: 2, lineHeight: 1.25 }}>
+              {fromCrate ? t('cosmetics.foundInCrateValue') : hint}
             </span>
           </span>
         </div>

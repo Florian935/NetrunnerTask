@@ -62,7 +62,8 @@ export async function ensureSeeded(): Promise<void> {
     })
   }
 
-  // US-031 : socle cosmétique. Tout débloqué au départ (H4), équipés = défauts.
+  // US-031 : socle cosmétique (départ = STARTER, US-033). US-032 : callsign.
+  // US-034 : stock de caisses non ouvertes à zéro (se gagnent en jouant).
   const cosmetics = await db.cosmeticsState.get('me')
   if (!cosmetics) {
     await db.cosmeticsState.add({
@@ -70,6 +71,7 @@ export async function ensureSeeded(): Promise<void> {
       owned: [...DEFAULT_COSMETICS.owned],
       equipped: { ...DEFAULT_COSMETICS.equipped },
       callsign: DEFAULT_CALLSIGN,
+      crates: { standard: 0, secured: 0, blackice: 0 },
     })
   }
 }

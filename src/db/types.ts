@@ -2,6 +2,7 @@
 // Identifiants et valeurs en anglais (convention) ; commentaires en français.
 
 import type { CosmeticType } from '../game/cosmetics'
+import type { CrateQuality } from '../game/crates'
 
 /** Échelle de difficulté d'un contrat (trivial → légendaire) → détermine la récompense (US-008). */
 export type Difficulty = 'trivial' | 'easy' | 'medium' | 'hard' | 'legendary'
@@ -217,4 +218,11 @@ export interface CosmeticsState {
    * d'identité `cosmeticsState` (survit à la renaissance). Défaut au seed.
    */
   callsign: string
+  /**
+   * Caisses **non ouvertes** par qualité (US-034) — stock gagné en jouant, à
+   * ouvrir via le rituel. Vit sur le singleton d'identité → **survit à la
+   * renaissance** (`prestige()` ne touche que `builderState`). `0` partout au
+   * départ (seed) ; rétro-rempli par la migration v20.
+   */
+  crates: Record<CrateQuality, number>
 }
