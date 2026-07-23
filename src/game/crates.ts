@@ -5,10 +5,18 @@
 // EXCLUSIF aux caisses (`source: 'crate'`, voir `cosmetics.ts`) selon une table
 // de probabilités par rareté propre à sa qualité.
 //
-// Comme `cosmetics.ts`, ce module **n'expose AUCUNE valeur de jeu**. C'est aussi
-// la **première introduction de hasard** dans `game/*` (tout le reste est
-// déterministe : `marketRate`, chronos en instant absolu…) — le RNG est donc
-// **injecté** (`rng: () => number`, défaut `Math.random`) pour des tests
+// US-035 : **pity + fragments** (approfondit les caisses). Le tirage devient
+// **pur aléatoire** (les doublons sont désormais possibles) : retomber sur un
+// cosmétique déjà possédé le **convertit en fragments** (monnaie de complétion,
+// indexée sur la rareté), au lieu de la garantie « toujours du neuf » + la
+// consolation crédits d'US-034 (supprimées). Deux filets anti-frustration :
+//  · **pity** — après `PITY_CONFIG.threshold` ouvertures sans légendaire, la
+//    suivante force ce cran ;
+//  · **forge** (côté store) — dépenser des fragments pour débloquer un cosmétique
+//    choisi (`FORGE_COST`), filet déterministe.
+//
+// Comme `cosmetics.ts`, ce module **n'expose AUCUNE valeur de jeu**. Le hasard
+// est **injecté** (`rng: () => number`, défaut `Math.random`) pour des tests
 // déterministes et pour préserver la pureté du module.
 
 import { RARITY_ORDER, type Cosmetic, type Rarity } from './cosmetics'
@@ -32,73 +40,103 @@ export const CRATE_ODDS: Record<CrateQuality, Record<Rarity, number>> = {
 }
 
 /**
- * Consolation en crédits versée quand le pool exclusif est **entièrement
- * possédé** (décision technique #3 : couture reprise par le pity + fragments
- * d'US-035). Réglable en recette.
+ * Fragments gagnés en convertissant un **doublon** (US-035), par rareté du
+ * cosmétique retombé. Valeurs de la maquette `pity-fragments` (ajustables).
  */
-export const CONSOLATION_CREDITS = 120
+export const FRAGMENT_VALUE: Record<Rarity, number> = {
+  common: 5,
+  enhanced: 12,
+  rare: 30,
+  epic: 75,
+  legendary: 200,
+}
 
-/** Résultat d'une ouverture : un cosmétique tiré, ou une consolation crédits. */
+/**
+ * Coût de **forge** (US-035) par rareté — dépense de fragments pour débloquer un
+ * cosmétique choisi. Monte fortement avec la rareté (≈ 7-8 doublons du même
+ * cran) : la forge est un **filet**, pas un raccourci. Ajustable en recette.
+ */
+export const FORGE_COST: Record<Rarity, number> = {
+  common: 40,
+  enhanced: 100,
+  rare: 250,
+  epic: 600,
+  legendary: 1500,
+}
+
+/**
+ * Filet anti-malchance (US-035) : après `threshold` ouvertures **sans** le cran
+ * `rarity`, la prochaine ouverture le **force**. Le compteur `pity` (persisté)
+ * est réinitialisé à l'obtention de ce cran. `threshold` ajustable en recette.
+ */
+export const PITY_CONFIG: { threshold: number; rarity: Rarity } = {
+  threshold: 30,
+  rarity: 'legendary',
+}
+
+/**
+ * Résultat d'une ouverture : un cosmétique **nouveau**, ou un **doublon** converti
+ * en fragments (`dupId` = le cosmétique retombé, pour l'affichage du rituel).
+ */
 export type CrateDraw =
   | { kind: 'cosmetic'; id: string }
-  | { kind: 'credits'; amount: number }
+  | { kind: 'fragments'; amount: number; dupId?: string }
+
+/** Résultat complet d'`openCrate` : le tirage + le compteur de pity mis à jour. */
+export interface CrateOpenResult {
+  draw: CrateDraw
+  pity: number
+}
 
 /** Source d'aléa injectable (défaut `Math.random`). */
 export type Rng = () => number
 
+/** Tire une rareté selon `weights` (poids entiers), via `roll` dans [0,1). */
+function rollRarity(weights: Record<Rarity, number>, roll: number): Rarity {
+  const total = RARITY_ORDER.reduce((a, r) => a + weights[r], 0)
+  let x = roll * total
+  for (const r of RARITY_ORDER) {
+    x -= weights[r]
+    if (x < 0) return r
+  }
+  return RARITY_ORDER[RARITY_ORDER.length - 1]
+}
+
 /**
- * Ouvre une caisse de qualité `quality` : tire **un** cosmétique dans le `pool`
- * exclusif, selon `CRATE_ODDS[quality]`, en **ignorant les items déjà possédés**
- * (`owned`) — garantit du neuf tant qu'il en reste (C6). Le tirage renormalise
- * la table sur les seules raretés encore disponibles (une rareté sans item neuf
- * n'est jamais tirée). Si tout le pool est possédé → consolation crédits
- * (décision #3). `rng` injecté pour la testabilité.
+ * Ouvre une caisse de qualité `quality` (US-034 + US-035). Tirage **pur** :
+ * une rareté (via `CRATE_ODDS`, ou **forcée** au cran de pity si `pity + 1 ≥
+ * threshold`), puis un item **uniforme** de cette rareté dans le `pool` exclusif
+ * (possédé **ou non**). Item déjà dans `owned` → **doublon** converti en
+ * fragments ; sinon → cosmétique **nouveau**. Renvoie aussi le `pity` mis à jour
+ * (réinitialisé si le cran de pity est obtenu, incrémenté sinon). `rng` injecté.
  */
 export function openCrate(
   quality: CrateQuality,
   owned: readonly string[],
   pool: readonly Cosmetic[],
+  pity: number,
   rng: Rng = Math.random,
-): CrateDraw {
-  const ownedSet = new Set(owned)
-  const unowned = pool.filter((c) => !ownedSet.has(c.id))
-  if (unowned.length === 0) {
-    return { kind: 'credits', amount: CONSOLATION_CREDITS }
-  }
+): CrateOpenResult {
+  // Rareté : forcée par le pity, sinon tirée à la table.
+  const forced = pity + 1 >= PITY_CONFIG.threshold
+  const rarity = forced ? PITY_CONFIG.rarity : rollRarity(CRATE_ODDS[quality], rng())
 
-  // Items neufs regroupés par rareté.
-  const byRarity = new Map<Rarity, Cosmetic[]>()
-  for (const c of unowned) {
-    const arr = byRarity.get(c.rarity)
-    if (arr) arr.push(c)
-    else byRarity.set(c.rarity, [c])
-  }
+  // Item uniforme dans la rareté (repli sur tout le pool si la rareté est vide).
+  const candidates = pool.filter((c) => c.rarity === rarity)
+  const items = candidates.length > 0 ? candidates : pool
+  const picked = items[Math.min(items.length - 1, Math.floor(rng() * items.length))]
 
-  // Raretés encore disponibles (ordre croissant), poids renormalisés sur elles.
-  const table = CRATE_ODDS[quality]
-  const rarities = RARITY_ORDER.filter((r) => byRarity.has(r))
-  const weights = rarities.map((r) => table[r])
-  const totalWeight = weights.reduce((a, w) => a + w, 0)
+  // pity : réinitialisé si le cran cible est obtenu, incrémenté sinon.
+  const nextPity = picked.rarity === PITY_CONFIG.rarity ? 0 : pity + 1
 
-  // Tirage de la rareté. Repli uniforme si la table donne un poids total nul
-  // sur les raretés disponibles (théoriquement impossible ici — défensif).
-  let chosen: Rarity
-  if (totalWeight <= 0) {
-    chosen = rarities[Math.min(rarities.length - 1, Math.floor(rng() * rarities.length))]
-  } else {
-    let roll = rng() * totalWeight
-    chosen = rarities[rarities.length - 1]
-    for (let i = 0; i < rarities.length; i++) {
-      roll -= weights[i]
-      if (roll < 0) {
-        chosen = rarities[i]
-        break
-      }
-    }
-  }
+  const draw: CrateDraw = owned.includes(picked.id)
+    ? { kind: 'fragments', amount: FRAGMENT_VALUE[picked.rarity], dupId: picked.id }
+    : { kind: 'cosmetic', id: picked.id }
 
-  // Tirage uniforme de l'item dans la rareté choisie.
-  const items = byRarity.get(chosen)!
-  const idx = Math.min(items.length - 1, Math.floor(rng() * items.length))
-  return { kind: 'cosmetic', id: items[idx].id }
+  return { draw, pity: nextPity }
+}
+
+/** Peut-on forger un cosmétique de rareté `rarity` avec `fragments` en solde ? */
+export function canForge(fragments: number, rarity: Rarity): boolean {
+  return fragments >= FORGE_COST[rarity]
 }

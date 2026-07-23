@@ -115,6 +115,59 @@
   animation: nw-crate-rays 14s linear infinite;
 }
 
+/* US-035 — pop du gain de fragments (conversion d'un doublon). */
+@keyframes nw-frag-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.9);
+  }
+  60% {
+    transform: translateY(0) scale(1.06);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+.nw-frag-pop {
+  animation: nw-frag-pop 0.5s var(--ease-out) 0.15s both;
+}
+
+/* US-035 — halo du badge de pity « garanti au prochain ». */
+@keyframes nw-pity-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 1px rgba(var(--rarity-legendary-rgb), 0.6);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(var(--rarity-legendary-rgb), 1),
+      0 0 16px rgba(var(--rarity-legendary-rgb), 0.5);
+  }
+}
+.nw-pity-glow {
+  animation: nw-pity-glow 1.8s ease-in-out infinite;
+}
+
+/* US-035 — flash « FORGÉ » sur la carte avant qu'elle ne quitte la liste. */
+@keyframes nw-forged {
+  0% {
+    opacity: 0;
+    transform: scale(0.82);
+  }
+  45% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.nw-forged {
+  animation: nw-forged 0.3s var(--ease-out) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .nw-legend,
   .nw-reveal,
@@ -122,7 +175,10 @@
   .nw-crate-shake,
   .nw-crate-ring,
   .nw-crate-rise,
-  .nw-crate-rays {
+  .nw-crate-rays,
+  .nw-frag-pop,
+  .nw-pity-glow,
+  .nw-forged {
     animation: none;
   }
 }

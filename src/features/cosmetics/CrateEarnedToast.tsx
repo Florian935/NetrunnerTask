@@ -35,7 +35,9 @@ export function CrateEarnedToast({ item, onClose }: CrateEarnedToastProps) {
         style={{
           position: 'relative',
           clipPath: 'var(--clip-bevel-md)',
-          background: `linear-gradient(160deg, rgba(${s.rgb}, 0.12), transparent 55%), var(--bg-surface)`,
+          // Fond opaque sombre : le toast flotte sur la nav (claire, chargée) →
+          // une surface pleine et contrastée garantit la lisibilité.
+          background: `linear-gradient(160deg, rgba(${s.rgb}, 0.16), transparent 60%), var(--void-800)`,
           padding: 14,
           display: 'flex',
           alignItems: 'center',
@@ -46,8 +48,8 @@ export function CrateEarnedToast({ item, onClose }: CrateEarnedToastProps) {
         <span className="nw-scanlines" aria-hidden style={{ position: 'absolute', inset: 0 }} />
         <CrateIcon quality={item.quality} size={48} />
         <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 'var(--text-xs)', letterSpacing: '0.18em', color: s.color, textShadow: `0 0 10px rgba(${s.rgb}, ${s.glow * 0.7})` }}>
-            <span className="nw-blink" aria-hidden style={{ display: 'inline-flex' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 'var(--text-xs)', letterSpacing: '0.18em', color: 'var(--text-primary)' }}>
+            <span className="nw-blink" aria-hidden style={{ display: 'inline-flex', color: s.color }}>
               <Icon name="package" size={15} />
             </span>
             {t('cosmetics.crates.earned.title')}

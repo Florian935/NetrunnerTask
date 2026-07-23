@@ -228,6 +228,23 @@
     "reward": "RÉCOMPENSE",
     "foundInCrate": "TROUVÉ EN CAISSE",
     "foundInCrateValue": "OUVERTURE DE CAISSE",
+    "fragments": { "label": "FRAGMENTS" },
+    "forge": {
+      "title": "FORGE",
+      "intro": "Choisis un cosmétique non possédé et forge-le contre des fragments — filet déterministe, sans passer par la chance. Le coût monte avec la rareté.",
+      "cost": "COÛT",
+      "forge": "FORGER",
+      "forged": "FORGÉ",
+      "insufficient": "SOLDE INSUFFISANT · MANQUE",
+      "complete": "Collection caisses complète — plus rien à forger."
+    },
+    "pity": {
+      "title": "PITY · LÉGENDAIRE",
+      "guaranteed": "GARANTI AU PROCHAIN",
+      "guaranteedHint": "La prochaine ouverture livrera un LÉGENDAIRE.",
+      "remaining_one": "Encore {{count}} ouverture avant un légendaire garanti.",
+      "remaining_other": "Encore {{count}} ouvertures avant un légendaire garanti."
+    },
     "collection": {
       "title": "COLLECTION",
       "unlocked": "DÉBLOQUÉS",
@@ -283,6 +300,8 @@
         "result": "RÉSULTAT",
         "instant": "RÉVÉLATION INSTANTANÉE",
         "added": "AJOUTÉ À LA COLLECTION · EXCLUSIF CAISSE",
+        "duplicate": "DÉJÀ POSSÉDÉ",
+        "convertedTo": "CONVERTI EN",
         "equip": "ÉQUIPER",
         "continue": "CONTINUER",
         "complete": { "title": "COLLECTION COMPLÈTE", "desc": "Plus rien à débloquer dans ce pool. Conversion en crédits.", "credits": "CRÉDITS" }

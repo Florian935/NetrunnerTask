@@ -4,12 +4,17 @@ import { Button, Card, Icon } from '../../components/ui'
 import type { Cosmetic } from '../../game/cosmetics'
 import { CosmeticPreview } from './previews'
 import { CRATE_ACCENT, CRATE_ACCENT_RGB } from './crateStyle'
+import { FRAGMENT_COLOR, FRAGMENT_RGB, FragmentAmount } from './Fragment'
 import { RarityBadge } from './RarityBadge'
 import { RARITY_FILL, rarityColor, rarityGlow, rarityRgb } from './rarityStyle'
 import './cosmetics.css'
 
-/** État d'une carte : verrouillé (à débloquer) / possédé non équipé / équipé. */
-export type CosmeticCardState = 'locked' | 'unequipped' | 'equipped'
+/**
+ * État d'une carte : verrouillé (à débloquer) / possédé non équipé / équipé /
+ * **forge** (US-035 : cosmétique non possédé, affiché en couleur, à forger
+ * contre des fragments).
+ */
+export type CosmeticCardState = 'locked' | 'unequipped' | 'equipped' | 'forge'
 
 export interface CosmeticCardProps {
   item: Cosmetic
@@ -22,6 +27,12 @@ export interface CosmeticCardProps {
   hint?: string
   /** Appelé pour équiper ce cosmétique (ignoré si verrouillé/déjà équipé). */
   onEquip?: () => void
+  /** Coût de forge en fragments (US-035) — requis si `state === 'forge'`. */
+  forgeCost?: number
+  /** Solde de fragments courant — détermine si la forge est abordable (`state === 'forge'`). */
+  fragments?: number
+  /** Appelé pour forger ce cosmétique (`state === 'forge'`, ignoré si solde insuffisant). */
+  onForge?: () => void
 }
 
 /**
@@ -32,15 +43,18 @@ export interface CosmeticCardProps {
  * déterministe) ou « Trouvé en caisse » (`source: 'crate'`). Le cran
  * `legendary` respire quand la carte est active (jamais verrouillée).
  */
-export function CosmeticCard({ item, state, hint, onEquip }: CosmeticCardProps) {
+export function CosmeticCard({ item, state, hint, onEquip, forgeCost, fragments, onForge }: CosmeticCardProps) {
   const { t } = useTranslation()
   const [hover, setHover] = useState(false)
   const locked = state === 'locked'
   const equipped = state === 'equipped'
+  const forge = state === 'forge'
   const legend = item.rarity === 'legendary'
   const active = !locked && (equipped || hover)
   const rgb = rarityRgb(item.rarity)
   const fromCrate = item.source === 'crate'
+  const afford = (fragments ?? 0) >= (forgeCost ?? Number.POSITIVE_INFINITY)
+  const missing = Math.max(0, (forgeCost ?? 0) - (fragments ?? 0))
 
   return (
     <Card
@@ -157,6 +171,34 @@ export function CosmeticCard({ item, state, hint, onEquip }: CosmeticCardProps) 
               {fromCrate ? t('cosmetics.foundInCrateValue') : hint}
             </span>
           </span>
+        </div>
+      ) : forge ? (
+        <div>
+          {/* Ligne coût */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 9, padding: '7px 10px', clipPath: 'var(--clip-bevel-sm)', border: `1px solid ${afford ? `rgba(${FRAGMENT_RGB}, 0.4)` : 'var(--border)'}`, background: 'var(--bg-inset)' }}>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-2xs)', letterSpacing: '0.18em', color: 'var(--text-muted)' }}>{t('cosmetics.forge.cost')}</span>
+            <FragmentAmount value={forgeCost ?? 0} strong size={14} />
+          </div>
+          {afford ? (
+            <button
+              type="button"
+              onClick={onForge}
+              style={{
+                width: '100%', height: 'var(--control-h-md)', cursor: 'pointer', clipPath: 'var(--clip-bevel-sm)',
+                border: `1px solid ${FRAGMENT_COLOR}`,
+                background: hover ? `rgba(${FRAGMENT_RGB}, 0.2)` : `rgba(${FRAGMENT_RGB}, 0.1)`, color: FRAGMENT_COLOR,
+                boxShadow: hover ? `0 0 0 1px rgba(${FRAGMENT_RGB}, 0.6), 0 0 16px rgba(${FRAGMENT_RGB}, 0.4)` : `0 0 12px -4px rgba(${FRAGMENT_RGB}, 0.7)`,
+                fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 'var(--text-sm)', letterSpacing: '0.18em',
+                transition: 'all var(--dur-fast) var(--ease-out)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 7,
+              }}
+            >
+              <Icon name="hammer" size={14} /> {t('cosmetics.forge.forge')}
+            </button>
+          ) : (
+            <div style={{ width: '100%', minHeight: 'var(--control-h-md)', cursor: 'not-allowed', clipPath: 'var(--clip-bevel-sm)', border: '1px dashed var(--border-strong)', background: 'var(--bg-inset)', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: 'var(--text-2xs)', letterSpacing: '0.1em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7, textAlign: 'center', padding: '6px 8px' }}>
+              <Icon name="lock" size={13} /> {t('cosmetics.forge.insufficient')} <FragmentAmount value={missing} size={11} />
+            </div>
+          )}
         </div>
       ) : equipped ? (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7, height: 'var(--control-h-md)', clipPath: 'var(--clip-bevel-sm)', border: `1px solid rgba(${rgb}, 0.6)`, background: `rgba(${rgb}, 0.12)`, color: rarityColor(item.rarity), fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 'var(--text-sm)', letterSpacing: '0.18em', textTransform: 'uppercase' }}>

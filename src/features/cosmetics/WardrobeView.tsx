@@ -14,6 +14,7 @@ import { CollectionPreview } from './CollectionPreview'
 import { CosmeticCard, type CosmeticCardState } from './CosmeticCard'
 import { CratesPanel } from './CratesPanel'
 import { CrateOpeningModal } from './CrateOpeningModal'
+import { ForgePanel } from './ForgePanel'
 
 /** Icône de section + largeur mini de carte par type. */
 const TYPE_META: Record<CosmeticType, { icon: string; min: number }> = {
@@ -71,7 +72,10 @@ export function WardrobeView() {
   const equipped = useCosmeticsStore((s) => s.equipped)
   const equip = useCosmeticsStore((s) => s.equip)
   const crates = useCosmeticsStore((s) => s.crates)
+  const fragments = useCosmeticsStore((s) => s.fragments)
+  const pity = useCosmeticsStore((s) => s.pity)
   const openCrateAction = useCosmeticsStore((s) => s.openCrate)
+  const forge = useCosmeticsStore((s) => s.forge)
   const achievedMilestones = useBuilderStore((s) => s.achievedMilestones)
 
   /** Rituel d'ouverture en cours (US-034) ; `null` = aucun. */
@@ -122,8 +126,11 @@ export function WardrobeView() {
       {/* Aperçu de collection (US-033) */}
       <CollectionPreview owned={owned} />
 
-      {/* Inventaire de caisses (US-034) */}
-      <CratesPanel crates={crates} onOpen={handleOpen} />
+      {/* Inventaire de caisses (US-034) + pity (US-035) */}
+      <CratesPanel crates={crates} fragments={fragments} pity={pity} onOpen={handleOpen} />
+
+      {/* Forge (US-035) : dépenser des fragments pour un cosmétique choisi */}
+      <ForgePanel owned={owned} fragments={fragments} onForge={forge} />
 
       {COSMETIC_TYPES.map((type) => {
         const items = visibleOf(type)

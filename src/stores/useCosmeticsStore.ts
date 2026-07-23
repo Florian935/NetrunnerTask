@@ -1,19 +1,21 @@
 import { create } from 'zustand'
 import { cosmeticsRepo } from '../db'
 import {
+  COSMETIC_BY_ID,
   crateCosmetics,
   DEFAULT_COSMETICS,
   equip as equipPure,
   type CosmeticsCore,
 } from '../game/cosmetics'
 import {
+  canForge,
+  FORGE_COST,
   openCrate as openCratePure,
   type CrateDraw,
   type CrateQuality,
 } from '../game/crates'
 import { DEFAULT_CALLSIGN, normalizeCallsign } from '../game/profile'
 import { applyCosmeticTheme, mirrorCosmeticTheme } from '../features/cosmetics/theme'
-import { usePlayerStore } from './usePlayerStore'
 
 /** Stock de caisses initial (aucune) — miroir du seed / de la migration v20. */
 const DEFAULT_CRATES: Record<CrateQuality, number> = {
@@ -35,6 +37,10 @@ interface CosmeticsStoreState extends CosmeticsCore {
   callsign: string
   /** Caisses non ouvertes par qualité (US-034). */
   crates: Record<CrateQuality, number>
+  /** Fragments (US-035) — monnaie de complétion issue des doublons. */
+  fragments: number
+  /** Compteur de pity (US-035) — ouvertures depuis le dernier légendaire. */
+  pity: number
   loaded: boolean
   load: () => Promise<void>
   /** Équipe le cosmétique `id` (no-op si inconnu/non possédé/déjà équipé). */
@@ -50,19 +56,26 @@ interface CosmeticsStoreState extends CosmeticsCore {
   /** Ajoute une caisse `quality` au stock (US-034, gagnée en jouant) ; persiste. */
   grantCrate: (quality: CrateQuality) => void
   /**
-   * Ouvre une caisse `quality` (US-034) : décrémente le stock, tire via
-   * `game/crates.ts`, applique le résultat (déblocage cosmétique **ou** crédits
-   * de consolation), persiste, et **renvoie le tirage** pour le rituel. No-op
-   * (renvoie `null`) si aucune caisse de cette qualité.
+   * Ouvre une caisse `quality` (US-034 + US-035) : décrémente le stock, tire via
+   * `game/crates.ts` (avec le `pity` courant), applique le résultat (déblocage
+   * cosmétique **ou** conversion doublon → **fragments**), met à jour le pity,
+   * persiste, et **renvoie le tirage** pour le rituel. No-op (renvoie `null`) si
+   * aucune caisse de cette qualité.
    */
   openCrate: (quality: CrateQuality) => CrateDraw | null
+  /**
+   * Forge (US-035) : dépense `FORGE_COST[rarity]` fragments pour débloquer le
+   * cosmétique `id` (non possédé). No-op (renvoie `false`) si déjà possédé,
+   * inconnu, ou solde insuffisant.
+   */
+  forge: (id: string) => boolean
 }
 
 export const useCosmeticsStore = create<CosmeticsStoreState>((set, get) => {
-  /** Persiste l'état courant (owned + equipped + callsign + crates) en base. */
+  /** Persiste l'état courant (owned + equipped + callsign + crates + US-035) en base. */
   function persist(): void {
-    const { owned, equipped, callsign, crates } = get()
-    void cosmeticsRepo.save({ owned, equipped, callsign, crates })
+    const { owned, equipped, callsign, crates, fragments, pity } = get()
+    void cosmeticsRepo.save({ owned, equipped, callsign, crates, fragments, pity })
   }
 
   return {
@@ -70,6 +83,8 @@ export const useCosmeticsStore = create<CosmeticsStoreState>((set, get) => {
     equipped: { ...DEFAULT_COSMETICS.equipped },
     callsign: DEFAULT_CALLSIGN,
     crates: { ...DEFAULT_CRATES },
+    fragments: 0,
+    pity: 0,
     loaded: false,
 
     load: async () => {
@@ -78,7 +93,9 @@ export const useCosmeticsStore = create<CosmeticsStoreState>((set, get) => {
       const equipped = state?.equipped ?? { ...DEFAULT_COSMETICS.equipped }
       const callsign = state?.callsign ?? DEFAULT_CALLSIGN
       const crates = state?.crates ?? { ...DEFAULT_CRATES }
-      set({ owned, equipped, callsign, crates, loaded: true })
+      const fragments = state?.fragments ?? 0
+      const pity = state?.pity ?? 0
+      set({ owned, equipped, callsign, crates, fragments, pity, loaded: true })
       applyCosmeticTheme(equipped.theme)
       mirrorCosmeticTheme(equipped.theme)
     },
@@ -120,17 +137,28 @@ export const useCosmeticsStore = create<CosmeticsStoreState>((set, get) => {
       const crates = get().crates
       if (crates[quality] <= 0) return null // aucune caisse → no-op
 
-      const draw = openCratePure(quality, get().owned, crateCosmetics())
-      // Décrémente la caisse consommée.
-      set({ crates: { ...crates, [quality]: crates[quality] - 1 } })
+      const { draw, pity } = openCratePure(quality, get().owned, crateCosmetics(), get().pity)
+      // Décrémente la caisse consommée + met à jour le pity.
+      set({ crates: { ...crates, [quality]: crates[quality] - 1 }, pity })
 
       if (draw.kind === 'cosmetic') {
-        get().grant([draw.id]) // ajoute aux owned (persiste l'état complet)
+        get().grant([draw.id]) // nouveau → ajoute aux owned (persiste)
       } else {
-        void usePlayerStore.getState().adjustCredits(draw.amount) // consolation
+        set({ fragments: get().fragments + draw.amount }) // doublon → fragments
       }
-      persist() // garantit l'écriture du stock (cas crédits : grant non appelé)
+      persist() // garantit l'écriture du stock/pity/fragments
       return draw
+    },
+
+    forge: (id) => {
+      const cosmetic = COSMETIC_BY_ID[id]
+      if (cosmetic === undefined) return false // inconnu
+      if (get().owned.includes(id)) return false // déjà possédé
+      if (!canForge(get().fragments, cosmetic.rarity)) return false // solde insuffisant
+      set({ fragments: get().fragments - FORGE_COST[cosmetic.rarity] })
+      get().grant([id]) // débloque + persiste
+      persist() // garantit l'écriture du solde de fragments
+      return true
     },
   }
 })
