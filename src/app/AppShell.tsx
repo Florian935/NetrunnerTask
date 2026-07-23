@@ -6,6 +6,7 @@ import { NavRail } from '../components/layout/NavRail'
 import { StatusBar } from '../components/layout/StatusBar'
 import { MilestoneToast, OfflineCatchupBanner, useBuilderTick } from '../features/builder'
 import { CosmeticUnlockToast, CrateEarnedToast } from '../features/cosmetics'
+import { CorruptionAmbient, CorruptionRevealHost } from '../features/corruption'
 import { LevelUpToast } from '../features/progression/LevelUpToast'
 import { useReminders } from '../features/reminders/useReminders'
 import { RankUpToast } from '../features/reputation/RankUpToast'
@@ -267,6 +268,11 @@ export function AppShell() {
           </div>
         ))}
       </div>
+
+      {/* Corruption (US-036) : ambiance glitch plein écran tant qu'elle est
+          embrassée, + reveal plein cadre au 1ᵉʳ armement du pacte. */}
+      <CorruptionAmbient />
+      <CorruptionRevealHost />
     </div>
   )
 }

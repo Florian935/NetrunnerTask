@@ -3,25 +3,116 @@
 > Reflète l'état réel du projet à tout instant. Mis à jour après **chaque**
 > étape franchie du cycle de vie (voir `CLAUDE.md` §5).
 
-## État courant — pas de cycle US en cours
+## US active
 
-**Phase A3 « Identité & Collection » TERMINÉE (5/5 tranches)** : US-031 (socle) →
-US-032 (profil) → US-033 (voie déterministe) → US-034 (caisses) → US-035 (pity +
-fragments). Toutes clôturées, mergées sur `develop`, poussées.
+**US-036 — L'Éveil de la Corruption CLÔTURÉE** le 23/07/2026 (Phase A4, 1ʳᵉ
+tranche). Cycle complet : cadrages fonctionnel + technique validés PO, maquette
+`corruption` reçue/analysée/validée PO, plan 19 étapes validé PO, implémentation
+faite, **recette 9/9 PO à 100 %** (2 améliorations d'immersion en direct : profil
+glitché bespoke + `CorruptionAmbient` plein écran), **décision #042**. Commit +
+merge sur `develop` + push.
+
+**Prochaine étape : US-037 — « La Voie Corrompue »** (Phase A4, 2ᵉ/dernière
+tranche — la mécanique de la voie sombre : ressource corrompue instable +
+production dopée + pool de cosmétiques glitch ; lit le flag `corruption:
+embraced` posé par US-036). À démarrer via `nouvelle-us`. _Suivi possible au
+backlog : refonte de l'écran Réseau en frames `HudPanel` terminal glitchées
+(hors périmètre US-036)._
+
+---
+
+_Historique de la tranche US-036._
+**US-036 — L'Éveil de la Corruption** (Phase A4, priorité haute, 1ʳᵉ tranche —
+premier reveal + cadre de reveals). Branche `feature/US-036-eveil-corruption`
+créée depuis `develop`. **Cadrage fonctionnel validé PO le 23/07/2026** (5
+hypothèses + invariant + 9 critères ; seuil 3ᵉ renaissance et « Purger » dans
+US-036 retenus). **Étape en cours : cadrage technique**
+(`us/US-036-eveil-corruption.md` §2) — **STOP, en attente de validation PO.**
+
+Cadrage technique posé : **nouveau module pur `game/reveals.ts`** (moteur de
+reveals **déterministe** — registre + prédicat de déclenchement + `CORRUPTION_
+PRESTIGE_THRESHOLD = 3` ; zéro RNG) ; **3 champs sur `CosmeticsState`**
+(`discoveredReveals`, `corruption` [5 états], `corruptionArmedAt`) + **migration
+Dexie v22** (survit à la renaissance, rattrapage si `prestigeCount ≥ 3`) ;
+`useCosmeticsStore` gagne `checkReveals`/`embraceCorruption`/`refuseCorruption`/
+`purgeCorruption` + application du **thème corrompu** (axe CSS distinct
+`data-corruption`, calque de `theme.ts`) ; `useBuilderStore` appelle `checkReveals`
+après `prestige()` + au `load()` ; nouveau dossier `features/corruption/`
+(overlay glitch + host + contrôle Purger) ; +1 titre glitch `source:'corruption'`.
+**Cadrage technique validé PO le 23/07/2026** (5 décisions techniques).
+
+**Étape en cours : Design** — impact UI significatif confirmé, **4 surfaces à
+maquetter** (séquence glitch + pacte plein écran ; thème corrompu global ; contrôle
+Purger/Ré-embrasser ; titre glitch en Garde-robe/Profil). **Maquette `corruption`
+reçue + analysée** (non versionnée, #007) : très fidèle au DS réel (accent `magenta`
+déjà présent, composants tous existants, `CosmeticCard` réutilisée). Plan de
+réutilisation posé + 6 écarts/interprétations (thème corrompu = re-skin **global
+`data-corruption`** et non accent par composant ; **pas de 6ᵉ rareté** — titre =
+`legendary`+`source:'corruption'` ; surface profil intégrée au `ProfileView`
+existant ; narratif à i18n FR+EN ; icône `shield-x` à ajouter ; timings ajustables).
+**Maquette validée PO le 23/07/2026** (3 interprétations structurantes retenues :
+re-skin global `data-corruption` ; pas de 6ᵉ rareté ; profil intégré à l'existant).
+
+**Plan d'implémentation validé PO le 23/07/2026** (19 étapes, `us/US-036…md` §4 ;
+contrôle Purger placé en Garde-robe).
+
+**Implémentation US-036 terminée.** Livré : module pur **`game/reveals.ts`**
+(moteur de reveals **déterministe** — registre + `newlyTriggeredReveals` +
+`CORRUPTION_PRESTIGE_THRESHOLD = 3` ; **testé 6/6**, zéro RNG) ; catalogue
+`cosmetics.ts` étendu (`source: 'corruption'` + titre **`corrupt-glitch`** +
+`corruptionCosmetics()`, +2 tests) ; **3 champs sur `CosmeticsState`**
+(`discoveredReveals`, `corruption` [5 états], `corruptionArmedAt`) + **migration
+Dexie v22** (rétro-remplissage, rattrapage `prestigeCount ≥ 3`) + seed ;
+`useCosmeticsStore` (`checkReveals`/`embraceCorruption`/`refuseCorruption`/
+`purgeCorruption` + application thème corrompu au `load()`) ; **thème corrompu**
+axe distinct **`data-corruption`** (`corruptionTheme.ts` calqué sur `theme.ts` +
+`theme/tokens/corruption.css` magenta + `bootCorruption()` anti-FOUC dans
+`main.tsx`) ; `useBuilderStore` appelle `checkReveals` après `prestige()` + au
+`load()` ; dossier **`features/corruption/`** (`GlitchText`/`Interference`/
+`GlitchMark`, `PactButton`, **`CorruptionRevealOverlay`** [glitch→hail→pacte→issue,
+reduced-motion], **`CorruptionRevealHost`** dans `AppShell`, **`CorruptionControl`**
+Purger/Ré-embrasser en Garde-robe, `corruption.css` keyframes sous garde
+reduced-motion) ; `CosmeticCard` gagne le traitement `source: 'corruption'`
+(badge/indice « Obtenu en embrassant la corruption ») ; profil re-teinté par le
+thème global ; 2 icônes (`shield-x`/`rotate-ccw`) ; i18n FR/EN bloc `corruption.*`.
+**Vérifs vertes : typecheck + lint + build/PWA + tests 280/280 (+8).** Vérif
+visuelle navigateur à faire en recette (séquence glitch, reduced-motion, rattrapage
+`prestigeCount ≥ 3`, pacte embrasser/refuser, purge, survie renaissance).
+
+**Étape en cours : recette PO.** Critères + scripts console fournis. **2 retours
+d'immersion PO traités en direct** (23/07/2026) : (1) **profil corrompu bespoke** —
+titre équipé `« CORROMPU »` en `GlitchText` (aberration RGB), scan `Interference`
++ bannière/label magenta quand embrassé (`RunnerIdCard` corruption-aware, puce
+source « CORRUPTION ») ; (2) **immersion globale** — nouvel overlay plein écran
+**`CorruptionAmbient`** (scan magenta + grain + scanlines sur tout le fond de
+l'app, `pointer-events:none`, reduced-motion respecté) monté dans `AppShell` tant
+que la corruption est embrassée. Vérifs re-passées vertes (typecheck + lint +
+build + 280/280). **Point signalé au PO** : reconvertir l'écran Réseau en frames
+`HudPanel variant="terminal"` = refonte hors périmètre US-036 → proposé en suivi.
+
+Cadrage fonctionnel = 5 hypothèses + 1 invariant + 9 critères. **H1** moteur de
+reveals extensible (registre pur + prédicat de déclenchement + flag persisté
+append-only « découvert », patron `achievedMilestones` ; corruption = 1ʳᵉ entrée) ·
+**H2** déclenchement au prestige (`prestigeCount ≥ 3`, ajustable ; vérifié après
+renaissance + au `load()`) · **H3** séquence glitch « wahou » (aberration magenta
+`--crate-blackice-chroma-rgb`, scanlines, message menaçant ; reduced-motion
+obligatoire) · **H4** le pacte Embrasser/Refuser persisté (refus non bloquant →
+ré-offert à la renaissance suivante ; embrasser réversible via « Purger » ; états
+`dormant`→`offered`→`embraced`/`refused`) · **H5** récompense v1 pur statut (thème
+corrompu global + 1 cosmétique/titre glitch exclusif, gagné jamais acheté, survit
+à la renaissance ; mécanique dopée = US-037). **Invariant** : pur statut, aucun
+avantage fonctionnel, rien de définitif détruit, gagné jamais acheté, local-first.
+
+**Impact UI significatif détecté** (séquence glitch plein écran + thème corrompu +
+surface du pacte + entrée Garde-robe) → **étape design/maquette Claude Design
+requise** après validation des cadrages.
 
 **Phase A4 « Corruption / Voie sombre » définie le 23/07/2026 — décision #041**
-(session de brainstorming PO ↔ Claude). Cap : rester **local-first**, prouver la
-**rétention long-terme en solo** via le levier « ça ne s'arrête jamais » (**P6**).
-On bâtit un **cadre de reveals extensible** (`game/reveals.ts`) dont le **premier
-reveal = la corruption / le glitch** (grandmapocalypse netrunner). Contenu révélé
-= une **voie sombre à embrasser AU CHOIX** (le pacte). Déclencheur = la
-**renaissance** (après N renaissances, seuil 3ᵉ ajustable). **2 tranches**, chemin
-critique **US-036 → US-037** (voir `docs/roadmap.md` / `project/backlog.md` /
-décision #041).
+(brainstorming PO ↔ Claude). 2 tranches, chemin critique **US-036 → US-037** (voir
+`docs/roadmap.md` / `project/backlog.md`).
 
-**Prochaine action : démarrer US-036 — « L'Éveil de la Corruption »** via le skill
-`nouvelle-us` (branche depuis `develop`, cadrage fonctionnel → STOP validation PO).
-Impact UI significatif attendu → étape design/maquette Claude Design à prévoir.
+_Phase A3 « Identité & Collection » TERMINÉE (5/5 tranches, US-031→035), toutes
+clôturées/mergées/poussées._
 
 ---
 

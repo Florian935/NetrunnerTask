@@ -14,6 +14,9 @@
 /* Thèmes cosmétiques (US-031) — surcharges sémantiques par data-cosmetic-theme.
    Après base.css pour surcharger, mais ne touchent que les alias sémantiques. */
 @import './tokens/themes.css';
+/* Corruption (US-036) — axe distinct data-corruption, APRÈS themes.css pour
+   composer par-dessus le thème équipé (gagne à spécificité égale). */
+@import './tokens/corruption.css';
 
 /* ---- Pont Tailwind ↔ tokens NIGHTWIRE ----
    Expose les alias sémantiques du design system comme utilitaires Tailwind

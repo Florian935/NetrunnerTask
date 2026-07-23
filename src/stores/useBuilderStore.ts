@@ -292,6 +292,12 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => {
     // US-034 : idem pour les caisses des jalons rattrapés — en silence.
     grantMilestoneCrates(newMilestoneIds, true)
 
+    // US-036 : rattrapage du reveal — une save déjà au-delà du seuil (ex. mise à
+    // jour de la feature avec prestigeCount ≥ 3) arme la corruption au chargement.
+    // Le store cosmétique est chargé avant le builder (séquencement AppShell), donc
+    // `discoveredReveals`/`corruption` sont à jour. checkReveals persiste lui-même.
+    useCosmeticsStore.getState().checkReveals({ prestigeCount })
+
     // Persiste si le rattrapage, la résolution ou un jalon a changé quelque chose.
     if (gainCycles > 0 || gainData > 0 || resolvedAcc !== accAtClose || newMilestoneIds.length > 0) {
       void get().persist()
@@ -387,6 +393,8 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => {
     useCosmeticsStore.getState().grantCrate('secured')
     useFeedbackStore.getState().triggerCrateEarned('secured')
     checkAndApplyMilestones()
+    // US-036 : la renaissance peut armer un reveal (la corruption au 3ᵉ prestige).
+    useCosmeticsStore.getState().checkReveals({ prestigeCount: next.prestigeCount })
     void get().persist()
   },
 

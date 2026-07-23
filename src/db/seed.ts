@@ -64,7 +64,7 @@ export async function ensureSeeded(): Promise<void> {
 
   // US-031 : socle cosmétique (départ = STARTER, US-033). US-032 : callsign.
   // US-034 : stock de caisses non ouvertes à zéro (se gagnent en jouant).
-  // US-035 : fragments + pity à zéro.
+  // US-035 : fragments + pity à zéro. US-036 : reveals vierges, corruption dormante.
   const cosmetics = await db.cosmeticsState.get('me')
   if (!cosmetics) {
     await db.cosmeticsState.add({
@@ -75,6 +75,9 @@ export async function ensureSeeded(): Promise<void> {
       crates: { standard: 0, secured: 0, blackice: 0 },
       fragments: 0,
       pity: 0,
+      discoveredReveals: [],
+      corruption: 'dormant',
+      corruptionArmedAt: null,
     })
   }
 }

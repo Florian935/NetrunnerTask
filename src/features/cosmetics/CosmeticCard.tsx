@@ -4,6 +4,7 @@ import { Button, Card, Icon } from '../../components/ui'
 import type { Cosmetic } from '../../game/cosmetics'
 import { CosmeticPreview } from './previews'
 import { CRATE_ACCENT, CRATE_ACCENT_RGB } from './crateStyle'
+import { COR_COLOR, COR_RGB } from '../corruption/corruptionStyle'
 import { FRAGMENT_COLOR, FRAGMENT_RGB, FragmentAmount } from './Fragment'
 import { RarityBadge } from './RarityBadge'
 import { RARITY_FILL, rarityColor, rarityGlow, rarityRgb } from './rarityStyle'
@@ -52,7 +53,13 @@ export function CosmeticCard({ item, state, hint, onEquip, forgeCost, fragments,
   const legend = item.rarity === 'legendary'
   const active = !locked && (equipped || hover)
   const rgb = rarityRgb(item.rarity)
+  // Source spéciale (US-034 caisse / US-036 corruption) : accent + indice dédiés.
   const fromCrate = item.source === 'crate'
+  const fromCorruption = item.source === 'corruption'
+  const hasSource = fromCrate || fromCorruption
+  const srcColor = fromCorruption ? COR_COLOR : CRATE_ACCENT
+  const srcRgb = fromCorruption ? COR_RGB : CRATE_ACCENT_RGB
+  const srcIcon = fromCorruption ? 'skull' : 'package'
   const afford = (fragments ?? 0) >= (forgeCost ?? Number.POSITIVE_INFINITY)
   const missing = Math.max(0, (forgeCost ?? 0) - (fragments ?? 0))
 
@@ -82,7 +89,7 @@ export function CosmeticCard({ item, state, hint, onEquip, forgeCost, fragments,
           </span>
         )}
         {locked && (
-          <span style={{ display: 'inline-flex', color: fromCrate ? CRATE_ACCENT : 'var(--steel-400)' }}>
+          <span style={{ display: 'inline-flex', color: hasSource ? srcColor : 'var(--steel-400)' }}>
             <Icon name="lock" size={15} />
           </span>
         )}
@@ -113,13 +120,13 @@ export function CosmeticCard({ item, state, hint, onEquip, forgeCost, fragments,
                   display: 'grid',
                   placeItems: 'center',
                   clipPath: 'var(--clip-bevel-sm)',
-                  border: `1px solid ${fromCrate ? `rgba(${CRATE_ACCENT_RGB}, 0.6)` : 'var(--border-strong)'}`,
+                  border: `1px solid ${hasSource ? `rgba(${srcRgb}, 0.6)` : 'var(--border-strong)'}`,
                   background: 'color-mix(in srgb, var(--bg-app) 70%, transparent)',
-                  color: fromCrate ? CRATE_ACCENT : 'var(--text-label)',
-                  boxShadow: fromCrate ? `0 0 16px -4px rgba(${CRATE_ACCENT_RGB}, 0.9)` : 'none',
+                  color: hasSource ? srcColor : 'var(--text-label)',
+                  boxShadow: hasSource ? `0 0 16px -4px rgba(${srcRgb}, 0.9)` : 'none',
                 }}
               >
-                <Icon name={fromCrate ? 'package' : 'lock'} size={20} />
+                <Icon name={hasSource ? srcIcon : 'lock'} size={20} />
               </span>
             </span>
             <span
@@ -156,19 +163,19 @@ export function CosmeticCard({ item, state, hint, onEquip, forgeCost, fragments,
             minHeight: 'var(--control-h-md)',
             padding: '7px 10px',
             clipPath: 'var(--clip-bevel-sm)',
-            border: `1px dashed ${fromCrate ? `rgba(${CRATE_ACCENT_RGB}, 0.55)` : 'var(--border-strong)'}`,
-            background: fromCrate ? `rgba(${CRATE_ACCENT_RGB}, 0.06)` : 'var(--bg-inset)',
+            border: `1px dashed ${hasSource ? `rgba(${srcRgb}, 0.55)` : 'var(--border-strong)'}`,
+            background: hasSource ? `rgba(${srcRgb}, 0.06)` : 'var(--bg-inset)',
           }}
         >
-          <span style={{ color: fromCrate ? CRATE_ACCENT : 'var(--amber-500)', display: 'inline-flex', flexShrink: 0 }}>
-            <Icon name={fromCrate ? 'package' : 'key-round'} size={14} />
+          <span style={{ color: hasSource ? srcColor : 'var(--amber-500)', display: 'inline-flex', flexShrink: 0 }}>
+            <Icon name={hasSource ? srcIcon : 'key-round'} size={14} />
           </span>
           <span style={{ minWidth: 0 }}>
             <span style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 'var(--text-2xs)', letterSpacing: '0.2em', color: 'var(--text-muted)' }}>
-              {fromCrate ? t('cosmetics.foundInCrate') : t('cosmetics.unlockedBy')}
+              {fromCrate ? t('cosmetics.foundInCrate') : fromCorruption ? t('corruption.foundLabel') : t('cosmetics.unlockedBy')}
             </span>
-            <span style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 'var(--text-xs)', letterSpacing: '0.04em', color: fromCrate ? CRATE_ACCENT : 'var(--text-label)', marginTop: 2, lineHeight: 1.25 }}>
-              {fromCrate ? t('cosmetics.foundInCrateValue') : hint}
+            <span style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 'var(--text-xs)', letterSpacing: '0.04em', color: hasSource ? srcColor : 'var(--text-label)', marginTop: 2, lineHeight: 1.25 }}>
+              {fromCrate ? t('cosmetics.foundInCrateValue') : fromCorruption ? t('corruption.foundValue') : hint}
             </span>
           </span>
         </div>

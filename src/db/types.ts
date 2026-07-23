@@ -126,6 +126,16 @@ export interface Faction {
   reputation: number
 }
 
+/**
+ * Cycle de vie de la corruption (US-036, Phase A4) — le pacte de la voie sombre.
+ * `dormant` : jamais déclenchée. `offered` : le glitch est armé, le pacte attend
+ * un choix. `refused` : refusée (l'offre se re-présente à la prochaine
+ * renaissance). `embraced` : embrassée, thème corrompu **actif**. `purged` :
+ * embrassée puis purgée — look propre, mais ré-embrassable à volonté (le titre
+ * glitch gagné reste possédé). Voir `game/reveals.ts` + `useCosmeticsStore`.
+ */
+export type CorruptionState = 'dormant' | 'offered' | 'refused' | 'embraced' | 'purged'
+
 /** État de progression global — enregistrement unique (singleton, clé fixe `'me'`). */
 export interface Player {
   id: 'me'
@@ -237,4 +247,23 @@ export interface CosmeticsState {
    * légendaire (voir `game/crates.ts`). `0` au départ ; rétro-rempli v21.
    */
   pity: number
+  /**
+   * Ledger **append-only** des reveals déjà dévoilés (US-036, `id` de
+   * `game/reveals.ts`). Générique et extensible : marque qu'un reveal a été
+   * surfacé au moins une fois (empêche le re-déclenchement de la séquence).
+   * `[]` au départ ; rétro-rempli v22. Survit à la renaissance (identité).
+   */
+  discoveredReveals: string[]
+  /**
+   * État du pacte de corruption (US-036). `'dormant'` au départ ; rétro-rempli
+   * v22. Survit à la renaissance (le pacte engage le joueur au-delà d'un reset).
+   */
+  corruption: CorruptionState
+  /**
+   * `prestigeCount` au dernier armement de la corruption (US-036) — borne la
+   * **ré-offre** : après un refus, l'offre ne se re-présente qu'à une **nouvelle**
+   * renaissance (`prestigeCount > corruptionArmedAt`). `null` tant que jamais
+   * armée ; rétro-rempli v22.
+   */
+  corruptionArmedAt: number | null
 }

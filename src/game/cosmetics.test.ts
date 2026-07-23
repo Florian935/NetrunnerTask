@@ -3,6 +3,7 @@ import {
   COSMETICS,
   COSMETIC_BY_ID,
   cosmeticsByType,
+  corruptionCosmetics,
   crateCosmetics,
   DEFAULT_COSMETICS,
   equip,
@@ -71,6 +72,27 @@ describe('pool exclusif caisses (US-034)', () => {
   it('couvre chaque cran de rareté (≥ 1 item → tirage toujours possible)', () => {
     const byRarity = new Set(crateCosmetics().map((c) => c.rarity))
     for (const r of RARITY_ORDER) expect(byRarity.has(r)).toBe(true)
+  })
+})
+
+describe('récompense corruption (US-036)', () => {
+  it('corruptionCosmetics() ne renvoie que des source:"corruption"', () => {
+    const pool = corruptionCosmetics()
+    expect(pool.length).toBeGreaterThanOrEqual(1)
+    expect(pool.every((c) => c.source === 'corruption')).toBe(true)
+  })
+
+  it('est disjointe du départ, des caisses et des récompenses de jalons', () => {
+    const rewards = new Set(
+      MILESTONE_DEFS.map((m) => m.reward).filter((r): r is string => r !== undefined),
+    )
+    const crate = new Set(crateCosmetics().map((c) => c.id))
+    for (const c of corruptionCosmetics()) {
+      expect(STARTER_COSMETICS.includes(c.id)).toBe(false)
+      expect(crate.has(c.id)).toBe(false)
+      expect(rewards.has(c.id)).toBe(false)
+      expect(isCrateExclusive(c.id)).toBe(false)
+    }
   })
 })
 

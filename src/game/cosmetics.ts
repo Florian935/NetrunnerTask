@@ -42,11 +42,13 @@ export interface Cosmetic {
    */
   icon?: string
   /**
-   * Voie d'acquisition (US-034). Absent = **déterministe** (départ ou récompense
-   * de jalon, US-033). `'crate'` = **exclusif aux caisses** : ne tombe jamais de
-   * la voie déterministe, uniquement du tirage d'une caisse (voir `game/crates.ts`).
+   * Voie d'acquisition. Absent = **déterministe** (départ ou récompense de jalon,
+   * US-033). `'crate'` = **exclusif aux caisses** (US-034 : uniquement le tirage
+   * d'une caisse). `'corruption'` = **débloqué en embrassant la corruption**
+   * (US-036 : le reveal de la voie sombre — voir `game/reveals.ts`). Un cosmétique
+   * à `source` défini ne tombe jamais de la voie déterministe (jalons).
    */
-  source?: 'crate'
+  source?: 'crate' | 'corruption'
 }
 
 /**
@@ -94,6 +96,12 @@ export const COSMETICS: readonly Cosmetic[] = [
   // -- légendaire --
   { id: 'crate-obsidian', type: 'theme', rarity: 'legendary', source: 'crate' },
   { id: 'crate-voidsurge', type: 'banner', rarity: 'legendary', icon: 'atom', source: 'crate' },
+
+  // === Récompense EXCLUSIVE de la corruption (US-036, `source: 'corruption'`) ===
+  // Titre glitch débloqué en **embrassant la corruption** (le pacte du reveal de
+  // la voie sombre). Rareté légendaire (pas de 6ᵉ cran) ; c'est la `source` qui
+  // porte l'identité magenta/glitch de la carte (comme le pool caisses).
+  { id: 'corrupt-glitch', type: 'title', rarity: 'legendary', source: 'corruption' },
 ] as const
 
 /** Index du catalogue par `id`. */
@@ -158,6 +166,11 @@ export function crateCosmetics(): Cosmetic[] {
 /** Ce cosmétique n'est-il obtenable que par une caisse (US-034) ? */
 export function isCrateExclusive(id: string): boolean {
   return COSMETIC_BY_ID[id]?.source === 'crate'
+}
+
+/** Cosmétiques débloqués en **embrassant la corruption** (US-036, `source: 'corruption'`). */
+export function corruptionCosmetics(): Cosmetic[] {
+  return COSMETICS.filter((c) => c.source === 'corruption')
 }
 
 /** Le joueur possède-t-il ce cosmétique ? */
