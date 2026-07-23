@@ -15,6 +15,7 @@ import { CosmeticCard, type CosmeticCardState } from './CosmeticCard'
 import { CratesPanel } from './CratesPanel'
 import { CrateOpeningModal } from './CrateOpeningModal'
 import { ForgePanel } from './ForgePanel'
+import { CorruptionControl } from '../corruption'
 
 /** Icône de section + largeur mini de carte par type. */
 const TYPE_META: Record<CosmeticType, { icon: string; min: number }> = {
@@ -131,6 +132,12 @@ export function WardrobeView() {
 
       {/* Forge (US-035) : dépenser des fragments pour un cosmétique choisi */}
       <ForgePanel owned={owned} fragments={fragments} onForge={forge} />
+
+      {/* Contrôle de corruption (US-036) : Purger / Ré-embrasser — s'auto-masque
+          tant que la corruption n'a jamais été embrassée. */}
+      <div style={{ marginBottom: 30 }}>
+        <CorruptionControl />
+      </div>
 
       {COSMETIC_TYPES.map((type) => {
         const items = visibleOf(type)

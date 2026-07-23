@@ -332,7 +332,46 @@
       "crate-nemesis": { "name": "Némésis", "sub": "avatar · contamination" },
       "crate-omega": { "name": "« Oméga »", "sub": "titre · terminal", "text": "OMÉGA" },
       "crate-obsidian": { "name": "Obsidienne", "sub": "thème · exclusif caisse" },
-      "crate-voidsurge": { "name": "Onde du Vide", "sub": "bannière · singularité" }
+      "crate-voidsurge": { "name": "Onde du Vide", "sub": "bannière · singularité" },
+      "corrupt-glitch": { "name": "« Corrompu »", "sub": "titre · corruption", "text": "CORROMPU" }
+    }
+  },
+  "corruption": {
+    "foundLabel": "OBTENU EN",
+    "foundValue": "EMBRASSANT LA CORRUPTION",
+    "intrusion": { "corrupted": "SIGNAL CORROMPU — INTRUSION", "active": "CORRUPTION ACTIVE", "purged": "SIGNAL PURGÉ" },
+    "glitch": { "lossOfControl": "PERTE DE CONTRÔLE", "injection": "injection de signal étranger" },
+    "source": "SOURCE INCONNUE",
+    "entity": "LE_GLITCH",
+    "hailTitle": "TU CROYAIS AVOIR TOUT VU.",
+    "hail1": "> à force de renaître, le Réseau s'est fissuré.",
+    "hail2": "> quelque chose s'est glissé dans la faille.",
+    "hail3": "> ce quelque chose, c'est moi.",
+    "offerTitle": "EMBRASSE LA VOIE SOMBRE",
+    "offerSub": "le Réseau t'obéira — mais il ne sera plus jamais le même.",
+    "embrace": "EMBRASSER",
+    "embraceSub": "rejoins la corruption",
+    "refuse": "REFUSER",
+    "refuseSub": "purge le signal",
+    "irreversible": "CE PACTE EST IRRÉVERSIBLE — EN APPARENCE",
+    "acceptedTitle": "CORRUPTION ACCEPTÉE",
+    "acceptedBody": "Le Réseau t'obéit désormais. Le thème corrompu et le titre « Corrompu » sont débloqués. Rien ne sera plus jamais comme avant.",
+    "refusedTitle": "SIGNAL PURGÉ",
+    "refusedBody": "Tu as tenu bon. La faille se referme… pour l'instant. Le glitch reviendra.",
+    "continue": "CONTINUER",
+    "profileLabel": "PROFIL CORROMPU",
+    "sourceBadge": "CORRUPTION",
+    "control": {
+      "title": "ÉTAT DU RÉSEAU",
+      "current": "ÉTAT COURANT",
+      "corrupted": "CORROMPU",
+      "purged": "PURGÉ",
+      "corruptedDesc": "Le glitch imprègne le Réseau. Thème corrompu actif, titre « Corrompu » porté.",
+      "purgedDesc": "Le signal a été purgé. Le Réseau tourne proprement — mais le pacte reste ouvert.",
+      "purge": "PURGER LE RÉSEAU",
+      "reembrace": "RÉ-EMBRASSER LA CORRUPTION",
+      "purgeHint": "RÉVERSIBLE — TU PEUX RÉ-EMBRASSER À TOUT MOMENT",
+      "reembraceHint": "RÉ-EMBRASSER RÉ-ACTIVE LE THÈME ET LE TITRE"
     }
   },
   "dashboard": {

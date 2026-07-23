@@ -15,7 +15,13 @@ import {
   type CrateQuality,
 } from '../game/crates'
 import { DEFAULT_CALLSIGN, normalizeCallsign } from '../game/profile'
+import { newlyTriggeredReveals, type RevealContext } from '../game/reveals'
 import { applyCosmeticTheme, mirrorCosmeticTheme } from '../features/cosmetics/theme'
+import { applyCorruption, mirrorCorruption } from '../features/corruption/corruptionTheme'
+import type { CorruptionState } from '../db/types'
+
+/** `id` du titre glitch débloqué en embrassant la corruption (US-036). */
+const CORRUPTION_REWARD_ID = 'corrupt-glitch'
 
 /** Stock de caisses initial (aucune) — miroir du seed / de la migration v20. */
 const DEFAULT_CRATES: Record<CrateQuality, number> = {
@@ -41,6 +47,12 @@ interface CosmeticsStoreState extends CosmeticsCore {
   fragments: number
   /** Compteur de pity (US-035) — ouvertures depuis le dernier légendaire. */
   pity: number
+  /** Ledger append-only des reveals dévoilés (US-036, `game/reveals.ts`). */
+  discoveredReveals: string[]
+  /** État du pacte de corruption (US-036). */
+  corruption: CorruptionState
+  /** `prestigeCount` au dernier armement de la corruption (US-036) ; borne la ré-offre. */
+  corruptionArmedAt: number | null
   loaded: boolean
   load: () => Promise<void>
   /** Équipe le cosmétique `id` (no-op si inconnu/non possédé/déjà équipé). */
@@ -69,13 +81,37 @@ interface CosmeticsStoreState extends CosmeticsCore {
    * inconnu, ou solde insuffisant.
    */
   forge: (id: string) => boolean
+  /**
+   * Évalue les reveals (US-036) contre `ctx` (état de jeu, ex. `prestigeCount`).
+   * Arme la corruption (`offered`) si nouvellement déclenchée depuis `dormant`,
+   * **ou** la ré-offre depuis `refused` à une nouvelle renaissance. Appelé par le
+   * store builder après une renaissance et au `load()`. Persiste si changement.
+   */
+  checkReveals: (ctx: RevealContext) => void
+  /** Embrasse la corruption (US-036) : `embraced` + thème corrompu + titre glitch. */
+  embraceCorruption: () => void
+  /** Refuse la corruption (US-036) : `refused` (l'offre reviendra à la renaissance suivante). */
+  refuseCorruption: () => void
+  /** Purge la corruption (US-036) : `purged` — look propre, titre conservé, ré-embrassable. */
+  purgeCorruption: () => void
 }
 
 export const useCosmeticsStore = create<CosmeticsStoreState>((set, get) => {
-  /** Persiste l'état courant (owned + equipped + callsign + crates + US-035) en base. */
+  /** Persiste l'état courant (owned + equipped + callsign + crates + US-035/036) en base. */
   function persist(): void {
     const { owned, equipped, callsign, crates, fragments, pity } = get()
-    void cosmeticsRepo.save({ owned, equipped, callsign, crates, fragments, pity })
+    const { discoveredReveals, corruption, corruptionArmedAt } = get()
+    void cosmeticsRepo.save({
+      owned,
+      equipped,
+      callsign,
+      crates,
+      fragments,
+      pity,
+      discoveredReveals,
+      corruption,
+      corruptionArmedAt,
+    })
   }
 
   return {
@@ -85,6 +121,9 @@ export const useCosmeticsStore = create<CosmeticsStoreState>((set, get) => {
     crates: { ...DEFAULT_CRATES },
     fragments: 0,
     pity: 0,
+    discoveredReveals: [],
+    corruption: 'dormant',
+    corruptionArmedAt: null,
     loaded: false,
 
     load: async () => {
@@ -95,9 +134,27 @@ export const useCosmeticsStore = create<CosmeticsStoreState>((set, get) => {
       const crates = state?.crates ?? { ...DEFAULT_CRATES }
       const fragments = state?.fragments ?? 0
       const pity = state?.pity ?? 0
-      set({ owned, equipped, callsign, crates, fragments, pity, loaded: true })
+      const discoveredReveals = state?.discoveredReveals ?? []
+      const corruption = state?.corruption ?? 'dormant'
+      const corruptionArmedAt = state?.corruptionArmedAt ?? null
+      set({
+        owned,
+        equipped,
+        callsign,
+        crates,
+        fragments,
+        pity,
+        discoveredReveals,
+        corruption,
+        corruptionArmedAt,
+        loaded: true,
+      })
       applyCosmeticTheme(equipped.theme)
       mirrorCosmeticTheme(equipped.theme)
+      // US-036 : le thème corrompu est actif tant que la corruption est embrassée.
+      const corrupted = corruption === 'embraced'
+      applyCorruption(corrupted)
+      mirrorCorruption(corrupted)
     },
 
     equip: (id) => {
@@ -159,6 +216,52 @@ export const useCosmeticsStore = create<CosmeticsStoreState>((set, get) => {
       get().grant([id]) // débloque + persiste
       persist() // garantit l'écriture du solde de fragments
       return true
+    },
+
+    checkReveals: (ctx) => {
+      const { discoveredReveals, corruption, corruptionArmedAt } = get()
+      const fresh = newlyTriggeredReveals(discoveredReveals, ctx)
+
+      if (fresh.includes('corruption') && corruption === 'dormant') {
+        // 1er dévoilement : arme le pacte + inscrit au ledger (empêche la reprise).
+        set({
+          corruption: 'offered',
+          corruptionArmedAt: ctx.prestigeCount,
+          discoveredReveals: [...discoveredReveals, 'corruption'],
+        })
+        persist()
+        return
+      }
+
+      // Ré-offre (H4) : après un refus, l'offre revient à une NOUVELLE renaissance.
+      if (corruption === 'refused' && ctx.prestigeCount > (corruptionArmedAt ?? 0)) {
+        set({ corruption: 'offered', corruptionArmedAt: ctx.prestigeCount })
+        persist()
+      }
+    },
+
+    embraceCorruption: () => {
+      const { corruption } = get()
+      if (corruption !== 'offered' && corruption !== 'purged') return // no-op
+      set({ corruption: 'embraced' })
+      applyCorruption(true)
+      mirrorCorruption(true)
+      get().grant([CORRUPTION_REWARD_ID]) // titre glitch (idempotent, gardé à vie)
+      persist()
+    },
+
+    refuseCorruption: () => {
+      if (get().corruption !== 'offered') return // no-op
+      set({ corruption: 'refused' })
+      persist()
+    },
+
+    purgeCorruption: () => {
+      if (get().corruption !== 'embraced') return // no-op
+      set({ corruption: 'purged' })
+      applyCorruption(false) // look propre — le titre glitch reste possédé (P8)
+      mirrorCorruption(false)
+      persist()
     },
   }
 })

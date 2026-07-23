@@ -332,7 +332,46 @@
       "crate-nemesis": { "name": "Nemesis", "sub": "avatar · contamination" },
       "crate-omega": { "name": "\"Omega\"", "sub": "title · terminal", "text": "OMEGA" },
       "crate-obsidian": { "name": "Obsidian", "sub": "theme · crate-exclusive" },
-      "crate-voidsurge": { "name": "Void Surge", "sub": "banner · singularity" }
+      "crate-voidsurge": { "name": "Void Surge", "sub": "banner · singularity" },
+      "corrupt-glitch": { "name": "“Corrupted”", "sub": "title · corruption", "text": "CORRUPTED" }
+    }
+  },
+  "corruption": {
+    "foundLabel": "OBTAINED BY",
+    "foundValue": "EMBRACING THE CORRUPTION",
+    "intrusion": { "corrupted": "SIGNAL CORRUPTED — INTRUSION", "active": "CORRUPTION ACTIVE", "purged": "SIGNAL PURGED" },
+    "glitch": { "lossOfControl": "LOSS OF CONTROL", "injection": "injecting foreign signal" },
+    "source": "UNKNOWN SOURCE",
+    "entity": "THE_GLITCH",
+    "hailTitle": "YOU THOUGHT YOU'D SEEN IT ALL.",
+    "hail1": "> reborn again and again, the Network cracked.",
+    "hail2": "> something slipped through the breach.",
+    "hail3": "> that something is me.",
+    "offerTitle": "EMBRACE THE DARK PATH",
+    "offerSub": "the Network will obey you — but it will never be the same.",
+    "embrace": "EMBRACE",
+    "embraceSub": "join the corruption",
+    "refuse": "REFUSE",
+    "refuseSub": "purge the signal",
+    "irreversible": "THIS PACT IS IRREVERSIBLE — SEEMINGLY",
+    "acceptedTitle": "CORRUPTION ACCEPTED",
+    "acceptedBody": "The Network obeys you now. The corrupted theme and the “Corrupted” title are unlocked. Nothing will ever be the same.",
+    "refusedTitle": "SIGNAL PURGED",
+    "refusedBody": "You held firm. The breach seals… for now. The glitch will return.",
+    "continue": "CONTINUE",
+    "profileLabel": "CORRUPTED PROFILE",
+    "sourceBadge": "CORRUPTION",
+    "control": {
+      "title": "NETWORK STATE",
+      "current": "CURRENT STATE",
+      "corrupted": "CORRUPTED",
+      "purged": "PURGED",
+      "corruptedDesc": "The glitch pervades the Network. Corrupted theme active, “Corrupted” title worn.",
+      "purgedDesc": "The signal has been purged. The Network runs clean — but the pact stays open.",
+      "purge": "PURGE THE NETWORK",
+      "reembrace": "RE-EMBRACE THE CORRUPTION",
+      "purgeHint": "REVERSIBLE — YOU CAN RE-EMBRACE ANY TIME",
+      "reembraceHint": "RE-EMBRACING RE-ACTIVATES THE THEME AND TITLE"
     }
   },
   "dashboard": {

@@ -1185,3 +1185,44 @@ tranchés dans la session :
 le cadre de reveals resservira, et un jeu solo qui « ne s'arrête jamais » est le
 meilleur argument avant d'investir dans le connecté. Prochaine étape : démarrer
 **US-036** via le skill `nouvelle-us`.
+
+### 042 — L'Éveil de la Corruption (US-036, Phase A4, 23/07/2026)
+
+1ʳᵉ tranche de la Phase A4 (#041) : le **moteur de reveals** + son 1ᵉʳ reveal, la
+**corruption**. Livre le choc + le cadre + le choix ; la mécanique de la voie
+sombre = US-037.
+
+- **Moteur de reveals** (`game/reveals.ts`, pur, **déterministe, zéro RNG**) :
+  registre `REVEALS` à prédicat de déclenchement + `newlyTriggeredReveals(
+  discovered, ctx)` ; `CORRUPTION_PRESTIGE_THRESHOLD = 3` (ajustable). **Testé 6/6.**
+  Ledger append-only `discoveredReveals` (patron `achievedMilestones`).
+- **Déclenchement** : `useBuilderStore` appelle `checkReveals({ prestigeCount })`
+  **après `prestige()`** et **au `load()`** (rattrapage : une save `prestigeCount
+  ≥ 3` arme la corruption à la 1ʳᵉ ouverture post-mise-à-jour).
+- **Pacte (5 états)** : `dormant → offered → refused | embraced`, `embraced ⇄
+  purged`. **Refuser** n'est jamais bloquant (ré-offert à la renaissance suivante
+  via `corruptionArmedAt`) ; **embrasser** est réversible (`purgeCorruption`, le
+  titre gagné reste possédé — P8). Actions sur `useCosmeticsStore`.
+- **Persistance** : `discoveredReveals` + `corruption` + `corruptionArmedAt` sur
+  **`CosmeticsState`** (singleton d'identité, **survit à la renaissance**) →
+  **migration Dexie v22** (rétro-remplissage `[]`/`'dormant'`/`null`).
+- **Thème corrompu = axe CSS global `data-corruption`** (distinct de
+  `data-cosmetic-theme`, composé par-dessus) : `corruptionTheme.ts` (calque de
+  `theme.ts`) + `theme/tokens/corruption.css` (re-skin magenta « Chrome + fonds »)
+  + `bootCorruption()` anti-FOUC. **Décision : pas d'accent par composant.**
+- **Pas de 6ᵉ rareté** : le titre glitch **`corrupt-glitch`** est `rarity:
+  'legendary'` + **`source: 'corruption'`** ; l'identité magenta/glitch est portée
+  par la source (patron « Trouvé en caisse » d'US-034). Non forgeable.
+- **UI** (`features/corruption/`) : primitives `GlitchText`/`Interference`/
+  `GlitchMark`, `PactButton`, **`CorruptionRevealOverlay`** (glitch→hail→pacte→issue,
+  **reduced-motion** = saut au pacte statique), **`CorruptionRevealHost`** (AppShell),
+  **`CorruptionControl`** (Purger/Ré-embrasser, Garde-robe). Keyframes sous garde
+  `prefers-reduced-motion`.
+- **Boucle de recette — 2 améliorations d'immersion (PO)** : (1) **profil corrompu
+  bespoke** (`RunnerIdCard` : titre `GlitchText`, scan, bannière/label magenta,
+  puce source) ; (2) **`CorruptionAmbient`** — overlay plein écran (scan magenta +
+  grain + scanlines sur tout le fond) tant que la corruption est embrassée. Point
+  signalé : reconvertir l'écran Réseau en frames `HudPanel` terminal = hors
+  périmètre, proposé en suivi.
+- Vérifs : typecheck + lint + build/PWA + **tests 280/280** (+8). **Recette 9/9
+  PO, validée à 100 %** le 23/07/2026. Maquette `corruption` non versionnée (#007).

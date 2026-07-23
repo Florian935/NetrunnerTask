@@ -435,6 +435,37 @@ export class NetrunnerDB extends Dexie {
             if (c.pity === undefined) c.pity = 0
           }),
       )
+    // v22 (US-036) : moteur de reveals + pacte de corruption. Trois champs sur le
+    // singleton cosmétique → schéma v21 recopié + rétro-remplissage (patron des
+    // migrations de champ v11→v21). Aucune reconciliation de `owned` (le titre
+    // glitch est du contenu neuf qu'aucune save ne possède). Une sauvegarde déjà
+    // à `prestigeCount ≥ 3` verra la corruption s'armer au 1ᵉʳ `load()` (rattrapage
+    // voulu — le joueur avancé découvre la corruption à la mise à jour).
+    this.version(22)
+      .stores({
+        contracts: 'id, factionId, status, dueDate, createdAt',
+        factions: 'id, name',
+        player: 'id',
+        builderState: 'id',
+        cosmeticsState: 'id',
+        demoKV: 'key',
+      })
+      .upgrade((tx) =>
+        tx
+          .table('cosmeticsState')
+          .toCollection()
+          .modify(
+            (c: {
+              discoveredReveals?: string[]
+              corruption?: string
+              corruptionArmedAt?: number | null
+            }) => {
+              if (c.discoveredReveals === undefined) c.discoveredReveals = []
+              if (c.corruption === undefined) c.corruption = 'dormant'
+              if (c.corruptionArmedAt === undefined) c.corruptionArmedAt = null
+            },
+          ),
+      )
   }
 }
 

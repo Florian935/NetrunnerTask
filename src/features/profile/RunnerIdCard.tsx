@@ -1,6 +1,9 @@
 import { useTranslation } from 'react-i18next'
 import { Card, Icon } from '../../components/ui'
 import type { Cosmetic } from '../../game/cosmetics'
+import { GlitchText, Interference } from '../corruption'
+import { COR_COLOR, COR_RGB } from '../corruption/corruptionStyle'
+import { useCosmeticsStore } from '../../stores/useCosmeticsStore'
 import { RarityBadge } from '../cosmetics/RarityBadge'
 import { RARITY_GLOW, rarityColor, rarityRgb } from '../cosmetics/rarityStyle'
 import { CallsignEditor } from './CallsignEditor'
@@ -67,7 +70,11 @@ export interface RunnerIdCardProps {
  */
 export function RunnerIdCard({ callsign, onSaveCallsign, avatar, banner, title }: RunnerIdCardProps) {
   const { t } = useTranslation()
-  const bRgb = rarityRgb(banner.rarity)
+  // US-036 : profil corrompu — bannière/scan magenta + titre en glitch quand la
+  // corruption est embrassée (ou que le titre équipé est le titre glitch).
+  const corrupted = useCosmeticsStore((s) => s.corruption === 'embraced')
+  const glitchTitle = corrupted || title.source === 'corruption'
+  const bRgb = corrupted ? COR_RGB : rarityRgb(banner.rarity)
   const bGlow = RARITY_GLOW[banner.rarity]
   const titleColor = rarityColor(title.rarity)
   const tRgb = rarityRgb(title.rarity)
@@ -112,6 +119,8 @@ export function RunnerIdCard({ callsign, onSaveCallsign, avatar, banner, title }
           style={{ position: 'absolute', top: 0, bottom: 0, width: 90, background: 'linear-gradient(90deg, transparent, rgba(255,255,255,.06), transparent)' }}
         />
         <span className="nw-scanlines" aria-hidden style={{ position: 'absolute', inset: 0 }} />
+        {/* US-036 : interférence glitch sur la bannière quand corrompu (scan magenta). */}
+        {corrupted && <Interference level={0.35} animated blocks={false} />}
         {/* Étiquette bannière équipée */}
         <span
           style={{
@@ -124,14 +133,23 @@ export function RunnerIdCard({ callsign, onSaveCallsign, avatar, banner, title }
             fontFamily: 'var(--font-mono)',
             fontSize: 'var(--text-2xs)',
             letterSpacing: '0.22em',
-            color: 'var(--text-label)',
             padding: '5px 10px',
             background: 'color-mix(in srgb, var(--bg-app) 60%, transparent)',
-            border: '1px solid var(--border)',
+            border: `1px solid ${corrupted ? `rgba(${COR_RGB}, 0.5)` : 'var(--border)'}`,
             clipPath: 'var(--clip-bevel-sm)',
+            color: corrupted ? COR_COLOR : 'var(--text-label)',
+            zIndex: 3,
           }}
         >
-          <Icon name="flag" size={12} /> {t('profile.bannerLabel', { name: t(`cosmetics.items.${banner.id}.name`) })}
+          {corrupted ? (
+            <>
+              <Icon name="skull" size={12} /> {t('corruption.profileLabel')}
+            </>
+          ) : (
+            <>
+              <Icon name="flag" size={12} /> {t('profile.bannerLabel', { name: t(`cosmetics.items.${banner.id}.name`) })}
+            </>
+          )}
         </span>
         {/* Dégradé vers le corps pour ancrer l'avatar */}
         <span aria-hidden style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 90, background: 'linear-gradient(to top, var(--bg-panel), transparent)' }} />
@@ -166,21 +184,46 @@ export function RunnerIdCard({ callsign, onSaveCallsign, avatar, banner, title }
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-2xs)', letterSpacing: '0.24em', color: 'var(--text-muted)', marginBottom: 5 }}>
                 {t('profile.titleLabel')}
               </div>
-              <div
+              {glitchTitle ? (
+                <GlitchText text={`« ${t(`cosmetics.items.${title.id}.text`)} »`} size={30} letterSpacing="0.1em" />
+              ) : (
+                <div
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontWeight: 700,
+                    fontSize: '1.9rem',
+                    letterSpacing: '0.12em',
+                    color: titleColor,
+                    textShadow: tGlow ? `0 0 16px rgba(${tRgb}, ${tGlow * 0.8}), 0 0 4px rgba(${tRgb}, 0.6)` : 'none',
+                    lineHeight: 1,
+                  }}
+                >
+                  « {t(`cosmetics.items.${title.id}.text`)} »
+                </div>
+              )}
+            </div>
+            {title.source === 'corruption' ? (
+              <span
                 style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  padding: '3px 9px',
+                  clipPath: 'var(--clip-bevel-sm)',
+                  border: `1px solid rgba(${COR_RGB}, 0.65)`,
+                  background: `rgba(${COR_RGB}, 0.12)`,
+                  color: COR_COLOR,
                   fontFamily: 'var(--font-display)',
                   fontWeight: 700,
-                  fontSize: '1.9rem',
-                  letterSpacing: '0.12em',
-                  color: titleColor,
-                  textShadow: tGlow ? `0 0 16px rgba(${tRgb}, ${tGlow * 0.8}), 0 0 4px rgba(${tRgb}, 0.6)` : 'none',
-                  lineHeight: 1,
+                  fontSize: 'var(--text-2xs)',
+                  letterSpacing: '0.16em',
                 }}
               >
-                « {t(`cosmetics.items.${title.id}.text`)} »
-              </div>
-            </div>
-            <RarityBadge rarity={title.rarity} />
+                <Icon name="skull" size={12} /> {t('corruption.sourceBadge')}
+              </span>
+            ) : (
+              <RarityBadge rarity={title.rarity} />
+            )}
           </div>
         </div>
       </div>

@@ -1,0 +1,53 @@
+/* NIGHTWIRE — Corruption theme (US-036, Phase A4).
+   La voie sombre embrassée re-skin le HUD entier. Axe **distinct** du thème
+   cosmétique (`data-cosmetic-theme`) : le store pose `data-corruption="on"` sur
+   <html>, et ce bloc surcharge la couche sémantique (alias de `colors.css`).
+   Importé APRÈS `themes.css` → à spécificité égale (`:root[attr]`), la corruption
+   **gagne** et compose par-dessus le thème équipé.
+
+   Identité : magenta glitch (#ff2d95, aberration `--crate-blackice-chroma-rgb`)
+   sur void quasi-noir. Le glitch ambiant (scanlines emballées, décalage RGB) est
+   porté par le composant `Interference` sur des surfaces ciblées — ici on ne fait
+   que la palette (supportable en continu, non fatigante). */
+
+:root[data-corruption='on'] {
+  --accent: #ff2d95;
+  --accent-hover: #ff5cae;
+  --accent-press: #d61479;
+
+  --bg-app: #0a060a;
+  --bg-panel: #150a12;
+  --bg-surface: #1e0e18;
+  --bg-hover: #2a1322;
+  --bg-inset: #060306;
+
+  --text-primary: #ffe4f1;
+  --text-secondary: #c493ab;
+  --text-muted: #8a6478;
+  --text-label: #d6a8c0;
+
+  --border: #3a2032;
+  --border-strong: #552f47;
+  --border-neon: #ff2d95;
+}
+
+/* Un léger pouls magenta sur le fond de l'app quand la corruption est active —
+   ambiance permanente discrète (désactivé en reduced-motion). */
+:root[data-corruption='on'] body {
+  animation: nw-corruption-ambient 6s ease-in-out infinite;
+}
+@keyframes nw-corruption-ambient {
+  0%,
+  100% {
+    box-shadow: inset 0 0 120px -40px rgba(255, 45, 149, 0.18);
+  }
+  50% {
+    box-shadow: inset 0 0 160px -30px rgba(255, 45, 149, 0.32);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :root[data-corruption='on'] body {
+    animation: none;
+    box-shadow: inset 0 0 120px -40px rgba(255, 45, 149, 0.18);
+  }
+}

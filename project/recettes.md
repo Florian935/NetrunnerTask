@@ -3,6 +3,54 @@
 > Tests de recette par US. Chaque test reprend un critère d'acceptation de l'US.
 > Statuts : `à faire` / `validé` / `échoué`.
 
+## US-036 — L'Éveil de la Corruption (Phase A4)
+
+Recette du 23/07/2026. Critères de `us/US-036-eveil-corruption.md` §1. **Vérifs
+automatiques** : `typecheck` + `lint` (oxlint) + `build`/PWA + tests Vitest
+**280/280** (+8 : `game/reveals` 6, `game/cosmetics` +2). **Vérif live PO**
+(scripts console IndexedDB : injecter `prestigeCount`, réarmer/réinitialiser la
+corruption).
+
+| ID | Critère (action → résultat) | Vérif | Statut | Date |
+|----|------------------------------|-------|--------|------|
+| C1 | `prestigeCount = 2` → **aucune** corruption, app inchangée | `newlyTriggeredReveals` (< seuil, **testé**) + PO live | validé | 23/07/2026 |
+| C2 | 3ᵉ renaissance → **séquence glitch** puis **pacte** (Embrasser / Refuser) | `checkReveals` (arme `offered`) + `CorruptionRevealHost`/`Overlay` + PO live | validé | 23/07/2026 |
+| C3 | Reload avec `prestigeCount ≥ 3` non découvert → séquence (rattrapage) ; après un choix, **plus de re-déclenchement** au reload | `checkReveals` au `load()` builder + ledger `discoveredReveals` + PO live | validé | 23/07/2026 |
+| C4 | **Refuser** → état normal ; **ré-offre** à la renaissance suivante | `refuseCorruption` + ré-offre (`prestigeCount > corruptionArmedAt`) + PO live | validé | 23/07/2026 |
+| C5 | **Embrasser** → thème corrompu global immédiat + titre glitch « Corrompu » possédé (marqué « corruption ») | `embraceCorruption` + `applyCorruption` + `grant` + `CosmeticCard` source + PO live | validé | 23/07/2026 |
+| C6 | Choix + état **survivent** au reload **et** à une renaissance ultérieure | `corruption`/`corruptionArmedAt`/`discoveredReveals` sur `cosmeticsState` (hors `prestige()`) + migration v22 + PO live | validé | 23/07/2026 |
+| C7 | **Purger** (Garde-robe) → look propre **sans** retirer le titre ; ré-embrassable | `purgeCorruption` (`purged`, titre conservé) + `CorruptionControl` + PO live | validé | 23/07/2026 |
+| C8 | **Reduced-motion** → séquence statique lisible, pacte fonctionnel | garde `.nw-cor-anim` + `prefersReducedMotion()` (saut au pacte) + PO live | validé | 23/07/2026 |
+| C9 | Garde-fou : production/arbre/ressources **identiques** qu'on embrasse ou non | corruption = pur statut (aucun appel moteur) + PO live | validé | 23/07/2026 |
+| C10 | Moteur de reveals couvert (seuil, déclenchement, non-répétition, déterminisme) | `reveals.test.ts` (**6**) + `cosmetics.test.ts` (corruption, +2) | validé | 23/07/2026 |
+| C11 | `typecheck` + `lint` + `build`/PWA + `test` (**280/280**) | exécution | validé | 23/07/2026 |
+| — | **Migration Dexie v22** : `discoveredReveals`/`corruption`/`corruptionArmedAt` rétro-remplis (survivent à la renaissance) | `db.ts` v22 | validé | 23/07/2026 |
+| — | Réutilisation DS : `Card`/`Button`/`Icon`, `CosmeticCard` (source `corruption`), `RunnerIdCard`/`ProfileView` ; thème corrompu = axe CSS `data-corruption` (patron `theme.ts`/« Chrome + fonds ») | composants existants | validé | 23/07/2026 |
+
+### Boucle de recette — 2 retours d'immersion PO traités en direct
+
+- **Profil corrompu bespoke** : titre équipé `« CORROMPU »` en `GlitchText`
+  (aberration RGB) + scan `Interference` + bannière/label magenta + puce source
+  « CORRUPTION » (`RunnerIdCard` corruption-aware).
+- **Immersion globale** : nouvel overlay plein écran **`CorruptionAmbient`** (scan
+  magenta + grain + scanlines sur tout le fond de l'app, `pointer-events:none`,
+  reduced-motion respecté) monté dans `AppShell` tant que la corruption est
+  embrassée. Fond de page « scanné » comme la maquette.
+
+### Notes de méthode & écarts (validés PO)
+
+- **Thème corrompu = re-skin global `data-corruption`** (pas d'accent par
+  composant) ; **pas de 6ᵉ rareté** (titre = `legendary` + `source: 'corruption'`,
+  identité portée par la source) ; **profil intégré** au `RunnerIdCard` existant.
+- **Seuil = 3ᵉ renaissance** et **timings** de séquence (1,6 s → 3,2 s) =
+  valeurs par défaut, **ajustables**.
+- **Hors périmètre (proposé en suivi)** : reconvertir l'écran Réseau en frames
+  `HudPanel variant="terminal"` (refonte d'écran) — l'`CorruptionAmbient` global
+  couvre déjà le besoin d'immersion « fenêtres glitchées ».
+
+**Verdict : recette US-036 validée à 100 % (9/9 critères + vérifs annexes), 2
+améliorations d'immersion appliquées en direct, aucun bug ouvert.**
+
 ## US-035 — Pity + fragments anti-doublon (Phase A3)
 
 Recette du 23/07/2026. Critères de `us/US-035-pity-fragments.md` §1. **Vérifs

@@ -13,6 +13,7 @@ import {
   playerRepo,
 } from './db'
 import { bootCosmeticTheme } from './features/cosmetics/theme'
+import { bootCorruption } from './features/corruption/corruptionTheme'
 
 /**
  * Prépare les données locales (factions par défaut + joueur) avant le rendu,
@@ -22,6 +23,8 @@ import { bootCosmeticTheme } from './features/cosmetics/theme'
 async function bootstrap(): Promise<void> {
   // US-031 : applique le thème cosmétique mémorisé avant tout rendu (anti-FOUC).
   bootCosmeticTheme()
+  // US-036 : idem pour l'état de corruption (le HUD corrompu ne doit pas flasher).
+  bootCorruption()
 
   await ensureSeeded()
 
