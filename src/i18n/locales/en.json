@@ -186,11 +186,57 @@
     "contractsCode": "CTR",
     "network": "Network",
     "networkCode": "NET",
+    "wardrobe": "Wardrobe",
+    "wardrobeCode": "WRD",
     "progression": "Progression",
     "inventory": "Inventory",
     "crates": "Crates",
     "profile": "Profile",
     "soon": "soon"
+  },
+  "cosmetics": {
+    "kicker": "NETRUNNER://PROFILE/COSMETICS",
+    "title": "WARDROBE",
+    "subtitle": "Customize your operator's look and your HUD.",
+    "unlocked": "UNLOCKED",
+    "sectionCount_one": "{{count}} ITEM",
+    "sectionCount_other": "{{count}} ITEMS",
+    "equip": "Equip",
+    "equipped": "Equipped",
+    "equippedShort": "EQUIPPED",
+    "types": {
+      "theme": "THEMES",
+      "avatar": "AVATARS",
+      "banner": "BANNERS",
+      "title": "TITLES"
+    },
+    "rarity": {
+      "common": "COMMON",
+      "enhanced": "ENHANCED",
+      "rare": "RARE",
+      "epic": "EPIC",
+      "legendary": "LEGENDARY"
+    },
+    "preview": {
+      "bannerRatio": "BANNER · 21:9",
+      "titleTag": "‹ TITLE ›"
+    },
+    "items": {
+      "nightwire": { "name": "Nightwire", "sub": "theme · default" },
+      "cryo": { "name": "Cryo", "sub": "theme · cold" },
+      "ecarlate": { "name": "Scarlet", "sub": "theme · hot" },
+      "avatar-daemon": { "name": "Daemon-01", "sub": "avatar · script" },
+      "avatar-raven": { "name": "Raven", "sub": "avatar · scout" },
+      "avatar-phantom": { "name": "Phantom", "sub": "avatar · stealth" },
+      "avatar-icebreaker": { "name": "ICE-Skull", "sub": "avatar · icebreaker" },
+      "banner-sweep": { "name": "Sweep", "sub": "banner · network" },
+      "banner-surge": { "name": "Surge", "sub": "banner · power" },
+      "banner-apex": { "name": "Apex", "sub": "banner · prestige" },
+      "title-architect": { "name": "\"Architect\"", "sub": "title · builder", "text": "ARCHITECT" },
+      "title-ghost": { "name": "\"Ghost of the Net\"", "sub": "title · stealth", "text": "GHOST OF THE NET" },
+      "title-overdrive": { "name": "\"Overdrive\"", "sub": "title · mastery", "text": "OVERDRIVE" },
+      "title-zeroday": { "name": "\"Zero-Day\"", "sub": "title · mythic", "text": "ZERO-DAY" }
+    }
   },
   "dashboard": {
     "eyebrow": "HUD // BRIEFING",

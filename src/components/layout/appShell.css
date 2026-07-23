@@ -28,7 +28,7 @@
   font-weight: 700;
   font-size: 9px;
   letter-spacing: 0.14em;
-  color: var(--cyan-500);
+  color: var(--accent);
   writing-mode: vertical-rl;
   text-shadow: var(--text-glow-cyan);
 }
@@ -56,12 +56,12 @@
   letter-spacing: 0.06em;
 }
 .nav-item--active {
-  color: var(--cyan-500);
-  background: rgba(0, 240, 255, 0.1);
-  border-color: rgba(0, 240, 255, 0.4);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
   box-shadow:
-    inset 2px 0 0 var(--cyan-500),
-    0 0 14px -6px var(--cyan-500);
+    inset 2px 0 0 var(--accent),
+    0 0 14px -6px var(--accent);
 }
 .nav-item--future {
   height: 36px;
@@ -167,7 +167,7 @@
   }
   .nav-item--active {
     background: none;
-    box-shadow: inset 0 2px 0 var(--cyan-500);
+    box-shadow: inset 0 2px 0 var(--accent);
   }
   /* Trop de destinations pour une barre étroite : on masque les caisses/inventaire. */
   .nav-item--future.nav-hide-mobile {

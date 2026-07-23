@@ -186,11 +186,57 @@
     "contractsCode": "CTR",
     "network": "Réseau",
     "networkCode": "NET",
+    "wardrobe": "Garde-robe",
+    "wardrobeCode": "WRD",
     "progression": "Progression",
     "inventory": "Inventaire",
     "crates": "Caisses",
     "profile": "Profil",
     "soon": "bientôt"
+  },
+  "cosmetics": {
+    "kicker": "NETRUNNER://PROFIL/COSMÉTIQUES",
+    "title": "GARDE-ROBE",
+    "subtitle": "Personnalise l'apparence de ton opérateur et de ton HUD.",
+    "unlocked": "DÉBLOQUÉS",
+    "sectionCount_one": "{{count}} ÉLÉM.",
+    "sectionCount_other": "{{count}} ÉLÉM.",
+    "equip": "Équiper",
+    "equipped": "Équipé",
+    "equippedShort": "ÉQUIPÉ",
+    "types": {
+      "theme": "THÈMES",
+      "avatar": "AVATARS",
+      "banner": "BANNIÈRES",
+      "title": "TITRES"
+    },
+    "rarity": {
+      "common": "COMMUN",
+      "enhanced": "AMÉLIORÉ",
+      "rare": "RARE",
+      "epic": "ÉPIQUE",
+      "legendary": "LÉGENDAIRE"
+    },
+    "preview": {
+      "bannerRatio": "BANNIÈRE · 21:9",
+      "titleTag": "‹ TITRE ›"
+    },
+    "items": {
+      "nightwire": { "name": "Nightwire", "sub": "thème · défaut" },
+      "cryo": { "name": "Cryo", "sub": "thème · froid" },
+      "ecarlate": { "name": "Écarlate", "sub": "thème · chaud" },
+      "avatar-daemon": { "name": "Daemon-01", "sub": "avatar · script" },
+      "avatar-raven": { "name": "Corbeau", "sub": "avatar · éclaireur" },
+      "avatar-phantom": { "name": "Fantôme", "sub": "avatar · furtif" },
+      "avatar-icebreaker": { "name": "Crâne-ICE", "sub": "avatar · brise-glace" },
+      "banner-sweep": { "name": "Balayage", "sub": "bannière · réseau" },
+      "banner-surge": { "name": "Surtension", "sub": "bannière · énergie" },
+      "banner-apex": { "name": "Apex", "sub": "bannière · prestige" },
+      "title-architect": { "name": "« Architecte »", "sub": "titre · builder", "text": "ARCHITECTE" },
+      "title-ghost": { "name": "« Fantôme du Réseau »", "sub": "titre · furtivité", "text": "FANTÔME DU RÉSEAU" },
+      "title-overdrive": { "name": "« Surcadence »", "sub": "titre · maîtrise", "text": "SURCADENCE" },
+      "title-zeroday": { "name": "« Zéro-Jour »", "sub": "titre · mythique", "text": "ZÉRO-JOUR" }
+    }
   },
   "dashboard": {
     "eyebrow": "HUD // BRIEFING",

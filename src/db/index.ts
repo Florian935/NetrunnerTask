@@ -7,6 +7,7 @@ export type {
   BuilderState,
   Contract,
   ContractStatus,
+  CosmeticsState,
   Difficulty,
   Faction,
   Player,
@@ -27,3 +28,4 @@ export type {
 } from './repositories/contracts'
 export { playerRepo } from './repositories/player'
 export { builderRepo } from './repositories/builder'
+export { cosmeticsRepo } from './repositories/cosmetics'

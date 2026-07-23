@@ -1,3 +1,4 @@
+import { DEFAULT_COSMETICS } from '../game/cosmetics'
 import { db } from './db'
 import type { Faction } from './types'
 
@@ -57,6 +58,16 @@ export async function ensureSeeded(): Promise<void> {
       prestigeCount: 0,
       updatedAt: Date.now(),
       achievedMilestones: [],
+    })
+  }
+
+  // US-031 : socle cosmétique. Tout débloqué au départ (H4), équipés = défauts.
+  const cosmetics = await db.cosmeticsState.get('me')
+  if (!cosmetics) {
+    await db.cosmeticsState.add({
+      id: 'me',
+      owned: [...DEFAULT_COSMETICS.owned],
+      equipped: { ...DEFAULT_COSMETICS.equipped },
     })
   }
 }

@@ -17,9 +17,9 @@ body{
 
 h1,h2,h3,h4,h5,h6{font-family:var(--font-display);font-weight:var(--weight-bold);line-height:var(--leading-tight);margin:0}
 
-/* Links */
-a{color:var(--cyan-500);text-decoration:none;transition:color var(--dur-fast) var(--ease-out),text-shadow var(--dur-fast) var(--ease-out)}
-a:hover{color:var(--cyan-400);text-shadow:var(--text-glow-cyan)}
+/* Links — chrome piloté par l'accent sémantique (thème cosmétique, US-031). */
+a{color:var(--accent);text-decoration:none;transition:color var(--dur-fast) var(--ease-out),text-shadow var(--dur-fast) var(--ease-out)}
+a:hover{color:var(--accent-hover);text-shadow:var(--text-glow-cyan)}
 
 ::selection{background:var(--magenta-500);color:var(--void-900)}
 
@@ -50,10 +50,11 @@ a:hover{color:var(--cyan-400);text-shadow:var(--text-glow-cyan)}
   position:relative;
 }
 
-/* L-shaped corner brackets — wrap any positioned element */
+/* L-shaped corner brackets — wrap any positioned element.
+   Couleur pilotée par l'accent sémantique (thème cosmétique, US-031). */
 .nw-brackets::before,.nw-brackets::after{
   content:"";position:absolute;width:14px;height:14px;pointer-events:none;
-  border-color:var(--cyan-500);border-style:solid;
+  border-color:var(--accent);border-style:solid;
 }
 .nw-brackets::before{top:0;left:0;border-width:2px 0 0 2px}
 .nw-brackets::after{bottom:0;right:0;border-width:0 2px 2px 0}

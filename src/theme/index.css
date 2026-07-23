@@ -8,7 +8,11 @@
 @import './tokens/typography.css';
 @import './tokens/spacing.css';
 @import './tokens/effects.css';
+@import './tokens/rarity.css';
 @import './tokens/base.css';
+/* Thèmes cosmétiques (US-031) — surcharges sémantiques par data-cosmetic-theme.
+   Après base.css pour surcharger, mais ne touchent que les alias sémantiques. */
+@import './tokens/themes.css';
 
 /* ---- Pont Tailwind ↔ tokens NIGHTWIRE ----
    Expose les alias sémantiques du design system comme utilitaires Tailwind

@@ -4,7 +4,15 @@ import './theme/fonts'
 import './theme/index.css'
 import './i18n'
 import App from './App'
-import { contractsRepo, ensureSeeded, factionsRepo, playerRepo } from './db'
+import {
+  builderRepo,
+  contractsRepo,
+  cosmeticsRepo,
+  ensureSeeded,
+  factionsRepo,
+  playerRepo,
+} from './db'
+import { bootCosmeticTheme } from './features/cosmetics/theme'
 
 /**
  * Prépare les données locales (factions par défaut + joueur) avant le rendu,
@@ -12,10 +20,19 @@ import { contractsRepo, ensureSeeded, factionsRepo, playerRepo } from './db'
  * la recette de la couche de données en console (temporaire, US-002).
  */
 async function bootstrap(): Promise<void> {
+  // US-031 : applique le thème cosmétique mémorisé avant tout rendu (anti-FOUC).
+  bootCosmeticTheme()
+
   await ensureSeeded()
 
   if (import.meta.env.DEV) {
-    Object.assign(window, { contractsRepo, factionsRepo, playerRepo })
+    Object.assign(window, {
+      contractsRepo,
+      factionsRepo,
+      playerRepo,
+      builderRepo,
+      cosmeticsRepo,
+    })
   }
 
   createRoot(document.getElementById('root')!).render(

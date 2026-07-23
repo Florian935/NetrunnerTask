@@ -26,13 +26,19 @@ const ROUTES = [
     label: 'nav.network',
     end: false,
   },
+  {
+    to: '/wardrobe',
+    icon: 'shirt',
+    code: 'nav.wardrobeCode',
+    label: 'nav.wardrobe',
+    end: false,
+  },
 ] as const
 
 /** Destinations à venir (MVP 2/3), affichées désactivées. `hideMobile` = masquée
  *  sur la barre inférieure étroite. */
 const FUTURE = [
   { icon: 'trending-up', label: 'nav.progression', hideMobile: false },
-  { icon: 'package', label: 'nav.inventory', hideMobile: true },
   { icon: 'box', label: 'nav.crates', hideMobile: true },
 ] as const
 

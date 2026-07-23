@@ -1,6 +1,12 @@
 import Dexie from 'dexie'
 import type { Table } from 'dexie'
-import type { BuilderState, Contract, Faction, Player } from './types'
+import type {
+  BuilderState,
+  Contract,
+  CosmeticsState,
+  Faction,
+  Player,
+} from './types'
 
 /**
  * Table de démonstration héritée d'US-001 (clé/valeur). Conservée uniquement
@@ -21,6 +27,7 @@ export class NetrunnerDB extends Dexie {
   factions!: Table<Faction, string>
   player!: Table<Player, string>
   builderState!: Table<BuilderState, string>
+  cosmeticsState!: Table<CosmeticsState, string>
   demoKV!: Table<DemoKV, string>
 
   constructor() {
@@ -309,6 +316,18 @@ export class NetrunnerDB extends Dexie {
             if (b.achievedMilestones === undefined) b.achievedMilestones = []
           }),
       )
+    // v17 (US-031) : socle cosmétique. **Nouvelle table** singleton
+    // `cosmeticsState` (clé `id`) → schéma v16 recopié + ajout de la table.
+    // Pas de rétro-remplissage de rangée : le singleton est créé (idempotent)
+    // par le seed (même modèle que l'ajout de `builderState` en v10).
+    this.version(17).stores({
+      contracts: 'id, factionId, status, dueDate, createdAt',
+      factions: 'id, name',
+      player: 'id',
+      builderState: 'id',
+      cosmeticsState: 'id',
+      demoKV: 'key',
+    })
   }
 }
 

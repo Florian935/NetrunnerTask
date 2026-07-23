@@ -10,6 +10,7 @@ import { useReminders } from '../features/reminders/useReminders'
 import { RankUpToast } from '../features/reputation/RankUpToast'
 import { ReputationGainToast } from '../features/reputation/ReputationGainToast'
 import { useBuilderStore } from '../stores/useBuilderStore'
+import { useCosmeticsStore } from '../stores/useCosmeticsStore'
 import { useContractsStore } from '../stores/useContractsStore'
 import { useFactionsStore } from '../stores/useFactionsStore'
 import { usePlayerStore } from '../stores/usePlayerStore'
@@ -30,6 +31,7 @@ export function AppShell() {
   const loadFactions = useFactionsStore((s) => s.load)
   const loadPlayer = usePlayerStore((s) => s.load)
   const loadBuilder = useBuilderStore((s) => s.load)
+  const loadCosmetics = useCosmeticsStore((s) => s.load)
   const toasts = useFeedbackStore((s) => s.toasts)
   const dismiss = useFeedbackStore((s) => s.dismiss)
   const pushToast = useFeedbackStore((s) => s.pushToast)
@@ -58,7 +60,9 @@ export function AppShell() {
     void loadContracts().then(() => loadFactions())
     void loadPlayer()
     void loadBuilder()
-  }, [loadContracts, loadFactions, loadPlayer, loadBuilder])
+    // US-031 : charge l'inventaire cosmétique + applique le thème équipé.
+    void loadCosmetics()
+  }, [loadContracts, loadFactions, loadPlayer, loadBuilder, loadCosmetics])
 
   // US-013 : mises perdues détectées au chargement → toasts danger (une fois).
   useEffect(() => {
