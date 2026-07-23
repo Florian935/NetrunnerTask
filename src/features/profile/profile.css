@@ -1,0 +1,34 @@
+/* US-032 — animations de la carte d'ID runner (désactivées en reduced-motion).
+   - nw-sweep : balayage lumineux qui traverse la bannière.
+   - nw-blink : pulsation du point « connecté ». */
+@keyframes nw-sweep {
+  from {
+    transform: translateX(-140%);
+  }
+  to {
+    transform: translateX(1400%);
+  }
+}
+.nw-sweep {
+  animation: nw-sweep 6s linear infinite;
+}
+
+@keyframes nw-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+.nw-blink {
+  animation: nw-blink 2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nw-sweep,
+  .nw-blink {
+    animation: none;
+  }
+}

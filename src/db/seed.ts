@@ -1,4 +1,5 @@
 import { DEFAULT_COSMETICS } from '../game/cosmetics'
+import { DEFAULT_CALLSIGN } from '../game/profile'
 import { db } from './db'
 import type { Faction } from './types'
 
@@ -68,6 +69,7 @@ export async function ensureSeeded(): Promise<void> {
       id: 'me',
       owned: [...DEFAULT_COSMETICS.owned],
       equipped: { ...DEFAULT_COSMETICS.equipped },
+      callsign: DEFAULT_CALLSIGN,
     })
   }
 }
