@@ -1092,3 +1092,43 @@ jouant** (jamais achetées) s'ouvrent via un rituel et lâchent un cosmétique
 - Vérifs : typecheck + lint + build/PWA + **tests 269/269** (+18). Recette
   **8/8 PO, validée à 100 %** le 23/07/2026, aucun bug. Maquette `crates` non
   versionnée (convention #007).
+
+### 040 — Pity + fragments anti-doublon (US-035, Phase A3, 23/07/2026)
+
+5ᵉ et **dernière tranche de la Phase A3** (#035) — approfondit les caisses (#039)
+avec deux filets anti-frustration. **Clôt la Phase A3.**
+
+- **Modèle de tirage révisé** (remplace #039 explicitement) : `openCrate` devient
+  **pur aléatoire** (doublons possibles) et renvoie `{ draw, pity }`. Un cosmétique
+  **déjà possédé** est **converti en fragments** (`FRAGMENT_VALUE`, ~ rareté). La
+  **garantie anti-doublon** ET la **consolation crédits** d'US-034 sont
+  **supprimées** (la couture #3 disparaît : à pool complet, tout tirage est un
+  doublon → fragments). RNG toujours injecté. **Testé 15/15**.
+- **Pity** (H3, filet anti-malchance) : compteur `pity` (persisté) d'ouvertures
+  depuis le dernier légendaire ; à `PITY_CONFIG.threshold` (**30**), la prochaine
+  ouverture **force** un légendaire (garantit la **rareté**, pas l'item),
+  réinitialise ensuite.
+- **Fragments + Forge** (H1/H2) : `fragments` = monnaie de complétion issue des
+  doublons ; la **forge** (`FORGE_COST`, `canForge`) les dépense pour débloquer un
+  cosmétique **choisi** (filet **déterministe** — garantit l'**item**). Forge =
+  **exclusifs caisses non possédés** uniquement.
+- **Persistance** : `CosmeticsState.fragments` + `pity` → **migration Dexie v21**
+  (rétro-remplissage 0). Survivent à la renaissance (singleton d'identité).
+- **UI (DS)** : `CosmeticCard` gagne l'état **`forge`** (coût + Forger /
+  insuffisant) ; nouveaux `FragmentBalance`, `PityMeter` (jauge segmentée),
+  `ForgePanel` ; `CrateOpeningModal` gagne la branche **doublon → fragments**
+  (filigrane « déjà possédé »). Identité fragments **mint/cristal** (token
+  **`--fragment-*`** → `--mint-500`), hors accents réservés. Helper `Fragment`
+  (icône/montant) ; 3 icônes (`gem`/`hammer`/`copy`).
+- **Garde-fou** : fragments purement esthétiques, **jamais achetés** (issus des
+  seules caisses).
+- **Écarts (validés PO)** : identité mint · barème (`FRAGMENT_VALUE` 5/12/30/75/200,
+  `FORGE_COST` 40/100/250/600/1500) + pity (30) = valeurs maquette **ajustables** ·
+  forge limitée au pool caisses.
+- **Boucle de recette** : 3 retours mineurs corrigés en direct — toast peu lisible
+  (fond opaque void-800 + titre clair, BUG-035-1), carte de caisse dispo sans fond
+  distinct (surface void-400, BUG-035-2), forge sans animation (flash « FORGÉ »
+  `nw-forged`, BUG-035-3).
+- Vérifs : typecheck + lint + build/PWA + **tests 272/272** (+3). Recette **8/8
+  PO, validée à 100 %** le 23/07/2026. Maquette `pity-fragments` non versionnée
+  (convention #007). **Phase A3 terminée (5/5 tranches).**

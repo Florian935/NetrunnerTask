@@ -3,6 +3,53 @@
 > Tests de recette par US. Chaque test reprend un critère d'acceptation de l'US.
 > Statuts : `à faire` / `validé` / `échoué`.
 
+## US-035 — Pity + fragments anti-doublon (Phase A3)
+
+Recette du 23/07/2026. Critères de `us/US-035-pity-fragments.md` §1. **Vérifs
+automatiques** : `typecheck` + `lint` (oxlint) + `build`/PWA + tests Vitest
+**272/272** (+3 : `game/crates` révisé — doublons, pity, forge). **Vérif live
+PO** (scripts console IndexedDB : injecter fragments/pity, forcer doublons, pool
+vierge).
+
+| ID | Critère (action → résultat) | Vérif | Statut | Date |
+|----|------------------------------|-------|--------|------|
+| C1 | Doublon (cosmétique déjà possédé) → **converti en fragments** (montant ~ rareté), solde +X, aucun doublon ajouté | `openCrate` (doublon → `FRAGMENT_VALUE`, **testé**) + store `fragments +=` + rituel + PO live | validé | 23/07/2026 |
+| C2 | Nouveau cosmétique → **ajouté à la collection**, sans fragments | `openCrate` (item neuf, **testé**) + `grant` + PO live | validé | 23/07/2026 |
+| C3 | **Forge** un cosmétique abordable → possédé/équipable, solde −coût | `forge` store + `canForge`/`FORGE_COST` (**testé**) + `ForgePanel` + PO live | validé | 23/07/2026 |
+| C3b | Cosmétique trop cher → bouton **désactivé** « manque X » | `CosmeticCard` état `forge` (afford) + PO live | validé | 23/07/2026 |
+| C4 | **Pity** : au seuil (30 sans légendaire) → prochaine ouverture **garantit** un légendaire ; compteur réinitialisé | `openCrate` (force + reset, **testé**) + `PityMeter` + PO live | validé | 23/07/2026 |
+| C5 | Fragments **et** pity **survivent** au reload **et** à la renaissance | `fragments`/`pity` sur `cosmeticsState` (hors `prestige()`) + migration v21 + PO live | validé | 23/07/2026 |
+| C6 | Rituel : doublon (mint « +fragments ») **distinct** du nouveau ; reduced-motion → instantané, même issue | `CrateOpeningModal` (branche doublon + reduced) + PO live | validé | 23/07/2026 |
+| C7 | Garde-fous : fragments sans effet de jeu, **jamais** achetés ; forge = exclusifs caisses non possédés | `game/crates` sans valeur de jeu + `ForgePanel` (pool exclusif) + PO live | validé | 23/07/2026 |
+| C8 | Couches pures couvertes (doublon, pity, forge) | `crates.test.ts` (**15**) | validé | 23/07/2026 |
+| C9 | `typecheck` + `lint` + `build`/PWA + `test` (**272/272**) | exécution | validé | 23/07/2026 |
+| — | **Migration Dexie v21** : `fragments`/`pity` rétro-remplis à 0 (survivent à la renaissance) | `db.ts` v21 | validé | 23/07/2026 |
+| — | Réutilisation DS : `CosmeticCard` (état `forge`), `Card`/`Icon`, rampe rareté, famille toasts ; token `--fragment-*` (alias mint) | composants existants | validé | 23/07/2026 |
+
+### Boucle de recette — 3 retours PO corrigés en direct
+
+- **BUG-035-1** (mineur) : toast « caisse gagnée » peu lisible (fond `--bg-surface`
+  trop proche de la nav + titre acier muet) → **fond opaque void-800 + titre
+  `--text-primary`**.
+- **BUG-035-2** (mineur) : carte de caisse **disponible** sans fond distinct
+  (`--bg-surface` ≈ panneau) → **surface surélevée void-400 + bordure renforcée**.
+- **BUG-035-3** (mineur) : carte forgée disparaissait sans animation → **flash
+  « FORGÉ »** (`nw-forged`, mint) avant retrait ; commit immédiat en reduced-motion.
+
+### Notes de méthode & écarts (validés PO)
+
+- **Modèle de tirage révisé vs US-034** (assumé) : le no-doublon (C6 d'US-034) et
+  la consolation crédits (couture #3) sont **remplacés** par doublons → fragments
+  + pity + forge. Tests d'US-034 mis à jour.
+- **Identité fragments = mint/cristal** (token `--fragment-*` → `--mint-500`),
+  hors accents réservés. **Barème** (`FRAGMENT_VALUE`/`FORGE_COST`) et **pity**
+  (seuil 30, `legendary`) = valeurs maquette, **ajustables**.
+- **Forge = pool exclusif caisses non possédé** uniquement (les cosmétiques de
+  jalon restent gagnés par le jeu).
+
+**Verdict : recette US-035 validée (8/8 critères + vérifs annexes), 3 retours
+mineurs corrigés en direct, aucun bug ouvert.**
+
 ## US-034 — Caisses & rituel d'ouverture (Phase A3)
 
 Recette du 23/07/2026. Critères de `us/US-034-caisses-ouverture.md` §1. **Vérifs

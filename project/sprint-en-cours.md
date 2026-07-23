@@ -5,10 +5,60 @@
 
 ## US active
 
-**US-034 — Caisses & rituel d'ouverture** (Phase A3, priorité moyenne, voie
-**aléatoire** de l'acquisition hybride). Branche
-`feature/US-034-caisses-ouverture` créée depuis `develop`. **Cadrage fonctionnel
-validé PO le 23/07/2026** (H1→H6 + invariant, 8 critères ; reco H2/H5 adoptées).
+**US-035 — Pity + fragments anti-doublon** (Phase A3, priorité basse, dernière
+tranche — approfondit les caisses d'US-034). Branche `feature/US-035-pity-fragments`
+créée depuis `develop`. **Cadrage fonctionnel validé PO le 23/07/2026** (H1→H5 +
+invariant, 8 critères ; H4 = fragments, H5 = report caisse quotidienne). **Étape
+en cours : cadrage technique** (`us/US-035-pity-fragments.md` §2) — **STOP, en
+attente de validation PO.**
+
+Constat fondateur : US-034 garantit du neuf tant que le pool en contient (C6) et
+verse une consolation crédits à pool épuisé (couture #3 « reprise par US-035»).
+US-035 **remplace cette couture** par une économie de fragments + un pity. Cadrage
+= 5 hypothèses (H1 doublons → fragments · H2 forge : dépenser des fragments pour
+débloquer un cosmétique choisi · H3 pity anti-malchance sur le tirage · H4
+consolation pool épuisé → fragments · H5 caisse quotidienne/hebdo **reportée**) +
+1 invariant (fragments = monnaie de complétion cosmétique, jamais achetée, survit
+à la renaissance) + **8 critères**.
+
+Cadrage technique posé : **`game/crates.ts` révisé** (tirage pur avec doublons →
+`FRAGMENT_VALUE`, **pity** global visant `legendary`, `openCrate` renvoie
+`{ draw, pity }`, `canForge`/`FORGE_COST` ; supprime la garantie anti-doublon +
+la consolation crédits d'US-034), **`fragments`/`pity` sur `CosmeticsState` +
+migration Dexie v21** (survivent à la renaissance), `openCrate`/`forge` sur
+`useCosmeticsStore`, UI forge + solde + rituel doublon. **Cadrage technique
+validé PO** (4 décisions). **Maquette `pity-fragments` validée PO**. **Plan 16
+étapes validé PO.**
+
+**Implémentation US-035 terminée.** Livré : **`game/crates.ts` révisé**
+(`FRAGMENT_VALUE`/`FORGE_COST`/`PITY_CONFIG`, `openCrate` renvoie `{draw, pity}`
+— doublon → fragments, pity force `legendary`, `canForge` ; **suppression** du
+no-doublon + consolation crédits d'US-034 ; **testé 15/15**, RNG injecté) ;
+**`fragments`/`pity` sur `CosmeticsState` + migration Dexie v21** + seed ;
+`useCosmeticsStore` (`openCrate` revu, **`forge`**) ; token **`--fragment-*`**
+(alias mint) + helper `Fragment` (icône/montant) ; **`CosmeticCard` état
+`forge`** ; composants DS **`FragmentBalance`**, **`PityMeter`**, **`ForgePanel`**
+(pool exclusif non possédé) ; **`CrateOpeningModal`** branche doublon→fragments
+(filigrane « déjà possédé » + gain mint) ; assemblage `WardrobeView`/`CratesPanel`
+(solde + pity + forge) ; 3 icônes (`gem`/`hammer`/`copy`) ; keyframes
+`nw-frag-pop`/`nw-pity-glow` (reduced-motion) ; i18n FR/EN. **Vérifs vertes :
+typecheck + lint + build/PWA + tests 272/272 (+3).**
+
+**Recette 8/8 validée PO le 23/07/2026 à 100 %** (3 retours mineurs corrigés en
+direct — BUG-035-1/2/3 : toast lisible, carte de caisse dispo avec fond, flash
+« FORGÉ »). **Décision #040.** US **clôturée** — commit + merge sur `develop` +
+push.
+
+**Phase A3 « Identité & Collection » TERMINÉE (5/5 tranches)** : US-031 (socle) →
+US-032 (profil) → US-033 (voie déterministe) → US-034 (caisses) → US-035 (pity +
+fragments). Prochaine étape : nouvelle tranche/phase à cadrer (brainstorming PO ↔
+Claude) — cf. `docs/roadmap.md` (Phase B = couche connectée, backend requis).
+
+---
+
+_Historique de la tranche US-034._ **US-034 — Caisses & rituel d'ouverture**
+(Phase A3, voie **aléatoire**). Branche `feature/US-034-caisses-ouverture` créée
+depuis `develop`. **Cadrage fonctionnel validé PO le 23/07/2026** (H1→H6 + invariant, 8 critères ; reco H2/H5 adoptées).
 **Cadrage technique validé PO** (3 décisions : RNG injecté · mapping
 source→qualité · pool épuisé→crédits). **Maquette `crates` reçue + analysée +
 validée PO** (violet→frost, réutilise rampe rareté/`CosmeticCard`, `CRATE_ODDS`

@@ -225,4 +225,16 @@ export interface CosmeticsState {
    * départ (seed) ; rétro-rempli par la migration v20.
    */
   crates: Record<CrateQuality, number>
+  /**
+   * Fragments (US-035) — monnaie de complétion cosmétique issue de la conversion
+   * des doublons, dépensée à la forge. Purement esthétique. `0` au départ ;
+   * rétro-rempli v21. Survit à la renaissance (singleton d'identité).
+   */
+  fragments: number
+  /**
+   * Compteur de **pity** (US-035) — ouvertures de caisse depuis le dernier
+   * légendaire ; à `PITY_CONFIG.threshold`, la prochaine ouverture force un
+   * légendaire (voir `game/crates.ts`). `0` au départ ; rétro-rempli v21.
+   */
+  pity: number
 }

@@ -414,6 +414,27 @@ export class NetrunnerDB extends Dexie {
             }
           }),
       )
+    // v21 (US-035) : pity + fragments. Deux champs scalaires sur le singleton
+    // cosmétique → schéma v20 recopié + rétro-remplissage à 0 (patron des
+    // migrations de champ v11→v20). Aucune reconciliation (contenu neuf).
+    this.version(21)
+      .stores({
+        contracts: 'id, factionId, status, dueDate, createdAt',
+        factions: 'id, name',
+        player: 'id',
+        builderState: 'id',
+        cosmeticsState: 'id',
+        demoKV: 'key',
+      })
+      .upgrade((tx) =>
+        tx
+          .table('cosmeticsState')
+          .toCollection()
+          .modify((c: { fragments?: number; pity?: number }) => {
+            if (c.fragments === undefined) c.fragments = 0
+            if (c.pity === undefined) c.pity = 0
+          }),
+      )
   }
 }
 

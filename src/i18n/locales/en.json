@@ -228,6 +228,23 @@
     "reward": "REWARD",
     "foundInCrate": "FOUND IN A CRATE",
     "foundInCrateValue": "CRATE DROP",
+    "fragments": { "label": "FRAGMENTS" },
+    "forge": {
+      "title": "FORGE",
+      "intro": "Pick a cosmetic you don't own and forge it with fragments — a deterministic safety net, no luck required. Cost rises with rarity.",
+      "cost": "COST",
+      "forge": "FORGE",
+      "forged": "FORGED",
+      "insufficient": "NOT ENOUGH · MISSING",
+      "complete": "Crate collection complete — nothing left to forge."
+    },
+    "pity": {
+      "title": "PITY · LEGENDARY",
+      "guaranteed": "GUARANTEED NEXT",
+      "guaranteedHint": "The next opening will deliver a LEGENDARY.",
+      "remaining_one": "{{count}} opening until a guaranteed legendary.",
+      "remaining_other": "{{count}} openings until a guaranteed legendary."
+    },
     "collection": {
       "title": "COLLECTION",
       "unlocked": "UNLOCKED",
@@ -283,6 +300,8 @@
         "result": "RESULT",
         "instant": "INSTANT REVEAL",
         "added": "ADDED TO COLLECTION · CRATE-EXCLUSIVE",
+        "duplicate": "ALREADY OWNED",
+        "convertedTo": "CONVERTED TO",
         "equip": "EQUIP",
         "continue": "CONTINUE",
         "complete": { "title": "COLLECTION COMPLETE", "desc": "Nothing left to unlock in this pool. Converted to credits.", "credits": "CREDITS" }

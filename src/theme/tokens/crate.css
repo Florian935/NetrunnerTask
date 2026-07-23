@@ -20,4 +20,9 @@
   /* Accent générique caisses (en-têtes, indice « Trouvé en caisse »). */
   --crate-accent: #c084fc;
   --crate-accent-rgb: 192, 132, 252;
+
+  /* Fragments (US-035) — monnaie de complétion, identité mint/cristal. Alias
+     sémantique de la mint du DS (`--mint-500`), distincte des accents réservés. */
+  --fragment: var(--mint-500);
+  --fragment-rgb: 46, 255, 194;
 }

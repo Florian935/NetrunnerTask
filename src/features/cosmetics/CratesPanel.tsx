@@ -5,6 +5,8 @@ import { CRATE_QUALITIES, type CrateQuality } from '../../game/crates'
 import { CrateIcon } from './CrateIcon'
 import { CrateOddsTable } from './CrateOddsTable'
 import { CRATE_ACCENT, CRATE_STYLE, crateGlow } from './crateStyle'
+import { FragmentBalance } from './FragmentBalance'
+import { PityMeter } from './PityMeter'
 
 /** Ligne d'inventaire d'une qualité : coffre + description + compteur + action. */
 function CrateSlot({
@@ -32,8 +34,10 @@ function CrateSlot({
         gap: 16,
         padding: '15px 16px',
         clipPath: 'var(--clip-bevel-sm)',
-        border: `1px solid ${empty ? 'var(--border)' : `rgba(${s.rgb}, 0.4)`}`,
-        background: empty ? 'var(--void-900)' : `linear-gradient(120deg, rgba(${s.rgb}, 0.07), transparent 55%), var(--bg-surface)`,
+        border: `1px solid ${empty ? 'var(--border)' : `rgba(${s.rgb}, 0.5)`}`,
+        // Disponible = surface **surélevée** opaque (void-400), clairement
+        // distincte du panneau ; vide = inset sombre (void-900).
+        background: empty ? 'var(--void-900)' : `linear-gradient(120deg, rgba(${s.rgb}, 0.12), transparent 55%), var(--void-400)`,
         opacity: empty ? 0.72 : 1,
       }}
     >
@@ -109,6 +113,10 @@ function CrateSlot({
 
 export interface CratesPanelProps {
   crates: Record<CrateQuality, number>
+  /** Solde de fragments (US-035) — affiché en en-tête. */
+  fragments: number
+  /** Compteur de pity (US-035) — jauge « avant légendaire garanti ». */
+  pity: number
   /** Ouvre le rituel pour la qualité choisie (câblé au store par l'appelant). */
   onOpen: (quality: CrateQuality) => void
 }
@@ -119,7 +127,7 @@ export interface CratesPanelProps {
  * 0, C2) + accès à la table de probabilités (modale interne). Rappelle le
  * garde-fou « gagnées en jouant, jamais achetées ».
  */
-export function CratesPanel({ crates, onOpen }: CratesPanelProps) {
+export function CratesPanel({ crates, fragments, pity, onOpen }: CratesPanelProps) {
   const { t } = useTranslation()
   const [oddsFor, setOddsFor] = useState<CrateQuality | null>(null)
   const total = CRATE_QUALITIES.reduce((a, q) => a + crates[q], 0)
@@ -142,14 +150,21 @@ export function CratesPanel({ crates, onOpen }: CratesPanelProps) {
             {t('cosmetics.crates.pending', { count: total })}
           </span>
         </div>
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font-mono)', fontSize: 'var(--text-2xs)', letterSpacing: '0.1em', color: 'var(--text-secondary)', border: '1px solid var(--border)', padding: '4px 9px', clipPath: 'var(--clip-bevel-sm)' }}>
-          <Icon name="info" size={12} /> {t('cosmetics.crates.earnedNote')}
-        </span>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          <FragmentBalance value={fragments} />
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font-mono)', fontSize: 'var(--text-2xs)', letterSpacing: '0.1em', color: 'var(--text-secondary)', border: '1px solid var(--border)', padding: '4px 9px', clipPath: 'var(--clip-bevel-sm)' }}>
+            <Icon name="info" size={12} /> {t('cosmetics.crates.earnedNote')}
+          </span>
+        </div>
       </div>
       <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: 10 }}>
         {CRATE_QUALITIES.map((q) => (
           <CrateSlot key={q} quality={q} count={crates[q]} onOpen={() => onOpen(q)} onOdds={() => setOddsFor(q)} />
         ))}
+      </div>
+      {/* Jauge de pity (US-035) */}
+      <div style={{ position: 'relative', marginTop: 12 }}>
+        <PityMeter pity={pity} />
       </div>
 
       {/* Modale de table de probabilités */}

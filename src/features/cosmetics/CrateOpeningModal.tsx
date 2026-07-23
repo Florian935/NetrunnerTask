@@ -6,6 +6,7 @@ import type { CrateDraw, CrateQuality } from '../../game/crates'
 import { CosmeticCard } from './CosmeticCard'
 import { CrateIcon } from './CrateIcon'
 import { CRATE_STYLE } from './crateStyle'
+import { FRAGMENT_COLOR, FRAGMENT_RGB, FragmentAmount } from './Fragment'
 import { RARITY_GLOW, rarityColor, rarityRgb } from './rarityStyle'
 
 type Phase = 'anticipation' | 'reveal' | 'result'
@@ -45,11 +46,12 @@ export interface CrateOpeningModalProps {
 }
 
 /**
- * Rituel d'ouverture (US-034) — overlay plein cadre. Séquence anticipation →
- * révélation → résultat ; halo/rayons intensifiés aux hautes raretés. En
- * `prefers-reduced-motion`, bascule directement sur le résultat (C5). Réutilise
- * `CosmeticCard` + `RarityBadge`. Cas « collection complète » : consolation
- * crédits (décision #3).
+ * Rituel d'ouverture (US-034 + US-035) — overlay plein cadre. Séquence
+ * anticipation → révélation → résultat ; halo/rayons intensifiés aux hautes
+ * raretés. En `prefers-reduced-motion`, bascule directement sur le résultat
+ * (C5). Réutilise `CosmeticCard` + `RarityBadge`. Deux issues (US-035) : un
+ * cosmétique **nouveau** (ajouté à la collection) ou un **doublon** converti en
+ * **fragments** (filigrane « déjà possédé » + gain mint).
  */
 export function CrateOpeningModal({ quality, draw, onEquip, onClose }: CrateOpeningModalProps) {
   const { t } = useTranslation()
@@ -67,13 +69,22 @@ export function CrateOpeningModal({ quality, draw, onEquip, onClose }: CrateOpen
     }
   }, [reduced])
 
-  const cosmetic = draw.kind === 'cosmetic' ? COSMETIC_BY_ID[draw.id] : undefined
-  const rarity = cosmetic?.rarity
-  const high = rarity !== undefined && rarityRank(rarity) >= 4
+  const isDup = draw.kind === 'fragments'
+  const fragAmount = draw.kind === 'fragments' ? draw.amount : 0
+  // Le cosmétique révélé : le tiré (nouveau) ou celui retombé (doublon).
+  const revealed =
+    draw.kind === 'cosmetic'
+      ? COSMETIC_BY_ID[draw.id]
+      : draw.dupId
+        ? COSMETIC_BY_ID[draw.dupId]
+        : undefined
+  const rarity = revealed?.rarity
+  const high = !isDup && rarity !== undefined && rarityRank(rarity) >= 4
   const revealing = phase === 'reveal'
   const showResult = phase === 'result'
-  const frameColor = showResult && rarity ? rarityColor(rarity) : s.color
-  const frameRgb = showResult && rarity ? rarityRgb(rarity) : s.rgb
+  // Cadre : mint pour un doublon, rareté pour un nouveau (au résultat), sinon caisse.
+  const frameColor = isDup ? FRAGMENT_COLOR : showResult && rarity ? rarityColor(rarity) : s.color
+  const frameRgb = isDup ? FRAGMENT_RGB : showResult && rarity ? rarityRgb(rarity) : s.rgb
 
   return (
     <div
@@ -107,7 +118,7 @@ export function CrateOpeningModal({ quality, draw, onEquip, onClose }: CrateOpen
         <div style={{ position: 'absolute', top: 16, left: 0, right: 0, display: 'flex', justifyContent: 'center' }}>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: 'var(--font-mono)', fontSize: 'var(--text-2xs)', letterSpacing: '0.24em', color: frameColor, padding: '5px 12px', clipPath: 'var(--clip-bevel-sm)', border: `1px solid rgba(${frameRgb}, 0.5)`, background: 'color-mix(in srgb, var(--bg-app) 55%, transparent)' }}>
             <span className={!reduced && !showResult ? 'nw-blink' : undefined} style={{ display: 'inline-flex' }}>
-              <Icon name={showResult ? 'sparkles' : revealing ? 'unlock' : reduced ? 'zap' : 'orbit'} size={13} />
+              <Icon name={showResult ? (isDup ? 'copy' : 'sparkles') : revealing ? 'unlock' : reduced ? 'zap' : 'orbit'} size={13} />
             </span>
             {reduced
               ? t('cosmetics.crates.ritual.instant')
@@ -131,51 +142,46 @@ export function CrateOpeningModal({ quality, draw, onEquip, onClose }: CrateOpen
           </div>
         )}
 
-        {/* Révélation / résultat */}
-        {(revealing || showResult) &&
-          (draw.kind === 'credits' ? (
-            <div className={!reduced ? 'nw-reveal' : undefined} style={{ position: 'relative', width: 300, maxWidth: '80%' }}>
-              <div style={{ position: 'relative', clipPath: 'var(--clip-bevel-md)', border: '1px solid var(--border-strong)', background: 'var(--bg-surface)', padding: '20px 18px', textAlign: 'center' }}>
-                <span style={{ display: 'inline-grid', placeItems: 'center', width: 44, height: 44, clipPath: 'var(--clip-bevel-sm)', border: '1px solid var(--amber-400)', background: 'rgba(255,176,32,.1)', color: 'var(--amber-500)', marginBottom: 12 }}>
-                  <Icon name="coins" size={22} />
+        {/* Révélation / résultat : cosmétique nouveau OU doublon → fragments */}
+        {(revealing || showResult) && revealed && (
+          <div className={!reduced ? (high ? 'nw-crate-rise' : 'nw-reveal') : undefined} style={{ position: 'relative', width: 256, maxWidth: '72%' }}>
+            {high && rarity && <span aria-hidden style={{ position: 'absolute', inset: -18, clipPath: 'var(--clip-bevel-md)', boxShadow: `0 0 60px 6px rgba(${rarityRgb(rarity)}, ${0.35 + RARITY_GLOW[rarity] * 0.25})`, pointerEvents: 'none' }} />}
+            <div style={{ position: 'relative' }}>
+              <CosmeticCard item={revealed} state="unequipped" />
+              {isDup && (
+                <span style={{ position: 'absolute', top: 52, left: 15, display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 8px', clipPath: 'var(--clip-bevel-sm)', background: 'color-mix(in srgb, var(--bg-app) 82%, transparent)', border: '1px solid var(--border-strong)', fontFamily: 'var(--font-mono)', fontSize: 'var(--text-2xs)', letterSpacing: '0.16em', color: 'var(--text-label)', zIndex: 4 }}>
+                  <Icon name="copy" size={11} /> {t('cosmetics.crates.ritual.duplicate')}
                 </span>
-                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 'var(--text-sm)', letterSpacing: '0.16em', color: 'var(--text-secondary)' }}>
-                  {t('cosmetics.crates.ritual.complete.title')}
-                </div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-2xs)', lineHeight: 1.5, letterSpacing: '0.04em', color: 'var(--text-muted)', margin: '7px auto 0', maxWidth: 220 }}>
-                  {t('cosmetics.crates.ritual.complete.desc')}
-                </div>
-                <div style={{ display: 'inline-flex', alignItems: 'baseline', gap: 6, marginTop: 14, padding: '7px 16px', clipPath: 'var(--clip-bevel-sm)', border: '1px solid var(--amber-400)', background: 'rgba(255,176,32,.08)' }}>
-                  <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 24, color: 'var(--amber-500)', textShadow: '0 0 12px rgba(255,176,32,.5)' }}>+{draw.amount}</span>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-2xs)', letterSpacing: '0.18em', color: 'var(--text-muted)' }}>{t('cosmetics.crates.ritual.complete.credits')}</span>
-                </div>
-                {showResult && (
-                  <div style={{ marginTop: 16 }}>
-                    <ContinueButton label={t('cosmetics.crates.ritual.continue')} onClick={onClose} />
-                  </div>
-                )}
-              </div>
+              )}
             </div>
-          ) : cosmetic ? (
-            <div className={!reduced ? (high ? 'nw-crate-rise' : 'nw-reveal') : undefined} style={{ position: 'relative', width: 256, maxWidth: '72%' }}>
-              {high && rarity && <span aria-hidden style={{ position: 'absolute', inset: -18, clipPath: 'var(--clip-bevel-md)', boxShadow: `0 0 60px 6px rgba(${rarityRgb(rarity)}, ${0.35 + RARITY_GLOW[rarity] * 0.25})`, pointerEvents: 'none' }} />}
-              <CosmeticCard item={cosmetic} state="unequipped" />
-              {showResult && (
+            {showResult &&
+              (isDup ? (
+                <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+                  <span
+                    className={!reduced ? 'nw-frag-pop' : undefined}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: '8px 16px', clipPath: 'var(--clip-bevel-sm)', border: `1px solid rgba(${FRAGMENT_RGB}, 0.6)`, background: `rgba(${FRAGMENT_RGB}, 0.1)`, boxShadow: `0 0 20px -5px rgba(${FRAGMENT_RGB}, 0.7)` }}
+                  >
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-2xs)', letterSpacing: '0.16em', color: 'var(--text-secondary)' }}>{t('cosmetics.crates.ritual.convertedTo')}</span>
+                    <FragmentAmount value={fragAmount} sign="+" strong size={17} />
+                  </span>
+                  <ContinueButton label={t('cosmetics.crates.ritual.continue')} onClick={onClose} />
+                </div>
+              ) : (
                 <div style={{ marginTop: 12, display: 'flex', gap: 9 }}>
                   <button
                     type="button"
-                    onClick={() => onEquip(cosmetic.id)}
+                    onClick={() => onEquip(revealed.id)}
                     style={{ flex: 1, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 7, height: 36, clipPath: 'var(--clip-bevel-sm)', border: `1px solid ${rarity ? rarityColor(rarity) : 'var(--accent)'}`, background: rarity ? `rgba(${rarityRgb(rarity)}, 0.12)` : 'var(--bg-hover)', color: rarity ? rarityColor(rarity) : 'var(--accent)', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 'var(--text-xs)', letterSpacing: '0.14em' }}
                   >
                     <Icon name="check-check" size={14} /> {t('cosmetics.crates.ritual.equip')}
                   </button>
                   <ContinueButton label={t('cosmetics.crates.ritual.continue')} onClick={onClose} flex />
                 </div>
-              )}
-            </div>
-          ) : null)}
+              ))}
+          </div>
+        )}
 
-        {/* Liseré « ajouté à la collection » (résultat cosmétique) */}
+        {/* Liseré « ajouté à la collection » (nouveau cosmétique uniquement) */}
         {showResult && draw.kind === 'cosmetic' && (
           <div style={{ position: 'absolute', bottom: 16, left: 0, right: 0, display: 'flex', justifyContent: 'center' }}>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontFamily: 'var(--font-mono)', fontSize: 'var(--text-2xs)', letterSpacing: '0.16em', color: 'var(--text-secondary)' }}>
