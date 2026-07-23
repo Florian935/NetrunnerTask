@@ -197,6 +197,11 @@ Les US-005 à US-007 enrichissent le to-do.
 > moteur `game/reveals.ts` est l'actif réutilisable (les reveals suivants s'y
 > brancheront). Réutilise le token `--crate-blackice-chroma-rgb` (aberration
 > magenta) et le patron de re-skin `data-cosmetic-theme` d'US-031.
+>
+> **Brique visuelle dispo (24/07/2026)** : effet « pluie de symboles Matrix »
+> prototypé et archivé — `src/components/effects/MatrixRain.tsx`, doc
+> `docs/labo-visuel.md`. Candidat pour un fond glitch de la corruption / voie
+> sombre. Non câblé ; à monter dans l'US qui le consomme.
 
 ## MVP 3 — Rétention profonde & identité (historique, gelé #022)
 
