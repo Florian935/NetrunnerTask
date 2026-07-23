@@ -974,3 +974,42 @@ les caisses viennent en US-033/034).
   **9/9 PO, validée à 100 %** le 23/07/2026, aucun bug (vérif live sur `:5181`,
   états injectés via console — `builderRepo`/`cosmeticsRepo` exposés en dev).
   Maquette `wardrobe` non versionnée (convention #007).
+
+### 037 — Profil / ID runner (US-032, Phase A3, 23/07/2026)
+
+2ᵉ tranche de la Phase A3 (#035) — la **vitrine** : un écran `/profile` qui
+assemble les cosmétiques équipés (avatar/bannière/titre, US-031) et le palmarès
+du runner. **Écran de présentation quasi pur** : il lit des états déjà persistés
+(`useCosmeticsStore`, `useBuilderStore`) + les totaux des catalogues ; la seule
+donnée nouvelle est le **callsign**.
+
+- **Données builder uniquement, perso exclu (décision produit clé)** : les stats
+  affichées sont les **3 permanentes** qui survivent à la renaissance —
+  **Génération** (`prestigeCount`), **Jalons** (`X/total`), **Cosmétiques
+  débloqués** (`X/total`). Les données du **module perso** (XP/niveau/crédits du
+  `Player`, réputation de faction) sont **volontairement absentes** : le profil
+  est l'ID du runner **du Réseau**, et le module perso reste privé/découplé
+  (pivot #022). Le reste du Réseau (cycles/data/crypto, daemons) repart à zéro à
+  la renaissance → non identitaire, non affiché.
+- **Callsign** : identité nominale éditable, normalisée par la couche pure
+  `game/profile.ts` (`normalizeCallsign` : majuscules, charset `A-Z 0-9 -`, 12
+  car. max, repli sur défaut — **testée 6/6**). Portée par **`cosmeticsState`**
+  (le singleton d'identité) plutôt qu'une nouvelle table ou le `Player` (perso,
+  exclu) → **migration Dexie v18** (1 champ, backfill défaut) ; **survit à la
+  renaissance** par construction.
+- **Réutilisation forte du DS** (consigne PO) : bloc 3 stats sur **`<StatCard>`**,
+  carte d'ID sur **`<Card hud brackets>`**, **`RarityBadge`/`RankPips`** et
+  `rarityStyle` réutilisés d'US-031, CTA/boutons sur **`<Button>`**. Bespoke
+  **justifié** : le callsign « héros » (display 46px, le `<Input>` boxé ne
+  convient pas), l'avatar hexagonal grand format et la bannière héros (les
+  aperçus d'US-031 sont calibrés petits). Route `/profile` + entrée de nav
+  Profil activée ; i18n FR/EN (`profile.*`) ; 2 icônes (`pencil`/`milestone`).
+- **3 ajustements issus de la recette** (corrigés en direct) : (1) `.nav-rail`
+  rendu **sticky pleine hauteur** (l'entrée Profil du bas n'était atteignable
+  qu'en scrollant) ; (2) **`z-index` sur les repères de `<Card>`** — ils étaient
+  masqués par un contenu opaque bord à bord (bannière) ; correctif propre du DS,
+  bénéfique partout ; (3) cercle décoratif de bannière **remonté** (coupe droite
+  par l'`overflow`).
+- Vérifs : typecheck + lint + build/PWA + **tests 238/238** (+6). Recette
+  **8/8 PO, validée à 100 %** le 23/07/2026, aucun bug ouvert. Maquette
+  `profil-runner` non versionnée (convention #007).

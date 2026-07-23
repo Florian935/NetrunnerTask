@@ -211,4 +211,10 @@ export interface CosmeticsState {
   owned: string[]
   /** `id` équipé par type — un seul par type. */
   equipped: Record<CosmeticType, string>
+  /**
+   * Callsign du runner (US-032) — identité nominale éditable, normalisée par
+   * `game/profile.ts` (majuscules, 12 car. max). Rejoint le singleton
+   * d'identité `cosmeticsState` (survit à la renaissance). Défaut au seed.
+   */
+  callsign: string
 }

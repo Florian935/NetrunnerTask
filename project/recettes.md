@@ -3,6 +3,44 @@
 > Tests de recette par US. Chaque test reprend un critère d'acceptation de l'US.
 > Statuts : `à faire` / `validé` / `échoué`.
 
+## US-032 — Profil / ID runner (Phase A3)
+
+Recette du 23/07/2026. Critères de `us/US-032-profil-runner.md` §1. **Vérifs
+automatiques** : `typecheck` + `lint` + `build`/PWA + tests Vitest **238/238**
+(+6 sur `game/profile`). **Vérif live PO** sur `:5181`.
+
+| ID | Critère (action → résultat) | Vérif | Statut | Date |
+|----|------------------------------|-------|--------|------|
+| C1 | Cliquer l'entrée **Profil** du rail → écran `/profile` s'affiche | route `/profile` + `NavLink` actif + PO live | validé | 23/07/2026 |
+| C2 | Avatar + bannière + titre **équipés** affichés sur la carte d'ID | `RunnerIdCard` lit `equipped` + PO live | validé | 23/07/2026 |
+| C3 | Changer un équipé en Garde-robe → profil **reflète** (avant/après reload) | store partagé `useCosmeticsStore` + PO live | validé | 23/07/2026 |
+| C4 | 3 stats exactes (Génération/Jalons X÷11/Cosmétiques X÷14) ; **aucune donnée perso** | lecture `prestigeCount`/`achievedMilestones`/`owned` + totaux catalogues + PO live | validé | 23/07/2026 |
+| C5 | Modifier le callsign (MAJ forcées, 12 max, caractères filtrés) → **enregistré + persiste** au reload | `normalizeCallsign` (**testé 6/6**) + `setCallsign` (v18) + PO live | validé | 23/07/2026 |
+| C6 | CTA **« Personnaliser »** → `/wardrobe` | `useNavigate` + PO live | validé | 23/07/2026 |
+| C7 | Le profil respecte le **thème équipé** (re-skin US-031) | hérite du re-skin global + PO live | validé | 23/07/2026 |
+| C8 | i18n **FR/EN** (`profile.*`) ; aucune chaîne en dur | clés FR+EN + composants via `t()` + PO live | validé | 23/07/2026 |
+| C9 | `game/profile.ts` couvert (normalisation callsign) | `profile.test.ts` (**6/6**) | validé | 23/07/2026 |
+| C10 | `typecheck` + `lint` + `build`/PWA + `test` (**238/238**) | exécution | validé | 23/07/2026 |
+| — | Réutilisation DS : `<StatCard>`, `<Card hud brackets>`, `RarityBadge`/`RankPips`, `<Button>` | composants existants | validé | 23/07/2026 |
+| — | Migration Dexie **v18** : `callsign` sur `cosmeticsState` (survit à la renaissance) | `db.ts` v18 + seed | validé | 23/07/2026 |
+
+### Ajustements en cours de recette (validés PO, corrigés en direct)
+
+- **Rail de nav non figé** (défaut UX) : sur une vue qui défile, l'entrée Profil
+  (bas du rail) n'était atteignable qu'en scrollant tout en bas. Corrigé →
+  `.nav-rail` **sticky pleine hauteur** (desktop) / **collé en bas** (mobile),
+  `appShell.css`. Le rail reste entièrement visible sur toutes les vues.
+- **Repère d'angle haut-droite masqué** sur la carte d'ID : les brackets de
+  `<Card>` étaient rendus **sous** le contenu → la bannière opaque recouvrait le
+  repère haut-droite. Corrigé → **`z-index` sur les repères de `<Card>`**
+  (`components/ui/surfaces/Card.tsx`) : les 2 repères restent visibles quel que
+  soit le contenu (correctif propre du DS, bénéfique partout).
+- **Cercle décoratif de la bannière tronqué net** en bas (coupe droite par
+  l'`overflow:hidden`) : cercle **remonté** (`RunnerIdCard`) pour que son bas
+  reste au-dessus du bord → arc net.
+
+**Verdict : recette US-032 validée (8/8 critères + vérifs annexes), aucun bug ouvert.**
+
 ## US-031 — Socle cosmétique & rareté (Phase A3)
 
 Recette du 23/07/2026. Critères de `us/US-031-socle-cosmetique-rarete.md` §1.

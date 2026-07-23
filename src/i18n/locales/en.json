@@ -192,7 +192,27 @@
     "inventory": "Inventory",
     "crates": "Crates",
     "profile": "Profile",
+    "profileCode": "PRO",
     "soon": "soon"
+  },
+  "profile": {
+    "kicker": "NETRUNNER://PROFILE/ID",
+    "title": "PROFILE",
+    "customize": "Customize",
+    "connected": "RUNNER ID · ONLINE",
+    "bannerLabel": "BANNER · {{name}}",
+    "titleLabel": "‹ EQUIPPED TITLE ›",
+    "callsign": {
+      "hint": "PUBLIC HANDLE · A-Z 0-9, 12 CHARS MAX",
+      "editAria": "Edit callsign",
+      "save": "Save",
+      "cancel": "Cancel"
+    },
+    "stats": {
+      "generation": "Generation",
+      "milestones": "Milestones",
+      "cosmetics": "Cosmetics"
+    }
   },
   "cosmetics": {
     "kicker": "NETRUNNER://PROFILE/COSMETICS",

@@ -84,12 +84,16 @@ export function NavRail() {
 
       <div className="nav-spacer" />
 
-      <div
-        className="nav-item nav-item--future"
-        title={`${t('nav.profile')} — ${soon}`}
+      <NavLink
+        to="/profile"
+        title={t('nav.profile')}
+        className={({ isActive }) =>
+          `nav-item${isActive ? ' nav-item--active' : ''}`
+        }
       >
-        <Icon name="user" size={18} color="var(--steel-600)" />
-      </div>
+        <Icon name="user" size={18} />
+        <span>{t('nav.profileCode')}</span>
+      </NavLink>
     </nav>
   )
 }

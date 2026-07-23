@@ -43,6 +43,9 @@ function Bracket({ pos, borders }: { pos: CSSProperties; borders: string }) {
         borderStyle: 'solid',
         borderWidth: borders,
         pointerEvents: 'none',
+        // Au-dessus du contenu (ex. une bannière opaque bord à bord) pour que les
+        // deux repères restent visibles quels que soient les enfants de la carte.
+        zIndex: 2,
         ...pos,
       }}
     />

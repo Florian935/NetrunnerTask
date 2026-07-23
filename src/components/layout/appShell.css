@@ -9,7 +9,8 @@
   background: var(--void-900);
 }
 
-/* Rail latéral (desktop) */
+/* Rail latéral (desktop) — figé sur la hauteur du viewport pour rester
+   entièrement visible même quand la vue défile (l'entrée Profil est en bas). */
 .nav-rail {
   width: 66px;
   flex: none;
@@ -20,6 +21,11 @@
   align-items: center;
   padding: 14px 0;
   gap: 4px;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  height: 100vh;
+  overflow-y: auto;
 }
 
 .nav-brand {
@@ -145,6 +151,12 @@
     border-top: 1px solid var(--border);
     padding: 0;
     gap: 0;
+    /* Barre inférieure : collée en bas du viewport (reset du sticky desktop). */
+    position: sticky;
+    top: auto;
+    bottom: 0;
+    align-self: auto;
+    overflow: visible;
   }
   .nav-main {
     order: 1;

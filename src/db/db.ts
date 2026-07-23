@@ -1,5 +1,6 @@
 import Dexie from 'dexie'
 import type { Table } from 'dexie'
+import { DEFAULT_CALLSIGN } from '../game/profile'
 import type {
   BuilderState,
   Contract,
@@ -328,6 +329,26 @@ export class NetrunnerDB extends Dexie {
       cosmeticsState: 'id',
       demoKV: 'key',
     })
+    // v18 (US-032) : callsign du runner sur le singleton cosmétique. Pas d'index
+    // nouveau → schéma v17 recopié + rétro-remplissage `callsign` par défaut
+    // (patron des migrations de champ v11→v16).
+    this.version(18)
+      .stores({
+        contracts: 'id, factionId, status, dueDate, createdAt',
+        factions: 'id, name',
+        player: 'id',
+        builderState: 'id',
+        cosmeticsState: 'id',
+        demoKV: 'key',
+      })
+      .upgrade((tx) =>
+        tx
+          .table('cosmeticsState')
+          .toCollection()
+          .modify((c: { callsign?: string }) => {
+            if (c.callsign === undefined) c.callsign = DEFAULT_CALLSIGN
+          }),
+      )
   }
 }
 

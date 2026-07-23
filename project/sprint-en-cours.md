@@ -5,12 +5,56 @@
 
 ## US active
 
-_Aucune US active._ **US-031 — Socle cosmétique & rareté clôturée** le
+_Aucune US active._ **US-032 — Profil / ID runner clôturée** le 23/07/2026
+(Phase A3, vitrine ; cycle complet — cadrages validés PO, maquette `profil-runner`
+analysée, plan 11 étapes validé PO, implémentation faite, **recette 8/8 PO à
+100 %** [3 ajustements corrigés en direct], décision **#037**, commit + merge sur
+`develop` + push). **Chemin critique A3 (US-031 → US-032) terminé.** Restent en
+Phase A3 : **US-033 — Achievements-récompenses + aperçu de collection**,
+**US-034 — Caisses & rituel d'ouverture**, **US-035 — Pity + fragments**.
+Prochaine US via `nouvelle-us`.
+
+---
+
+_Historique de la tranche US-032._ Branche `feature/US-032-profil-runner` créée
+depuis `develop`. **Cadrage fonctionnel validé PO le 23/07/2026** : H1 **callsign éditable** ✓ · H2 **3 stats
+BUILDER permanentes** (Génération/Jalons X÷total/Cosmétiques X÷total) — **données
+perso exclues** (XP/niveau/crédits/réputation, découplées #022) ✓ · H3 **deux
+écrans reliés** (profil vitrine + CTA → Garde-robe) ✓. **Étape en cours : cadrage
+technique** — écran de présentation quasi pur (lit `useCosmeticsStore` +
+`useBuilderStore` + totaux catalogues) ; **seule donnée nouvelle : `callsign`**
+porté par `cosmeticsState` / **migration Dexie v18** ; `ProfileView` +
+`CallsignEditor` + `game/profile.ts` (normalizeCallsign, testé) ; route
+`/profile` + entrée de nav `profile` activée. **Cadrage technique validé PO le
+23/07/2026** (3 décisions : callsign sur `cosmeticsState`/migration v18 · profil
+vitrine lecture seule · rendu grand format bespoke réutilisant `rarityStyle`/
+`RarityBadge`). **Maquette `profil-runner` validée PO**, **plan 11 étapes validé PO**.
+**Implémentation US-032 terminée.** Livré : couche pure **`game/profile.ts`**
+(`normalizeCallsign`, **testée 6/6**) ; **`CosmeticsState.callsign`** +
+**migration Dexie v18** + seed ; `useCosmeticsStore` gagne `setCallsign` ;
+composants **`RunnerIdCard`** (sur `<Card hud brackets>` : bannière héros + avatar
+hexagonal grand format + titre, réutilise `RarityBadge`/`rarityStyle`),
+**`CallsignEditor`** (affichage↔édition, boutons `<Button>`), écran
+**`ProfileView`** (en-tête + CTA « Personnaliser » → `/wardrobe` + carte d'ID +
+**bloc 3 `<StatCard>`** Génération/Jalons/Cosmétiques, données perso exclues) ;
+route `/profile` + entrée de nav Profil activée ; `profile.css` (animations
+reduced-motion) ; 2 icônes (`pencil`/`milestone`) ; i18n FR/EN. **Vérifs vertes :
+typecheck + lint + build/PWA + tests 238/238 (+6).** Vérif visuelle navigateur à
+faire en recette.
+
+**Recette 8/8 validée PO le 23/07/2026** (aucun bug ouvert ; 3 ajustements
+corrigés en direct : rail de nav sticky, `z-index` des repères de `<Card>`,
+cercle de bannière remonté).
+
+**Prochaine action : commit + merge + push** via le skill `commit`.
+
+---
+
+_Historique._ **US-031 — Socle cosmétique & rareté clôturée** le
 23/07/2026 (Phase A3, fondation ; cycle complet — cadrages fonctionnel +
 technique validés PO, maquette `wardrobe` reçue + analysée, plan 14 étapes validé
 PO, implémentation faite, **recette 9/9 PO validée à 100 %**, décision **#036**,
-commit + merge sur `develop` + push). **Prochaine tranche : US-032 — Profil / ID
-runner** (chemin critique A3) via le skill `nouvelle-us`.
+commit + merge sur `develop` + push).
 
 ---
 

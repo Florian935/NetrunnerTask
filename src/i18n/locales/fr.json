@@ -192,7 +192,27 @@
     "inventory": "Inventaire",
     "crates": "Caisses",
     "profile": "Profil",
+    "profileCode": "PRO",
     "soon": "bientôt"
+  },
+  "profile": {
+    "kicker": "NETRUNNER://PROFIL/ID",
+    "title": "PROFIL",
+    "customize": "Personnaliser",
+    "connected": "ID RUNNER · CONNECTÉ",
+    "bannerLabel": "BANNIÈRE · {{name}}",
+    "titleLabel": "‹ TITRE ÉQUIPÉ ›",
+    "callsign": {
+      "hint": "IDENTIFIANT PUBLIC · A-Z 0-9, 12 CAR. MAX",
+      "editAria": "Modifier le callsign",
+      "save": "Valider",
+      "cancel": "Annuler"
+    },
+    "stats": {
+      "generation": "Génération",
+      "milestones": "Jalons",
+      "cosmetics": "Cosmétiques"
+    }
   },
   "cosmetics": {
     "kicker": "NETRUNNER://PROFIL/COSMÉTIQUES",
