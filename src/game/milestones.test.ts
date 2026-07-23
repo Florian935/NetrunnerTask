@@ -1,9 +1,13 @@
 import { describe, expect, it } from 'vitest'
+import { COSMETICS, isStarter } from './cosmetics'
 import {
   checkHackMilestone,
   checkMilestones,
   HACK_MILESTONE_ID,
+  MILESTONE_BY_ID,
   MILESTONE_DEFS,
+  milestoneForCosmetic,
+  rewardsFor,
   type MilestoneCore,
 } from './milestones'
 
@@ -99,5 +103,51 @@ describe('checkHackMilestone', () => {
   })
   it('retourne [] si déjà atteint', () => {
     expect(checkHackMilestone(['hack'])).toEqual([])
+  })
+})
+
+describe('récompenses (US-033)', () => {
+  const rewards = MILESTONE_DEFS.map((m) => m.reward).filter(
+    (r): r is string => r !== undefined,
+  )
+
+  it('chaque récompense existe dans le catalogue cosmétique', () => {
+    for (const id of rewards) {
+      expect(COSMETICS.some((c) => c.id === id)).toBe(true)
+    }
+  })
+
+  it('aucune récompense en double (un cosmétique = un seul jalon)', () => {
+    expect(new Set(rewards).size).toBe(rewards.length)
+  })
+
+  it('aucun cosmétique de départ n’est une récompense', () => {
+    for (const id of rewards) expect(isStarter(id)).toBe(false)
+  })
+
+  it('couvre tous les cosmétiques non-starter (tout est gagnable)', () => {
+    const earnable = COSMETICS.filter((c) => !isStarter(c.id)).map((c) => c.id)
+    expect(new Set(rewards)).toEqual(new Set(earnable))
+  })
+
+  it('les jalons cachés récompensés portent une rareté haute (épique+)', () => {
+    for (const m of MILESTONE_DEFS) {
+      if (m.hidden && m.reward) {
+        const c = COSMETICS.find((x) => x.id === m.reward)!
+        expect(['epic', 'legendary']).toContain(c.rarity)
+      }
+    }
+  })
+
+  it('rewardsFor ne renvoie que les récompenses des jalons donnés, dans l’ordre', () => {
+    expect(rewardsFor(['hack'])).toEqual(['avatar-raven'])
+    expect(rewardsFor([])).toEqual([])
+    // ordre du catalogue, pas de l’argument
+    expect(rewardsFor(['reborn', 'hack'])).toEqual(['avatar-raven', 'banner-apex'])
+  })
+
+  it('milestoneForCosmetic remonte le bon jalon (ou undefined pour un starter)', () => {
+    expect(milestoneForCosmetic('avatar-raven')).toBe(MILESTONE_BY_ID.hack)
+    expect(milestoneForCosmetic('nightwire')).toBeUndefined()
   })
 })

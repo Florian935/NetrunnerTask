@@ -2,13 +2,15 @@ import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Icon } from '../../components/ui'
 import {
-  COSMETICS,
   COSMETIC_TYPES,
   cosmeticsByType,
   type CosmeticType,
 } from '../../game/cosmetics'
+import { milestoneForCosmetic } from '../../game/milestones'
+import { useBuilderStore } from '../../stores/useBuilderStore'
 import { useCosmeticsStore } from '../../stores/useCosmeticsStore'
-import { CosmeticCard } from './CosmeticCard'
+import { CollectionPreview } from './CollectionPreview'
+import { CosmeticCard, type CosmeticCardState } from './CosmeticCard'
 
 /** Icône de section + largeur mini de carte par type. */
 const TYPE_META: Record<CosmeticType, { icon: string; min: number }> = {
@@ -32,18 +34,7 @@ function Section({
     <section style={{ marginBottom: 30 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
         <span aria-hidden style={{ width: 20, height: 10, background: 'var(--hatch-cyan)', flexShrink: 0 }} />
-        <span
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 8,
-            fontFamily: 'var(--font-display)',
-            fontWeight: 700,
-            fontSize: 'var(--text-md)',
-            letterSpacing: '0.24em',
-            color: 'var(--text-primary)',
-          }}
-        >
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 'var(--text-md)', letterSpacing: '0.24em', color: 'var(--text-primary)' }}>
           <Icon name={TYPE_META[type].icon} size={16} color="var(--accent)" />
           {t(`cosmetics.types.${type}`)}
         </span>
@@ -52,98 +43,89 @@ function Section({
         </span>
         <span style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, var(--border-strong), transparent)' }} />
       </div>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: `repeat(auto-fill, minmax(${TYPE_META[type].min}px, 1fr))`,
-          gap: 16,
-        }}
-      >
+      <div style={{ display: 'grid', gridTemplateColumns: `repeat(auto-fill, minmax(${TYPE_META[type].min}px, 1fr))`, gap: 16 }}>
         {children}
       </div>
     </section>
   )
 }
 
+interface VisibleCosmetic {
+  id: string
+  state: CosmeticCardState
+  hint?: string
+}
+
 /**
- * Écran Garde-robe (US-031) — cosmétiques possédés groupés par type, chacun
- * équipable (un seul par type). Hérite du fond signature via `.nav-main`.
+ * Écran Garde-robe (US-031 + déblocage US-033). Affiche **tout le catalogue**
+ * groupé par type : possédés (équipables) et **verrouillés** (indice de
+ * déblocage). Les cosmétiques d'un accomplissement **caché non atteint** sont
+ * masqués. Aperçu de collection en tête.
  */
 export function WardrobeView() {
   const { t } = useTranslation()
   const owned = useCosmeticsStore((s) => s.owned)
   const equipped = useCosmeticsStore((s) => s.equipped)
   const equip = useCosmeticsStore((s) => s.equip)
+  const achievedMilestones = useBuilderStore((s) => s.achievedMilestones)
+
+  const ownedSet = new Set(owned)
+  const achievedSet = new Set(achievedMilestones)
+
+  /** Cosmétiques visibles d'un type (masque les récompenses de jalons cachés non atteints). */
+  const visibleOf = (type: CosmeticType): VisibleCosmetic[] => {
+    const out: VisibleCosmetic[] = []
+    for (const c of cosmeticsByType(type)) {
+      const isOwned = ownedSet.has(c.id)
+      const source = milestoneForCosmetic(c.id)
+      if (!isOwned && source?.hidden && !achievedSet.has(source.id)) continue // scellé → masqué
+      const state: CosmeticCardState = isOwned
+        ? equipped[type] === c.id
+          ? 'equipped'
+          : 'unequipped'
+        : 'locked'
+      const hint =
+        state === 'locked' && source ? t(`builder.milestones.items.${source.id}.name`) : undefined
+      out.push({ id: c.id, state, hint })
+    }
+    return out
+  }
 
   return (
     <div style={{ padding: 'var(--space-6) var(--space-6) var(--space-8)', maxWidth: 1180, margin: '0 auto' }}>
-      {/* En-tête HUD (sans pastille crédits — acquisition = US-033/034) */}
-      <header
-        style={{
-          display: 'flex',
-          alignItems: 'flex-end',
-          justifyContent: 'space-between',
-          gap: 20,
-          marginBottom: 26,
-          paddingBottom: 16,
-          borderBottom: '1px solid var(--border)',
-        }}
-      >
-        <div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-2xs)', letterSpacing: '0.34em', color: 'var(--text-muted)', marginBottom: 8 }}>
-            {t('cosmetics.kicker')}
-          </div>
-          <h1
-            style={{
-              margin: 0,
-              fontFamily: 'var(--font-display)',
-              fontWeight: 700,
-              fontSize: '2.4rem',
-              letterSpacing: '0.1em',
-              color: 'var(--text-primary)',
-              textShadow: 'var(--text-glow-cyan)',
-              lineHeight: 1,
-            }}
-          >
-            {t('cosmetics.title')}
-          </h1>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-xs)', letterSpacing: '0.12em', color: 'var(--text-secondary)', marginTop: 9 }}>
-            {t('cosmetics.subtitle')}
-          </div>
+      {/* En-tête HUD */}
+      <header style={{ marginBottom: 24 }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-2xs)', letterSpacing: '0.34em', color: 'var(--text-muted)', marginBottom: 8 }}>
+          {t('cosmetics.kicker')}
         </div>
-        {/* Compteur « débloqués » minimal (aperçu de collection complet = US-033). */}
-        <div
-          style={{
-            textAlign: 'right',
-            padding: '8px 14px',
-            clipPath: 'var(--clip-bevel-sm)',
-            border: '1px solid var(--border-strong)',
-            background: 'var(--bg-inset)',
-            flexShrink: 0,
-          }}
-        >
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-md)', color: 'var(--text-primary)' }}>
-            {owned.length}/{COSMETICS.length}
-          </div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-2xs)', letterSpacing: '0.18em', color: 'var(--text-muted)', marginTop: 3 }}>
-            {t('cosmetics.unlocked')}
-          </div>
+        <h1 style={{ margin: 0, fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '2.4rem', letterSpacing: '0.1em', color: 'var(--text-primary)', textShadow: 'var(--text-glow-cyan)', lineHeight: 1 }}>
+          {t('cosmetics.title')}
+        </h1>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-xs)', letterSpacing: '0.12em', color: 'var(--text-secondary)', marginTop: 9 }}>
+          {t('cosmetics.subtitle')}
         </div>
       </header>
 
+      {/* Aperçu de collection (US-033) */}
+      <CollectionPreview owned={owned} />
+
       {COSMETIC_TYPES.map((type) => {
-        const items = cosmeticsByType(type).filter((c) => owned.includes(c.id))
+        const items = visibleOf(type)
         if (items.length === 0) return null
         return (
           <Section key={type} type={type} count={items.length}>
-            {items.map((item) => (
-              <CosmeticCard
-                key={item.id}
-                item={item}
-                equipped={equipped[type] === item.id}
-                onEquip={() => equip(item.id)}
-              />
-            ))}
+            {items.map(({ id, state, hint }) => {
+              const cosmetic = cosmeticsByType(type).find((c) => c.id === id)!
+              return (
+                <CosmeticCard
+                  key={id}
+                  item={cosmetic}
+                  state={state}
+                  hint={hint}
+                  onEquip={() => equip(id)}
+                />
+              )
+            })}
           </Section>
         )
       })}

@@ -23,6 +23,12 @@ interface CosmeticsStoreState extends CosmeticsCore {
   load: () => Promise<void>
   /** Équipe le cosmétique `id` (no-op si inconnu/non possédé/déjà équipé). */
   equip: (id: string) => void
+  /**
+   * Débloque des cosmétiques (US-033) : ajoute aux `owned` ceux pas encore
+   * possédés, persiste, et **renvoie les `id` réellement nouveaux** (pour le
+   * feedback de déblocage). No-op (renvoie `[]`) si tous déjà possédés.
+   */
+  grant: (ids: readonly string[]) => string[]
   /** Change le callsign (normalisé via `game/profile.ts`) ; persiste aussitôt. */
   setCallsign: (raw: string) => void
 }
@@ -58,6 +64,16 @@ export const useCosmeticsStore = create<CosmeticsStoreState>((set, get) => {
       applyCosmeticTheme(next.equipped.theme)
       mirrorCosmeticTheme(next.equipped.theme)
       persist()
+    },
+
+    grant: (ids) => {
+      const owned = get().owned
+      const ownedSet = new Set(owned)
+      const fresh = ids.filter((id) => !ownedSet.has(id))
+      if (fresh.length === 0) return [] // tout déjà possédé → no-op
+      set({ owned: [...owned, ...fresh] })
+      persist()
+      return fresh
     },
 
     setCallsign: (raw) => {

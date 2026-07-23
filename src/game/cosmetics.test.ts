@@ -10,12 +10,13 @@ import {
   isOwned,
   rarityRank,
   RARITY_ORDER,
+  STARTER_COSMETICS,
   type CosmeticsCore,
 } from './cosmetics'
 
-/** État de test : tout possédé, équipés par défaut. */
+/** État de test à inventaire **complet** (pour tester la logique d'équipement). */
 const base = (): CosmeticsCore => ({
-  owned: [...DEFAULT_COSMETICS.owned],
+  owned: COSMETICS.map((c) => c.id),
   equipped: { ...DEFAULT_COSMETICS.equipped },
 })
 
@@ -40,8 +41,9 @@ describe('catalogue', () => {
 })
 
 describe('DEFAULT_COSMETICS', () => {
-  it('débloque tout le catalogue au départ (H4)', () => {
-    expect(DEFAULT_COSMETICS.owned).toHaveLength(COSMETICS.length)
+  it('ne possède que les cosmétiques de départ (US-033 : le reste se gagne)', () => {
+    expect([...DEFAULT_COSMETICS.owned].sort()).toEqual([...STARTER_COSMETICS].sort())
+    expect(DEFAULT_COSMETICS.owned.length).toBeLessThan(COSMETICS.length)
   })
 
   it('a un équipé par type, possédé et du bon type (invariant)', () => {

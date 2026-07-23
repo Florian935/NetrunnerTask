@@ -50,6 +50,13 @@ export interface MilestoneDef {
   condition: ((core: MilestoneCore) => boolean) | null
   /** Jalon de reveal caché (US-022/US-027) — masqué dans le panneau tant que non atteint. */
   hidden?: boolean
+  /**
+   * `id` du cosmétique **débloqué** en atteignant ce jalon (US-033, voie
+   * déterministe de l'acquisition). Absent = aucune récompense cosmétique
+   * (le jalon reste de la reconnaissance pure). Rareté ~ difficulté du jalon ;
+   * les jalons cachés portent les récompenses les plus rares.
+   */
+  reward?: string
 }
 
 /**
@@ -57,24 +64,26 @@ export interface MilestoneDef {
  * 22/07/2026). `id` stable, jamais renommé une fois persisté.
  */
 export const MILESTONE_DEFS: readonly MilestoneDef[] = [
-  { id: HACK_MILESTONE_ID, icon: 'zap', condition: null },
-  { id: 'daemon', icon: 'cpu', condition: (c) => Object.keys(c.generators).length >= 1 },
-  { id: 'roster', icon: 'server', condition: (c) => Object.keys(c.generators).length >= 2 },
-  { id: 'upgrade', icon: 'arrow-up-circle', condition: (c) => Object.keys(c.upgrades).length >= 1 },
+  { id: HACK_MILESTONE_ID, icon: 'zap', condition: null, reward: 'avatar-raven' },
+  { id: 'daemon', icon: 'cpu', condition: (c) => Object.keys(c.generators).length >= 1, reward: 'avatar-phantom' },
+  { id: 'roster', icon: 'server', condition: (c) => Object.keys(c.generators).length >= 2, reward: 'banner-surge' },
+  { id: 'upgrade', icon: 'arrow-up-circle', condition: (c) => Object.keys(c.upgrades).length >= 1, reward: 'title-ghost' },
   {
     id: 'data',
     icon: 'database',
     condition: (c) => (c.generators[BUILDER_CONFIG.dataUnlockGenerator] ?? 0) >= 1,
+    reward: 'cryo',
   },
-  { id: 'tree', icon: 'git-branch', condition: (c) => c.unlockedNodes.length >= 1 },
-  { id: 'accel', icon: 'gauge-circle', condition: (c) => c.acceleratorBoost !== null },
-  { id: 'crypto', icon: 'coins', condition: (c) => c.crypto > 0 },
-  { id: 'reborn', icon: 'flame', condition: (c) => c.prestigeCount >= 1 },
+  { id: 'tree', icon: 'git-branch', condition: (c) => c.unlockedNodes.length >= 1, reward: 'avatar-icebreaker' },
+  { id: 'accel', icon: 'gauge-circle', condition: (c) => c.acceleratorBoost !== null, reward: 'title-overdrive' },
+  { id: 'crypto', icon: 'coins', condition: (c) => c.crypto > 0, reward: 'ecarlate' },
+  { id: 'reborn', icon: 'flame', condition: (c) => c.prestigeCount >= 1, reward: 'banner-apex' },
   {
     id: 'ghost',
     icon: 'ghost',
     condition: (c) => c.unlockedNodes.includes('ghost-protocol'),
     hidden: true,
+    reward: 'title-zeroday',
   },
   {
     id: 'cartel',
@@ -112,4 +121,33 @@ export function checkMilestones(core: MilestoneCore, achieved: readonly string[]
  */
 export function checkHackMilestone(achieved: readonly string[]): string[] {
   return achieved.includes(HACK_MILESTONE_ID) ? [] : [HACK_MILESTONE_ID]
+}
+
+/** Map inverse `cosmeticId → milestoneId` (récompenses, US-033). */
+const REWARD_TO_MILESTONE: Record<string, string> = Object.fromEntries(
+  MILESTONE_DEFS.filter((m) => m.reward !== undefined).map((m) => [m.reward as string, m.id]),
+)
+
+/**
+ * `id` du cosmétique récompensé par ces jalons (US-033), dans l'ordre du
+ * catalogue, en ignorant les jalons sans récompense. Sert au câblage du
+ * déblocage (store) : `rewardsFor(newlyAchievedIds)`.
+ */
+export function rewardsFor(milestoneIds: readonly string[]): string[] {
+  const set = new Set(milestoneIds)
+  const out: string[] = []
+  for (const m of MILESTONE_DEFS) {
+    if (m.reward !== undefined && set.has(m.id)) out.push(m.reward)
+  }
+  return out
+}
+
+/**
+ * `id` du jalon qui débloque ce cosmétique (US-033), ou `undefined` s'il n'est
+ * la récompense d'aucun jalon (ex. cosmétique de départ). Sert à l'état
+ * verrouillé de la Garde-robe (indice + masquage des cachés).
+ */
+export function milestoneForCosmetic(cosmeticId: string): MilestoneDef | undefined {
+  const id = REWARD_TO_MILESTONE[cosmeticId]
+  return id === undefined ? undefined : MILESTONE_BY_ID[id]
 }

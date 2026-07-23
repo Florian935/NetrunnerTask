@@ -224,6 +224,18 @@
     "equip": "Équiper",
     "equipped": "Équipé",
     "equippedShort": "ÉQUIPÉ",
+    "unlockedBy": "DÉBLOQUÉ PAR",
+    "reward": "RÉCOMPENSE",
+    "collection": {
+      "title": "COLLECTION",
+      "unlocked": "DÉBLOQUÉS",
+      "legendariesLeft_one": "{{count}} LÉGENDAIRE RESTANT DANS LE POOL",
+      "legendariesLeft_other": "{{count}} LÉGENDAIRES RESTANTS DANS LE POOL"
+    },
+    "unlock": {
+      "title": "COSMÉTIQUE DÉBLOQUÉ",
+      "close": "Fermer"
+    },
     "types": {
       "theme": "THÈMES",
       "avatar": "AVATARS",

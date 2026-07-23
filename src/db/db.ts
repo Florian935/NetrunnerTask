@@ -1,6 +1,11 @@
 import Dexie from 'dexie'
 import type { Table } from 'dexie'
+import { DEFAULT_COSMETICS, STARTER_COSMETICS } from '../game/cosmetics'
+import { rewardsFor } from '../game/milestones'
 import { DEFAULT_CALLSIGN } from '../game/profile'
+
+/** Types (`CosmeticType`) équipables, pour la réconciliation de la migration v19. */
+const COSMETIC_TYPES_MIG = ['theme', 'avatar', 'banner', 'title'] as const
 import type {
   BuilderState,
   Contract,
@@ -349,6 +354,42 @@ export class NetrunnerDB extends Dexie {
             if (c.callsign === undefined) c.callsign = DEFAULT_CALLSIGN
           }),
       )
+    // v19 (US-033) : l'acquisition devient déterministe — une partie ne possède
+    // plus que les cosmétiques de départ + ceux gagnés via des accomplissements.
+    // Reconciliation de la sauvegarde existante (qui possédait tout depuis
+    // US-031) : `owned = STARTER ∪ récompenses des jalons déjà atteints`, et
+    // repli des slots équipés devenus verrouillés sur le défaut de leur type.
+    // Pas de champ nouveau (bump de version pour rejouer l'`upgrade`).
+    this.version(19)
+      .stores({
+        contracts: 'id, factionId, status, dueDate, createdAt',
+        factions: 'id, name',
+        player: 'id',
+        builderState: 'id',
+        cosmeticsState: 'id',
+        demoKV: 'key',
+      })
+      .upgrade(async (tx) => {
+        const builder = await tx
+          .table<{ achievedMilestones?: string[] }>('builderState')
+          .get('me')
+        const achieved = builder?.achievedMilestones ?? []
+        const owned = Array.from(
+          new Set([...STARTER_COSMETICS, ...rewardsFor(achieved)]),
+        )
+        const ownedSet = new Set(owned)
+        await tx
+          .table('cosmeticsState')
+          .toCollection()
+          .modify((c: { owned?: string[]; equipped?: Record<string, string> }) => {
+            c.owned = owned
+            const eq = c.equipped ?? { ...DEFAULT_COSMETICS.equipped }
+            for (const type of COSMETIC_TYPES_MIG) {
+              if (!ownedSet.has(eq[type])) eq[type] = DEFAULT_COSMETICS.equipped[type]
+            }
+            c.equipped = eq
+          })
+      })
   }
 }
 

@@ -5,7 +5,60 @@
 
 ## US active
 
-_Aucune US active._ **US-032 — Profil / ID runner clôturée** le 23/07/2026
+_Aucune US active._ **US-033 — Achievements-récompenses + aperçu de collection
+clôturée** le 23/07/2026 (Phase A3, voie déterministe ; cycle complet — cadrages
+validés PO, maquette `cosmectic-progression` analysée, plan 16 étapes validé PO,
+implémentation faite, **recette 8/8 PO à 100 %**, décision **#038**, commit +
+merge sur `develop` + push). Restent en Phase A3 : **US-034 — Caisses & rituel
+d'ouverture** (voie aléatoire de l'acquisition hybride) puis **US-035 — Pity +
+fragments**. Prochaine US via `nouvelle-us`.
+
+---
+
+_Historique de la tranche US-033._ Branche
+`feature/US-033-achievements-collection` créée depuis `develop`. **Cadrage
+fonctionnel**
+(`us/US-033-achievements-collection.md`) — bascule le socle d'US-031 de « tout
+débloqué » à « une partie se gagne » ; des accomplissements (dont cachés)
+débloquent des cosmétiques ciblés garantis + aperçu de collection par rareté. 5
+hypothèses (H1 étendre les jalons US-028 · H2 départ vs à-gagner · H3
+re-verrouillage de la save existante · H4 affichage liste + aperçu Garde-robe ·
+H5 feedback de déblocage) + 8 critères. **Cadrage fonctionnel validé PO le
+23/07/2026** (H1–H4). **Étape en cours : cadrage technique** — extension des
+jalons (`MilestoneDef.reward`, mapping 10 cosmétiques), `STARTER_COSMETICS` +
+**migration Dexie v19** (re-verrouille `owned` = départ ∪ récompenses atteintes,
+réconcilie `equipped`), `grant()` sur `useCosmeticsStore`, file `cosmeticUnlocks`
++ `CosmeticUnlockToast`, état verrouillé de `CosmeticCard`, aperçu de collection
+(`game/collection.ts` pur + `CollectionPreview`), extension `MilestonesPanel`. 3
+décisions techniques. **Cadrage technique validé PO le 23/07/2026.** **Étape en
+cours : Design** — 4 surfaces à maquetter (CosmeticCard état verrouillé, aperçu
+de collection, MilestonesPanel étendu avec récompenses, toast de déblocage).
+**Maquette `cosmectic-progression` reçue + analysée + validée PO** (23/07/2026) :
+fidèle, réutilise CosmeticCard/rareté/aperçus d'US-031 ; écarts validés (contenu =
+vrais jalons builder, pas les accomplissements perso de la maquette ; jalons
+booléens sans fraction de progression). **Plan 16 étapes validé PO.**
+**Implémentation US-033 terminée.** Livré : `MilestoneDef.reward` + mapping des 10
+cosmétiques + helpers (`rewardsFor`/`milestoneForCosmetic`, testés) ;
+`STARTER_COSMETICS` (départ = 4) ; **`game/collection.ts`** (aperçu par rareté,
+testé) ; **migration Dexie v19** (re-verrouille `owned` = départ ∪ récompenses
+atteintes + réconcilie `equipped`) ; `useCosmeticsStore.grant` ; file
+`cosmeticUnlocks` + **`CosmeticUnlockToast`** (hébergé AppShell, bas-centre) ;
+câblage du déblocage dans `useBuilderStore` (grant + reveal, silencieux au load ;
+cosmétiques chargés avant le builder pour éviter la course) ; **`CosmeticCard`
+état verrouillé** (cadenas + « Débloqué par ») ; **`CollectionPreview`** +
+**`RewardChip`** ; `WardrobeView` (catalogue complet + verrou + masquage des
+cachés + aperçu) ; `MilestonesPanel` étendu (puce récompense) ; 2 icônes ; i18n
+FR/EN. **Vérifs vertes : typecheck + lint + build/PWA + tests 252/252 (+14).**
+Vérif visuelle navigateur à faire en recette (dont re-verrouillage v19).
+
+**Recette 8/8 validée PO le 23/07/2026** (aucun bug ; vérif live sur `:5180`,
+partie neuve via « Clear site data »).
+
+**Prochaine action : commit + merge + push** via le skill `commit`.
+
+---
+
+_Historique._ **US-032 — Profil / ID runner clôturée** le 23/07/2026
 (Phase A3, vitrine ; cycle complet — cadrages validés PO, maquette `profil-runner`
 analysée, plan 11 étapes validé PO, implémentation faite, **recette 8/8 PO à
 100 %** [3 ajustements corrigés en direct], décision **#037**, commit + merge sur

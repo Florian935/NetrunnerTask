@@ -224,6 +224,18 @@
     "equip": "Equip",
     "equipped": "Equipped",
     "equippedShort": "EQUIPPED",
+    "unlockedBy": "UNLOCKED BY",
+    "reward": "REWARD",
+    "collection": {
+      "title": "COLLECTION",
+      "unlocked": "UNLOCKED",
+      "legendariesLeft_one": "{{count}} LEGENDARY LEFT IN THE POOL",
+      "legendariesLeft_other": "{{count}} LEGENDARIES LEFT IN THE POOL"
+    },
+    "unlock": {
+      "title": "COSMETIC UNLOCKED",
+      "close": "Close"
+    },
     "types": {
       "theme": "THEMES",
       "avatar": "AVATARS",
