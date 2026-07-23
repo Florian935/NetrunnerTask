@@ -5,6 +5,7 @@ import { Alert, Toast } from '../components/ui'
 import { NavRail } from '../components/layout/NavRail'
 import { StatusBar } from '../components/layout/StatusBar'
 import { MilestoneToast, OfflineCatchupBanner, useBuilderTick } from '../features/builder'
+import { CosmeticUnlockToast } from '../features/cosmetics'
 import { LevelUpToast } from '../features/progression/LevelUpToast'
 import { useReminders } from '../features/reminders/useReminders'
 import { RankUpToast } from '../features/reputation/RankUpToast'
@@ -53,15 +54,18 @@ export function AppShell() {
   const clearRankUp = () => useFeedbackStore.setState({ rankUp: null })
   const milestones = useFeedbackStore((s) => s.milestones)
   const dismissMilestone = useFeedbackStore((s) => s.dismissMilestone)
+  const cosmeticUnlocks = useFeedbackStore((s) => s.cosmeticUnlocks)
+  const dismissCosmeticUnlock = useFeedbackStore((s) => s.dismissCosmeticUnlock)
 
   useEffect(() => {
     // Séquencement : contrats → factions (les pénalités de réputation dues aux
     // streaks cassés sont écrites pendant `loadContracts`, avant leur lecture).
     void loadContracts().then(() => loadFactions())
     void loadPlayer()
-    void loadBuilder()
-    // US-031 : charge l'inventaire cosmétique + applique le thème équipé.
-    void loadCosmetics()
+    // US-031/033 : cosmétiques chargés **avant** le builder — au chargement, le
+    // rattrapage hors-ligne peut débloquer un cosmétique (grant), qui serait
+    // écrasé si `loadCosmetics` écrivait `owned` après. Applique aussi le thème.
+    void loadCosmetics().then(() => loadBuilder())
   }, [loadContracts, loadFactions, loadPlayer, loadBuilder, loadCosmetics])
 
   // US-013 : mises perdues détectées au chargement → toasts danger (une fois).
@@ -176,6 +180,32 @@ export function AppShell() {
         >
           {milestones.map((item) => (
             <MilestoneToast key={item.id} item={item} onClose={() => dismissMilestone(item.id)} />
+          ))}
+        </div>
+      )}
+
+      {/* Déblocages de cosmétiques (US-033) : reveal empilable, bas-centre —
+          distinct des jalons (haut-droit) et des toasts génériques (bas-droit). */}
+      {cosmeticUnlocks.length > 0 && (
+        <div
+          style={{
+            position: 'fixed',
+            bottom: 18,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 10,
+            zIndex: 1100,
+          }}
+        >
+          {cosmeticUnlocks.map((item) => (
+            <CosmeticUnlockToast
+              key={item.id}
+              item={item}
+              onClose={() => dismissCosmeticUnlock(item.id)}
+            />
           ))}
         </div>
       )}

@@ -3,6 +3,42 @@
 > Tests de recette par US. Chaque test reprend un critère d'acceptation de l'US.
 > Statuts : `à faire` / `validé` / `échoué`.
 
+## US-033 — Achievements-récompenses + aperçu de collection (Phase A3)
+
+Recette du 23/07/2026. Critères de `us/US-033-achievements-collection.md` §1.
+**Vérifs automatiques** : `typecheck` + `lint` + `build`/PWA + tests Vitest
+**252/252** (+14 : mapping récompenses jalons, `game/collection`). **Vérif live
+PO** sur `:5180` (partie neuve via « Clear site data » → seed v19 direct).
+
+| ID | Critère (action → résultat) | Vérif | Statut | Date |
+|----|------------------------------|-------|--------|------|
+| C1 | Partie neuve : seuls les 4 cosmétiques de départ possédés, le reste **verrouillé** (cadenas + « Débloqué par »), cachés non atteints **masqués** | `DEFAULT_COSMETICS.owned = STARTER` + `WardrobeView` (catalogue complet + masquage) + PO live | validé | 23/07/2026 |
+| C2 | Atteindre l'objectif d'un accomplissement → le cosmétique récompense devient **possédé et équipable** | `MilestoneDef.reward` + `grant` câblé dans `useBuilderStore` + PO live (HACK → Corbeau) | validé | 23/07/2026 |
+| C3 | Au déblocage : **reveal dédié** « Cosmétique débloqué » | file `cosmeticUnlocks` + `CosmeticUnlockToast` (AppShell) + PO live | validé | 23/07/2026 |
+| C4 | Déblocage **définitif** (survit reload + renaissance) et **idempotent** (ne se reproduit pas) | `owned` sur `cosmeticsState` (hors `prestige()`) + `grant` idempotent + `achievedMilestones` append-only + PO live | validé | 23/07/2026 |
+| C5 | Liste des accomplissements avec **récompense** par ligne ; cachés non atteints → « ??? » | `MilestonesPanel` étendu + `RewardChip` + PO live | validé | 23/07/2026 |
+| C6 | **Aperçu de collection** par rareté (débloqués/total) + « X légendaires restants » | `game/collection.ts` (**testé**) + `CollectionPreview` + PO live | validé | 23/07/2026 |
+| C7 | Cosmétique **verrouillé non équipable** (pas de bouton Équiper) | `CosmeticCard` état `locked` + PO live | validé | 23/07/2026 |
+| C8 | i18n **FR/EN** (verrouillage, récompense, collection, toast) ; aucune chaîne en dur | clés `cosmetics.*` FR+EN + PO live | validé | 23/07/2026 |
+| C9 | Couches pures couvertes (mapping récompenses, `game/collection`) | `milestones.test.ts` (+7) + `collection.test.ts` (8) | validé | 23/07/2026 |
+| C10 | `typecheck` + `lint` + `build`/PWA + `test` (**252/252**) | exécution | validé | 23/07/2026 |
+| — | **Migration Dexie v19** : re-verrouille `owned` = départ ∪ récompenses atteintes + réconcilie `equipped` (invariant « équipé ⊂ possédé ») | `db.ts` v19 (upgrade) | validé | 23/07/2026 |
+| — | Réutilisation DS : `CosmeticCard`/rareté/aperçus d'US-031 étendus, `<Card>`/`<Button>`, famille toasts | composants existants | validé | 23/07/2026 |
+| — | Course de chargement évitée : cosmétiques chargés **avant** le builder (`AppShell`) — le grant hors-ligne n'est pas écrasé | `loadCosmetics().then(loadBuilder)` | validé | 23/07/2026 |
+
+### Notes de méthode & écarts (validés PO)
+
+- **Contenu des accomplissements = vrais jalons builder (US-028)** + mapping de
+  récompense, **pas** les accomplissements de la maquette (« Série de 7 jours »,
+  « 50 tâches purgées » = module perso, écartés — cohérent avec le découplage
+  #022 / la décision profil #037).
+- **Jalons booléens** (atteint / à faire / scellé) — pas de fraction de
+  progression (« 38/50 » de la maquette écarté, nos jalons sont des prédicats).
+- **Mapping récompense** curé (rareté ~ difficulté ; cachés → titres/bannières
+  légendaires) — ajustable si besoin (`game/milestones.ts`).
+
+**Verdict : recette US-033 validée (8/8 critères + vérifs annexes), aucun bug ouvert.**
+
 ## US-032 — Profil / ID runner (Phase A3)
 
 Recette du 23/07/2026. Critères de `us/US-032-profil-runner.md` §1. **Vérifs

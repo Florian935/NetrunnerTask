@@ -21,6 +21,7 @@ import { convert as convertPure, marketRate, type CryptoCore } from '../game/cry
 import {
   checkHackMilestone,
   checkMilestones,
+  rewardsFor,
   type MilestoneCore,
 } from '../game/milestones'
 import {
@@ -35,6 +36,7 @@ import {
   dataMultiplier,
   type UnlockTreeCore,
 } from '../game/unlockTree'
+import { useCosmeticsStore } from './useCosmeticsStore'
 import { useFeedbackStore } from './useFeedbackStore'
 
 /** Seuil d'affichage du bandeau de rattrapage hors-ligne (US-024) : gain notable. */
@@ -151,7 +153,22 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => {
     if (newIds.length === 0) return
     set({ achievedMilestones: [...s.achievedMilestones, ...newIds] })
     for (const id of newIds) useFeedbackStore.getState().triggerMilestone(id)
+    // US-033 : les jalons à récompense débloquent leur cosmétique + reveal dédié.
+    grantMilestoneRewards(newIds, false)
     void get().persist()
+  }
+
+  /**
+   * US-033 : débloque les cosmétiques récompensant `milestoneIds` (idempotent
+   * via `grant`). `silent` = pas de reveal (merge de `load()` : un déblocage
+   * hors-ligne reste discret, le bandeau de rattrapage suffit).
+   */
+  function grantMilestoneRewards(milestoneIds: readonly string[], silent: boolean): void {
+    const rewards = rewardsFor(milestoneIds)
+    if (rewards.length === 0) return
+    const granted = useCosmeticsStore.getState().grant(rewards)
+    if (silent) return
+    for (const cid of granted) useFeedbackStore.getState().triggerCosmeticUnlock(cid)
   }
 
   return {
@@ -248,6 +265,12 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => {
       })
     }
 
+    // US-033 : les jalons franchis hors-ligne débloquent aussi leur cosmétique,
+    // mais **en silence** (pas de reveal — cohérent avec le merge silencieux des
+    // jalons ; le bandeau de rattrapage suffit). `grant` est idempotent, et le
+    // store cosmétique est chargé avant le builder (séquencement `AppShell`).
+    grantMilestoneRewards(newMilestoneIds, true)
+
     // Persiste si le rattrapage, la résolution ou un jalon a changé quelque chose.
     if (gainCycles > 0 || gainData > 0 || resolvedAcc !== accAtClose || newMilestoneIds.length > 0) {
       void get().persist()
@@ -263,6 +286,7 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => {
     if (hackIds.length > 0) {
       set({ achievedMilestones: [...s.achievedMilestones, ...hackIds] })
       for (const id of hackIds) useFeedbackStore.getState().triggerMilestone(id)
+      grantMilestoneRewards(hackIds, false) // US-033
       void get().persist()
     }
   },

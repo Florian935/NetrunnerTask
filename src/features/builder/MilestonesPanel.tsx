@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { Card, Icon, ProgressBar } from '../../components/ui'
 import { MILESTONE_DEFS, type MilestoneDef } from '../../game/milestones'
 import { useBuilderStore } from '../../stores/useBuilderStore'
+import { RewardChip } from '../cosmetics/RewardChip'
 import './builder.css'
 
 function MilestoneRow({ def, achieved }: { def: MilestoneDef; achieved: boolean }) {
@@ -29,6 +30,12 @@ function MilestoneRow({ def, achieved }: { def: MilestoneDef; achieved: boolean 
         <div className={`builder__milestones-row-desc${sealed ? ' builder__milestones-row-desc--sealed' : ''}`}>
           {desc}
         </div>
+        {/* US-033 : cosmétique récompense (masqué si jalon caché non atteint). */}
+        {def.reward !== undefined && (
+          <div style={{ marginTop: 9 }}>
+            <RewardChip cosmeticId={def.reward} sealed={sealed} />
+          </div>
+        )}
       </div>
       <span className="builder__milestones-row-status">
         <Icon name={achieved ? 'check-circle' : sealed ? 'help-circle' : 'circle-dashed'} size={15} />

@@ -40,6 +40,16 @@ export interface MilestoneItem {
   milestoneId: string
 }
 
+/**
+ * Cosmétique débloqué par un accomplissement (US-033) — reveal dédié.
+ * `cosmeticId` = `id` du catalogue `game/cosmetics.ts` (résout aperçu, nom,
+ * rareté, et le jalon source via `milestoneForCosmetic`).
+ */
+export interface CosmeticUnlockItem {
+  id: string
+  cosmeticId: string
+}
+
 /** Mise perdue détectée au chargement (US-013) — remontée en toast danger. */
 export interface StakeLossItem {
   id: string
@@ -71,6 +81,11 @@ interface FeedbackState {
    * même tick (ex. une renaissance en débloque plusieurs d'un coup).
    */
   milestones: MilestoneItem[]
+  /**
+   * File des cosmétiques débloqués à afficher (US-033) — reveal dédié, comme
+   * `milestones` : plusieurs peuvent tomber au même instant (ex. renaissance).
+   */
+  cosmeticUnlocks: CosmeticUnlockItem[]
   /** Contrat qui vient d'encaisser sa récompense → flash transitoire. */
   flashingId: string | null
   /** Mises perdues au chargement (US-013), à transformer en toasts (AppShell). */
@@ -93,6 +108,10 @@ interface FeedbackState {
   triggerMilestone: (milestoneId: string) => void
   /** Ferme un jalon affiché avant son auto-effacement (clic). */
   dismissMilestone: (id: string) => void
+  /** Empile un cosmétique débloqué (US-033) ; auto-effacement (~6 s). */
+  triggerCosmeticUnlock: (cosmeticId: string) => void
+  /** Ferme un reveal de déblocage avant son auto-effacement (clic). */
+  dismissCosmeticUnlock: (id: string) => void
   flash: (id: string) => void
   /** File des mises perdues au chargement (déduplique par appel). */
   pushStakeLosses: (items: Omit<StakeLossItem, 'id'>[]) => void
@@ -115,6 +134,7 @@ export const useFeedbackStore = create<FeedbackState>((set, get) => ({
   repGain: null,
   rankUp: null,
   milestones: [],
+  cosmeticUnlocks: [],
   flashingId: null,
   stakeLosses: [],
   dueCatchup: null,
@@ -177,6 +197,21 @@ export const useFeedbackStore = create<FeedbackState>((set, get) => ({
 
   dismissMilestone: (id) =>
     set((s) => ({ milestones: s.milestones.filter((m) => m.id !== id) })),
+
+  triggerCosmeticUnlock: (cosmeticId) => {
+    const item: CosmeticUnlockItem = { id: crypto.randomUUID(), cosmeticId }
+    set((s) => ({ cosmeticUnlocks: [...s.cosmeticUnlocks, item] }))
+    window.setTimeout(
+      () =>
+        set((s) => ({
+          cosmeticUnlocks: s.cosmeticUnlocks.filter((u) => u.id !== item.id),
+        })),
+      6000,
+    )
+  },
+
+  dismissCosmeticUnlock: (id) =>
+    set((s) => ({ cosmeticUnlocks: s.cosmeticUnlocks.filter((u) => u.id !== id) })),
 
   flash: (id) => {
     set({ flashingId: id })

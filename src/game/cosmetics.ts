@@ -93,17 +93,35 @@ export interface CosmeticsCore {
 }
 
 /**
- * État de départ (dérivé du catalogue) : **tout débloqué** (H4), équipés = des
- * cosmétiques sobres par type. Source de vérité du seed (`db/seed.ts`).
+ * Cosmétiques **de départ** (US-033) : possédés dès une partie neuve. Les autres
+ * se **gagnent** via les accomplissements (récompenses de jalons, US-028). Ce
+ * sont les 4 équipés par défaut (un par type).
+ */
+export const STARTER_COSMETICS: readonly string[] = [
+  'nightwire',
+  'avatar-daemon',
+  'banner-sweep',
+  'title-architect',
+]
+
+/**
+ * État de départ : seuls les `STARTER_COSMETICS` sont possédés (US-033 — le
+ * reste se mérite), équipés = ces mêmes cosmétiques de base. Source de vérité du
+ * seed (`db/seed.ts`).
  */
 export const DEFAULT_COSMETICS: CosmeticsCore = {
-  owned: COSMETICS.map((c) => c.id),
+  owned: [...STARTER_COSMETICS],
   equipped: {
     theme: 'nightwire',
     avatar: 'avatar-daemon',
     banner: 'banner-sweep',
     title: 'title-architect',
   },
+}
+
+/** Un cosmétique fait-il partie du lot de départ (jamais une récompense) ? */
+export function isStarter(id: string): boolean {
+  return STARTER_COSMETICS.includes(id)
 }
 
 /** Le joueur possède-t-il ce cosmétique ? */

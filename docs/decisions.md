@@ -1013,3 +1013,40 @@ donnée nouvelle est le **callsign**.
 - Vérifs : typecheck + lint + build/PWA + **tests 238/238** (+6). Recette
   **8/8 PO, validée à 100 %** le 23/07/2026, aucun bug ouvert. Maquette
   `profil-runner` non versionnée (convention #007).
+
+### 038 — Achievements-récompenses + aperçu de collection (US-033, Phase A3, 23/07/2026)
+
+3ᵉ tranche de la Phase A3 (#035) — la **voie déterministe** de l'acquisition
+hybride. Bascule le socle d'US-031 de « tout débloqué » à **« une partie se
+gagne »** : des accomplissements débloquent des cosmétiques **ciblés garantis**.
+
+- **Extension des jalons (US-028), pas de nouveau système** (H1) : `MilestoneDef`
+  gagne **`reward?`** (id de cosmétique). Atteindre un jalon à récompense
+  `grant`e son cosmétique. Mapping **curé** (rareté ~ difficulté ; les 2 jalons
+  cachés portent titre/bannière **légendaires**) des **10** cosmétiques non-starter.
+  Helpers purs `rewardsFor`/`milestoneForCosmetic` (**testés**).
+- **Départ vs à-gagner** (H2) : `STARTER_COSMETICS` (les 4 équipés par défaut) =
+  seuls possédés sur une partie neuve ; `DEFAULT_COSMETICS.owned` passe de
+  « tout » au STARTER.
+- **Re-verrouillage des saves existantes** (H3) : **migration Dexie v19** —
+  `owned = STARTER ∪ récompenses(achievedMilestones)` + **réconciliation
+  `equipped`** (un slot sur cosmétique verrouillé repasse au défaut → invariant
+  « équipé ⊂ possédé »). Aucun champ nouveau.
+- **Déblocage & feedback** : `useCosmeticsStore.grant(ids)` (idempotent) ; câblé
+  dans `useBuilderStore` là où un jalon devient atteint (+ **reveal
+  `CosmeticUnlockToast`**, file `cosmeticUnlocks`) ; **silencieux au `load()`**
+  (déblocage hors-ligne). **Course évitée** : cosmétiques chargés **avant** le
+  builder (`AppShell`) — sinon un grant hors-ligne serait écrasé par `loadCosmetics`.
+- **UI** : `CosmeticCard` gagne un **état verrouillé** (cadenas + « Débloqué
+  par », aperçu grisé) ; nouveaux `CollectionPreview` (aperçu par rareté, couche
+  pure `game/collection.ts` **testée**) et `RewardChip` ; `WardrobeView` affiche
+  le **catalogue complet** (masque les récompenses de jalons **cachés** non
+  atteints) ; `MilestonesPanel` gagne la puce récompense. 2 icônes (`award`,
+  `layout-grid`) ; i18n FR/EN.
+- **Écarts maquette (validés PO)** : contenu = **vrais jalons builder**, pas les
+  accomplissements **perso** de la maquette (« Série de 7 jours », « 50 tâches
+  purgées » — écartés, cohérent #022/#037) ; jalons **booléens** (pas de fraction
+  de progression).
+- Vérifs : typecheck + lint + build/PWA + **tests 252/252** (+14). Recette
+  **8/8 PO, validée à 100 %** le 23/07/2026, aucun bug. Maquette
+  `cosmectic-progression` non versionnée (convention #007).
