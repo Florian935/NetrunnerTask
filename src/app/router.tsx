@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from 'react-router'
 import { BuilderView } from '../features/builder'
 import { ContractsView } from '../features/contracts'
+import { WardrobeView } from '../features/cosmetics'
 import { DashboardView } from '../features/dashboard'
 import { AppShell } from './AppShell'
 
@@ -17,6 +18,7 @@ export const router = createBrowserRouter([
       { index: true, element: <DashboardView /> },
       { path: 'contracts', element: <ContractsView /> },
       { path: 'network', element: <BuilderView /> },
+      { path: 'wardrobe', element: <WardrobeView /> },
       { path: '*', element: <Navigate to="/" replace /> },
     ],
   },

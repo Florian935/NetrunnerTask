@@ -5,7 +5,37 @@
 
 ## US active
 
-_Aucune US active._ **Phase A2 close** (5/5 tranches livrées). **Phase A3
+_Aucune US active._ **US-031 — Socle cosmétique & rareté clôturée** le
+23/07/2026 (Phase A3, fondation ; cycle complet — cadrages fonctionnel +
+technique validés PO, maquette `wardrobe` reçue + analysée, plan 14 étapes validé
+PO, implémentation faite, **recette 9/9 PO validée à 100 %**, décision **#036**,
+commit + merge sur `develop` + push). **Prochaine tranche : US-032 — Profil / ID
+runner** (chemin critique A3) via le skill `nouvelle-us`.
+
+---
+
+_Historique de la tranche US-031._ Priorité haute, fondation de la Phase A3.
+Branche `feature/US-031-socle-cosmetique-rarete` créée depuis `develop`.
+**Cadrage fonctionnel validé PO le 22/07/2026** (H1 = 5 crans · H2 = **4 types
+dès le socle** · H6 = survie à la renaissance). **Étape en cours : cadrage
+technique** (`us/US-031-socle-cosmetique-rarete.md`) — nouveau domaine
+`cosmetics` isolé (module pur `game/cosmetics.ts` + table `cosmeticsState` /
+**migration Dexie v17** + `cosmeticsRepo` + `useCosmeticsStore`), re-skin par
+attribut CSS `data-cosmetic-theme` + surcharges `themes.css`, rampe de rareté
+`rarity.css` + `RarityBadge`/`CosmeticCard` (**solde la dette DS #008/#022**),
+écran `/wardrobe`. **Cadrage technique validé PO** (table dédiée `cosmeticsState`
+· re-skin CSS `data-cosmetic-theme` + miroir localStorage · écran `/wardrobe`).
+**Maquette `wardrobe` reçue + analysée** (22/07/2026) : fidèle à nos tokens, 5
+surfaces conformes ; portée sur NOS composants (`<Card hud brackets>`/`<Button>`/
+`Icon.tsx`), neuf seulement pour `RarityBadge`/`RankPips`/aperçus par type ;
+2 écarts (retrait pastille crédits, compteur X/Y minimal) ; **décision PO
+re-skin = « Chrome + fonds »** (couleurs de jeu fixes). **Étape en cours : plan
+d'implémentation** — **14 étapes** rédigées (`us/US-031-…md` §4), ordre bas→haut.
+**STOP — en attente de validation PO du plan.**
+
+---
+
+_Historique._ **Phase A2 close** (5/5 tranches livrées). **Phase A3
 « Identité & Collection » définie** le 22/07/2026 — **décision #035**
 (brainstorming PO ↔ Claude). Direction retenue parmi 3 options : la **couche
 identité & cosmétiques**, toujours local-first, qui **prépare** la Phase B au
@@ -22,7 +52,26 @@ caisses gagnées par le jeu, jamais achetées.
 aperçu de collection) · US-034 (caisses & rituel d'ouverture) · US-035 (pity +
 fragments).
 
-**Prochaine action : cadrage fonctionnel d'US-031** via le skill `nouvelle-us`.
+**Implémentation US-031 terminée** (14 étapes, plan validé PO). Livré : couche
+pure **`game/cosmetics.ts`** (catalogue 14 cosmétiques, `equip` un-par-type,
+**testée 13/13**) ; tokens **`rarity.css`** (rampe `--rarity-*`, dette DS #008/
+#022 soldée) + **`themes.css`** (re-skin par `data-cosmetic-theme`, décision
+« Chrome + fonds ») + passe d'aliasing chrome (liens/brackets/rail → `--accent`) ;
+**table `cosmeticsState` / migration Dexie v17** + `cosmeticsRepo` + seed ;
+**`useCosmeticsStore`** (equip persistant + miroir localStorage anti-FOUC) +
+application du thème au boot (`main.tsx`) et dans `AppShell` ; composants
+**`RarityBadge`/`RankPips`**, aperçus par type, **`CosmeticCard`** (sur
+`<Card hud brackets>` + `<Button>`), écran **`WardrobeView`** (route `/wardrobe`,
+entrée de nav `shirt`) ; i18n FR/EN. Écarts appliqués : pastille crédits retirée,
+compteur X/Y minimal. **Vérifs vertes : typecheck + lint + build/PWA + tests
+232/232 (+13).** Vérif visuelle navigateur à faire en recette (`:5180`).
+
+**Recette 9/9 validée PO le 23/07/2026** (aucun bug ; vérif live sur `:5181`,
+états injectés via console). Limites v1 assumées : fond signature #017 non
+re-skinné, quelques éléments chrome cyan « en dur » (boutons secondaires) non
+thémés — suivi possible au backlog.
+
+**Prochaine action : commit + merge + push** via le skill `commit`.
 
 Dernière US clôturée : **US-030 — Catalogue d'accélérateurs réels élargi**
 (Phase A2, priorité basse ; cycle complet — cadrages fonctionnel + technique

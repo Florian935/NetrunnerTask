@@ -3,6 +3,48 @@
 > Tests de recette par US. Chaque test reprend un critère d'acceptation de l'US.
 > Statuts : `à faire` / `validé` / `échoué`.
 
+## US-031 — Socle cosmétique & rareté (Phase A3)
+
+Recette du 23/07/2026. Critères de `us/US-031-socle-cosmetique-rarete.md` §1.
+**Vérifs automatiques** : `typecheck` + `lint` + `build`/PWA + tests Vitest
+**232/232** (+13 sur `game/cosmetics`). **Vérif live PO** sur `:5181` (5180
+occupé) — repositories `builderRepo`/`cosmeticsRepo` exposés en dev pour injecter
+l'état (renaissance) via la console.
+
+| ID | Critère (action → résultat) | Vérif | Statut | Date |
+|----|------------------------------|-------|--------|------|
+| C1 | Ouvrir la Garde-robe → cosmétiques **groupés par type** + **badge de rareté** par carte | `WardrobeView` + `cosmeticsByType` + `RarityBadge` + PO live | validé | 23/07/2026 |
+| C2 | Équiper un thème → **HUD re-skinné immédiatement** (fonds/panneaux + texte + bordures + accent du rail) sur toute l'app | `themes.css` (`data-cosmetic-theme`) + passe d'aliasing + PO live | validé | 23/07/2026 |
+| C3 | Équiper un 2ᵉ thème → le précédent se **déséquipe** (un seul thème actif) | `equip` (remplace l'équipé du même type, **test**) + PO live | validé | 23/07/2026 |
+| C4 | Non équipé → **« Équiper »** ; équipé → **« Équipé »** (pas de bouton redondant) | `CosmeticCard` (états) + PO live | validé | 23/07/2026 |
+| C5 | Chaque cran de rareté a un **traitement visuel distinct et cohérent** partout | `rarity.css` + `RarityBadge`/`RankPips` + PO live | validé | 23/07/2026 |
+| C6 | Recharger l'app après équipement → **thème + équipés restaurés** (pas de FOUC) | `cosmeticsRepo` (v17) + `bootCosmeticTheme` (miroir localStorage) + PO live | validé | 23/07/2026 |
+| C7 | Déclencher une **renaissance** → inventaire + équipés **conservés** (Réseau reset) | table `cosmeticsState` séparée (prestige ne touche que `builderState`) + PO live (cycles injectés console) | validé | 23/07/2026 |
+| C8 | Équiper n'importe quel cosmétique → **aucune valeur de jeu ne change** (pur statut) | découplage `game/cosmetics` (aucun multiplicateur) + PO live (débit/s inchangé) | validé | 23/07/2026 |
+| C9 | Équiper avatar/bannière/titre → choix **enregistré et persistant** au rechargement | `equip` un-par-type + persistance immédiate + PO live | validé | 23/07/2026 |
+| C10 | `game/cosmetics.ts` couvert (equip un-par-type, no-op, tri rareté, invariants) | `cosmetics.test.ts` (**13/13**) | validé | 23/07/2026 |
+| C11 | `typecheck` + `lint` + `build`/PWA + `test` (**232/232**) | exécution | validé | 23/07/2026 |
+| — | **Solde la dette DS #008/#022** : rampe `--rarity-*` + `RarityBadge`/`CosmeticCard` reconstruits sur NIGHTWIRE | `rarity.css` + composants `features/cosmetics/` | validé | 23/07/2026 |
+| — | Migration Dexie **v17** : nouvelle table `cosmeticsState` (seed singleton, tout débloqué) | `db.ts` v17 + `seed.ts` | validé | 23/07/2026 |
+| — | Écarts périmètre appliqués : **pastille crédits retirée**, compteur « X/Y débloqués » minimal | `WardrobeView` | validé | 23/07/2026 |
+
+### Notes de méthode & limites assumées (validées PO)
+
+- **Re-skin « Chrome + fonds »** (décision PO) : le thème surcharge la couche
+  sémantique (accent chrome + fonds + texte + bordures) ; les **couleurs de jeu
+  restent fixes** (data magenta, daemons violet, accélérateurs cyan, crypto
+  ambre, prestige rouge) pour la lisibilité gameplay.
+- **Limites v1 assumées** (ni bugs ni échecs de recette) : le **fond signature
+  #017** de la zone de contenu reste navy ; certains éléments chrome codés en
+  cyan « en dur » (**boutons secondaires**, quelques lueurs de titres) restent
+  cyan (passe d'aliasing volontairement courte, anti-dérapage). Router le reste
+  du chrome vers l'accent = suivi possible au backlog si souhaité.
+- **Aide de recette** : `builderRepo`/`cosmeticsRepo` ajoutés à l'exposition dev
+  `window` (`main.tsx`, bloc `import.meta.env.DEV`) — permet d'injecter l'état
+  pour tester C7 (renaissance) sans farmer le seuil.
+
+**Verdict : recette US-031 validée (9/9 critères + vérifs annexes), aucun bug.**
+
 ## US-030 — Catalogue d'accélérateurs réels élargi (Phase A2)
 
 Recette du 22/07/2026. Critères de `us/US-030-accelerateurs-elargi.md` §1

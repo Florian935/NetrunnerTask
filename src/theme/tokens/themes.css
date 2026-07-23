@@ -1,0 +1,69 @@
+/* NIGHTWIRE — Cosmetic themes (US-031, Phase A3).
+   Équiper un cosmétique de type `theme` re-skin le HUD : le store pose
+   `data-cosmetic-theme="<id>"` sur <html>, et chaque bloc ci-dessous surcharge
+   la COUCHE SÉMANTIQUE (alias de `colors.css`).
+
+   Périmètre du re-skin (décision PO 22/07/2026, « Chrome + fonds ») : accent
+   chrome + fonds + texte + bordures. Les couleurs de JEU restent FIXES
+   (`--accent-2` data/magenta, `--accent-4` daemons/violet, ambre crypto, rouge
+   prestige, statuts `--success`/`--warning`/`--danger`) — non surchargées ici,
+   pour préserver la lisibilité du gameplay quel que soit le thème.
+
+   `nightwire` = thème par défaut = AUCUN bloc (les valeurs de `colors.css`
+   s'appliquent telles quelles). */
+
+/* Transition douce au changement de thème (désactivée en reduced-motion). */
+body {
+  transition:
+    background-color var(--dur-med) var(--ease-out),
+    color var(--dur-med) var(--ease-out);
+}
+@media (prefers-reduced-motion: reduce) {
+  body {
+    transition: none;
+  }
+}
+
+/* --- ÉCARLATE — chaud, dominante magenta/rouge (rareté épique) --- */
+:root[data-cosmetic-theme='ecarlate'] {
+  --accent: #ff2d95;
+  --accent-hover: #ff5cae;
+  --accent-press: #d61479;
+
+  --bg-app: #120a12;
+  --bg-panel: #1b0f19;
+  --bg-surface: #271426;
+  --bg-hover: #331a30;
+  --bg-inset: #0c060c;
+
+  --text-primary: #ffe8f3;
+  --text-secondary: #c79ab0;
+  --text-muted: #8a6b7c;
+  --text-label: #d9b3c6;
+
+  --border: #3d2438;
+  --border-strong: #57344c;
+  --border-neon: #ff2d95;
+}
+
+/* --- CRYO — froid, dominante mint/violet (rareté rare) --- */
+:root[data-cosmetic-theme='cryo'] {
+  --accent: #2effc2;
+  --accent-hover: #6affd4;
+  --accent-press: #12d9a2;
+
+  --bg-app: #080f12;
+  --bg-panel: #0d161b;
+  --bg-surface: #122029;
+  --bg-hover: #193138;
+  --bg-inset: #050a0c;
+
+  --text-primary: #e6fff6;
+  --text-secondary: #89b4ad;
+  --text-muted: #5f847e;
+  --text-label: #a9d4cb;
+
+  --border: #22343a;
+  --border-strong: #345058;
+  --border-neon: #2effc2;
+}

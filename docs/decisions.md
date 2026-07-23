@@ -925,3 +925,52 @@ chemin critique **US-031 → US-032**, puis 033/034/035 :
   US-026 le prestige) : filet anti-malchance + conversion des doublons.
 
 **Prochaine étape** : cadrage fonctionnel d'US-031 via le skill `nouvelle-us`.
+
+### 036 — Socle cosmétique & rareté (US-031, Phase A3, 23/07/2026)
+
+1ʳᵉ tranche de la Phase A3 (#035) — **fondation** du système cosmétique. Introduit
+un **nouveau domaine `cosmetics`**, entièrement **découplé** du builder : un
+cosmétique est **purement esthétique** (aucune valeur de jeu), possédé + équipé
+(un seul par type). Livré avec le contenu de départ **tout débloqué** (le mérite/
+les caisses viennent en US-033/034).
+
+- **Couche pure `game/cosmetics.ts`** (**testée 13/13**) : types
+  `CosmeticType`/`Rarity` (5 crans), catalogue data-driven `COSMETICS` (14
+  cosmétiques : 3 thèmes, 4 avatars, 3 bannières, 4 titres), état
+  `CosmeticsCore {owned, equipped}`, helper `equip` (remplace l'équipé du même
+  type, no-op par référence). **N'importe rien** de `builder`/`prestige`/… et
+  **n'expose aucun multiplicateur** — garantie structurelle de la contrainte
+  « aucun cosmétique ne donne d'avantage » (H7).
+- **Table dédiée `cosmeticsState`** (singleton, **migration Dexie v17**) plutôt
+  qu'une extension de `BuilderState` : sépare identité et économie, et fait
+  **survivre les cosmétiques à la renaissance par construction** (`prestige()`
+  ne touche que `builderState`). `cosmeticsRepo` + `useCosmeticsStore` (equip
+  persistant immédiat). Seed idempotent = catalogue entier débloqué + équipés
+  sobres (H4).
+- **Re-skin par thème = 100 % CSS** : le store pose `data-cosmetic-theme` sur
+  `<html>`, surcharges dans `theme/tokens/themes.css`. **Décision PO « Chrome +
+  fonds »** : le thème surcharge la **couche sémantique** (accent chrome + fonds
+  + texte + bordures) ; les **couleurs de jeu restent fixes** (data magenta,
+  daemons violet, accélérateurs cyan, crypto ambre, prestige rouge) pour la
+  lisibilité gameplay. **Passe d'aliasing courte** (liens, `.nw-brackets`, rail
+  de nav → `--accent`) pour que le re-skin « prenne » ; le fond signature #017
+  et quelques éléments chrome cyan « en dur » (boutons secondaires) restent —
+  limite v1 assumée, suivi possible au backlog.
+- **Anti-FOUC** : miroir `localStorage` de l'id de thème équipé, appliqué
+  **synchronement au boot** (`main.tsx`) avant le 1ᵉʳ rendu ; source de vérité =
+  Dexie.
+- **Rampe de rareté `theme/tokens/rarity.css`** (`--rarity-common` →
+  `--rarity-legendary`) + composants **`RarityBadge`/`RankPips`** et
+  **`CosmeticCard`** (sur `<Card hud brackets>` + `<Button>`) : **solde la dette
+  design system #008/#022**. Distinction des crans par glow/liseré/rangs
+  (au-delà de la teinte) pour ne pas se confondre avec les accents de systèmes.
+- **UI** : écran `WardrobeView` (route `/wardrobe`, entrée de nav `shirt`
+  activée), aperçus par type (palette/glyphe hexagonal/bannière/titre), i18n
+  FR/EN (`cosmetics.*`/`nav.wardrobe`). Écarts périmètre (validés PO) : pastille
+  crédits **retirée** (acquisition = US-033/034, achat interdit par le garde-fou
+  « gagné pas acheté »), compteur « X/Y débloqués » minimal (aperçu de
+  collection complet = US-033).
+- Vérifs : typecheck + lint + build/PWA + **tests 232/232** (+13). Recette
+  **9/9 PO, validée à 100 %** le 23/07/2026, aucun bug (vérif live sur `:5181`,
+  états injectés via console — `builderRepo`/`cosmeticsRepo` exposés en dev).
+  Maquette `wardrobe` non versionnée (convention #007).

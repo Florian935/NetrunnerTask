@@ -1,0 +1,27 @@
+/* NIGHTWIRE — Rarity ramp (US-031, Phase A3).
+   Rampe de rareté des cosmétiques — 5 crans « matière » du métal mat froid
+   (commun) à l'or vivant (légendaire). La teinte suit la convention de jeu
+   (gris → vert → bleu → violet → or) mais la distinction se joue SURTOUT sur
+   l'intensité de liseré/glow (voir composants `RarityBadge`/`CosmeticCard`),
+   pour ne pas se confondre avec les accents de systèmes (cyan/magenta/mint/
+   violet/ambre/rouge) réservés au gameplay. Solde la dette design system
+   #008/#022 (rampe `--rarity-*` retirée à la migration NIGHTWIRE).
+
+   Chaque cran expose sa couleur (`--rarity-<k>`) et son triplet RGB
+   (`--rarity-<k>-rgb`) pour composer glows/liserés en `rgba(...)`. */
+:root {
+  --rarity-common: #7f8aa0;
+  --rarity-common-rgb: 127, 138, 160;
+
+  --rarity-enhanced: #8fdf57;
+  --rarity-enhanced-rgb: 143, 223, 87;
+
+  --rarity-rare: #4d9dff;
+  --rarity-rare-rgb: 77, 157, 255;
+
+  --rarity-epic: #b06bff;
+  --rarity-epic-rgb: 176, 107, 255;
+
+  --rarity-legendary: #ffcf47;
+  --rarity-legendary-rgb: 255, 207, 71;
+}

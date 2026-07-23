@@ -1,6 +1,8 @@
 // Types du domaine — cœur du MVP 1 (contrats, factions, joueur).
 // Identifiants et valeurs en anglais (convention) ; commentaires en français.
 
+import type { CosmeticType } from '../game/cosmetics'
+
 /** Échelle de difficulté d'un contrat (trivial → légendaire) → détermine la récompense (US-008). */
 export type Difficulty = 'trivial' | 'easy' | 'medium' | 'hard' | 'legendary'
 
@@ -194,4 +196,19 @@ export interface BuilderState {
    * Voir `game/milestones.ts`.
    */
   achievedMilestones: string[]
+}
+
+/**
+ * État cosmétique (US-031, Phase A3) — enregistrement unique (singleton, clé
+ * fixe `'me'`). **Table dédiée**, séparée de `BuilderState` : les cosmétiques
+ * relèvent de l'identité, pas de l'économie du Réseau, et **survivent à la
+ * renaissance** par construction (`prestige()` ne touche que `builderState`).
+ * Purement esthétique — aucune valeur de jeu (voir `game/cosmetics.ts`).
+ */
+export interface CosmeticsState {
+  id: 'me'
+  /** `id` des cosmétiques possédés (catalogue `COSMETICS`). */
+  owned: string[]
+  /** `id` équipé par type — un seul par type. */
+  equipped: Record<CosmeticType, string>
 }

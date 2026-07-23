@@ -155,7 +155,7 @@ Les US-005 à US-007 enrichissent le to-do.
 
 | ID | Titre | MVP | Priorité | Statut | Dépend de |
 |----|-------|-----|----------|--------|-----------|
-| US-031 | Socle cosmétique & rareté (catalogue typé, rampe `--rarity-*`, `RarityBadge`/`CosmeticCard`, moteur de thème équipé, inventaire) | A3 | haute | à faire | design system (#008) |
+| US-031 | Socle cosmétique & rareté (catalogue typé, rampe `--rarity-*`, `RarityBadge`/`CosmeticCard`, moteur de thème équipé, inventaire) | A3 | haute | fait | design system (#008) |
 | US-032 | Profil / ID runner (avatar + bannière + titre équipés + stats runner) | A3 | moyenne | à faire | US-031 |
 | US-033 | Achievements-récompenses + aperçu de collection (voie déterministe) | A3 | moyenne | à faire | US-031, jalons (US-028) |
 | US-034 | Caisses & rituel d'ouverture (3 qualités, tables de probas, voie aléatoire) | A3 | moyenne | à faire | US-031 |
