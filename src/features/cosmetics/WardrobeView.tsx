@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Icon } from '../../components/ui'
 import {
@@ -6,11 +6,14 @@ import {
   cosmeticsByType,
   type CosmeticType,
 } from '../../game/cosmetics'
+import type { CrateDraw, CrateQuality } from '../../game/crates'
 import { milestoneForCosmetic } from '../../game/milestones'
 import { useBuilderStore } from '../../stores/useBuilderStore'
 import { useCosmeticsStore } from '../../stores/useCosmeticsStore'
 import { CollectionPreview } from './CollectionPreview'
 import { CosmeticCard, type CosmeticCardState } from './CosmeticCard'
+import { CratesPanel } from './CratesPanel'
+import { CrateOpeningModal } from './CrateOpeningModal'
 
 /** Icône de section + largeur mini de carte par type. */
 const TYPE_META: Record<CosmeticType, { icon: string; min: number }> = {
@@ -67,7 +70,17 @@ export function WardrobeView() {
   const owned = useCosmeticsStore((s) => s.owned)
   const equipped = useCosmeticsStore((s) => s.equipped)
   const equip = useCosmeticsStore((s) => s.equip)
+  const crates = useCosmeticsStore((s) => s.crates)
+  const openCrateAction = useCosmeticsStore((s) => s.openCrate)
   const achievedMilestones = useBuilderStore((s) => s.achievedMilestones)
+
+  /** Rituel d'ouverture en cours (US-034) ; `null` = aucun. */
+  const [ritual, setRitual] = useState<{ quality: CrateQuality; draw: CrateDraw } | null>(null)
+
+  const handleOpen = (quality: CrateQuality) => {
+    const draw = openCrateAction(quality)
+    if (draw) setRitual({ quality, draw })
+  }
 
   const ownedSet = new Set(owned)
   const achievedSet = new Set(achievedMilestones)
@@ -109,6 +122,9 @@ export function WardrobeView() {
       {/* Aperçu de collection (US-033) */}
       <CollectionPreview owned={owned} />
 
+      {/* Inventaire de caisses (US-034) */}
+      <CratesPanel crates={crates} onOpen={handleOpen} />
+
       {COSMETIC_TYPES.map((type) => {
         const items = visibleOf(type)
         if (items.length === 0) return null
@@ -129,6 +145,19 @@ export function WardrobeView() {
           </Section>
         )
       })}
+
+      {/* Rituel d'ouverture (US-034) */}
+      {ritual && (
+        <CrateOpeningModal
+          quality={ritual.quality}
+          draw={ritual.draw}
+          onEquip={(id) => {
+            equip(id)
+            setRitual(null)
+          }}
+          onClose={() => setRitual(null)}
+        />
+      )}
     </div>
   )
 }

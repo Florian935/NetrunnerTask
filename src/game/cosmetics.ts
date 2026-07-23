@@ -41,6 +41,12 @@ export interface Cosmetic {
    * une `banner` : `icon` porte le glyphe/motif (registre lucide kebab-case).
    */
   icon?: string
+  /**
+   * Voie d'acquisition (US-034). Absent = **déterministe** (départ ou récompense
+   * de jalon, US-033). `'crate'` = **exclusif aux caisses** : ne tombe jamais de
+   * la voie déterministe, uniquement du tirage d'une caisse (voir `game/crates.ts`).
+   */
+  source?: 'crate'
 }
 
 /**
@@ -68,6 +74,26 @@ export const COSMETICS: readonly Cosmetic[] = [
   { id: 'title-ghost', type: 'title', rarity: 'rare' },
   { id: 'title-overdrive', type: 'title', rarity: 'epic' },
   { id: 'title-zeroday', type: 'title', rarity: 'legendary' },
+
+  // === Pool EXCLUSIF caisses (US-034, `source: 'crate'`) ===
+  // Ne tombent JAMAIS de la voie déterministe (ni départ, ni jalon) : uniquement
+  // du tirage d'une caisse. 10 items, ≥ 2 par cran de rareté (garantit un tirage
+  // possible à chaque rareté). ids/icônes distincts du reste du catalogue.
+  // -- commun --
+  { id: 'crate-larva', type: 'avatar', rarity: 'common', icon: 'bug', source: 'crate' },
+  { id: 'crate-null', type: 'title', rarity: 'common', source: 'crate' },
+  // -- amélioré --
+  { id: 'crate-static', type: 'banner', rarity: 'enhanced', icon: 'antenna', source: 'crate' },
+  { id: 'crate-wraith', type: 'avatar', rarity: 'enhanced', icon: 'drama', source: 'crate' },
+  // -- rare --
+  { id: 'crate-glacier', type: 'title', rarity: 'rare', source: 'crate' },
+  { id: 'crate-blackout', type: 'banner', rarity: 'rare', icon: 'zap-off', source: 'crate' },
+  // -- épique --
+  { id: 'crate-nemesis', type: 'avatar', rarity: 'epic', icon: 'biohazard', source: 'crate' },
+  { id: 'crate-omega', type: 'title', rarity: 'epic', source: 'crate' },
+  // -- légendaire --
+  { id: 'crate-obsidian', type: 'theme', rarity: 'legendary', source: 'crate' },
+  { id: 'crate-voidsurge', type: 'banner', rarity: 'legendary', icon: 'atom', source: 'crate' },
 ] as const
 
 /** Index du catalogue par `id`. */
@@ -122,6 +148,16 @@ export const DEFAULT_COSMETICS: CosmeticsCore = {
 /** Un cosmétique fait-il partie du lot de départ (jamais une récompense) ? */
 export function isStarter(id: string): boolean {
   return STARTER_COSMETICS.includes(id)
+}
+
+/** Pool **exclusif aux caisses** (US-034) — les seuls cosmétiques `source: 'crate'`. */
+export function crateCosmetics(): Cosmetic[] {
+  return COSMETICS.filter((c) => c.source === 'crate')
+}
+
+/** Ce cosmétique n'est-il obtenable que par une caisse (US-034) ? */
+export function isCrateExclusive(id: string): boolean {
+  return COSMETIC_BY_ID[id]?.source === 'crate'
 }
 
 /** Le joueur possède-t-il ce cosmétique ? */

@@ -46,6 +46,29 @@ body {
   --border-neon: #ff2d95;
 }
 
+/* --- OBSIDIAN — exclusif caisse (US-034), noir profond + accent givre/violet
+   (identité caisses violet→frost, cran légendaire) --- */
+:root[data-cosmetic-theme='crate-obsidian'] {
+  --accent: #c8b3ff;
+  --accent-hover: #dcccff;
+  --accent-press: #a98cff;
+
+  --bg-app: #08080d;
+  --bg-panel: #101019;
+  --bg-surface: #171724;
+  --bg-hover: #20202f;
+  --bg-inset: #050508;
+
+  --text-primary: #eeeaff;
+  --text-secondary: #a49ec2;
+  --text-muted: #726c8c;
+  --text-label: #c3bcdd;
+
+  --border: #262436;
+  --border-strong: #38344f;
+  --border-neon: #c8b3ff;
+}
+
 /* --- CRYO — froid, dominante mint/violet (rareté rare) --- */
 :root[data-cosmetic-theme='cryo'] {
   --accent: #2effc2;

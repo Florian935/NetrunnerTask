@@ -50,10 +50,79 @@
   animation: nw-blink 2s ease-in-out infinite;
 }
 
+/* US-034 — rituel d'ouverture de caisse (anticipation → révélation → résultat).
+   Toutes désactivées en reduced-motion (la séquence bascule alors directement
+   sur le résultat, voir CrateOpeningModal). */
+@keyframes nw-crate-shake {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  20% {
+    transform: translate(-2px, 1px);
+  }
+  40% {
+    transform: translate(2px, -1px);
+  }
+  60% {
+    transform: translate(-1px, -1px);
+  }
+  80% {
+    transform: translate(1px, 1px);
+  }
+}
+.nw-crate-shake {
+  animation: nw-crate-shake 0.5s var(--ease-in-out) infinite;
+}
+
+@keyframes nw-crate-ring {
+  0% {
+    transform: scale(0.7);
+    opacity: 0.9;
+  }
+  70% {
+    opacity: 0.15;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+.nw-crate-ring {
+  animation: nw-crate-ring 1.6s var(--ease-out) infinite;
+}
+
+@keyframes nw-crate-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(22px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+.nw-crate-rise {
+  animation: nw-crate-rise 0.6s var(--ease-out) both;
+}
+
+@keyframes nw-crate-rays {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.nw-crate-rays {
+  animation: nw-crate-rays 14s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .nw-legend,
   .nw-reveal,
-  .nw-blink {
+  .nw-blink,
+  .nw-crate-shake,
+  .nw-crate-ring,
+  .nw-crate-rise,
+  .nw-crate-rays {
     animation: none;
   }
 }

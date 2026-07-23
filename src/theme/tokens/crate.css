@@ -1,0 +1,23 @@
+/* NIGHTWIRE — Crate identity (US-034, Phase A3).
+   Les caisses ont une signature propre **violet → givre**, distincte de la rampe
+   de rareté (gris→or, `rarity.css`) ET des accents de systèmes déjà réservés
+   (cyan accélérateurs, rouge prestige, ambre crypto). Trois qualités montantes.
+   Chaque qualité expose sa couleur (`--crate-<q>`) et son triplet RGB
+   (`--crate-<q>-rgb`) pour composer glows/liserés en `rgba(...)` — même
+   convention que `rarity.css`. */
+:root {
+  --crate-standard: #8291ad;
+  --crate-standard-rgb: 130, 145, 173;
+
+  --crate-secured: #a855f7;
+  --crate-secured-rgb: 168, 85, 247;
+
+  --crate-blackice: #c8b3ff;
+  --crate-blackice-rgb: 200, 179, 255;
+  /* Aberration chromatique magenta du cran le plus prestigieux (Black ICE). */
+  --crate-blackice-chroma-rgb: 255, 45, 149;
+
+  /* Accent générique caisses (en-têtes, indice « Trouvé en caisse »). */
+  --crate-accent: #c084fc;
+  --crate-accent-rgb: 192, 132, 252;
+}

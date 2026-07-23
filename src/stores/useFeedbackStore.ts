@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import type { CrateQuality } from '../game/crates'
 
 /** Toast transitoire (récompense, création, suppression, rappel). */
 export interface ToastItem {
@@ -50,6 +51,16 @@ export interface CosmeticUnlockItem {
   cosmeticId: string
 }
 
+/**
+ * Caisse gagnée en jouant (US-034) — feedback one-shot dédié : le joueur voit
+ * qu'une caisse est tombée (renaissance / jalon). `quality` résout couleur,
+ * icône et libellé i18n de la qualité.
+ */
+export interface CrateEarnedItem {
+  id: string
+  quality: CrateQuality
+}
+
 /** Mise perdue détectée au chargement (US-013) — remontée en toast danger. */
 export interface StakeLossItem {
   id: string
@@ -86,6 +97,11 @@ interface FeedbackState {
    * `milestones` : plusieurs peuvent tomber au même instant (ex. renaissance).
    */
   cosmeticUnlocks: CosmeticUnlockItem[]
+  /**
+   * File des caisses gagnées à annoncer (US-034) — file comme `milestones` :
+   * une renaissance peut en octroyer une pendant que des jalons tombent.
+   */
+  crateEarned: CrateEarnedItem[]
   /** Contrat qui vient d'encaisser sa récompense → flash transitoire. */
   flashingId: string | null
   /** Mises perdues au chargement (US-013), à transformer en toasts (AppShell). */
@@ -112,6 +128,10 @@ interface FeedbackState {
   triggerCosmeticUnlock: (cosmeticId: string) => void
   /** Ferme un reveal de déblocage avant son auto-effacement (clic). */
   dismissCosmeticUnlock: (id: string) => void
+  /** Empile une caisse gagnée (US-034) ; auto-effacement (~5 s). */
+  triggerCrateEarned: (quality: CrateQuality) => void
+  /** Ferme un feedback de caisse gagnée avant son auto-effacement (clic). */
+  dismissCrateEarned: (id: string) => void
   flash: (id: string) => void
   /** File des mises perdues au chargement (déduplique par appel). */
   pushStakeLosses: (items: Omit<StakeLossItem, 'id'>[]) => void
@@ -135,6 +155,7 @@ export const useFeedbackStore = create<FeedbackState>((set, get) => ({
   rankUp: null,
   milestones: [],
   cosmeticUnlocks: [],
+  crateEarned: [],
   flashingId: null,
   stakeLosses: [],
   dueCatchup: null,
@@ -212,6 +233,18 @@ export const useFeedbackStore = create<FeedbackState>((set, get) => ({
 
   dismissCosmeticUnlock: (id) =>
     set((s) => ({ cosmeticUnlocks: s.cosmeticUnlocks.filter((u) => u.id !== id) })),
+
+  triggerCrateEarned: (quality) => {
+    const item: CrateEarnedItem = { id: crypto.randomUUID(), quality }
+    set((s) => ({ crateEarned: [...s.crateEarned, item] }))
+    window.setTimeout(
+      () => set((s) => ({ crateEarned: s.crateEarned.filter((c) => c.id !== item.id) })),
+      5000,
+    )
+  },
+
+  dismissCrateEarned: (id) =>
+    set((s) => ({ crateEarned: s.crateEarned.filter((c) => c.id !== id) })),
 
   flash: (id) => {
     set({ flashingId: id })

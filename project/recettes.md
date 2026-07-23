@@ -3,6 +3,48 @@
 > Tests de recette par US. Chaque test reprend un critère d'acceptation de l'US.
 > Statuts : `à faire` / `validé` / `échoué`.
 
+## US-034 — Caisses & rituel d'ouverture (Phase A3)
+
+Recette du 23/07/2026. Critères de `us/US-034-caisses-ouverture.md` §1. **Vérifs
+automatiques** : `typecheck` + `lint` (oxlint) + `build`/PWA + tests Vitest
+**269/269** (+18 : `game/crates` 12, catalogue pool exclusif 5, invariant
+milestones ajusté). **Vérif live PO** (scripts console IndexedDB pour injecter
+stock/états : SURCADENCE, recharge de caisses, pool épuisé).
+
+| ID | Critère (action → résultat) | Vérif | Statut | Date |
+|----|------------------------------|-------|--------|------|
+| C1 | Événement source (jalon / renaissance) → compteur de la **qualité** +1 + **feedback** « CAISSE GAGNÉE » | `grantCrate` câblé `useBuilderStore` (renaissance→secured · jalon→standard · caché→blackice) + file `crateEarned`/`CrateEarnedToast` + PO live | validé | 23/07/2026 |
+| C2 | Inventaire : compteur **par qualité** ; qualité à 0 **désactivée** (pas d'ouverture) | `CratesPanel`/`CrateSlot` (état vide « à gagner ») + PO live | validé | 23/07/2026 |
+| C3 | Table de probas consultable ; les **% somment à 100** | `CRATE_ODDS` (Σ=100 **testé**) + `CrateOddsTable` + PO live | validé | 23/07/2026 |
+| C4 | Ouvrir → compteur **−1**, rituel joué, **1** cosmétique du **pool caisses** ajouté à `owned` | `openCrate` store + `openCrate` pur (**testé**) + `crateCosmetics()` + PO live | validé | 23/07/2026 |
+| C5 | Rituel révèle la **rareté** (`CosmeticCard`/`RarityBadge`) ; `prefers-reduced-motion` → **révélation instantanée** | `CrateOpeningModal` (phases + branche reduced-motion) + PO live | validé | 23/07/2026 |
+| C6 | **Pas de doublon** tant qu'il reste du neuf dans le pool éligible | `openCrate` pur (renormalisation sur raretés dispo, **testé**) + PO live | validé | 23/07/2026 |
+| C7 | Caisses non ouvertes **et** cosmétiques tirés **survivent** au reload **et** à la renaissance | `crates`/`owned` sur `cosmeticsState` (hors `prestige()`) + migration v20 + PO live | validé | 23/07/2026 |
+| C8 | Garde-fous : tiré **équipable + sans effet** ; **aucun** achat de caisse contre monnaie | `game/crates` sans valeur de jeu + `equip` + absence de tout flux d'achat + PO live | validé | 23/07/2026 |
+| C9 | Couches pures couvertes (tirage, tables, anti-doublon, pool épuisé, pool exclusif) | `crates.test.ts` (12) + `cosmetics.test.ts` (+5) | validé | 23/07/2026 |
+| C10 | `typecheck` + `lint` + `build`/PWA + `test` (**269/269**) | exécution | validé | 23/07/2026 |
+| — | **Migration Dexie v20** : champ `crates` rétro-rempli à zéro (survit à la renaissance par construction) | `db.ts` v20 (upgrade) | validé | 23/07/2026 |
+| — | Réutilisation DS : `CosmeticCard`/rareté/aperçus étendus, `<Card hud brackets>`, `Icon`, famille toasts | composants existants + tokens `crate.css` | validé | 23/07/2026 |
+| — | Pool épuisé → **consolation crédits** (décision #3, +120 par défaut) ; couture reprise par US-035 | `openCrate` (`credits`) + `adjustCredits` + PO live | validé | 23/07/2026 |
+
+### Notes de méthode & écarts (validés PO)
+
+- **Contenu exclusif créé** : 10 cosmétiques `source: 'crate'` (≥ 2 par rareté,
+  4 types, 1 thème `crate-obsidian`), disjoints des départs et des récompenses de
+  jalons — la voie déterministe couvre le reste (invariant `milestones.test.ts`
+  ajusté en conséquence).
+- **Identité caisses violet → givre** (tokens `crate.css`), hors accents réservés
+  (cyan/rouge/ambre) — écart de maquette « choix couleur laissé au design », validé.
+- **`CRATE_ODDS` et `CONSOLATION_CREDITS` volontairement ajustables** — valeurs de
+  la maquette conservées, jugées OK par le PO en recette.
+- **Point levé en recette** (non bloquant) : à pool caisses complet, le libellé
+  « COLLECTION COMPLÈTE » du rituel désigne le *pool caisses*, pas toute la
+  collection (la Garde-robe peut encore montrer des épiques de **jalon**
+  verrouillés). Mécanique confirmée correcte (diagnostic console) ; wording
+  laissé tel quel.
+
+**Verdict : recette US-034 validée (8/8 critères + vérifs annexes), aucun bug ouvert.**
+
 ## US-033 — Achievements-récompenses + aperçu de collection (Phase A3)
 
 Recette du 23/07/2026. Critères de `us/US-033-achievements-collection.md` §1.

@@ -5,13 +5,63 @@
 
 ## US active
 
-_Aucune US active._ **US-033 — Achievements-récompenses + aperçu de collection
-clôturée** le 23/07/2026 (Phase A3, voie déterministe ; cycle complet — cadrages
-validés PO, maquette `cosmectic-progression` analysée, plan 16 étapes validé PO,
+**US-034 — Caisses & rituel d'ouverture** (Phase A3, priorité moyenne, voie
+**aléatoire** de l'acquisition hybride). Branche
+`feature/US-034-caisses-ouverture` créée depuis `develop`. **Cadrage fonctionnel
+validé PO le 23/07/2026** (H1→H6 + invariant, 8 critères ; reco H2/H5 adoptées).
+**Cadrage technique validé PO** (3 décisions : RNG injecté · mapping
+source→qualité · pool épuisé→crédits). **Maquette `crates` reçue + analysée +
+validée PO** (violet→frost, réutilise rampe rareté/`CosmeticCard`, `CRATE_ODDS`
+adoptées, pool exclusif = contenu à créer). **Plan d'implémentation 18 étapes
+posé** (`us/US-034-caisses-ouverture.md` §4). **STOP, en attente de validation PO
+du plan.**
+
+Constat fondateur : le catalogue actuel (14 cosmétiques) est **intégralement
+garanti en déterministe** (4 de départ + 10 récompenses de jalons US-033) → les
+caisses n'ont de valeur qu'avec du **contenu exclusif**. Cadrage fonctionnel = 6
+hypothèses (H1 pool exclusif aux caisses · H2 sources non farmables [renaissance +
+jalons] · H3 3 qualités + tables de probas affichées · H4 rituel d'ouverture · H5
+doublons v1 / pity reporté US-035 · H6 inventaire de caisses non ouvertes) + 1
+invariant (cosmétique = pur statut, survie à la renaissance).
+
+Cadrage technique **validé PO** (3 décisions : RNG injecté · mapping
+source→qualité · pool épuisé→crédits). Maquette `crates` **validée PO**. Plan 18
+étapes **validé PO**.
+
+**Implémentation US-034 terminée.** Livré : module pur **`game/crates.ts`**
+(qualités standard/secured/blackice, `CRATE_ODDS` sommant à 100, **`openCrate`
+RNG injecté** — 1ʳᵉ introduction de hasard dans `game/*`, anti-doublon,
+consolation crédits si pool épuisé ; **testé 12/12**) ; catalogue `cosmetics.ts`
+étendu de **10 cosmétiques `source: 'crate'`** (≥ 2 par rareté) + helpers
+`crateCosmetics`/`isCrateExclusive` (**+5 tests**) ; thème exclusif
+**`crate-obsidian`** (`themes.css` + aperçu) ; tokens **`crate.css`** (identité
+violet→givre) + `crateStyle.ts` ; **`CosmeticsState.crates` + migration Dexie
+v20** (rétro-remplissage zéro, survit à la renaissance par construction) + seed ;
+**`useCosmeticsStore`** `grantCrate`/`openCrate` ; file `crateEarned` +
+**`CrateEarnedToast`** (AppShell, haut-gauche) ; câblage du gain dans
+**`useBuilderStore`** (renaissance→secured · jalon→standard · jalon caché→
+blackice, silencieux au `load()`) ; composants DS **`CrateIcon`**,
+**`CratesPanel`/`CrateSlot`**, **`CrateOddsTable`**, **`CrateOpeningModal`**
+(rituel 3 phases + reduced-motion + Équiper/Continuer + consolation) ; extension
+**`CosmeticCard`** (« Trouvé en caisse ») ; assemblage `WardrobeView` ; 9 icônes
+lucide ; i18n FR/EN. **Vérifs vertes : typecheck + lint + build/PWA + tests
+269/269 (+18).** Vérif visuelle navigateur à faire en recette (tirage,
+reduced-motion, survie renaissance, pool épuisé → crédits).
+
+**Recette 8/8 validée PO le 23/07/2026 à 100 %** (aucun bug ; vérif live via
+scripts console IndexedDB — SURCADENCE injectée, recharge de caisses, pool
+épuisé → crédits confirmé). Point non bloquant relevé : le libellé « COLLECTION
+COMPLÈTE » du rituel désigne le pool caisses (mécanique confirmée correcte,
+wording laissé tel quel). **Décision #039.** US **clôturée** — commit + merge sur
+`develop` + push. Reste en Phase A3 : **US-035 — Pity + fragments** (dernière
+tranche). Prochaine US via `nouvelle-us`.
+
+_US-033 — Achievements-récompenses + aperçu de collection **clôturée** le
+23/07/2026 (Phase A3, voie déterministe ; cycle complet — cadrages validés PO,
+maquette `cosmectic-progression` analysée, plan 16 étapes validé PO,
 implémentation faite, **recette 8/8 PO à 100 %**, décision **#038**, commit +
-merge sur `develop` + push). Restent en Phase A3 : **US-034 — Caisses & rituel
-d'ouverture** (voie aléatoire de l'acquisition hybride) puis **US-035 — Pity +
-fragments**. Prochaine US via `nouvelle-us`.
+merge sur `develop` + push — `2da0233`/`6f0ffaf`). Reste en Phase A3 après
+US-034 : **US-035 — Pity + fragments**._
 
 ---
 

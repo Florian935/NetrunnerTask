@@ -3,9 +3,11 @@ import {
   COSMETICS,
   COSMETIC_BY_ID,
   cosmeticsByType,
+  crateCosmetics,
   DEFAULT_COSMETICS,
   equip,
   equippedOf,
+  isCrateExclusive,
   isEquipped,
   isOwned,
   rarityRank,
@@ -13,6 +15,7 @@ import {
   STARTER_COSMETICS,
   type CosmeticsCore,
 } from './cosmetics'
+import { MILESTONE_DEFS } from './milestones'
 
 /** État de test à inventaire **complet** (pour tester la logique d'équipement). */
 const base = (): CosmeticsCore => ({
@@ -37,6 +40,37 @@ describe('catalogue', () => {
   it('couvre les 4 types', () => {
     const types = new Set(COSMETICS.map((c) => c.type))
     expect([...types].sort()).toEqual(['avatar', 'banner', 'theme', 'title'])
+  })
+})
+
+describe('pool exclusif caisses (US-034)', () => {
+  it('crateCosmetics() ne renvoie que des source:"crate"', () => {
+    const pool = crateCosmetics()
+    expect(pool.length).toBe(10)
+    expect(pool.every((c) => c.source === 'crate')).toBe(true)
+  })
+
+  it('isCrateExclusive reflète le champ source', () => {
+    expect(isCrateExclusive('crate-larva')).toBe(true)
+    expect(isCrateExclusive('nightwire')).toBe(false)
+    expect(isCrateExclusive('inconnu')).toBe(false)
+  })
+
+  it('est disjoint des cosmétiques de départ', () => {
+    const pool = new Set(crateCosmetics().map((c) => c.id))
+    for (const id of STARTER_COSMETICS) expect(pool.has(id)).toBe(false)
+  })
+
+  it('est disjoint des récompenses de jalons (voie déterministe)', () => {
+    const rewards = new Set(
+      MILESTONE_DEFS.map((m) => m.reward).filter((r): r is string => r !== undefined),
+    )
+    for (const c of crateCosmetics()) expect(rewards.has(c.id)).toBe(false)
+  })
+
+  it('couvre chaque cran de rareté (≥ 1 item → tirage toujours possible)', () => {
+    const byRarity = new Set(crateCosmetics().map((c) => c.rarity))
+    for (const r of RARITY_ORDER) expect(byRarity.has(r)).toBe(true)
   })
 })
 

@@ -5,7 +5,7 @@ import { Alert, Toast } from '../components/ui'
 import { NavRail } from '../components/layout/NavRail'
 import { StatusBar } from '../components/layout/StatusBar'
 import { MilestoneToast, OfflineCatchupBanner, useBuilderTick } from '../features/builder'
-import { CosmeticUnlockToast } from '../features/cosmetics'
+import { CosmeticUnlockToast, CrateEarnedToast } from '../features/cosmetics'
 import { LevelUpToast } from '../features/progression/LevelUpToast'
 import { useReminders } from '../features/reminders/useReminders'
 import { RankUpToast } from '../features/reputation/RankUpToast'
@@ -56,6 +56,8 @@ export function AppShell() {
   const dismissMilestone = useFeedbackStore((s) => s.dismissMilestone)
   const cosmeticUnlocks = useFeedbackStore((s) => s.cosmeticUnlocks)
   const dismissCosmeticUnlock = useFeedbackStore((s) => s.dismissCosmeticUnlock)
+  const crateEarned = useFeedbackStore((s) => s.crateEarned)
+  const dismissCrateEarned = useFeedbackStore((s) => s.dismissCrateEarned)
 
   useEffect(() => {
     // Séquencement : contrats → factions (les pénalités de réputation dues aux
@@ -206,6 +208,26 @@ export function AppShell() {
               item={item}
               onClose={() => dismissCosmeticUnlock(item.id)}
             />
+          ))}
+        </div>
+      )}
+
+      {/* Caisses gagnées (US-034) : feedback empilable, haut-gauche — distinct
+          des jalons (haut-droit) et des déblocages cosmétiques (bas-centre). */}
+      {crateEarned.length > 0 && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 18,
+            left: 18,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 10,
+            zIndex: 1100,
+          }}
+        >
+          {crateEarned.map((item) => (
+            <CrateEarnedToast key={item.id} item={item} onClose={() => dismissCrateEarned(item.id)} />
           ))}
         </div>
       )}

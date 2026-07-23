@@ -21,6 +21,7 @@ import { convert as convertPure, marketRate, type CryptoCore } from '../game/cry
 import {
   checkHackMilestone,
   checkMilestones,
+  MILESTONE_BY_ID,
   rewardsFor,
   type MilestoneCore,
 } from '../game/milestones'
@@ -155,6 +156,8 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => {
     for (const id of newIds) useFeedbackStore.getState().triggerMilestone(id)
     // US-033 : les jalons à récompense débloquent leur cosmétique + reveal dédié.
     grantMilestoneRewards(newIds, false)
+    // US-034 : chaque jalon franchi octroie aussi une caisse (voie aléatoire).
+    grantMilestoneCrates(newIds, false)
     void get().persist()
   }
 
@@ -169,6 +172,22 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => {
     const granted = useCosmeticsStore.getState().grant(rewards)
     if (silent) return
     for (const cid of granted) useFeedbackStore.getState().triggerCosmeticUnlock(cid)
+  }
+
+  /**
+   * US-034 : chaque jalon franchi octroie **en plus** une caisse (voie
+   * aléatoire) — qualité indexée sur l'effort : jalon **caché**
+   * (`ghost`/`cartel`) → `blackice`, jalon normal → `standard` (décision #2).
+   * `silent` = pas de feedback (merge de `load()`, comme les récompenses).
+   */
+  function grantMilestoneCrates(milestoneIds: readonly string[], silent: boolean): void {
+    for (const id of milestoneIds) {
+      const def = MILESTONE_BY_ID[id]
+      if (def === undefined) continue
+      const quality = def.hidden ? 'blackice' : 'standard'
+      useCosmeticsStore.getState().grantCrate(quality)
+      if (!silent) useFeedbackStore.getState().triggerCrateEarned(quality)
+    }
   }
 
   return {
@@ -270,6 +289,8 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => {
     // jalons ; le bandeau de rattrapage suffit). `grant` est idempotent, et le
     // store cosmétique est chargé avant le builder (séquencement `AppShell`).
     grantMilestoneRewards(newMilestoneIds, true)
+    // US-034 : idem pour les caisses des jalons rattrapés — en silence.
+    grantMilestoneCrates(newMilestoneIds, true)
 
     // Persiste si le rattrapage, la résolution ou un jalon a changé quelque chose.
     if (gainCycles > 0 || gainData > 0 || resolvedAcc !== accAtClose || newMilestoneIds.length > 0) {
@@ -287,6 +308,7 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => {
       set({ achievedMilestones: [...s.achievedMilestones, ...hackIds] })
       for (const id of hackIds) useFeedbackStore.getState().triggerMilestone(id)
       grantMilestoneRewards(hackIds, false) // US-033
+      grantMilestoneCrates(hackIds, false) // US-034
       void get().persist()
     }
   },
@@ -360,6 +382,10 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => {
       prestigeCount: next.prestigeCount,
       // acceleratorRun/acceleratorBoost intacts (engagement réel du joueur).
     })
+    // US-034 : une renaissance (effort réel, seuil incrémental US-026) octroie
+    // une caisse de qualité supérieure (décision #2).
+    useCosmeticsStore.getState().grantCrate('secured')
+    useFeedbackStore.getState().triggerCrateEarned('secured')
     checkAndApplyMilestones()
     void get().persist()
   },
