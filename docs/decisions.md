@@ -1226,3 +1226,65 @@ sombre = US-037.
   périmètre, proposé en suivi.
 - Vérifs : typecheck + lint + build/PWA + **tests 280/280** (+8). **Recette 9/9
   PO, validée à 100 %** le 23/07/2026. Maquette `corruption` non versionnée (#007).
+
+### 043 — Benchmark IA (7 modèles, 2 vagues) : cap produit confirmé, collection retenue, marché entre joueurs écarté (24/07/2026)
+
+**Décision d'orientation** issue d'un benchmark externe conduit par le PO :
+interroger **7 modèles d'IA de fournisseurs différents** (Anthropic Opus 4.8,
+OpenAI GPT-5, Google Flash, Kimi K2, Qwen Plus, Qwen Max, xAI Grok) sur la
+direction produit, en **restant neutre** (description du genre — idle cyberpunk,
+trajectoire solo → social — **sans révéler l'implémentation existante**), pour
+détecter un éventuel mauvais cadrage et récolter des idées. **2 vagues** :
+vague 1 = fonctionnalités / rétention / adoption / monétisation ; vague 2 = deux
+idées nouvelles du PO (marché entre joueurs + système de collection). Matériau
+brut + synthèses **hors-dépôt** (`_inbox-ia/`, gitignoré) ; cette décision est
+auto-suffisante et fait foi.
+
+- **Cap produit CONFIRMÉ (vague 1) — aucune réorientation.** Les 7 modèles
+  convergent, sans concertation, sur exactement notre trajectoire : **solo
+  d'abord → social → monétisation en dernier**, **multijoueur asynchrone** (jamais
+  temps réel), **cosmétique = pur statut** (jamais pay-to-win), **reveals
+  narratifs** comme hook long terme, **simulation déterministe**. La majorité des
+  « indispensables solo » qu'ils citent est **déjà livrée** (Phases A → A4). On
+  n'est donc pas mal orientés. Atout différenciant confirmé mais **invisible du
+  marché** (aucun modèle ne l'a proposé spontanément) : les **accélérateurs réels
+  vérifiés par l'app** (US-023/030) — pépite probable, à **surveiller en rétention
+  réelle** (ni validée ni contredite).
+- **Système de collection — RETENU comme direction des phases à venir** (7/7
+  « ADOPTER »). Déjà présent à ~80 % (Phase A3 : rareté, caisses, pity,
+  **fragments anti-doublon**, garde-robe, profil/vitrine). À inscrire en roadmap
+  sous l'angle **complétion de sets + vitrine enrichie (provenance visible)**,
+  **pas** accumulation quantitative — « la complétion se raconte, le tas d'objets
+  ne dit rien ». Reste **local-first, sans backend**. Nos **fragments d'US-035**
+  sont déjà la bonne réponse aux doublons (recyclage/craft façon « poussière
+  Hearthstone », jamais revente).
+- **Marché entre joueurs — ÉCARTÉ. Non tracé comme besoin (ni backlog, ni
+  roadmap).** **0/7** modèles ne valident un marché libre ; **7/7** tranchent que
+  **vendre un objet de statut détruit le statut** (il devient « j'avais le solde »,
+  un portefeuille, plus un trophée) — en **collision frontale** avec notre
+  invariant « gagné jamais acheté ». Raisons cumulées : (1) **casse le
+  local-first** — l'inventaire échangeable ne peut naître côté client (injection
+  depuis save éditée) → **serveur autoritatif obligatoire** ; (2) **P2W indirect +
+  marché gris/RMT** inévitables ; (3) **charge de modération et d'équilibrage
+  économique permanente**, hors de portée d'une petite équipe ; (4) **exposition
+  réglementaire** (proximité loot box / jeu d'argent, PEGI 16) ; (5) **conflit avec
+  la piste « automatisation programmable »** (scripts + marché = ferme à bots clés
+  en main — cf. Idlescape qui interdit l'automatisation *parce qu'*il a un marché).
+  Référence canonique de l'échec : **hôtel des ventes de Diablo III** (le marché
+  court-circuite la boucle d'accumulation, qui est *tout* notre jeu). **On n'y
+  revient pas** sauf changement majeur de contexte (population ≫ 1 000 DAU, équipe
+  dédiée à l'économie, monétisation déjà rentable sans lui).
+- **Invariant permanent RENFORCÉ.** « Cosmétique / objet de statut = **pur
+  statut, gagné jamais acheté, non vendable** » est confirmé et durci. La
+  **« richesse » exposée = complétion et rareté gagnée, jamais solde ni
+  quantité**. Geste technique préventif à intégrer **dès que le modèle de
+  cosmétiques évoluera** : poser un champ **`tradeable` figé à `false`** sur tout
+  objet de statut — la taxonomie doit exister **avant** la production de contenu
+  (rétro-classer un objet en « non vendable » = crise communautaire garantie).
+- **Impact roadmap (ce qui doit s'y retrouver).** (a) Une future tranche
+  **« collection / vitrine enrichie »** reste **local-first** (aucun besoin
+  backend). (b) La **Phase B** (connecté) garde son ordre — social puis
+  monétisation ; **le marché n'y figure pas**. (c) Prérequis Phase B rappelés :
+  **serveur autoritatif + anti-triche**, dont la **fondation déterministe** est
+  déjà en place (`game/*` : crypto jamais persisté, reveals/corruption zéro RNG,
+  RNG injecté dans les caisses).
