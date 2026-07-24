@@ -5,20 +5,27 @@
 
 ## US active
 
-**US-037 — La Voie Corrompue CLÔTURÉE** le 24/07/2026 (Phase A4, 2ᵉ/dernière
-tranche). Cycle complet : cadrages fonctionnel + technique validés PO, maquette
-`corrupted-path` reçue/analysée/validée PO, plan 20 étapes validé PO, implémentation
-faite, **recette 11 critères PO à 100 %** (SecureFeedback refondu en direct :
-bandeau de progression permanent + pop de gain + anti-chevauchement), **décision
-#044**. Commit + merge sur `develop` + push. **Phase A4 TERMINÉE (2/2 tranches).**
+**Aucun cycle de vie US en cours.** **Phase A5 « Vitrine & prestige de collection »
+DÉFINIE le 24/07/2026 — décision #045** (brainstorming PO ↔ Claude), dans le
+prolongement de la direction « collection / vitrine enrichie » du benchmark IA
+(#043). 3 tranches, chemin critique **US-038 → US-039** ; voir `docs/roadmap.md` /
+`project/backlog.md`.
 
-**Prochaine étape : nouvelle tranche/phase à cadrer** (brainstorming PO ↔ Claude).
-Pistes déjà tracées : **décision #043** (benchmark IA du 24/07/2026) oriente vers une
-future tranche **« collection / vitrine enrichie »** (local-first, invariant « pur
-statut, non vendable » durci — champ `tradeable=false` à poser dès l'évolution du
-modèle cosmétique) ; le **marché entre joueurs est écarté**. Voir `docs/roadmap.md` /
-`docs/decisions.md`. _Suivi possible au backlog : refonte de l'écran Réseau en frames
-`HudPanel` terminal glitchées (hors périmètre US-036/037)._
+Cœur retenu (5 arbitrages de brainstorming) : vitrine enrichie = **Salle des
+trophées** (écran dédié) où le joueur **compose lui-même** un présentoir de ses
+**pièces maîtresses** ; épinglable **hétérogène** (cosmétiques + accomplissements) ;
+**emplacements qui se gagnent** avec la progression. Garde-fous #043 : richesse =
+complétion/rareté gagnée jamais quantité ; **`tradeable=false`** posé dès US-038 ;
+gagné jamais acheté ; marché entre joueurs écarté ; local-first.
+
+Tranches : **US-038** Socle Salle des trophées *(haute)* → **US-039** Accomplissements
+épinglables + provenance *(moyenne)* → **US-040** Sets & complétion *(basse,
+optionnelle)*.
+
+**Prochaine étape : démarrer US-038 via le skill `nouvelle-us`** (sélection →
+branche `feature/US-038-…` depuis `develop` → cadrage fonctionnel, STOP validation
+PO). _Suivi possible au backlog : refonte de l'écran Réseau en frames `HudPanel`
+terminal glitchées (hors périmètre)._
 
 ---
 

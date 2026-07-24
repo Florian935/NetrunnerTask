@@ -203,6 +203,35 @@ Les US-005 à US-007 enrichissent le to-do.
 > `docs/labo-visuel.md`. Candidat pour un fond glitch de la corruption / voie
 > sombre. Non câblé ; à monter dans l'US qui le consomme.
 
+## Phase A5 — Vitrine & prestige de collection (décision #045, 24/07/2026)
+
+> Objectif : un **lieu de fierté** où le joueur met en scène ce qu'il a gagné.
+> Toujours local-first, sans backend. Prolonge la direction **« collection /
+> vitrine enrichie »** du benchmark IA (#043). Cœur : une **Salle des trophées**
+> (écran dédié) où le joueur **compose** un présentoir de ses **pièces
+> maîtresses** — épinglable **hétérogène** (cosmétiques + accomplissements),
+> **emplacements qui se gagnent**. **Garde-fous #043** : richesse = complétion /
+> rareté gagnée, jamais quantité ; **`tradeable=false`** posé dès l'évolution du
+> modèle ; gagné jamais acheté ; fragments US-035 pour les doublons ; marché entre
+> joueurs écarté. Née d'un brainstorming PO ↔ Claude (24/07/2026). Chemin
+> critique : **US-038 → US-039**.
+
+| ID | Titre | MVP | Priorité | Statut | Dépend de |
+|----|-------|-----|----------|--------|-----------|
+| US-038 | Socle Salle des trophées (écran dédié + trophée épinglable + cosmétiques + emplacements gagnés + mise en scène pièces maîtresses ; pose `tradeable=false`) | A5 | haute | à faire | cosmétiques (US-031), profil (US-032) |
+| US-039 | Accomplissements épinglables + provenance (jalons US-028 / corruption US-036 / prestige ; « gagné en… ») | A5 | moyenne | à faire | US-038 |
+| US-040 | Sets & complétion (ensembles thématiques + récompense de complétion + rang de collectionneur) | A5 | basse | à faire | US-038 |
+
+> **US-038** — **impact UI significatif anticipé** (nouvel écran de mise en scène)
+> → étape design/maquette Claude Design probable dans son cycle. Réutilise le DS
+> acquis en A3 (`RarityBadge`/`rarityStyle`/`CosmeticCard`). Le champ
+> **`tradeable=false`** (taxonomie préventive #043) est posé ici, avant toute
+> production de contenu supplémentaire.
+>
+> **US-040** est **optionnelle** : à confirmer après US-038/039 selon la valeur
+> ressentie ; peut rester au backlog sans être jouée si les deux premières
+> tranches suffisent.
+
 ## MVP 3 — Rétention profonde & identité (historique, gelé #022)
 
 > **Gelé par le pivot #022, réinventé par la Phase A3 (#035) ci-dessus.** Conservé

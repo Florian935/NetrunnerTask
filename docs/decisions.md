@@ -1335,3 +1335,48 @@ P4/P5 tenus (solo, local, gagné jamais acheté, réversible).
 - Vérifs : typecheck + lint + build/PWA + **tests 304/304** (+24). **Recette
   11 critères PO, validée à 100 %** le 24/07/2026. Maquette `corrupted-path` non
   versionnée (#007). **Phase A4 terminée (2/2 tranches).**
+
+### 045 — Phase A5 « Vitrine & prestige de collection » définie (3 tranches, 24/07/2026)
+
+Née d'un **brainstorming PO ↔ Claude** (24/07/2026) à la clôture de la Phase A4.
+Donne suite à la direction **« collection / vitrine enrichie »** retenue par le
+**benchmark IA (#043)** — local-first, sans backend. A3 a construit la collection,
+A4 lui a donné de la profondeur (corruption) ; A5 lui donne un **lieu de fierté**.
+
+- **Objectif** : un endroit où le joueur **met en scène ce qu'il a gagné**. D'abord
+  pour soi (solo), et surtout **prépare la Phase B** — quand le social arrivera, le
+  présentoir sera déjà curaté, prêt à impressionner un public. Pas une nouvelle
+  promesse produit : l'aboutissement de l'axe identité/collection A3.
+- **Cœur retenu (5 arbitrages tranchés en brainstorming)** : (1) manque #1 à combler
+  = la **vitrine enrichie** (au-delà des compteurs actuels du profil/aperçu) ; (2) ce
+  qu'on expose = les **pièces maîtresses** (présentoir à trophées, pas le tas ni les
+  stats) ; (3) **composé par le joueur** (curation manuelle, pas auto) — l'engagement
+  vaut même en solo ; (4) contenu épinglable **hétérogène** = cosmétiques **+
+  accomplissements** ; (5) **emplacements qui se gagnent** avec la progression (la
+  vitrine devient un objectif, pas un présentoir passif).
+- **Forme** : une **Salle des trophées** = **écran dédié** (route + entrée de nav),
+  distinct du Profil (US-032, carte d'ID) et de la Garde-robe (US-031+). Réutilise le
+  DS acquis (`RarityBadge`/`rarityStyle`/`CosmeticCard`).
+- **Garde-fous permanents (issus de #043, non négociables)** : richesse exposée =
+  **complétion et rareté gagnée, jamais solde ni quantité** ; **`tradeable = false`**
+  posé sur tout objet de statut **dès l'évolution du modèle** (taxonomie avant le
+  contenu — rétro-classer = crise garantie) ; gagné jamais acheté, survit à la
+  renaissance ; **fragments US-035** réutilisés comme réponse aux doublons. **Marché
+  entre joueurs écarté** (#043). Local-first, sans backend.
+- **Découpage retenu : Approche A** (par couches de valeur, squelette vertical
+  d'abord — patron A1), **3 tranches**, chemin critique **US-038 → US-039** :
+  - **US-038 — Socle Salle des trophées** *(haute)* : écran dédié + abstraction
+    **« trophée épinglable »** (type + référence) + épingler des **cosmétiques**
+    possédés + **1er palier d'emplacements gagnés** + mise en scène des pièces
+    maîtresses. **Pose `tradeable=false`**. → présentoir jouable de bout en bout.
+  - **US-039 — Accomplissements épinglables + provenance** *(moyenne)* : étend
+    l'abstraction aux **jalons (US-028) / corruption (US-036) / prestige** ; rend la
+    **provenance visible** (« gagné en… », génération/date) — la collection qui se
+    raconte.
+  - **US-040 — Sets & complétion** *(basse, optionnelle)* : regroupe en **ensembles
+    thématiques**, récompense/statut de complétion, éventuel **rang de collectionneur**
+    dérivé de la rareté gagnée.
+- **Portée du brainstorming** : définition de phase uniquement. Le **cadrage détaillé
+  de chaque US** (fonctionnel → technique → design → plan, portes de validation PO)
+  se fait ensuite via le skill `nouvelle-us`. Impact UI significatif anticipé sur
+  US-038 → étape maquette Claude Design probable.

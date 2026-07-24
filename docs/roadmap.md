@@ -201,6 +201,38 @@ US-037**.
   cosmétiques glitch à gagner en parcourant la voie. Lit le flag `corruption:
   embraced` posé par US-036.
 
+### Phase A5 — Vitrine & prestige de collection (décision #045, 24/07/2026)
+*Objectif : donner un **lieu de fierté** où le joueur met en scène ce qu'il a
+gagné. Toujours local-first, sans backend. A3 a construit la collection, A4 lui a
+donné de la profondeur (corruption) ; A5 lui donne une **raison de s'afficher** —
+d'abord pour soi (solo), et surtout **prépare la Phase B** : quand le social
+arrivera, le présentoir sera déjà curaté, prêt à impressionner un public.*
+
+Née d'un brainstorming PO ↔ Claude (24/07/2026) à la clôture de la Phase A4, dans
+le prolongement de la direction **« collection / vitrine enrichie »** retenue par
+le **benchmark IA (décision #043)**. Cœur : une **Salle des trophées** (écran
+dédié) où le joueur **compose lui-même** un présentoir mettant en scène ses
+**pièces maîtresses** — contenu épinglable **hétérogène** (cosmétiques +
+accomplissements), **emplacements qui se gagnent** avec la progression.
+
+**Garde-fous (issus de #043)** : richesse exposée = **complétion et rareté gagnée,
+jamais solde ni quantité** ; **`tradeable = false`** posé sur tout objet de statut
+dès l'évolution du modèle ; gagné jamais acheté, survit à la renaissance ;
+fragments US-035 réutilisés pour les doublons ; **marché entre joueurs écarté**.
+Chemin critique : **US-038 → US-039**.
+
+- **US-038 — Socle Salle des trophées** *(fondation, en 1ᵉʳ)* : écran dédié +
+  abstraction **« trophée épinglable »** (type + référence) + épingler des
+  **cosmétiques** possédés + **1er palier d'emplacements gagnés** + mise en scène
+  des pièces maîtresses (réutilise `RarityBadge`/`rarityStyle`/`CosmeticCard`).
+  **Pose `tradeable=false`**. → un présentoir jouable de bout en bout.
+- **US-039 — Accomplissements épinglables + provenance** : étend l'abstraction aux
+  **jalons (US-028) / corruption (US-036) / prestige** ; rend la **provenance
+  visible** (« gagné en… », génération/date) — la collection qui se raconte.
+- **US-040 — Sets & complétion** *(optionnelle)* : regroupe les objets en
+  **ensembles thématiques**, récompense/statut de complétion, éventuel **rang de
+  collectionneur** dérivé de la rareté gagnée.
+
 ### Phase B — Couche connectée (backend requis, après la preuve du fun)
 
 - **B1** — Comptes/auth + sync local↔serveur + bascule **serveur-autoritatif** (compétitif).
