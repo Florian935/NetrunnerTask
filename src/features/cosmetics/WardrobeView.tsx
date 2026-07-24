@@ -6,6 +6,7 @@ import {
   cosmeticsByType,
   type CosmeticType,
 } from '../../game/cosmetics'
+import { tierVoltageFor } from '../../game/corruption'
 import type { CrateDraw, CrateQuality } from '../../game/crates'
 import { milestoneForCosmetic } from '../../game/milestones'
 import { useBuilderStore } from '../../stores/useBuilderStore'
@@ -59,6 +60,8 @@ interface VisibleCosmetic {
   id: string
   state: CosmeticCardState
   hint?: string
+  /** Progression de voie (US-037) — cosmétique `source: 'corruption'` verrouillé. */
+  progress?: { current: number; target: number }
 }
 
 /**
@@ -75,6 +78,7 @@ export function WardrobeView() {
   const crates = useCosmeticsStore((s) => s.crates)
   const fragments = useCosmeticsStore((s) => s.fragments)
   const pity = useCosmeticsStore((s) => s.pity)
+  const securedVoltage = useCosmeticsStore((s) => s.securedVoltage)
   const openCrateAction = useCosmeticsStore((s) => s.openCrate)
   const forge = useCosmeticsStore((s) => s.forge)
   const achievedMilestones = useBuilderStore((s) => s.achievedMilestones)
@@ -104,7 +108,13 @@ export function WardrobeView() {
         : 'locked'
       const hint =
         state === 'locked' && source ? t(`builder.milestones.items.${source.id}.name`) : undefined
-      out.push({ id: c.id, state, hint })
+      // US-037 : cosmétique de voie verrouillé → progression de voltage vers le palier.
+      const tierVoltage = tierVoltageFor(c.id)
+      const progress =
+        state === 'locked' && tierVoltage !== undefined
+          ? { current: securedVoltage, target: tierVoltage }
+          : undefined
+      out.push({ id: c.id, state, hint, progress })
     }
     return out
   }
@@ -144,7 +154,7 @@ export function WardrobeView() {
         if (items.length === 0) return null
         return (
           <Section key={type} type={type} count={items.length}>
-            {items.map(({ id, state, hint }) => {
+            {items.map(({ id, state, hint, progress }) => {
               const cosmetic = cosmeticsByType(type).find((c) => c.id === id)!
               return (
                 <CosmeticCard
@@ -152,6 +162,7 @@ export function WardrobeView() {
                   item={cosmetic}
                   state={state}
                   hint={hint}
+                  progress={progress}
                   onEquip={() => equip(id)}
                 />
               )

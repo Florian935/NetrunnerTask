@@ -8,6 +8,8 @@
 export const COR_COLOR = '#ff2d95'
 export const COR_COLOR_HOVER = '#ff5cae'
 export const COR_RGB = '255, 45, 149'
+/** Magenta « brûlant » (surcharge critique / krach, US-037). */
+export const COR_HOT = '#ffb8dc'
 /** Cyan d'aberration chromatique (le 2ᵉ canal du décalage RGB). */
 export const COR_CYAN_RGB = '0, 240, 255'
 

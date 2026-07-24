@@ -102,6 +102,17 @@ export const COSMETICS: readonly Cosmetic[] = [
   // la voie sombre). Rareté légendaire (pas de 6ᵉ cran) ; c'est la `source` qui
   // porte l'identité magenta/glitch de la carte (comme le pool caisses).
   { id: 'corrupt-glitch', type: 'title', rarity: 'legendary', source: 'corruption' },
+
+  // === Pool de LA VOIE CORROMPUE (US-037, `source: 'corruption'`) ===
+  // Gagnés en parcourant la voie : chaque cosmétique se débloque à un **palier de
+  // voltage sécurisé cumulé** (`game/corruption.ts` `CORRUPTION_PATH_TIERS`), voie
+  // DÉTERMINISTE (jamais une caisse). Pas de 6ᵉ rareté : le traitement magenta/
+  // glitch est piloté par la `source`. Mapping des types = maquette `corrupted-path`
+  // recadrée sur nos 4 types (pas de « cadre »/« effet » — effets reportés A3).
+  { id: 'cor-fracture', type: 'title', rarity: 'rare', source: 'corruption' },
+  { id: 'cor-aberration', type: 'banner', rarity: 'epic', icon: 'waves', source: 'corruption' },
+  { id: 'cor-surtension', type: 'avatar', rarity: 'legendary', icon: 'zap', source: 'corruption' },
+  { id: 'cor-0xdead', type: 'title', rarity: 'legendary', source: 'corruption' },
 ] as const
 
 /** Index du catalogue par `id`. */

@@ -3,6 +3,90 @@
 > Tests de recette par US. Chaque test reprend un critère d'acceptation de l'US.
 > Statuts : `à faire` / `validé` / `échoué`.
 
+## US-037 — La Voie Corrompue (Phase A4)
+
+Recette du 24/07/2026. Critères d'acceptation de `us/US-037-voie-corrompue.md` §1.
+
+> **Méthode.** L'environnement de test est **Node / couche `game/` pure** (décision
+> #014) : pas de navigateur ni d'IndexedDB dans la session. La **mécanique** a été
+> vérifiée par les tests auto (`game/corruption.test.ts` + le scénario end-to-end
+> `game/corruption.scenario.test.ts`, qui rejoue la composition du store à partir
+> des fonctions pures réelles) ; les critères **visuels / de persistance / live**
+> ont été **validés en live par le PO le 24/07/2026** (scripts console ci-dessous).
+
+| ID | Critère (action → résultat) | Vérif | Statut | Date |
+|----|------------------------------|-------|--------|------|
+| C1 | Corruption non embrassée → **aucune** surcharge/dopage, production identique | garde `embraced ? … : 1` + reset surcharge au tick non-embrassé (`applyTick`) + live PO | validé | 24/07/2026 |
+| C2 | Embrasser → la surcharge **démarre et monte** + indicateur visible | charge auto (scénario **C3**) + panneau live PO | validé | 24/07/2026 |
+| C3 | Dopage **croît** avec la surcharge ; débit affiché **supérieur** | `dopageMultiplier` monotone (scénario) + débit dopé `BuilderView` live PO | validé | 24/07/2026 |
+| C4 | Seuil critique → **krach** (reset, dopage retombé), **déterministe/rejouable** | `chargeSurcharge` krach + rejouabilité (scénario **C4**) + secousse/flash live PO | validé | 24/07/2026 |
+| C5 | **Sécuriser** → gain de voltage + trajectoire modifiée (pas de krach subi) | `securedGain` + reset + `bankVoltage` (scénario **C5**) + retour visuel live PO | validé | 24/07/2026 |
+| C6 | Atteindre un **jalon** → cosmétique `source:'corruption'` débloqué, Garde-robe, gagné | `pathRewardsFor` → `grant` (scénario **C5**) + rendu Garde-robe live PO | validé | 24/07/2026 |
+| C7 | **Purger** → surcharge/dopage stop, cosmétiques **conservés** ; ré-embrasser réactive | reset au tick non-embrassé + `grant` jamais retiré (P8) + live PO | validé | 24/07/2026 |
+| C8 | **Renaissance** → découverte + cosmétiques **survivent** ; surcharge **reset** | `prestige()` reset `surcharge`, `securedVoltage` hors `PrestigeCore` (scénario) + live PO | validé | 24/07/2026 |
+| C9 | **Hors-ligne** : surcharge **gelée** (déterministe, pas de krach en l'absence) | `dt=0 → no-op` (scénario **C9**) + `load()` sans dopage + live PO | validé | 24/07/2026 |
+| C10 | **Jamais imposée** : Réseau propre reste jouable/progressable (refus/purge) | aucune dépendance de la progression au flag corruption + live PO | validé | 24/07/2026 |
+| C8-bis | **Reduced-motion** : rendu statique lisible, mécanique inchangée | mécanique indépendante de l'animation (scénario **C8**) + rendu live PO | validé | 24/07/2026 |
+| — | `game/corruption.ts` couvert (dopage, krach, gain, paliers, déterminisme) | `corruption.test.ts` + `corruption.scenario.test.ts` | validé | 24/07/2026 |
+| — | `typecheck` + `lint` + `build`/PWA + `test` (**304/304**, +24) | exécution | validé | 24/07/2026 |
+
+### Scripts console pour la recette live PO (sur le dev server)
+
+> À coller dans la console de l'app. DB `netrunner-tasks` (v23), singletons clé `'me'`.
+
+**1) Embrasser la voie + injecter une surcharge haute** (voir dopage/krach/sécuriser) :
+```js
+const r = indexedDB.open('netrunner-tasks')
+r.onsuccess = (e) => { const db = e.target.result
+  const tx = db.transaction(['builderState','cosmeticsState'],'readwrite')
+  tx.objectStore('builderState').get('me').onsuccess = (ev)=>{ const b=ev.target.result
+    b.prestigeCount = 3; b.surcharge = 80; tx.objectStore('builderState').put(b) }
+  tx.objectStore('cosmeticsState').get('me').onsuccess = (ev)=>{ const c=ev.target.result
+    c.corruption = 'embraced'; tx.objectStore('cosmeticsState').put(c) }
+  tx.oncomplete = ()=>location.reload() }
+```
+→ Sur l'écran **Réseau**, colonne stage : panneau Surcharge à ~80 % (dopage ×~3), débit dopé.
+Laisser monter → **krach** (secousse + flash) ; ou cliquer **Sécuriser** → voltage encaissé.
+
+**2) Injecter du voltage cumulé** (voir la progression des paliers en Garde-robe) :
+```js
+const r = indexedDB.open('netrunner-tasks')
+r.onsuccess = (e) => { const db = e.target.result
+  const tx = db.transaction('cosmeticsState','readwrite')
+  tx.objectStore('cosmeticsState').get('me').onsuccess=(ev)=>{ const c=ev.target.result
+    c.securedVoltage = 500; tx.objectStore('cosmeticsState').put(c) }
+  tx.oncomplete=()=>location.reload() }
+```
+→ Garde-robe : cartes de voie **verrouillées** avec **mini-barre** (500 / seuil). Le
+**déblocage effectif** se fait en **sécurisant en jeu** (bankVoltage franchit le palier).
+
+**3) Tester le gel hors-ligne** : embrasser + surcharge 60, fermer l'onglet, rouvrir
+plus tard → la surcharge doit être **inchangée** (aucun krach subi), le rattrapage de
+production **sans dopage**.
+
+**4) Reduced-motion** : activer « réduire les animations » (OS) → panneau statique
+lisible, pas de secousse au krach, mécanique identique.
+
+**5) Purge / survie renaissance** : depuis embrassé, **Purger** (Garde-robe) → look
+propre, cosmétiques de voie **conservés** ; puis renaître → surcharge repart de 0, le
+voltage et les cosmétiques **persistent**.
+
+### Ajustements en cours de recette live (validés PO)
+
+- **Carte « Progression de voie » rendue PERMANENTE** : à l'origine transitoire
+  (feedback ~6 s), elle disparaissait → on perdait de vue la progression. Refondue
+  en bandeau **permanent** (tant que la corruption est embrassée) : voltage cumulé +
+  prochain palier + barre toujours visibles ; à chaque « Sécuriser », un **pop
+  `+N V`** monte et s'estompe + la carte **flashe** en mint (indicateur d'encaissement).
+- **Taille de carte stabilisée + anti-chevauchement** : le pop de gain est positionné
+  en **absolu** (plus de saut de hauteur au « Sécuriser ») ; largeurs cloisonnées
+  (titre / pop) et `gap` + troncature sur la ligne « voltage · prochain palier » pour
+  supprimer deux chevauchements de libellés signalés en recette.
+
+> **Verdict : recette US-037 validée à 100 % le 24/07/2026** (C1–C10 +
+> reduced-motion, mécanique auto + live PO). Aucun bug produit ouvert. Réglages
+> (`dopageMax ×3,6`, seuils, paliers) confirmés jouables face à la courbe de prestige.
+
 ## US-036 — L'Éveil de la Corruption (Phase A4)
 
 Recette du 23/07/2026. Critères de `us/US-036-eveil-corruption.md` §1. **Vérifs

@@ -61,6 +61,20 @@ export interface CrateEarnedItem {
   quality: CrateQuality
 }
 
+/**
+ * Encaissement de surcharge en voltage (US-037, « Sécuriser ») — feedback dédié.
+ * `gain` = voltage encaissé, `at` = surcharge (%) au moment de sécuriser, `mult`
+ * = dopage capté, `voltageAfter` = voltage cumulé après (pour la progression de
+ * voie). Résout le prochain palier via `game/corruption.ts`.
+ */
+export interface SecureFeedbackItem {
+  id: string
+  gain: number
+  at: number
+  mult: number
+  voltageAfter: number
+}
+
 /** Mise perdue détectée au chargement (US-013) — remontée en toast danger. */
 export interface StakeLossItem {
   id: string
@@ -102,6 +116,16 @@ interface FeedbackState {
    * une renaissance peut en octroyer une pendant que des jalons tombent.
    */
   crateEarned: CrateEarnedItem[]
+  /**
+   * Krach de surcharge (US-037) — événement one-shot qui déclenche la secousse
+   * glitch du panneau Surcharge. Singleton (comme `levelUp`) ; `null` = aucun.
+   */
+  corruptionKrach: { id: string } | null
+  /**
+   * Dernier encaissement « Sécuriser » (US-037) — feedback transitoire (montant
+   * + progression de voie). Singleton ; `null` = aucun.
+   */
+  secure: SecureFeedbackItem | null
   /** Contrat qui vient d'encaisser sa récompense → flash transitoire. */
   flashingId: string | null
   /** Mises perdues au chargement (US-013), à transformer en toasts (AppShell). */
@@ -132,6 +156,12 @@ interface FeedbackState {
   triggerCrateEarned: (quality: CrateQuality) => void
   /** Ferme un feedback de caisse gagnée avant son auto-effacement (clic). */
   dismissCrateEarned: (id: string) => void
+  /** Déclenche la secousse de krach (US-037) ; auto-effacement (~0,7 s). */
+  triggerCorruptionKrach: () => void
+  /** Signale un encaissement « Sécuriser » (US-037) ; auto-effacement (~6 s). */
+  triggerSecure: (item: Omit<SecureFeedbackItem, 'id'>) => void
+  /** Ferme le feedback de sécurisation avant son auto-effacement (clic). */
+  dismissSecure: () => void
   flash: (id: string) => void
   /** File des mises perdues au chargement (déduplique par appel). */
   pushStakeLosses: (items: Omit<StakeLossItem, 'id'>[]) => void
@@ -156,6 +186,8 @@ export const useFeedbackStore = create<FeedbackState>((set, get) => ({
   milestones: [],
   cosmeticUnlocks: [],
   crateEarned: [],
+  corruptionKrach: null,
+  secure: null,
   flashingId: null,
   stakeLosses: [],
   dueCatchup: null,
@@ -245,6 +277,26 @@ export const useFeedbackStore = create<FeedbackState>((set, get) => ({
 
   dismissCrateEarned: (id) =>
     set((s) => ({ crateEarned: s.crateEarned.filter((c) => c.id !== id) })),
+
+  triggerCorruptionKrach: () => {
+    const item = { id: crypto.randomUUID() }
+    set({ corruptionKrach: item })
+    window.setTimeout(
+      () => set((s) => (s.corruptionKrach?.id === item.id ? { corruptionKrach: null } : s)),
+      700,
+    )
+  },
+
+  triggerSecure: (item) => {
+    const secure = { id: crypto.randomUUID(), ...item }
+    set({ secure })
+    window.setTimeout(
+      () => set((s) => (s.secure?.id === secure.id ? { secure: null } : s)),
+      2600,
+    )
+  },
+
+  dismissSecure: () => set({ secure: null }),
 
   flash: (id) => {
     set({ flashingId: id })

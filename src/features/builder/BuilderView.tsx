@@ -5,9 +5,12 @@ import {
   productionPerSec,
   unlockedGenerators,
 } from '../../game/builder'
+import { dopageMultiplier } from '../../game/corruption'
 import { prestigeMultiplier } from '../../game/prestige'
 import { cycleMultiplier, dataMultiplier } from '../../game/unlockTree'
 import { useBuilderStore } from '../../stores/useBuilderStore'
+import { useCosmeticsStore } from '../../stores/useCosmeticsStore'
+import { OverloadPanel, SecureFeedback } from '../corruption'
 import { AcceleratorPanel } from './AcceleratorPanel'
 import { CryptoPanel } from './CryptoPanel'
 import { DataReadout } from './DataReadout'
@@ -37,19 +40,23 @@ export function BuilderView() {
   const crypto = useBuilderStore((s) => s.crypto)
   const unlockedNodes = useBuilderStore((s) => s.unlockedNodes)
   const prestigeCount = useBuilderStore((s) => s.prestigeCount)
+  const surcharge = useBuilderStore((s) => s.surcharge)
   const hack = useBuilderStore((s) => s.hack)
+  const corruption = useCosmeticsStore((s) => s.corruption)
 
   const core = { cycles, generators, upgrades, data, unlockedNodes }
   const tree = { data, crypto, generators, upgrades, unlockedNodes }
   const treeMultipliers = { cycles: cycleMultiplier(tree), data: dataMultiplier(tree) }
   // Débit **effectif** affiché : production de base × arbre × bonus de prestige
-  // (US-024) — reflète ce que `applyTick` crédite réellement (le boost temporaire
-  // SURCADENCE reste hors du débit affiché, comme depuis US-023).
+  // (US-024) × **dopage de la voie corrompue** (US-037, si embrassée) — reflète ce
+  // que `applyTick` crédite réellement (le boost SURCADENCE reste hors débit).
+  const embraced = corruption === 'embraced'
+  const dopage = embraced ? dopageMultiplier(surcharge) : 1
   const pMult = prestigeMultiplier(prestigeCount)
-  const rate = productionPerSec(core) * treeMultipliers.cycles * pMult
+  const rate = productionPerSec(core) * treeMultipliers.cycles * pMult * dopage
   const dataUnlocked = (generators[BUILDER_CONFIG.dataUnlockGenerator] ?? 0) >= 1
   const cryptoUnlocked = unlockedNodes.includes('breach-market')
-  const dataRate = dataPerSec(core, treeMultipliers.data) * pMult
+  const dataRate = dataPerSec(core, treeMultipliers.data) * pMult * dopage
   const unlockedCount = unlockedGenerators(core).length
 
   return (
@@ -80,6 +87,10 @@ export function BuilderView() {
           </div>
           <DataReadout unlocked={dataUnlocked} data={data} rate={dataRate} />
           <HackZone onHack={hack} gain={BUILDER_CONFIG.manualYield} />
+          {/* US-037 : la voie corrompue — panneau Surcharge + retour de sécurisation,
+              dockés en colonne stage (visibles seulement si la corruption est embrassée). */}
+          <OverloadPanel />
+          <SecureFeedback />
           <AcceleratorPanel />
           <CryptoPanel unlocked={cryptoUnlocked} />
         </div>

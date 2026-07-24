@@ -190,7 +190,7 @@ Les US-005 à US-007 enrichissent le to-do.
 | ID | Titre | MVP | Priorité | Statut | Dépend de |
 |----|-------|-----|----------|--------|-----------|
 | US-036 | L'Éveil de la Corruption (moteur de reveals + déclenchement prestige + séquence glitch + pacte accepter/refuser + thème corrompu + 1er cosmétique glitch) | A4 | haute | fait | prestige (US-024/026), cosmétiques (US-031) |
-| US-037 | La Voie Corrompue (ressource corrompue instable + production dopée + pool de cosmétiques glitch) | A4 | moyenne | à faire | US-036 |
+| US-037 | La Voie Corrompue (ressource corrompue instable + production dopée + pool de cosmétiques glitch) | A4 | moyenne | fait | US-036 |
 
 > **US-036** — impact UI significatif (séquence glitch « wahou » P9 + thème
 > corrompu) → **étape design/maquette Claude Design requise** dans son cycle. Le

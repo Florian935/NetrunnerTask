@@ -16,6 +16,7 @@ const mk = (over: Partial<PrestigeCore> = {}): PrestigeCore => ({
   crypto: 0,
   unlockedNodes: [],
   prestigeCount: 0,
+  surcharge: 0,
   ...over,
 })
 
@@ -87,6 +88,7 @@ describe('prestige', () => {
       crypto: 120,
       unlockedNodes: ['overclock', 'parallelism', 'breach-market'],
       prestigeCount: 1,
+      surcharge: 72,
     })
     const next = prestige(s)
     expect(next.cycles).toBe(0)
@@ -96,6 +98,7 @@ describe('prestige', () => {
     expect(next.crypto).toBe(0)
     expect(next.unlockedNodes).toEqual([])
     expect(next.prestigeCount).toBe(2)
+    expect(next.surcharge).toBe(0)
   })
   it('préserve les champs hors PrestigeCore (spread) — ex. accélérateur', () => {
     const s = {

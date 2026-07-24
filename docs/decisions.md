@@ -1288,3 +1288,50 @@ auto-suffisante et fait foi.
   **serveur autoritatif + anti-triche**, dont la **fondation déterministe** est
   déjà en place (`game/*` : crypto jamais persisté, reveals/corruption zéro RNG,
   RNG injecté dans les caisses).
+
+### 044 — La Voie Corrompue (US-037, Phase A4, 24/07/2026)
+
+2ᵉ et **dernière tranche** de la Phase A4 (#041) : la **profondeur mécanique** de la
+voie sombre, jouable une fois la corruption **embrassée** (#042). Réconciliation de
+l'invariant #042 : « aucun avantage fonctionnel en v1 » était un **report**, pas une
+interdiction ; la roadmap A4 prévoyait le dopage ici, **compensé par le risque** →
+P4/P5 tenus (solo, local, gagné jamais acheté, réversible).
+
+- **Ressource « Surcharge » (`game/corruption.ts`, pur, déterministe, zéro RNG)** :
+  jauge active ssi `corruption === 'embraced'`, **charge en jeu actif** (linéaire),
+  **dope** la production (`dopageMultiplier`, ×1 → **×3,6** au seuil), **krache** au
+  seuil critique (reset). `securedGain` non-linéaire, `CORRUPTION_PATH_TIERS`
+  (200/600/1400/3000 V) + `pathRewardsFor`. Le « tremblement instable » est un
+  **rendu CSS**, pas une variance de la mécanique. **Testé** (`corruption.test.ts`
+  + scénario end-to-end `corruption.scenario.test.ts`).
+- **Levier « Sécuriser »** : convertit la surcharge courante en **voltage de voie**
+  (`bankVoltage`) + reset **sans krach**. Le **risque = l'opportunité perdue** : un
+  krach ne rapporte rien (rampe gâchée), pas de destruction de ressource.
+- **Split d'état principiel** (frontière reset/survit posée depuis US-031) :
+  **`surcharge` sur `BuilderState`** (jauge live, +`PrestigeCore` → **reset à la
+  renaissance**) ; **`securedVoltage` sur `CosmeticsState`** (cumulatif, **survit**,
+  débloque les cosmétiques de voie) → **migration Dexie v23** (2 tables, rétro `0`).
+- **Dopage = bonus de jeu ACTIF (online)** : composé dans `applyTick` (comme boost/
+  prestige/arbre) ; **exclu du rattrapage hors-ligne** — la **surcharge gèle
+  hors-ligne** (déterministe, sans feel-bad). **Raffine le critère 9** (validé PO).
+- **Pool de voie (déterministe, patron US-033)** : **+4 cosmétiques `source:
+  'corruption'`** (`cor-fracture` titre/rare · `cor-aberration` bannière/épique ·
+  `cor-surtension` avatar/légendaire · `cor-0xdead` titre/légendaire) débloqués aux
+  paliers de voltage. **Pas de 6ᵉ rareté** ni de nouveaux types (« cadre »/« effet »
+  de la maquette écartés — effets reportés A3 ; mappés sur nos 4 types).
+- **UI** (`features/corruption/`) : `OverloadRing` (anneau redline + tremblement),
+  `OverloadPanel` (jauge + dopage ×N + alerte de risque + Sécuriser + krach intégré
+  — le `KrachDemo` de la maquette n'était qu'un support), `SecureFeedback`
+  (**bandeau permanent** de progression + pop `+N V` + flash mint) ; **colonne stage**
+  de l'écran Réseau (visible ssi embrassé) + **débit affiché dopé** ; `CosmeticCard`
+  mini-barre de progression sur l'état verrouillé de voie. Keyframes sous garde
+  `prefers-reduced-motion`.
+- **Boucle de recette — SecureFeedback refondu (PO)** : d'abord transitoire (on
+  perdait la progression de vue) → **rendu permanent, taille fixe**, avec pop de
+  gain en absolu (anti-saut de layout) + 2 chevauchements de libellés corrigés.
+- **À surveiller** : `dopageMax ×3,6` face à la courbe de prestige (#033) —
+  confirmé jouable en recette (n'enchaîne pas les renaissances). Réglable dans
+  `SURCHARGE_CONFIG`.
+- Vérifs : typecheck + lint + build/PWA + **tests 304/304** (+24). **Recette
+  11 critères PO, validée à 100 %** le 24/07/2026. Maquette `corrupted-path` non
+  versionnée (#007). **Phase A4 terminée (2/2 tranches).**
