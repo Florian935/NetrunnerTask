@@ -142,6 +142,107 @@
   }
 }
 
+/* US-037 — balayage radar de l'anneau de surcharge. */
+@keyframes nw-cor-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* US-037 — Surcharge : tremblement « instable » de l'anneau (plus la surcharge
+   est haute, plus il tremble vite — la durée est pilotée en inline). */
+@keyframes nw-cor-tremble {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(-1px, 1px);
+  }
+  50% {
+    transform: translate(1px, -1px);
+  }
+  75% {
+    transform: translate(1px, 1px);
+  }
+}
+
+/* US-037 — Krach : secousse du panneau au reset de la surcharge. */
+@keyframes nw-cor-krach-shake {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  10% {
+    transform: translate(-5px, 3px);
+  }
+  25% {
+    transform: translate(5px, -3px);
+  }
+  40% {
+    transform: translate(-4px, -2px);
+  }
+  55% {
+    transform: translate(4px, 2px);
+  }
+  70% {
+    transform: translate(-2px, 3px);
+  }
+  85% {
+    transform: translate(2px, -1px);
+  }
+}
+
+/* US-037 — Krach : flash magenta bref superposé. */
+@keyframes nw-cor-krach-flash {
+  0% {
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.9;
+  }
+  20% {
+    opacity: 0.1;
+  }
+  34% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* US-037 — « Sécuriser » : pop flottant du gain (monte + s'estompe, en absolu →
+   n'affecte jamais la taille de la carte). */
+@keyframes nw-cor-gain-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.92);
+  }
+  18% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+/* US-037 — « Sécuriser » : flash mint bref de la carte de progression. */
+@keyframes nw-cor-secure-pulse {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 /* Coupe toute animation glitch en reduced-motion. */
 @media (prefers-reduced-motion: reduce) {
   .nw-cor-anim,

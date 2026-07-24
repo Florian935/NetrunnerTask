@@ -57,6 +57,7 @@ export async function ensureSeeded(): Promise<void> {
       acceleratorRun: null,
       acceleratorBoost: null,
       prestigeCount: 0,
+      surcharge: 0,
       updatedAt: Date.now(),
       achievedMilestones: [],
     })
@@ -65,6 +66,7 @@ export async function ensureSeeded(): Promise<void> {
   // US-031 : socle cosmétique (départ = STARTER, US-033). US-032 : callsign.
   // US-034 : stock de caisses non ouvertes à zéro (se gagnent en jouant).
   // US-035 : fragments + pity à zéro. US-036 : reveals vierges, corruption dormante.
+  // US-037 : voltage de voie cumulé à zéro (se gagne en sécurisant la surcharge).
   const cosmetics = await db.cosmeticsState.get('me')
   if (!cosmetics) {
     await db.cosmeticsState.add({
@@ -78,6 +80,7 @@ export async function ensureSeeded(): Promise<void> {
       discoveredReveals: [],
       corruption: 'dormant',
       corruptionArmedAt: null,
+      securedVoltage: 0,
     })
   }
 }

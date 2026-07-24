@@ -14,11 +14,13 @@ import {
   type CrateDraw,
   type CrateQuality,
 } from '../game/crates'
+import { pathRewardsFor } from '../game/corruption'
 import { DEFAULT_CALLSIGN, normalizeCallsign } from '../game/profile'
 import { newlyTriggeredReveals, type RevealContext } from '../game/reveals'
 import { applyCosmeticTheme, mirrorCosmeticTheme } from '../features/cosmetics/theme'
 import { applyCorruption, mirrorCorruption } from '../features/corruption/corruptionTheme'
 import type { CorruptionState } from '../db/types'
+import { useFeedbackStore } from './useFeedbackStore'
 
 /** `id` du titre glitch débloqué en embrassant la corruption (US-036). */
 const CORRUPTION_REWARD_ID = 'corrupt-glitch'
@@ -53,6 +55,8 @@ interface CosmeticsStoreState extends CosmeticsCore {
   corruption: CorruptionState
   /** `prestigeCount` au dernier armement de la corruption (US-036) ; borne la ré-offre. */
   corruptionArmedAt: number | null
+  /** Voltage de voie sécurisé cumulé (US-037) — débloque les cosmétiques de voie. */
+  securedVoltage: number
   loaded: boolean
   load: () => Promise<void>
   /** Équipe le cosmétique `id` (no-op si inconnu/non possédé/déjà équipé). */
@@ -94,13 +98,20 @@ interface CosmeticsStoreState extends CosmeticsCore {
   refuseCorruption: () => void
   /** Purge la corruption (US-036) : `purged` — look propre, titre conservé, ré-embrassable. */
   purgeCorruption: () => void
+  /**
+   * Encaisse `gain` de voltage de voie (US-037, appelé par `secureSurcharge` du
+   * store builder) : incrémente `securedVoltage`, débloque les cosmétiques dont
+   * le palier est franchi (`pathRewardsFor` → `grant` idempotent + reveal), et
+   * persiste. No-op si `gain ≤ 0`.
+   */
+  bankVoltage: (gain: number) => void
 }
 
 export const useCosmeticsStore = create<CosmeticsStoreState>((set, get) => {
   /** Persiste l'état courant (owned + equipped + callsign + crates + US-035/036) en base. */
   function persist(): void {
     const { owned, equipped, callsign, crates, fragments, pity } = get()
-    const { discoveredReveals, corruption, corruptionArmedAt } = get()
+    const { discoveredReveals, corruption, corruptionArmedAt, securedVoltage } = get()
     void cosmeticsRepo.save({
       owned,
       equipped,
@@ -111,6 +122,7 @@ export const useCosmeticsStore = create<CosmeticsStoreState>((set, get) => {
       discoveredReveals,
       corruption,
       corruptionArmedAt,
+      securedVoltage,
     })
   }
 
@@ -124,6 +136,7 @@ export const useCosmeticsStore = create<CosmeticsStoreState>((set, get) => {
     discoveredReveals: [],
     corruption: 'dormant',
     corruptionArmedAt: null,
+    securedVoltage: 0,
     loaded: false,
 
     load: async () => {
@@ -137,6 +150,7 @@ export const useCosmeticsStore = create<CosmeticsStoreState>((set, get) => {
       const discoveredReveals = state?.discoveredReveals ?? []
       const corruption = state?.corruption ?? 'dormant'
       const corruptionArmedAt = state?.corruptionArmedAt ?? null
+      const securedVoltage = state?.securedVoltage ?? 0
       set({
         owned,
         equipped,
@@ -147,6 +161,7 @@ export const useCosmeticsStore = create<CosmeticsStoreState>((set, get) => {
         discoveredReveals,
         corruption,
         corruptionArmedAt,
+        securedVoltage,
         loaded: true,
       })
       applyCosmeticTheme(equipped.theme)
@@ -262,6 +277,18 @@ export const useCosmeticsStore = create<CosmeticsStoreState>((set, get) => {
       applyCorruption(false) // look propre — le titre glitch reste possédé (P8)
       mirrorCorruption(false)
       persist()
+      // La jauge de surcharge (BuilderState) se remet à 0 côté store builder au
+      // 1ᵉʳ tick « non embrassé » — ré-embrasser repart de zéro (décision 4).
+    },
+
+    bankVoltage: (gain) => {
+      if (gain <= 0) return // no-op
+      const prev = get().securedVoltage
+      const next = prev + gain
+      set({ securedVoltage: next })
+      const granted = get().grant(pathRewardsFor(prev, next)) // idempotent + persiste owned
+      for (const cid of granted) useFeedbackStore.getState().triggerCosmeticUnlock(cid)
+      persist() // garantit l'écriture de securedVoltage (grant no-op si aucun palier)
     },
   }
 })

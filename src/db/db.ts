@@ -466,6 +466,35 @@ export class NetrunnerDB extends Dexie {
             },
           ),
       )
+    // v23 (US-037) : la voie corrompue. **Deux** champs sur **deux** singletons →
+    // schéma v22 recopié + rétro-remplissage (patron des migrations de champ
+    // v11→v22) : `surcharge: 0` sur `builderState` (jauge live, reset renaissance)
+    // et `securedVoltage: 0` sur `cosmeticsState` (voltage cumulé, survit).
+    // Aucune reconciliation d'`owned` : les cosmétiques de voie sont du contenu
+    // neuf qu'aucune sauvegarde ne possède.
+    this.version(23)
+      .stores({
+        contracts: 'id, factionId, status, dueDate, createdAt',
+        factions: 'id, name',
+        player: 'id',
+        builderState: 'id',
+        cosmeticsState: 'id',
+        demoKV: 'key',
+      })
+      .upgrade(async (tx) => {
+        await tx
+          .table('builderState')
+          .toCollection()
+          .modify((b: { surcharge?: number }) => {
+            if (b.surcharge === undefined) b.surcharge = 0
+          })
+        await tx
+          .table('cosmeticsState')
+          .toCollection()
+          .modify((c: { securedVoltage?: number }) => {
+            if (c.securedVoltage === undefined) c.securedVoltage = 0
+          })
+      })
   }
 }
 

@@ -333,12 +333,43 @@
       "crate-omega": { "name": "\"Omega\"", "sub": "title · terminal", "text": "OMEGA" },
       "crate-obsidian": { "name": "Obsidian", "sub": "theme · crate-exclusive" },
       "crate-voidsurge": { "name": "Void Surge", "sub": "banner · singularity" },
-      "corrupt-glitch": { "name": "“Corrupted”", "sub": "title · corruption", "text": "CORRUPTED" }
+      "corrupt-glitch": { "name": "“Corrupted”", "sub": "title · corruption", "text": "CORRUPTED" },
+      "cor-fracture": { "name": "“Fracture”", "sub": "title · corrupted path", "text": "FRACTURE" },
+      "cor-aberration": { "name": "Aberration", "sub": "banner · corrupted path" },
+      "cor-surtension": { "name": "Surge", "sub": "avatar · corrupted path" },
+      "cor-0xdead": { "name": "“0xDEAD”", "sub": "title · corrupted path", "text": "0xDEAD" }
     }
   },
   "corruption": {
     "foundLabel": "OBTAINED BY",
     "foundValue": "EMBRACING THE CORRUPTION",
+    "path": {
+      "header": "NETWORK OVERLOAD",
+      "phase": { "stable": "STABLE", "tension": "TENSION", "critique": "CRITICAL", "krach": "CRASH" },
+      "dopage": "BOOST",
+      "level": "OVERLOAD {{value}}%",
+      "trace": "INSTABILITY TRACE",
+      "krach": "CRASH",
+      "rampWasted": "RAMP WASTED",
+      "krachLine": "CRASH — OVERLOAD LOST",
+      "riskCritical": "CRITICAL THRESHOLD — SECURE NOW",
+      "riskTension": "TENSION — THE CRASH IS COMING",
+      "riskHint": "the higher you climb, the more you boost — but the more you risk the crash",
+      "secure": "SECURE",
+      "secureHint": "BANKS THE OVERLOAD AS VOLTAGE · RESETS THE GAUGE TO 0, NO CRASH",
+      "lockedLabel": "CORRUPTED PATH",
+      "progressTitle": "PATH PROGRESS",
+      "secured": {
+        "title": "OVERLOAD SECURED",
+        "voltage": "VOLTAGE",
+        "popDetail": "at {{at}}% · boost ×{{mult}}",
+        "detail": "banked at {{at}}% overload · boost ×{{mult}} · gauge reset to 0, no crash",
+        "voie": "PATH VOLTAGE · {{value}} V",
+        "nextPalier": "NEXT · {{value}} V",
+        "complete": "PATH COMPLETE",
+        "nextHint": "next unlock in {{value}} V"
+      }
+    },
     "intrusion": { "corrupted": "SIGNAL CORRUPTED — INTRUSION", "active": "CORRUPTION ACTIVE", "purged": "SIGNAL PURGED" },
     "glitch": { "lossOfControl": "LOSS OF CONTROL", "injection": "injecting foreign signal" },
     "source": "UNKNOWN SOURCE",

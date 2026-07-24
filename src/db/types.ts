@@ -194,6 +194,16 @@ export interface BuilderState {
    */
   prestigeCount: number
   /**
+   * Jauge de **surcharge** de la voie corrompue (US-037) — 0 → seuil critique.
+   * N'a d'effet que si la corruption est **embrassée** (`cosmeticsState.corruption
+   * === 'embraced'`) : elle charge en jeu actif et **dope** la production ; au
+   * seuil critique elle krache (reset 0). Fait partie de l'économie du Réseau →
+   * **remise à zéro par la renaissance** (`prestige()`), contrairement au voltage
+   * cumulé (identité, `CosmeticsState.securedVoltage`). `0` par défaut ;
+   * rétro-rempli v23. Voir `game/corruption.ts`.
+   */
+  surcharge: number
+  /**
    * Dernier instant de mise à jour (epoch ms) — base du tick **et** du calcul
    * de production hors-ligne (US-024) : à la réouverture, la production écoulée
    * depuis cet instant est créditée d'un coup (voir `game/builder.ts`
@@ -266,4 +276,13 @@ export interface CosmeticsState {
    * armée ; rétro-rempli v22.
    */
   corruptionArmedAt: number | null
+  /**
+   * Voltage de voie **sécurisé cumulé** (US-037) — la progression de la voie
+   * corrompue. Monté en **sécurisant** la surcharge (`game/corruption.ts`
+   * `securedGain`) ; jamais dépensé ; débloque les cosmétiques `source:
+   * 'corruption'` à des **paliers** (`CORRUPTION_PATH_TIERS`). Vit sur le singleton
+   * d'identité → **survit à la renaissance** (contrairement à la jauge live
+   * `BuilderState.surcharge`). `0` au départ ; rétro-rempli v23.
+   */
+  securedVoltage: number
 }

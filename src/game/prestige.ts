@@ -20,6 +20,12 @@ export interface PrestigeCore {
   crypto: number
   unlockedNodes: string[]
   prestigeCount: number
+  /**
+   * Jauge de surcharge de la voie corrompue (US-037) — jauge **live** de
+   * l'économie du Réseau, remise à zéro par la renaissance (le voltage sécurisé
+   * cumulé, lui, survit — il est porté par `cosmeticsState`, hors `PrestigeCore`).
+   */
+  surcharge: number
 }
 
 /** Réglage global (valeurs affinables en recette). */
@@ -83,5 +89,6 @@ export function prestige<T extends PrestigeCore>(core: T): T {
     crypto: 0,
     unlockedNodes: [],
     prestigeCount: core.prestigeCount + 1,
+    surcharge: 0,
   }
 }

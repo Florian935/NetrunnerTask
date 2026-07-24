@@ -333,12 +333,43 @@
       "crate-omega": { "name": "« Oméga »", "sub": "titre · terminal", "text": "OMÉGA" },
       "crate-obsidian": { "name": "Obsidienne", "sub": "thème · exclusif caisse" },
       "crate-voidsurge": { "name": "Onde du Vide", "sub": "bannière · singularité" },
-      "corrupt-glitch": { "name": "« Corrompu »", "sub": "titre · corruption", "text": "CORROMPU" }
+      "corrupt-glitch": { "name": "« Corrompu »", "sub": "titre · corruption", "text": "CORROMPU" },
+      "cor-fracture": { "name": "« Fracture »", "sub": "titre · voie corrompue", "text": "FRACTURE" },
+      "cor-aberration": { "name": "Aberration", "sub": "bannière · voie corrompue" },
+      "cor-surtension": { "name": "Surtension", "sub": "avatar · voie corrompue" },
+      "cor-0xdead": { "name": "« 0xDEAD »", "sub": "titre · voie corrompue", "text": "0xDEAD" }
     }
   },
   "corruption": {
     "foundLabel": "OBTENU EN",
     "foundValue": "EMBRASSANT LA CORRUPTION",
+    "path": {
+      "header": "SURCHARGE DU RÉSEAU",
+      "phase": { "stable": "STABLE", "tension": "TENSION", "critique": "CRITIQUE", "krach": "KRACH" },
+      "dopage": "DOPAGE",
+      "level": "SURCHARGE {{value}}%",
+      "trace": "TRACE D'INSTABILITÉ",
+      "krach": "KRACH",
+      "rampWasted": "RAMPE GÂCHÉE",
+      "krachLine": "KRACH — SURCHARGE PERDUE",
+      "riskCritical": "SEUIL CRITIQUE — SÉCURISE MAINTENANT",
+      "riskTension": "TENSION — LE KRACH APPROCHE",
+      "riskHint": "plus tu montes, plus tu dopes — mais plus tu risques le krach",
+      "secure": "SÉCURISER",
+      "secureHint": "ENCAISSE LA SURCHARGE EN VOLTAGE · REMET LA JAUGE À 0 SANS KRACH",
+      "lockedLabel": "VOIE CORROMPUE",
+      "progressTitle": "PROGRESSION DE VOIE",
+      "secured": {
+        "title": "SURCHARGE SÉCURISÉE",
+        "voltage": "VOLTAGE",
+        "popDetail": "à {{at}}% · dopage ×{{mult}}",
+        "detail": "encaissé à {{at}}% de surcharge · dopage ×{{mult}} · jauge remise à 0, aucun krach",
+        "voie": "VOLTAGE DE VOIE · {{value}} V",
+        "nextPalier": "PROCHAIN · {{value}} V",
+        "complete": "VOIE COMPLÉTÉE",
+        "nextHint": "prochain déblocage dans {{value}} V"
+      }
+    },
     "intrusion": { "corrupted": "SIGNAL CORROMPU — INTRUSION", "active": "CORRUPTION ACTIVE", "purged": "SIGNAL PURGÉ" },
     "glitch": { "lossOfControl": "PERTE DE CONTRÔLE", "injection": "injection de signal étranger" },
     "source": "SOURCE INCONNUE",

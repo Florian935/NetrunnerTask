@@ -18,6 +18,7 @@ import {
   type BuilderCore,
 } from '../game/builder'
 import { convert as convertPure, marketRate, type CryptoCore } from '../game/crypto'
+import { canSecure, chargeSurcharge, dopageMultiplier, securedGain } from '../game/corruption'
 import {
   checkHackMilestone,
   checkMilestones,
@@ -64,6 +65,12 @@ interface BuilderStoreState extends BuilderCore, AcceleratorCore {
   prestigeCount: number
   /** `id` des jalons de progression déjà atteints (US-028), append-only. */
   achievedMilestones: string[]
+  /**
+   * Jauge de surcharge de la voie corrompue (US-037) — charge en jeu actif tant
+   * que la corruption est embrassée, dope la production, krache au seuil. Reset à
+   * la renaissance. Voir `game/corruption.ts`.
+   */
+  surcharge: number
   loaded: boolean
   load: () => Promise<void>
   /** HACK manuel : ajoute des cycles (persistance différée par le hook). */
@@ -76,6 +83,13 @@ interface BuilderStoreState extends BuilderCore, AcceleratorCore {
   buyNode: (id: string) => void
   /** Convertit `dataAmount` de `data` en crypto au cours effectif du moment (no-op si invalide) ; persiste aussitôt. */
   convertToCrypto: (dataAmount: number) => void
+  /**
+   * Sécurise la surcharge courante (US-037) : encaisse `securedGain(surcharge)`
+   * en voltage de voie (via `useCosmeticsStore.bankVoltage`), remet la jauge à 0
+   * sans krach, et déclenche le feedback. No-op si la corruption n'est pas
+   * embrassée ou la surcharge trop basse ; persiste aussitôt.
+   */
+  secureSurcharge: () => void
   /** Lance l'accélérateur `id` (no-op si une session/boost est déjà en cours) ; persiste aussitôt. */
   startAccelerator: (id: string) => void
   /** Abandonne la session en cours (no-op sinon), aucune pénalité ; persiste aussitôt. */
@@ -124,6 +138,7 @@ const prestigeCore = (s: BuilderStoreState): PrestigeCore => ({
   crypto: s.crypto,
   unlockedNodes: s.unlockedNodes,
   prestigeCount: s.prestigeCount,
+  surcharge: s.surcharge,
 })
 
 /** Vue `MilestoneCore` (US-028) pour les appels à `game/milestones.ts`. */
@@ -201,6 +216,7 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => {
   acceleratorBoost: null,
   prestigeCount: 0,
   achievedMilestones: [],
+  surcharge: 0,
   loaded: false,
 
   load: async () => {
@@ -221,6 +237,9 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => {
     }
     const prestigeCount = state?.prestigeCount ?? 0
     const achievedAtClose = state?.achievedMilestones ?? []
+    // US-037 : la surcharge est **gelée hors-ligne** (chargée telle quelle, aucun
+    // krach ni dopage rejoués — le rattrapage garde les multiplicateurs de base).
+    const surcharge = state?.surcharge ?? 0
     const fromMs = state?.updatedAt ?? now
 
     // --- Rattrapage hors-ligne (US-024) ---
@@ -272,6 +291,7 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => {
       acceleratorBoost: resolvedAcc.acceleratorBoost,
       prestigeCount,
       achievedMilestones,
+      surcharge,
       loaded: true,
     })
 
@@ -386,6 +406,7 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => {
       crypto: next.crypto,
       unlockedNodes: next.unlockedNodes,
       prestigeCount: next.prestigeCount,
+      surcharge: next.surcharge, // US-037 : jauge live remise à 0 par la renaissance
       // acceleratorRun/acceleratorBoost intacts (engagement réel du joueur).
     })
     // US-034 : une renaissance (effort réel, seuil incrémental US-026) octroie
@@ -405,15 +426,38 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => {
     const accNext = resolveAcceleratorPure(accCurrent, now)
     if (accNext !== accCurrent) set(accNext)
 
+    // US-037 : la voie corrompue dope la production tant que la corruption est
+    // embrassée ; `dopage` se compose avec arbre × boost × prestige comme un
+    // multiplicateur de plus. `1` (neutre) sinon.
+    const embraced = useCosmeticsStore.getState().corruption === 'embraced'
+    const dopage = embraced ? dopageMultiplier(state.surcharge) : 1
+
     const current = core(state) // champs builder non affectés par la résolution accélérateur
     const tree = treeCore(state)
     const boost = boostMultiplier(accNext, now)
     const pMult = prestigeMultiplier(state.prestigeCount)
     const next = tickPure(current, dtMs, {
-      cycles: cycleMultiplier(tree) * boost.cycles * pMult,
-      data: dataMultiplier(tree) * boost.data * pMult,
+      cycles: cycleMultiplier(tree) * boost.cycles * pMult * dopage,
+      data: dataMultiplier(tree) * boost.data * pMult * dopage,
     })
     if (next !== current) set({ cycles: next.cycles, data: next.data })
+
+    // US-037 : avance la surcharge (embrassée) ou la remet à 0 (purge/refus).
+    // L'incrément normal est persisté par la cadence du hook (PERSIST_MS) ; on ne
+    // force un `persist()` que sur les événements rares (krach, reset de purge).
+    let krached = false
+    if (embraced) {
+      const step = chargeSurcharge(state.surcharge, dtMs / 1000)
+      krached = step.krached
+      if (step.surcharge !== state.surcharge) set({ surcharge: step.surcharge })
+    } else if (state.surcharge !== 0) {
+      set({ surcharge: 0 }) // ré-embrasser repartira de zéro (décision 4)
+      void get().persist()
+    }
+    if (krached) {
+      useFeedbackStore.getState().triggerCorruptionKrach()
+      void get().persist() // fige le reset du krach
+    }
 
     if (accNext !== accCurrent) {
       // Seul `accel` peut basculer ici (résolution d'un boost SURCADENCE) —
@@ -421,6 +465,20 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => {
       checkAndApplyMilestones()
       void get().persist()
     }
+  },
+
+  secureSurcharge: () => {
+    const state = get()
+    if (useCosmeticsStore.getState().corruption !== 'embraced') return // voie inactive
+    if (!canSecure(state.surcharge)) return // surcharge trop basse → no-op
+    const gain = securedGain(state.surcharge)
+    const at = Math.round(state.surcharge)
+    const mult = dopageMultiplier(state.surcharge)
+    set({ surcharge: 0 })
+    useCosmeticsStore.getState().bankVoltage(gain) // voltage + paliers → cosmétiques
+    const voltageAfter = useCosmeticsStore.getState().securedVoltage
+    useFeedbackStore.getState().triggerSecure({ gain, at, mult, voltageAfter })
+    void get().persist()
   },
 
   persist: async () => {
@@ -435,6 +493,7 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => {
       acceleratorBoost,
       prestigeCount,
       achievedMilestones,
+      surcharge,
     } = get()
     await builderRepo.save({
       cycles,
@@ -447,6 +506,7 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => {
       acceleratorBoost,
       prestigeCount,
       achievedMilestones,
+      surcharge,
       updatedAt: Date.now(),
     })
   },

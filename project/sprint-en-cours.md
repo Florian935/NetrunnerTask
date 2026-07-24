@@ -5,19 +5,141 @@
 
 ## US active
 
+**US-037 — La Voie Corrompue CLÔTURÉE** le 24/07/2026 (Phase A4, 2ᵉ/dernière
+tranche). Cycle complet : cadrages fonctionnel + technique validés PO, maquette
+`corrupted-path` reçue/analysée/validée PO, plan 20 étapes validé PO, implémentation
+faite, **recette 11 critères PO à 100 %** (SecureFeedback refondu en direct :
+bandeau de progression permanent + pop de gain + anti-chevauchement), **décision
+#044**. Commit + merge sur `develop` + push. **Phase A4 TERMINÉE (2/2 tranches).**
+
+**Prochaine étape : nouvelle tranche/phase à cadrer** (brainstorming PO ↔ Claude).
+Pistes déjà tracées : **décision #043** (benchmark IA du 24/07/2026) oriente vers une
+future tranche **« collection / vitrine enrichie »** (local-first, invariant « pur
+statut, non vendable » durci — champ `tradeable=false` à poser dès l'évolution du
+modèle cosmétique) ; le **marché entre joueurs est écarté**. Voir `docs/roadmap.md` /
+`docs/decisions.md`. _Suivi possible au backlog : refonte de l'écran Réseau en frames
+`HudPanel` terminal glitchées (hors périmètre US-036/037)._
+
+---
+
+_Historique de la tranche US-037._
+**US-037 — La Voie Corrompue** (Phase A4, priorité moyenne, 2ᵉ/dernière tranche —
+la **profondeur mécanique** de la voie sombre ; lit le flag `corruption: embraced`
+posé par US-036). Branche `feature/US-037-voie-corrompue` créée depuis `develop`.
+
+**Cadrage fonctionnel validé PO le 24/07/2026** (6 hypothèses + invariant + 10
+critères ; 4 arbitrages tranchés sur les recos : instabilité **montée→krach** ·
+Surcharge **reset à la renaissance** · « sécuriser » **progresse la voie** · pool
+**3-4**). Réconciliation explicite de l'invariant d'US-036 (« aucun avantage
+fonctionnel en v1 » = **report**, pas interdiction ; dopage prévu par la roadmap
+Phase A4, compensé par le risque → P4/P5 tenus).
+
+**Cadrage technique validé PO le 24/07/2026** (`us/US-037-voie-corrompue.md` §2,
+6 décisions). Modèle retenu : **jauge de Surcharge** active ssi `corruption ===
+'embraced'` — charge en temps réel (online), **dopage** = multiplicateur composé
+dans `applyTick`, **krach déterministe** au seuil critique (reset, zéro RNG), levier
+**Sécuriser** (convertit en voltage → cosmétiques de voie déterministes). Nouveau
+module pur **`game/corruption.ts`** (patron `crypto.ts`/`accelerators.ts`) ; **split
+d'état principiel** : `surcharge` sur `BuilderState` (reset renaissance,
++`PrestigeCore`), `securedVoltage` sur `CosmeticsState` (survit) → **migration Dexie
+v23** (deux tables) ; +3-4 cosmétiques `source: 'corruption'`. Décision **n°3** :
+hors-ligne, Surcharge **gelée** + dopage **exclu** du rattrapage (**raffine le
+critère 9**, sans feel-bad). Décision **n°6** : dopage × courbe de prestige US-026 à
+régler en recette.
+
+**Étape en cours : Design** — **impact UI significatif CONFIRMÉ**, 4 surfaces.
+**Maquette `corrupted-path` reçue + analysée** (24/07/2026, non versionnée #007) :
+très fidèle au DS réel + à l'acquis US-036 (réutilise `StatCard`/`ProgressBar`/
+`HudPanel`/`Button`/`Tag`/`Icon`, `GlitchText`/`Interference` d'US-036,
+`RarityBadge`, **`CosmeticCard` qui gère déjà `source: 'corruption'`**, accent
+magenta réservé). **Donne les courbes** (repris en placeholders : dopage
+`×1→×3,6`, `CRIT=100`, danger >58 %, encaissement non-linéaire, **paliers
+200/600/1400/3000 V**). Plan de réutilisation posé + **nouveau** dans
+`features/corruption/` : `OverloadRing` (anneau, redline+tremble), `OverloadPanel`,
+`KrachFeedback`, `SecureFeedback` (accent mint). **6 écarts/interprétations**, dont
+**3 à trancher** : (1) **mapping des types** des 4 cosmétiques de voie sur nos types
+existants (pas de « cadre »/« effet » — effets reportés A3 ; reco titre/bannière/
+avatar/titre, tous `source: 'corruption'`) ; (3) **déterminisme** — le jitter
+`Math.random()` de la démo est **écarté** (charge linéaire déterministe, zéro RNG ;
+tremblement = rendu CSS) ; (6) **mini-barre de progression** sur la carte
+verrouillée (ajout optionnel à `CosmeticCard`). Arbitrages design confirmés
+(colonne stage · anneau · ambiance qui chauffe avec la surcharge).
+
+**Maquette validée PO le 24/07/2026** (3 écarts tranchés : mapping des 4 types de
+voie ; charge déterministe zéro RNG ; mini-barre carte verrouillée).
+
+**Plan d'implémentation validé PO le 24/07/2026** (20 étapes, `us/US-037…md` §4).
+
+**Implémentation US-037 terminée.** Livré : module pur **`game/corruption.ts`**
+(déterministe, **zéro RNG** — `dopageMultiplier` [×1→×3,6], `chargeSurcharge`
+[charge linéaire + krach au seuil 100], `securedGain` [non-linéaire], `CORRUPTION_
+PATH_TIERS` [200/600/1400/3000 V] + `pathRewardsFor` ; **testé 6 blocs**) ;
+catalogue `cosmetics.ts` **+4 cosmétiques `source: 'corruption'`** (`cor-fracture`
+titre/rare · `cor-aberration` bannière/épique · `cor-surtension` avatar/légendaire ·
+`cor-0xdead` titre/légendaire) ; **`surcharge` sur `BuilderState`** (+`PrestigeCore`,
+reset renaissance) & **`securedVoltage` sur `CosmeticsState`** (survit) + **migration
+Dexie v23** (2 tables) + seed ; `useFeedbackStore` (`triggerCorruptionKrach` +
+`triggerSecure`/`secure`) ; `useCosmeticsStore` (`securedVoltage` + **`bankVoltage`**
+→ paliers → `grant` + reveal) ; `useBuilderStore` (**`applyTick` compose le dopage**
++ charge/krach de la surcharge, reset au 1ᵉʳ tick non-embrassé [purge] ;
+**`secureSurcharge`** ; **gel hors-ligne** — surcharge chargée telle quelle, dopage
+exclu du rattrapage) ; `features/corruption/` **`OverloadRing`** (anneau redline +
+tremblement) / **`OverloadPanel`** (jauge + dopage ×N + alerte de risque + Sécuriser
++ krach intégré) / **`SecureFeedback`** (accent mint + progression de palier) +
+keyframes `corruption.css` (tremble/krach-shake/krach-flash, **sous garde
+reduced-motion**) ; écran Réseau : panneau + retour en **colonne stage** (visibles
+ssi embrassé) + **débit affiché dopé** ; **`CosmeticCard`** mini-barre de progression
+sur l'état verrouillé `source: 'corruption'` (+ câblage `WardrobeView`) ; icône
+`waves` ; i18n FR/EN bloc `corruption.path.*` + 4 items. **Vérifs vertes :
+typecheck + lint + build/PWA + tests 296/296 (+16).**
+
+**Étape en cours : recette.** **Mécanique validée (auto)** — scénario end-to-end
+`game/corruption.scenario.test.ts` (8 cas : dopage croissant, krach déterministe +
+rejouable, sécuriser→voltage→paliers, krach n'encaisse rien, gel `dt=0`, reset
+surcharge au prestige) rejouant la composition du store à partir des fonctions
+pures. **Vérifs vertes : typecheck + lint + build/PWA + tests 304/304 (+24).**
+Recette consignée `project/recettes.md` (US-037) : C1–C10 + reduced-motion, avec
+scripts console. **LIVE PO en attente** (visuel/persistance/gel hors-ligne ; réglage
+`dopageMax` × courbe prestige US-026). Aucun bug produit détecté. **STOP — recette
+live PO avant clôture.**
+
+_Note d'implémentation : le feedback de krach a été **intégré au `OverloadPanel`**
+(lit l'événement `corruptionKrach`) plutôt qu'en composant `KrachFeedback` séparé —
+le `KrachDemo` de la maquette n'était qu'un support de démo._
+
+- **H1** ressource corrompue « **Surcharge** » (jauge instable, active ssi
+  `embraced`, monte avec l'activité du Réseau) · **H2** **production dopée** indexée
+  sur la Surcharge (multiplicateur global) · **H3** instabilité = contrepartie →
+  **krach déterministe** au seuil critique (Surcharge reset, dopage retombe ; **zéro
+  nouveau RNG**, cohérent crypto/hors-ligne) · **H4** levier de gestion
+  (**sécuriser/encaisser** vs **laisser monter** = vrai arbitrage) · **H5** **pool
+  de cosmétiques glitch** de la voie (déterministe, jalons, étend US-036, 3-4
+  reco) · **H6** garde-fous (purge désactive proprement, cosmétiques conservés ;
+  jamais imposée, Réseau propre entier).
+- **Invariant** : arbitrage risque/récompense **auto-contenu, solo, local-first** ;
+  dopage réel **mais compensé** (pas un strict upgrade) ; **aucun RNG persisté** ;
+  cosmétiques gagnés jamais achetés, survivent à la renaissance ; réversible ;
+  jamais imposée.
+- **4 arbitrages** : (1) modèle d'instabilité — reco **montée→krach** · (2)
+  Surcharge à la renaissance — reco **reset** · (3) effet de « sécuriser » — reco
+  **progresse la voie**, pas une ressource classique · (4) taille du pool — reco
+  **3-4**.
+- **Impact UI potentiellement significatif** signalé (jauge Surcharge + dopage +
+  feedback de krach + levier + cartes cosmétiques) → étape design à confirmer après
+  les cadrages.
+
+_Suivi possible au backlog : refonte de l'écran Réseau en frames `HudPanel`
+terminal glitchées (hors périmètre US-036)._
+
+---
+
+_Historique de la tranche US-036._
 **US-036 — L'Éveil de la Corruption CLÔTURÉE** le 23/07/2026 (Phase A4, 1ʳᵉ
 tranche). Cycle complet : cadrages fonctionnel + technique validés PO, maquette
 `corruption` reçue/analysée/validée PO, plan 19 étapes validé PO, implémentation
 faite, **recette 9/9 PO à 100 %** (2 améliorations d'immersion en direct : profil
 glitché bespoke + `CorruptionAmbient` plein écran), **décision #042**. Commit +
 merge sur `develop` + push.
-
-**Prochaine étape : US-037 — « La Voie Corrompue »** (Phase A4, 2ᵉ/dernière
-tranche — la mécanique de la voie sombre : ressource corrompue instable +
-production dopée + pool de cosmétiques glitch ; lit le flag `corruption:
-embraced` posé par US-036). À démarrer via `nouvelle-us`. _Suivi possible au
-backlog : refonte de l'écran Réseau en frames `HudPanel` terminal glitchées
-(hors périmètre US-036)._
 
 ---
 

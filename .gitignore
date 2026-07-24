@@ -15,6 +15,9 @@ dist-ssr
 # Vite / PWA generated
 dev-dist
 
+# Réponses brutes des modèles IA (analyse hors-dépôt)
+_inbox-ia/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

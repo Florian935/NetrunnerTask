@@ -34,6 +34,13 @@ export interface CosmeticCardProps {
   fragments?: number
   /** Appelé pour forger ce cosmétique (`state === 'forge'`, ignoré si solde insuffisant). */
   onForge?: () => void
+  /**
+   * Progression vers le déblocage (US-037) — cosmétique de la **voie corrompue**
+   * verrouillé : `current`/`target` de voltage sécurisé. Affiche une mini-barre à
+   * la place de l'indice statique. Ignoré hors `state === 'locked'` + `source:
+   * 'corruption'`.
+   */
+  progress?: { current: number; target: number }
 }
 
 /**
@@ -44,7 +51,7 @@ export interface CosmeticCardProps {
  * déterministe) ou « Trouvé en caisse » (`source: 'crate'`). Le cran
  * `legendary` respire quand la carte est active (jamais verrouillée).
  */
-export function CosmeticCard({ item, state, hint, onEquip, forgeCost, fragments, onForge }: CosmeticCardProps) {
+export function CosmeticCard({ item, state, hint, onEquip, forgeCost, fragments, onForge, progress }: CosmeticCardProps) {
   const { t } = useTranslation()
   const [hover, setHover] = useState(false)
   const locked = state === 'locked'
@@ -154,7 +161,20 @@ export function CosmeticCard({ item, state, hint, onEquip, forgeCost, fragments,
       </div>
 
       {/* Action selon l'état */}
-      {locked ? (
+      {locked && fromCorruption && progress ? (
+        /* US-037 : cosmétique de voie verrouillé — indice de palier + mini-barre. */
+        <div style={{ padding: '8px 10px', clipPath: 'var(--clip-bevel-sm)', border: `1px dashed rgba(${srcRgb}, 0.5)`, background: `rgba(${srcRgb}, 0.05)` }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontFamily: 'var(--font-mono)', fontSize: 'var(--text-2xs)', letterSpacing: '0.12em', color: 'var(--text-muted)', marginBottom: 6 }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, color: srcColor }}>
+              <Icon name={srcIcon} size={11} /> {t('corruption.path.lockedLabel')}
+            </span>
+            <span>{`${Math.round(progress.current).toLocaleString('fr-FR')} / ${progress.target.toLocaleString('fr-FR')} V`}</span>
+          </div>
+          <div style={{ height: 5, background: 'var(--void-900)', clipPath: 'var(--clip-bevel-sm)', overflow: 'hidden' }}>
+            <div style={{ height: '100%', width: `${Math.max(0, Math.min(100, (progress.current / progress.target) * 100))}%`, background: srcColor, boxShadow: `0 0 8px ${srcColor}`, transition: 'width var(--dur-med) var(--ease-out)' }} />
+          </div>
+        </div>
+      ) : locked ? (
         <div
           style={{
             display: 'flex',
