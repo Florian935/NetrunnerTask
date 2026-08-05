@@ -81,6 +81,8 @@ export async function ensureSeeded(): Promise<void> {
       corruption: 'dormant',
       corruptionArmedAt: null,
       securedVoltage: 0,
+      // US-038 : présentoir de la Salle des trophées vide (le joueur le compose).
+      showcase: [],
     })
   }
 }

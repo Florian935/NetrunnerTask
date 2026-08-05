@@ -495,6 +495,28 @@ export class NetrunnerDB extends Dexie {
             if (c.securedVoltage === undefined) c.securedVoltage = 0
           })
       })
+    // v24 (US-038) : présentoir de la Salle des trophées. Un champ sur le
+    // singleton cosmétique → schéma v23 recopié + rétro-remplissage `showcase: []`
+    // (patron des migrations de champ v11→v23). Aucune reconciliation : le
+    // présentoir est vide au départ (le joueur le compose). Le nombre
+    // d'emplacements ouverts se dérive des jalons — rien à persister ici.
+    this.version(24)
+      .stores({
+        contracts: 'id, factionId, status, dueDate, createdAt',
+        factions: 'id, name',
+        player: 'id',
+        builderState: 'id',
+        cosmeticsState: 'id',
+        demoKV: 'key',
+      })
+      .upgrade((tx) =>
+        tx
+          .table('cosmeticsState')
+          .toCollection()
+          .modify((c: { showcase?: unknown[] }) => {
+            if (c.showcase === undefined) c.showcase = []
+          }),
+      )
   }
 }
 

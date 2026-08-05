@@ -1,12 +1,13 @@
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Outlet } from 'react-router'
+import { Outlet, useNavigate } from 'react-router'
 import { Alert, Toast } from '../components/ui'
 import { NavRail } from '../components/layout/NavRail'
 import { StatusBar } from '../components/layout/StatusBar'
 import { MilestoneToast, OfflineCatchupBanner, useBuilderTick } from '../features/builder'
 import { CosmeticUnlockToast, CrateEarnedToast } from '../features/cosmetics'
 import { CorruptionAmbient, CorruptionRevealHost } from '../features/corruption'
+import { SlotUnlockToast } from '../features/showcase'
 import { LevelUpToast } from '../features/progression/LevelUpToast'
 import { useReminders } from '../features/reminders/useReminders'
 import { RankUpToast } from '../features/reputation/RankUpToast'
@@ -29,6 +30,7 @@ import '../components/layout/appShell.css'
  */
 export function AppShell() {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const loadContracts = useContractsStore((s) => s.load)
   const loadFactions = useFactionsStore((s) => s.load)
   const loadPlayer = usePlayerStore((s) => s.load)
@@ -59,6 +61,8 @@ export function AppShell() {
   const dismissCosmeticUnlock = useFeedbackStore((s) => s.dismissCosmeticUnlock)
   const crateEarned = useFeedbackStore((s) => s.crateEarned)
   const dismissCrateEarned = useFeedbackStore((s) => s.dismissCrateEarned)
+  const showcaseSlots = useFeedbackStore((s) => s.showcaseSlots)
+  const dismissShowcaseSlot = useFeedbackStore((s) => s.dismissShowcaseSlot)
 
   useEffect(() => {
     // Séquencement : contrats → factions (les pénalités de réputation dues aux
@@ -229,6 +233,36 @@ export function AppShell() {
         >
           {crateEarned.map((item) => (
             <CrateEarnedToast key={item.id} item={item} onClose={() => dismissCrateEarned(item.id)} />
+          ))}
+        </div>
+      )}
+
+      {/* Emplacements de vitrine débloqués (US-038) : file empilable, bas-gauche —
+          distinct des jalons (haut-droit), caisses (haut-gauche), cosmétiques
+          (bas-centre) et toasts génériques (bas-droit). Deep-link vers la Salle
+          des trophées + ouverture du sélecteur sur le nouvel emplacement. */}
+      {showcaseSlots.length > 0 && (
+        <div
+          style={{
+            position: 'fixed',
+            left: 18,
+            bottom: 18,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 10,
+            zIndex: 1100,
+          }}
+        >
+          {showcaseSlots.map((item) => (
+            <SlotUnlockToast
+              key={item.id}
+              item={item}
+              onPin={() => {
+                dismissShowcaseSlot(item.id)
+                navigate('/showcase?pin=1')
+              }}
+              onClose={() => dismissShowcaseSlot(item.id)}
+            />
           ))}
         </div>
       )}

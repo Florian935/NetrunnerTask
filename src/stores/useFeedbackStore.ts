@@ -75,6 +75,15 @@ export interface SecureFeedbackItem {
   voltageAfter: number
 }
 
+/**
+ * Nouvel emplacement de la Salle des trophées débloqué (US-038) — feedback dédié.
+ * `threshold` = nombre de jalons du palier franchi (libellé « palier de N jalons »).
+ */
+export interface ShowcaseSlotItem {
+  id: string
+  threshold: number
+}
+
 /** Mise perdue détectée au chargement (US-013) — remontée en toast danger. */
 export interface StakeLossItem {
   id: string
@@ -126,6 +135,12 @@ interface FeedbackState {
    * + progression de voie). Singleton ; `null` = aucun.
    */
   secure: SecureFeedbackItem | null
+  /**
+   * File des emplacements de vitrine débloqués (US-038) — **file** comme
+   * `milestones` : un même tick de jalons peut ouvrir plusieurs emplacements
+   * (ex. renaissance qui fait franchir plusieurs paliers d'un coup).
+   */
+  showcaseSlots: ShowcaseSlotItem[]
   /** Contrat qui vient d'encaisser sa récompense → flash transitoire. */
   flashingId: string | null
   /** Mises perdues au chargement (US-013), à transformer en toasts (AppShell). */
@@ -162,6 +177,10 @@ interface FeedbackState {
   triggerSecure: (item: Omit<SecureFeedbackItem, 'id'>) => void
   /** Ferme le feedback de sécurisation avant son auto-effacement (clic). */
   dismissSecure: () => void
+  /** Empile un emplacement de vitrine débloqué (US-038) ; auto-effacement (~8 s). */
+  triggerShowcaseSlot: (threshold: number) => void
+  /** Ferme un feedback d'emplacement débloqué avant son auto-effacement (clic). */
+  dismissShowcaseSlot: (id: string) => void
   flash: (id: string) => void
   /** File des mises perdues au chargement (déduplique par appel). */
   pushStakeLosses: (items: Omit<StakeLossItem, 'id'>[]) => void
@@ -188,6 +207,7 @@ export const useFeedbackStore = create<FeedbackState>((set, get) => ({
   crateEarned: [],
   corruptionKrach: null,
   secure: null,
+  showcaseSlots: [],
   flashingId: null,
   stakeLosses: [],
   dueCatchup: null,
@@ -297,6 +317,18 @@ export const useFeedbackStore = create<FeedbackState>((set, get) => ({
   },
 
   dismissSecure: () => set({ secure: null }),
+
+  triggerShowcaseSlot: (threshold) => {
+    const item: ShowcaseSlotItem = { id: crypto.randomUUID(), threshold }
+    set((s) => ({ showcaseSlots: [...s.showcaseSlots, item] }))
+    window.setTimeout(
+      () => set((s) => ({ showcaseSlots: s.showcaseSlots.filter((x) => x.id !== item.id) })),
+      8000,
+    )
+  },
+
+  dismissShowcaseSlot: (id) =>
+    set((s) => ({ showcaseSlots: s.showcaseSlots.filter((x) => x.id !== id) })),
 
   flash: (id) => {
     set({ flashingId: id })

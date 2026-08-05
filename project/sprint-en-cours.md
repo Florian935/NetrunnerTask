@@ -5,27 +5,108 @@
 
 ## US active
 
-**Aucun cycle de vie US en cours.** **Phase A5 « Vitrine & prestige de collection »
-DÉFINIE le 24/07/2026 — décision #045** (brainstorming PO ↔ Claude), dans le
-prolongement de la direction « collection / vitrine enrichie » du benchmark IA
-(#043). 3 tranches, chemin critique **US-038 → US-039** ; voir `docs/roadmap.md` /
-`project/backlog.md`.
+**US-038 — Socle Salle des trophées CLÔTURÉE** le 05/08/2026 (Phase A5, 1ʳᵉ/3
+tranches). Cycle complet : cadrages fonctionnel + technique validés PO, maquette
+`trophy-room` reçue/analysée/validée PO (3 écarts tranchés), plan 17 étapes validé
+PO, implémentation faite, **recette 11 critères PO à 100 %**, **décision #046**.
+Commit + merge sur `develop` + push. **Vérifs vertes : typecheck + lint + build/PWA
++ tests 330/330 (+26).**
 
-Cœur retenu (5 arbitrages de brainstorming) : vitrine enrichie = **Salle des
-trophées** (écran dédié) où le joueur **compose lui-même** un présentoir de ses
-**pièces maîtresses** ; épinglable **hétérogène** (cosmétiques + accomplissements) ;
-**emplacements qui se gagnent** avec la progression. Garde-fous #043 : richesse =
-complétion/rareté gagnée jamais quantité ; **`tradeable=false`** posé dès US-038 ;
-gagné jamais acheté ; marché entre joueurs écarté ; local-first.
+**Prochaine étape : US-039 — Accomplissements épinglables + provenance** (Phase A5,
+2ᵉ tranche, chemin critique) via le skill `nouvelle-us` — étend l'abstraction
+`ShowcasePin` (posée extensible dès US-038) aux jalons/corruption/prestige + rend la
+provenance visible. Puis US-040 Sets & complétion (optionnelle).
 
-Tranches : **US-038** Socle Salle des trophées *(haute)* → **US-039** Accomplissements
+---
+
+_Historique de la tranche US-038._
+**US-038 — Socle Salle des trophées** (Phase A5, priorité haute, 1ʳᵉ tranche —
+fondation/squelette vertical de la phase ; livre un présentoir jouable de bout en
+bout avec les cosmétiques comme 1ᵉʳ contenu épinglable). Branche
+`feature/US-038-salle-trophees` créée depuis `develop`.
+
+**Cadrage fonctionnel validé PO le 24/07/2026** (`us/US-038-salle-trophees.md` §1) :
+6 hypothèses + invariant #043 + 11 critères testables + **4 arbitrages tranchés**
+(nav dédiée + CTA Profil · emplacements indexés sur les **jalons US-028** · **3 au
+départ +1 au palier** · **multi-même-type oui**). **Impact UI significatif** → étape
+design/maquette à prévoir.
+
+**Étape en cours : cadrage technique** (`us/US-038-salle-trophees.md` §2) — 9
+décisions. Module pur **`game/showcase.ts`** (type discriminé `ShowcasePin` extensible
+US-039 ; `unlockedSlots(achievedCount)` **dérivé** des jalons, zéro champ redondant ;
+`pin`/`unpin`/`reconcile` purs, unicité par `ref`, multi-même-type) ; taxonomie
+**`tradeable: false`** (#043) sur `Cosmetic` (littéral, non persisté) ; **migration
+Dexie v24** (`showcase: []` sur `CosmeticsState`, survit renaissance) ; store
+`useCosmeticsStore` (+`showcase`, `pinTrophy`/`unpinTrophy`, jamais lié à `equipped`
+→ C5) ; feedback de déblocage d'emplacement via `useBuilderStore`/`useFeedbackStore`
+(file) ; UI **`features/showcase/`** (`ShowcaseView`/`ShowcaseGrid`/`ShowcaseSlot`/
+`TrophyPicker`, réutilise DS + `RarityBadge`/`rarityStyle`, reduced-motion) ; nav
+`/showcase` + CTA Profil ; i18n FR/EN. `BuilderState` inchangé.
+
+**Cadrage technique validé PO le 24/07/2026** (9 décisions, migration Dexie v24,
+`tradeable=false` ; raffiné par la maquette : +`slotProgress`/`topExposedRarity`,
+slot #1 featured).
+
+**Maquette `trophy-room` reçue + analysée + validée PO le 25/07/2026** (fournie
+hors-dépôt `Downloads/trophy-room`, **non versionnée** — patron #007). Très fidèle
+au DS réel + conforme #043 (rareté = couleur, **aucun compteur d'objets**). Prototype
+autoportant → primitives **mappées sur nos vrais composants** (RAPPEL PO) :
+`RarityBadge`/`RankPips`/`rarityStyle`/`previews.tsx`/`CosmeticCard` +
+`Card hud brackets`/`Button`/`Icon`/`ProgressBar` + patrons `CrateOpeningModal`/
+`CosmeticUnlockToast`. **3 écarts tranchés** : slot #1 featured double (fixe) ·
+sélecteur = modal · toast = deep-link vers le sélecteur. Contenu de démo + clés
+rareté FR écartés.
+
+**Plan d'implémentation rédigé (17 étapes, `us/US-038…md` §4)** — ordre bas→haut :
+`game/showcase.ts` (pur : `ShowcasePin`, `unlockedSlots`/`slotProgress`/
+`topExposedRarity`, `pin`/`unpin`/`reconcile`) + tests · taxonomie `tradeable:false` ·
+migration Dexie **v24** (`showcase:[]`) + seed · store (`pinTrophy`/`unpinTrophy`) ·
+feedback de déblocage (file) · UI `features/showcase/` (`TrophySlot` 3 états +
+featured, `TrophyPicker` modal, `ShowcaseGrid` + en-tête, `SlotUnlockToast`,
+`ShowcaseView`) réutilisant le DS · nav `/showcase` + CTA Profil · i18n FR/EN ·
+vérifs + recette. **Plan validé PO le 25/07/2026.**
+
+**Implémentation US-038 terminée.** Livré : module pur **`game/showcase.ts`**
+(type discriminé `ShowcasePin`, `SHOWCASE_CONFIG` [base 3 + paliers 3/6/9/11],
+`unlockedSlots`/`slotProgress`/`slotRequirement`/`topExposedRarity`,
+`pinSlot`/`unpinSlot`/`reconcileShowcase` — possédé requis, unicité par `ref`,
+multi-même-type, no-op par référence ; **testé 25 blocs**) ; **taxonomie
+`tradeable: false`** (#043) sur `Cosmetic` (type littéral, rempli à la construction
+du catalogue via `COSMETIC_SPECS` + `satisfies`, non persisté ; +1 test) ;
+**`CosmeticsState.showcase`** + **migration Dexie v24** (rétro `[]`, survit
+renaissance) + seed ; `useCosmeticsStore` (**`showcase`** + **`pinTrophy`/
+`unpinTrophy`**, réconciliation au `load()`, **jamais lié à `equipped`**) ;
+feedback **file `showcaseSlots`** (`useFeedbackStore`) déclenché dans
+`useBuilderStore` (`notifyShowcaseSlots` après `checkMilestones` + hack, silencieux
+au load) ; UI **`features/showcase/`** — `TrophySlot` (3 états + featured double,
+actions accessibles focus-within), `TrophyPicker` (modal, groupé rareté + filtre
+type, Échap/voile, réutilise `CosmeticPreview`/`RarityBadge`), `SlotUnlockToast`
+(sceau, deep-link), `ShowcaseView` (en-tête pièce maîtresse + `ProgressBar` jalons +
+grille + note #043) + `showcase.css` (hover/focus + keyframe sous reduced-motion) ;
+3 icônes (`trophy`/`pin`/`repeat`) ; route `/showcase` + entrée NavRail + **CTA
+Profil** ; toast hébergé dans `AppShell` (bas-gauche) ; i18n FR/EN bloc
+`showcase.*` + `nav.showcase`. **Réutilise le DS acquis** (RAPPEL PO) : aucune
+primitive de rareté/aperçu réimplémentée. **Vérifs vertes : typecheck (`tsc -b`) +
+lint (oxlint) + build/PWA + tests 330/330 (+26).**
+
+**Étape en cours : recette PO.** Vérif visuelle navigateur à faire (pas d'outil
+navigateur en session) : épinglage/retrait/remplacement, non-possédé non
+épinglable, épingler ≠ équiper, multi-même-type, déblocage d'emplacement au palier
+de jalons + toast/deep-link, persistance (recharge), survie renaissance, pas de
+compteur d'objets, reduced-motion. **STOP — recette PO avant clôture.**
+
+---
+
+**Phase A5 « Vitrine & prestige de collection » DÉFINIE le 24/07/2026 — décision
+#045** (brainstorming PO ↔ Claude), prolonge la direction « collection / vitrine
+enrichie » du benchmark IA (#043). 3 tranches, chemin critique **US-038 → US-039** :
+**US-038** Socle Salle des trophées *(haute, en cours)* → **US-039** Accomplissements
 épinglables + provenance *(moyenne)* → **US-040** Sets & complétion *(basse,
-optionnelle)*.
-
-**Prochaine étape : démarrer US-038 via le skill `nouvelle-us`** (sélection →
-branche `feature/US-038-…` depuis `develop` → cadrage fonctionnel, STOP validation
-PO). _Suivi possible au backlog : refonte de l'écran Réseau en frames `HudPanel`
-terminal glitchées (hors périmètre)._
+optionnelle)*. Cœur : Salle des trophées (écran dédié) où le joueur compose un
+présentoir de ses pièces maîtresses ; épinglable hétérogène (cosmétiques +
+accomplissements) ; emplacements qui se gagnent. Commit de définition de phase
+`ddd15e2` sur `develop`. _Suivi possible au backlog : refonte de l'écran Réseau en
+frames `HudPanel` terminal glitchées (hors périmètre)._
 
 ---
 

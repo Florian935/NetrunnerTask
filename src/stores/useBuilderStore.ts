@@ -31,6 +31,7 @@ import {
   prestigeMultiplier,
   type PrestigeCore,
 } from '../game/prestige'
+import { slotRequirement, unlockedSlots } from '../game/showcase'
 import {
   buyNode as buyNodePure,
   cryptoFloorBonus,
@@ -165,6 +166,7 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => {
    */
   function checkAndApplyMilestones(): void {
     const s = get()
+    const prevCount = s.achievedMilestones.length
     const newIds = checkMilestones(milestoneCore(s), s.achievedMilestones)
     if (newIds.length === 0) return
     set({ achievedMilestones: [...s.achievedMilestones, ...newIds] })
@@ -173,7 +175,23 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => {
     grantMilestoneRewards(newIds, false)
     // US-034 : chaque jalon franchi octroie aussi une caisse (voie aléatoire).
     grantMilestoneCrates(newIds, false)
+    // US-038 : franchir un palier de jalons ouvre un emplacement de vitrine.
+    notifyShowcaseSlots(prevCount, prevCount + newIds.length)
     void get().persist()
+  }
+
+  /**
+   * US-038 : signale les emplacements de la Salle des trophées **nouvellement
+   * ouverts** entre `prevCount` et `nextCount` jalons atteints (un toast dédié
+   * par emplacement, patron file). À n'appeler que sur les gains de jalons
+   * **en jeu actif** — jamais au `load()`/backfill (comme les toasts de jalon).
+   */
+  function notifyShowcaseSlots(prevCount: number, nextCount: number): void {
+    const before = unlockedSlots(prevCount)
+    const after = unlockedSlots(nextCount)
+    for (let i = before; i < after; i++) {
+      useFeedbackStore.getState().triggerShowcaseSlot(slotRequirement(i) ?? nextCount)
+    }
   }
 
   /**
@@ -331,10 +349,12 @@ export const useBuilderStore = create<BuilderStoreState>((set, get) => {
     const s = get()
     const hackIds = checkHackMilestone(s.achievedMilestones)
     if (hackIds.length > 0) {
+      const prevCount = s.achievedMilestones.length
       set({ achievedMilestones: [...s.achievedMilestones, ...hackIds] })
       for (const id of hackIds) useFeedbackStore.getState().triggerMilestone(id)
       grantMilestoneRewards(hackIds, false) // US-033
       grantMilestoneCrates(hackIds, false) // US-034
+      notifyShowcaseSlots(prevCount, prevCount + hackIds.length) // US-038
       void get().persist()
     }
   },
