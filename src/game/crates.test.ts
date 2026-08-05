@@ -12,16 +12,16 @@ import { RARITY_ORDER, type Cosmetic } from './cosmetics'
 
 /** Petit pool synthétique : 2 items par cran (ids stables pour les assertions). */
 const POOL: Cosmetic[] = [
-  { id: 'c-common-1', type: 'avatar', rarity: 'common' },
-  { id: 'c-common-2', type: 'title', rarity: 'common' },
-  { id: 'c-enhanced-1', type: 'banner', rarity: 'enhanced' },
-  { id: 'c-enhanced-2', type: 'avatar', rarity: 'enhanced' },
-  { id: 'c-rare-1', type: 'title', rarity: 'rare' },
-  { id: 'c-rare-2', type: 'banner', rarity: 'rare' },
-  { id: 'c-epic-1', type: 'avatar', rarity: 'epic' },
-  { id: 'c-epic-2', type: 'title', rarity: 'epic' },
-  { id: 'c-legendary-1', type: 'theme', rarity: 'legendary' },
-  { id: 'c-legendary-2', type: 'banner', rarity: 'legendary' },
+  { id: 'c-common-1', type: 'avatar', rarity: 'common', tradeable: false },
+  { id: 'c-common-2', type: 'title', rarity: 'common', tradeable: false },
+  { id: 'c-enhanced-1', type: 'banner', rarity: 'enhanced', tradeable: false },
+  { id: 'c-enhanced-2', type: 'avatar', rarity: 'enhanced', tradeable: false },
+  { id: 'c-rare-1', type: 'title', rarity: 'rare', tradeable: false },
+  { id: 'c-rare-2', type: 'banner', rarity: 'rare', tradeable: false },
+  { id: 'c-epic-1', type: 'avatar', rarity: 'epic', tradeable: false },
+  { id: 'c-epic-2', type: 'title', rarity: 'epic', tradeable: false },
+  { id: 'c-legendary-1', type: 'theme', rarity: 'legendary', tradeable: false },
+  { id: 'c-legendary-2', type: 'banner', rarity: 'legendary', tradeable: false },
 ]
 
 /** RNG déterministe rejouant une séquence (boucle si épuisée). */

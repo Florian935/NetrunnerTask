@@ -1380,3 +1380,45 @@ A4 lui a donné de la profondeur (corruption) ; A5 lui donne un **lieu de fiert�
   de chaque US** (fonctionnel → technique → design → plan, portes de validation PO)
   se fait ensuite via le skill `nouvelle-us`. Impact UI significatif anticipé sur
   US-038 → étape maquette Claude Design probable.
+
+### 046 — Socle Salle des trophées (US-038, Phase A5, 05/08/2026)
+
+1ʳᵉ tranche de la Phase A5 (#045) : la **Salle des trophées**, un présentoir
+**composé par le joueur** (des emplacements qu'on épingle, pas un inventaire).
+Squelette vertical de la phase — jouable de bout en bout avec les **cosmétiques**
+comme 1ᵉʳ contenu épinglable ; accomplissements (US-039) et sets (US-040) s'y
+brancheront ensuite.
+
+- **Module pur `game/showcase.ts`** (patron `cosmetics.ts` — aucune valeur de jeu,
+  n'importe rien de `builder`/`prestige`) : type discriminé **`ShowcasePin`**
+  (`kind: 'cosmetic'` en V1, extensible US-039 **sans migration de forme**) ;
+  emplacements **dérivés des jalons** (`unlockedSlots`/`slotProgress`/
+  `slotRequirement`, `SHOWCASE_CONFIG` base 3 + paliers 3/6/9/11 → 7 max) — **zéro
+  champ redondant**, `achievedMilestones` reste la source de vérité ;
+  `pinSlot`/`unpinSlot`/`reconcileShowcase` (possédé requis, **unicité par `ref`**,
+  **multi-même-type**, no-op par référence) ; `topExposedRarity` (rareté maîtresse).
+  **Testé 25 blocs.**
+- **Taxonomie `tradeable: false` (#043, préventif)** : champ **littéral** sur
+  `Cosmetic` (le type interdit `true`), rempli à la construction du catalogue
+  (`COSMETIC_SPECS` + `satisfies`) — posé **avant** toute production de contenu, non
+  dupliqué sur les 24 entrées, **non persisté**. « Vendre un objet de statut détruit
+  le statut » → jamais échangeable par construction.
+- **Persistance** : `CosmeticsState.showcase` (singleton d'identité → **survit à la
+  renaissance**) + **migration Dexie v24** (rétro `[]`). Store `useCosmeticsStore`
+  (`pinTrophy`/`unpinTrophy`, réconciliation au `load()`) **jamais lié à `equipped`**
+  (épingler ≠ équiper).
+- **Feedback** : file `showcaseSlots` (`useFeedbackStore`) déclenchée dans
+  `useBuilderStore` (`notifyShowcaseSlots` après gain de jalon **en direct**,
+  silencieux au `load()`/backfill) ; toast **deep-link** vers le sélecteur.
+- **UI `features/showcase/`** — **réutilise le DS acquis** (RAPPEL PO, aucune
+  primitive de rareté/aperçu réimplémentée) : `TrophySlot` (3 états + **slot #1
+  featured** double largeur, actions Remplacer/Retirer **accessibles focus-within**),
+  `TrophyPicker` (**modal** groupé par rareté + filtre type, patron
+  `CrateOpeningModal`), `SlotUnlockToast` (sceau, hébergé `AppShell` bas-gauche),
+  `ShowcaseView` (en-tête pièce maîtresse + progression jalons `ProgressBar` + grille
+  + note de règle #043). Route `/showcase` + entrée `NavRail` + **CTA Profil** ;
+  keyframes sous `prefers-reduced-motion`.
+- **Maquette `trophy-room`** reçue/analysée/validée (non versionnée, patron #007) ;
+  3 écarts tranchés (slot #1 featured · sélecteur modal · toast deep-link).
+- Vérifs : typecheck (`tsc -b`) + lint (oxlint) + build/PWA + **tests 330/330**
+  (+26). **Recette 11 critères PO, validée à 100 %** le 05/08/2026, aucun bug.

@@ -218,7 +218,7 @@ Les US-005 à US-007 enrichissent le to-do.
 
 | ID | Titre | MVP | Priorité | Statut | Dépend de |
 |----|-------|-----|----------|--------|-----------|
-| US-038 | Socle Salle des trophées (écran dédié + trophée épinglable + cosmétiques + emplacements gagnés + mise en scène pièces maîtresses ; pose `tradeable=false`) | A5 | haute | à faire | cosmétiques (US-031), profil (US-032) |
+| US-038 | Socle Salle des trophées (écran dédié + trophée épinglable + cosmétiques + emplacements gagnés + mise en scène pièces maîtresses ; pose `tradeable=false`) | A5 | haute | fait | cosmétiques (US-031), profil (US-032) |
 | US-039 | Accomplissements épinglables + provenance (jalons US-028 / corruption US-036 / prestige ; « gagné en… ») | A5 | moyenne | à faire | US-038 |
 | US-040 | Sets & complétion (ensembles thématiques + récompense de complétion + rang de collectionneur) | A5 | basse | à faire | US-038 |
 

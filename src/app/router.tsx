@@ -4,6 +4,7 @@ import { ContractsView } from '../features/contracts'
 import { WardrobeView } from '../features/cosmetics'
 import { DashboardView } from '../features/dashboard'
 import { ProfileView } from '../features/profile'
+import { ShowcaseView } from '../features/showcase'
 import { AppShell } from './AppShell'
 
 /**
@@ -20,6 +21,7 @@ export const router = createBrowserRouter([
       { path: 'contracts', element: <ContractsView /> },
       { path: 'network', element: <BuilderView /> },
       { path: 'wardrobe', element: <WardrobeView /> },
+      { path: 'showcase', element: <ShowcaseView /> },
       { path: 'profile', element: <ProfileView /> },
       { path: '*', element: <Navigate to="/" replace /> },
     ],

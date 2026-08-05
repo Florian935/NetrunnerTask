@@ -193,7 +193,9 @@
     "crates": "Caisses",
     "profile": "Profil",
     "profileCode": "PRO",
-    "soon": "bientôt"
+    "soon": "bientôt",
+    "showcase": "Salle des trophées",
+    "showcaseCode": "TRO"
   },
   "profile": {
     "kicker": "NETRUNNER://PROFIL/ID",
@@ -228,7 +230,9 @@
     "reward": "RÉCOMPENSE",
     "foundInCrate": "TROUVÉ EN CAISSE",
     "foundInCrateValue": "OUVERTURE DE CAISSE",
-    "fragments": { "label": "FRAGMENTS" },
+    "fragments": {
+      "label": "FRAGMENTS"
+    },
     "forge": {
       "title": "FORGE",
       "intro": "Choisis un cosmétique non possédé et forge-le contre des fragments — filet déterministe, sans passer par la chance. Le coût monte avec la rareté.",
@@ -284,9 +288,18 @@
       "count_other": "NON OUVERTES",
       "viewOdds": "VOIR LES PROBABILITÉS",
       "quality": {
-        "standard": { "label": "STANDARD", "desc": "Récupérée sur le réseau. La plus commune." },
-        "secured": { "label": "SÉCURISÉE", "desc": "Verrouillage ICE. Meilleures probabilités." },
-        "blackice": { "label": "BLACK ICE", "desc": "Contre-mesure létale. La plus prestigieuse." }
+        "standard": {
+          "label": "STANDARD",
+          "desc": "Récupérée sur le réseau. La plus commune."
+        },
+        "secured": {
+          "label": "SÉCURISÉE",
+          "desc": "Verrouillage ICE. Meilleures probabilités."
+        },
+        "blackice": {
+          "label": "BLACK ICE",
+          "desc": "Contre-mesure létale. La plus prestigieuse."
+        }
       },
       "odds": {
         "title": "TABLE DE PROBABILITÉS",
@@ -304,40 +317,144 @@
         "convertedTo": "CONVERTI EN",
         "equip": "ÉQUIPER",
         "continue": "CONTINUER",
-        "complete": { "title": "COLLECTION COMPLÈTE", "desc": "Plus rien à débloquer dans ce pool. Conversion en crédits.", "credits": "CRÉDITS" }
+        "complete": {
+          "title": "COLLECTION COMPLÈTE",
+          "desc": "Plus rien à débloquer dans ce pool. Conversion en crédits.",
+          "credits": "CRÉDITS"
+        }
       },
-      "earned": { "title": "CAISSE GAGNÉE", "body": "Caisse {{quality}} ajoutée — à ouvrir dans la Garde-robe." }
+      "earned": {
+        "title": "CAISSE GAGNÉE",
+        "body": "Caisse {{quality}} ajoutée — à ouvrir dans la Garde-robe."
+      }
     },
     "items": {
-      "nightwire": { "name": "Nightwire", "sub": "thème · défaut" },
-      "cryo": { "name": "Cryo", "sub": "thème · froid" },
-      "ecarlate": { "name": "Écarlate", "sub": "thème · chaud" },
-      "avatar-daemon": { "name": "Daemon-01", "sub": "avatar · script" },
-      "avatar-raven": { "name": "Corbeau", "sub": "avatar · éclaireur" },
-      "avatar-phantom": { "name": "Fantôme", "sub": "avatar · furtif" },
-      "avatar-icebreaker": { "name": "Crâne-ICE", "sub": "avatar · brise-glace" },
-      "banner-sweep": { "name": "Balayage", "sub": "bannière · réseau" },
-      "banner-surge": { "name": "Surtension", "sub": "bannière · énergie" },
-      "banner-apex": { "name": "Apex", "sub": "bannière · prestige" },
-      "title-architect": { "name": "« Architecte »", "sub": "titre · builder", "text": "ARCHITECTE" },
-      "title-ghost": { "name": "« Fantôme du Réseau »", "sub": "titre · furtivité", "text": "FANTÔME DU RÉSEAU" },
-      "title-overdrive": { "name": "« Surcadence »", "sub": "titre · maîtrise", "text": "SURCADENCE" },
-      "title-zeroday": { "name": "« Zéro-Jour »", "sub": "titre · mythique", "text": "ZÉRO-JOUR" },
-      "crate-larva": { "name": "Larve", "sub": "avatar · parasite" },
-      "crate-null": { "name": "« Null »", "sub": "titre · anonyme", "text": "NULL" },
-      "crate-static": { "name": "Parasite", "sub": "bannière · brouillage" },
-      "crate-wraith": { "name": "Spectre", "sub": "avatar · masque" },
-      "crate-glacier": { "name": "« Glacier »", "sub": "titre · sang-froid", "text": "GLACIER" },
-      "crate-blackout": { "name": "Blackout", "sub": "bannière · panne" },
-      "crate-nemesis": { "name": "Némésis", "sub": "avatar · contamination" },
-      "crate-omega": { "name": "« Oméga »", "sub": "titre · terminal", "text": "OMÉGA" },
-      "crate-obsidian": { "name": "Obsidienne", "sub": "thème · exclusif caisse" },
-      "crate-voidsurge": { "name": "Onde du Vide", "sub": "bannière · singularité" },
-      "corrupt-glitch": { "name": "« Corrompu »", "sub": "titre · corruption", "text": "CORROMPU" },
-      "cor-fracture": { "name": "« Fracture »", "sub": "titre · voie corrompue", "text": "FRACTURE" },
-      "cor-aberration": { "name": "Aberration", "sub": "bannière · voie corrompue" },
-      "cor-surtension": { "name": "Surtension", "sub": "avatar · voie corrompue" },
-      "cor-0xdead": { "name": "« 0xDEAD »", "sub": "titre · voie corrompue", "text": "0xDEAD" }
+      "nightwire": {
+        "name": "Nightwire",
+        "sub": "thème · défaut"
+      },
+      "cryo": {
+        "name": "Cryo",
+        "sub": "thème · froid"
+      },
+      "ecarlate": {
+        "name": "Écarlate",
+        "sub": "thème · chaud"
+      },
+      "avatar-daemon": {
+        "name": "Daemon-01",
+        "sub": "avatar · script"
+      },
+      "avatar-raven": {
+        "name": "Corbeau",
+        "sub": "avatar · éclaireur"
+      },
+      "avatar-phantom": {
+        "name": "Fantôme",
+        "sub": "avatar · furtif"
+      },
+      "avatar-icebreaker": {
+        "name": "Crâne-ICE",
+        "sub": "avatar · brise-glace"
+      },
+      "banner-sweep": {
+        "name": "Balayage",
+        "sub": "bannière · réseau"
+      },
+      "banner-surge": {
+        "name": "Surtension",
+        "sub": "bannière · énergie"
+      },
+      "banner-apex": {
+        "name": "Apex",
+        "sub": "bannière · prestige"
+      },
+      "title-architect": {
+        "name": "« Architecte »",
+        "sub": "titre · builder",
+        "text": "ARCHITECTE"
+      },
+      "title-ghost": {
+        "name": "« Fantôme du Réseau »",
+        "sub": "titre · furtivité",
+        "text": "FANTÔME DU RÉSEAU"
+      },
+      "title-overdrive": {
+        "name": "« Surcadence »",
+        "sub": "titre · maîtrise",
+        "text": "SURCADENCE"
+      },
+      "title-zeroday": {
+        "name": "« Zéro-Jour »",
+        "sub": "titre · mythique",
+        "text": "ZÉRO-JOUR"
+      },
+      "crate-larva": {
+        "name": "Larve",
+        "sub": "avatar · parasite"
+      },
+      "crate-null": {
+        "name": "« Null »",
+        "sub": "titre · anonyme",
+        "text": "NULL"
+      },
+      "crate-static": {
+        "name": "Parasite",
+        "sub": "bannière · brouillage"
+      },
+      "crate-wraith": {
+        "name": "Spectre",
+        "sub": "avatar · masque"
+      },
+      "crate-glacier": {
+        "name": "« Glacier »",
+        "sub": "titre · sang-froid",
+        "text": "GLACIER"
+      },
+      "crate-blackout": {
+        "name": "Blackout",
+        "sub": "bannière · panne"
+      },
+      "crate-nemesis": {
+        "name": "Némésis",
+        "sub": "avatar · contamination"
+      },
+      "crate-omega": {
+        "name": "« Oméga »",
+        "sub": "titre · terminal",
+        "text": "OMÉGA"
+      },
+      "crate-obsidian": {
+        "name": "Obsidienne",
+        "sub": "thème · exclusif caisse"
+      },
+      "crate-voidsurge": {
+        "name": "Onde du Vide",
+        "sub": "bannière · singularité"
+      },
+      "corrupt-glitch": {
+        "name": "« Corrompu »",
+        "sub": "titre · corruption",
+        "text": "CORROMPU"
+      },
+      "cor-fracture": {
+        "name": "« Fracture »",
+        "sub": "titre · voie corrompue",
+        "text": "FRACTURE"
+      },
+      "cor-aberration": {
+        "name": "Aberration",
+        "sub": "bannière · voie corrompue"
+      },
+      "cor-surtension": {
+        "name": "Surtension",
+        "sub": "avatar · voie corrompue"
+      },
+      "cor-0xdead": {
+        "name": "« 0xDEAD »",
+        "sub": "titre · voie corrompue",
+        "text": "0xDEAD"
+      }
     }
   },
   "corruption": {
@@ -345,7 +462,12 @@
     "foundValue": "EMBRASSANT LA CORRUPTION",
     "path": {
       "header": "SURCHARGE DU RÉSEAU",
-      "phase": { "stable": "STABLE", "tension": "TENSION", "critique": "CRITIQUE", "krach": "KRACH" },
+      "phase": {
+        "stable": "STABLE",
+        "tension": "TENSION",
+        "critique": "CRITIQUE",
+        "krach": "KRACH"
+      },
       "dopage": "DOPAGE",
       "level": "SURCHARGE {{value}}%",
       "trace": "TRACE D'INSTABILITÉ",
@@ -370,8 +492,15 @@
         "nextHint": "prochain déblocage dans {{value}} V"
       }
     },
-    "intrusion": { "corrupted": "SIGNAL CORROMPU — INTRUSION", "active": "CORRUPTION ACTIVE", "purged": "SIGNAL PURGÉ" },
-    "glitch": { "lossOfControl": "PERTE DE CONTRÔLE", "injection": "injection de signal étranger" },
+    "intrusion": {
+      "corrupted": "SIGNAL CORROMPU — INTRUSION",
+      "active": "CORRUPTION ACTIVE",
+      "purged": "SIGNAL PURGÉ"
+    },
+    "glitch": {
+      "lossOfControl": "PERTE DE CONTRÔLE",
+      "injection": "injection de signal étranger"
+    },
     "source": "SOURCE INCONNUE",
     "entity": "LE_GLITCH",
     "hailTitle": "TU CROYAIS AVOIR TOUT VU.",
@@ -455,10 +584,22 @@
     "insufficientHint": "+{{n}}/s au prochain",
     "hint": "Martèle HACK pour amorcer · compile un daemon pour automatiser la production",
     "generators": {
-      "scraper": { "name": "SCRAPER-01", "role": "Nœud de minage passif" },
-      "sifter": { "name": "SIFTER-07", "role": "Filtre de paquets" },
-      "wraith": { "name": "WRAITH-2X", "role": "Injecteur furtif" },
-      "oracle": { "name": "ORACLE-00", "role": "Signal chiffré" }
+      "scraper": {
+        "name": "SCRAPER-01",
+        "role": "Nœud de minage passif"
+      },
+      "sifter": {
+        "name": "SIFTER-07",
+        "role": "Filtre de paquets"
+      },
+      "wraith": {
+        "name": "WRAITH-2X",
+        "role": "Injecteur furtif"
+      },
+      "oracle": {
+        "name": "ORACLE-00",
+        "role": "Signal chiffré"
+      }
     },
     "upgrade": {
       "label": "Améliorer",
@@ -502,15 +643,42 @@
       "requiresGenerator": "Requiert {{count}}× {{name}}",
       "requiresNode": "Requiert {{name}}",
       "nodes": {
-        "overclock": { "name": "OVERCLOCK", "effect": "+25 % sur la production de cycles globale." },
-        "parallelism": { "name": "PARALLÉLISME", "effect": "+50 % sur la production de données." },
-        "cryo-cache": { "name": "CRYO-CACHE", "effect": "+40 % sur la production de données." },
-        "ghost-protocol": { "name": "GHOST://ROGUE.AI", "effect": "Une IA dormante s'éveille dans le réseau. ×3 sur la production de données, jusque-là invisible." },
-        "breach-market": { "name": "RELAIS DE MARCHÉ", "effect": "Ouvre un canal chiffré vers le marché crypto. Débloque la conversion data→crypto et sa branche." },
-        "arbitrage-auto": { "name": "ARBITRAGE AUTO", "effect": "+15 % sur la production de cycles globale." },
-        "rate-floor": { "name": "PLANCHER DE COURS", "effect": "Le cours ne descend plus sous 1,40 CR / 1 000 data." },
-        "ghost-laundry": { "name": "LAVERIE FANTÔME", "effect": "+18 % sur la production de cycles globale." },
-        "dark-pool": { "name": "CARTEL://DARK.POOL", "effect": "Un pool occulte manipule le cours. Le contenir stabilise le marché — plancher remonté à 1,80 CR / 1 000 data." }
+        "overclock": {
+          "name": "OVERCLOCK",
+          "effect": "+25 % sur la production de cycles globale."
+        },
+        "parallelism": {
+          "name": "PARALLÉLISME",
+          "effect": "+50 % sur la production de données."
+        },
+        "cryo-cache": {
+          "name": "CRYO-CACHE",
+          "effect": "+40 % sur la production de données."
+        },
+        "ghost-protocol": {
+          "name": "GHOST://ROGUE.AI",
+          "effect": "Une IA dormante s'éveille dans le réseau. ×3 sur la production de données, jusque-là invisible."
+        },
+        "breach-market": {
+          "name": "RELAIS DE MARCHÉ",
+          "effect": "Ouvre un canal chiffré vers le marché crypto. Débloque la conversion data→crypto et sa branche."
+        },
+        "arbitrage-auto": {
+          "name": "ARBITRAGE AUTO",
+          "effect": "+15 % sur la production de cycles globale."
+        },
+        "rate-floor": {
+          "name": "PLANCHER DE COURS",
+          "effect": "Le cours ne descend plus sous 1,40 CR / 1 000 data."
+        },
+        "ghost-laundry": {
+          "name": "LAVERIE FANTÔME",
+          "effect": "+18 % sur la production de cycles globale."
+        },
+        "dark-pool": {
+          "name": "CARTEL://DARK.POOL",
+          "effect": "Un pool occulte manipule le cours. Le contenir stabilise le marché — plancher remonté à 1,80 CR / 1 000 data."
+        }
       },
       "reveal": {
         "banner": "Anomalie détectée · intrusion non répertoriée",
@@ -555,11 +723,31 @@
       "protocolShort": "protocole court · {{min}} min",
       "phaseLabel": "PHASE {{n}}/{{total}} · {{name}}",
       "phases": {
-        "priming": { "name": "AMORÇAGE", "short": "AMORÇ", "sub": "ouverture des flux" },
-        "indexing": { "name": "INDEXATION", "short": "INDEX", "sub": "cartographie des nœuds" },
-        "correlation": { "name": "CORRÉLATION", "short": "CORRÉL", "sub": "recoupement des signaux" },
-        "synthesis": { "name": "SYNTHÈSE", "short": "SYNTH", "sub": "agrégation des données" },
-        "extraction": { "name": "EXTRACTION", "short": "EXTR", "sub": "consolidation ×2" }
+        "priming": {
+          "name": "AMORÇAGE",
+          "short": "AMORÇ",
+          "sub": "ouverture des flux"
+        },
+        "indexing": {
+          "name": "INDEXATION",
+          "short": "INDEX",
+          "sub": "cartographie des nœuds"
+        },
+        "correlation": {
+          "name": "CORRÉLATION",
+          "short": "CORRÉL",
+          "sub": "recoupement des signaux"
+        },
+        "synthesis": {
+          "name": "SYNTHÈSE",
+          "short": "SYNTH",
+          "sub": "agrégation des données"
+        },
+        "extraction": {
+          "name": "EXTRACTION",
+          "short": "EXTR",
+          "sub": "consolidation ×2"
+        }
       },
       "rewardTitle": "SURCADENCE · {{res}} ×{{mult}}",
       "rewardReady": "prête à {{pct}}%",
@@ -709,5 +897,45 @@
         "close": "Fermer"
       }
     }
+  },
+  "showcase": {
+    "kicker": "NETRUNNER://PROFIL/VITRINE",
+    "title": "SALLE DES TROPHÉES",
+    "subtitle": "Compose ton présentoir. Ce que tu exposes vaut par sa matière, pas par son volume.",
+    "masterpiece": "PIÈCE MAÎTRESSE EXPOSÉE",
+    "masterpieceNone": "À COMPOSER",
+    "slotsOpen": "EMPLACEMENTS OUVERTS",
+    "nextTier": "Prochain à {{at}} jalons · {{count}} atteints",
+    "allOpen": "Tous les emplacements sont ouverts",
+    "slotTag": "EMPL. {{n}}",
+    "empty": {
+      "action": "Épingler un trophée"
+    },
+    "locked": {
+      "label": "VERROUILLÉ",
+      "req": "Atteins {{n}} jalons",
+      "reqUnknown": "Palier à venir"
+    },
+    "slot": {
+      "replace": "Remplacer",
+      "remove": "Retirer"
+    },
+    "rule": "Les emplacements s'ouvrent aux paliers de jalons. Le présentoir n'affiche jamais le volume de ta collection.",
+    "picker": {
+      "kicker": "EMPLACEMENT {{n}} · MISE EN SCÈNE",
+      "title": "ÉPINGLER UN TROPHÉE",
+      "subtitle": "Trié par rareté décroissante. Les pièces déjà exposées n'apparaissent pas.",
+      "filterAll": "TOUT",
+      "empty": "AUCUNE PIÈCE DISPONIBLE POUR CE FILTRE.",
+      "pin": "ÉPINGLER",
+      "close": "Fermer"
+    },
+    "toast": {
+      "title": "NOUVEL EMPLACEMENT DE VITRINE",
+      "body": "Palier de {{n}} jalons atteint. Un présentoir de plus à mettre en scène.",
+      "pin": "ÉPINGLER",
+      "close": "Fermer"
+    },
+    "cta": "Salle des trophées"
   }
 }

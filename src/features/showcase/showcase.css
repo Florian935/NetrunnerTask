@@ -1,0 +1,64 @@
+/* NIGHTWIRE — Salle des trophées (US-038).
+   Styles d'interaction (hover/focus) des emplacements + keyframes de mise en
+   scène. La couleur de rareté est portée en inline (tokens `--rarity-*`) ; ce
+   fichier ne gère que l'état d'interaction et l'animation, sous garde
+   `prefers-reduced-motion`. Les classes globales `nw-legend`/`nw-toast-in`/
+   `nw-scanlines` viennent du DS (base.css / cosmetics.css). */
+
+/* Emplacement VIDE — cadre pointillé qui s'allume au survol / focus clavier. */
+.nw-slot-empty {
+  transition: border-color var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+}
+.nw-slot-empty:hover,
+.nw-slot-empty:focus-visible {
+  border-color: var(--cyan-500);
+  background: rgba(0, 240, 255, 0.04);
+  box-shadow: var(--glow-cyan);
+  outline: none;
+}
+
+/* Emplacement REMPLI — les actions (remplacer/retirer) apparaissent au survol
+   ET au focus clavier (accessibilité — jamais réservées au seul :hover). */
+.nw-slot-actions {
+  opacity: 0;
+  transform: translateY(4px);
+  pointer-events: none;
+  transition: opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+.nw-slot-filled:hover .nw-slot-actions,
+.nw-slot-filled:focus-within .nw-slot-actions {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+/* Carte du sélecteur — révèle l'étiquette « Épingler » au survol / focus. */
+.nw-pick-hint {
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+.nw-pick:hover .nw-pick-hint,
+.nw-pick:focus-visible .nw-pick-hint {
+  opacity: 1;
+}
+.nw-pick:focus-visible {
+  outline: none;
+  box-shadow: var(--glow-cyan);
+}
+
+/* Pulsation d'un emplacement fraîchement débloqué. */
+@keyframes nw-slot-unlock {
+  0% { box-shadow: 0 0 0 1px var(--cyan-500), 0 0 4px rgba(0, 240, 255, 0.2); }
+  50% { box-shadow: 0 0 0 1px var(--cyan-500), 0 0 26px rgba(0, 240, 255, 0.55); }
+  100% { box-shadow: 0 0 0 1px var(--cyan-500), 0 0 4px rgba(0, 240, 255, 0.2); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nw-slot-empty,
+  .nw-slot-actions,
+  .nw-pick-hint {
+    transition: none;
+  }
+  /* Les actions restent atteignables au focus même sans transition. */
+}

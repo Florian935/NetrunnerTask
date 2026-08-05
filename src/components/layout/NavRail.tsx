@@ -33,6 +33,13 @@ const ROUTES = [
     label: 'nav.wardrobe',
     end: false,
   },
+  {
+    to: '/showcase',
+    icon: 'trophy',
+    code: 'nav.showcaseCode',
+    label: 'nav.showcase',
+    end: false,
+  },
 ] as const
 
 /** Destinations à venir (MVP 2/3), affichées désactivées. `hideMobile` = masquée

@@ -3,6 +3,7 @@
 
 import type { CosmeticType } from '../game/cosmetics'
 import type { CrateQuality } from '../game/crates'
+import type { ShowcaseSlot } from '../game/showcase'
 
 /** Échelle de difficulté d'un contrat (trivial → légendaire) → détermine la récompense (US-008). */
 export type Difficulty = 'trivial' | 'easy' | 'medium' | 'hard' | 'legendary'
@@ -285,4 +286,14 @@ export interface CosmeticsState {
    * `BuilderState.surcharge`). `0` au départ ; rétro-rempli v23.
    */
   securedVoltage: number
+  /**
+   * Présentoir de la **Salle des trophées** (US-038) — composition **choisie par
+   * le joueur** : un tableau indexé par emplacement, chaque case = un trophée
+   * épinglé (`ShowcasePin`) ou `null` (vide). Purement esthétique (aucune valeur
+   * de jeu) ; **indépendant de `equipped`** (épingler ≠ équiper). Le nombre
+   * d'emplacements *ouverts* est **dérivé** des jalons (`game/showcase.ts`
+   * `unlockedSlots`), pas stocké ici. Vit sur le singleton d'identité → **survit à
+   * la renaissance**. `[]` au départ ; rétro-rempli v24.
+   */
+  showcase: ShowcaseSlot[]
 }

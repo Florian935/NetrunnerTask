@@ -61,14 +61,24 @@ export function ProfileView() {
             {t('profile.title')}
           </h1>
         </div>
-        <Button
-          variant="secondary"
-          hud
-          onClick={() => navigate('/wardrobe')}
-          leftIcon={<Icon name="shirt" size={17} />}
-        >
-          {t('profile.customize')}
-        </Button>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          <Button
+            variant="secondary"
+            hud
+            onClick={() => navigate('/wardrobe')}
+            leftIcon={<Icon name="shirt" size={17} />}
+          >
+            {t('profile.customize')}
+          </Button>
+          <Button
+            variant="secondary"
+            hud
+            onClick={() => navigate('/showcase')}
+            leftIcon={<Icon name="trophy" size={17} />}
+          >
+            {t('showcase.cta')}
+          </Button>
+        </div>
       </header>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>

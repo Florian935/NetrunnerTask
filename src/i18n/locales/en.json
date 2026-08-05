@@ -193,7 +193,9 @@
     "crates": "Crates",
     "profile": "Profile",
     "profileCode": "PRO",
-    "soon": "soon"
+    "soon": "soon",
+    "showcase": "Trophy Room",
+    "showcaseCode": "TRO"
   },
   "profile": {
     "kicker": "NETRUNNER://PROFILE/ID",
@@ -228,7 +230,9 @@
     "reward": "REWARD",
     "foundInCrate": "FOUND IN A CRATE",
     "foundInCrateValue": "CRATE DROP",
-    "fragments": { "label": "FRAGMENTS" },
+    "fragments": {
+      "label": "FRAGMENTS"
+    },
     "forge": {
       "title": "FORGE",
       "intro": "Pick a cosmetic you don't own and forge it with fragments — a deterministic safety net, no luck required. Cost rises with rarity.",
@@ -284,9 +288,18 @@
       "count_other": "UNOPENED",
       "viewOdds": "VIEW ODDS",
       "quality": {
-        "standard": { "label": "STANDARD", "desc": "Scavenged off the grid. The most common." },
-        "secured": { "label": "SECURED", "desc": "ICE-locked. Better odds." },
-        "blackice": { "label": "BLACK ICE", "desc": "Lethal countermeasure. The most prestigious." }
+        "standard": {
+          "label": "STANDARD",
+          "desc": "Scavenged off the grid. The most common."
+        },
+        "secured": {
+          "label": "SECURED",
+          "desc": "ICE-locked. Better odds."
+        },
+        "blackice": {
+          "label": "BLACK ICE",
+          "desc": "Lethal countermeasure. The most prestigious."
+        }
       },
       "odds": {
         "title": "DROP RATES",
@@ -304,40 +317,144 @@
         "convertedTo": "CONVERTED TO",
         "equip": "EQUIP",
         "continue": "CONTINUE",
-        "complete": { "title": "COLLECTION COMPLETE", "desc": "Nothing left to unlock in this pool. Converted to credits.", "credits": "CREDITS" }
+        "complete": {
+          "title": "COLLECTION COMPLETE",
+          "desc": "Nothing left to unlock in this pool. Converted to credits.",
+          "credits": "CREDITS"
+        }
       },
-      "earned": { "title": "CRATE EARNED", "body": "{{quality}} crate added — open it in the Wardrobe." }
+      "earned": {
+        "title": "CRATE EARNED",
+        "body": "{{quality}} crate added — open it in the Wardrobe."
+      }
     },
     "items": {
-      "nightwire": { "name": "Nightwire", "sub": "theme · default" },
-      "cryo": { "name": "Cryo", "sub": "theme · cold" },
-      "ecarlate": { "name": "Scarlet", "sub": "theme · hot" },
-      "avatar-daemon": { "name": "Daemon-01", "sub": "avatar · script" },
-      "avatar-raven": { "name": "Raven", "sub": "avatar · scout" },
-      "avatar-phantom": { "name": "Phantom", "sub": "avatar · stealth" },
-      "avatar-icebreaker": { "name": "ICE-Skull", "sub": "avatar · icebreaker" },
-      "banner-sweep": { "name": "Sweep", "sub": "banner · network" },
-      "banner-surge": { "name": "Surge", "sub": "banner · power" },
-      "banner-apex": { "name": "Apex", "sub": "banner · prestige" },
-      "title-architect": { "name": "\"Architect\"", "sub": "title · builder", "text": "ARCHITECT" },
-      "title-ghost": { "name": "\"Ghost of the Net\"", "sub": "title · stealth", "text": "GHOST OF THE NET" },
-      "title-overdrive": { "name": "\"Overdrive\"", "sub": "title · mastery", "text": "OVERDRIVE" },
-      "title-zeroday": { "name": "\"Zero-Day\"", "sub": "title · mythic", "text": "ZERO-DAY" },
-      "crate-larva": { "name": "Larva", "sub": "avatar · parasite" },
-      "crate-null": { "name": "\"Null\"", "sub": "title · anonymous", "text": "NULL" },
-      "crate-static": { "name": "Static", "sub": "banner · jamming" },
-      "crate-wraith": { "name": "Wraith", "sub": "avatar · mask" },
-      "crate-glacier": { "name": "\"Glacier\"", "sub": "title · cold-blooded", "text": "GLACIER" },
-      "crate-blackout": { "name": "Blackout", "sub": "banner · outage" },
-      "crate-nemesis": { "name": "Nemesis", "sub": "avatar · contamination" },
-      "crate-omega": { "name": "\"Omega\"", "sub": "title · terminal", "text": "OMEGA" },
-      "crate-obsidian": { "name": "Obsidian", "sub": "theme · crate-exclusive" },
-      "crate-voidsurge": { "name": "Void Surge", "sub": "banner · singularity" },
-      "corrupt-glitch": { "name": "“Corrupted”", "sub": "title · corruption", "text": "CORRUPTED" },
-      "cor-fracture": { "name": "“Fracture”", "sub": "title · corrupted path", "text": "FRACTURE" },
-      "cor-aberration": { "name": "Aberration", "sub": "banner · corrupted path" },
-      "cor-surtension": { "name": "Surge", "sub": "avatar · corrupted path" },
-      "cor-0xdead": { "name": "“0xDEAD”", "sub": "title · corrupted path", "text": "0xDEAD" }
+      "nightwire": {
+        "name": "Nightwire",
+        "sub": "theme · default"
+      },
+      "cryo": {
+        "name": "Cryo",
+        "sub": "theme · cold"
+      },
+      "ecarlate": {
+        "name": "Scarlet",
+        "sub": "theme · hot"
+      },
+      "avatar-daemon": {
+        "name": "Daemon-01",
+        "sub": "avatar · script"
+      },
+      "avatar-raven": {
+        "name": "Raven",
+        "sub": "avatar · scout"
+      },
+      "avatar-phantom": {
+        "name": "Phantom",
+        "sub": "avatar · stealth"
+      },
+      "avatar-icebreaker": {
+        "name": "ICE-Skull",
+        "sub": "avatar · icebreaker"
+      },
+      "banner-sweep": {
+        "name": "Sweep",
+        "sub": "banner · network"
+      },
+      "banner-surge": {
+        "name": "Surge",
+        "sub": "banner · power"
+      },
+      "banner-apex": {
+        "name": "Apex",
+        "sub": "banner · prestige"
+      },
+      "title-architect": {
+        "name": "\"Architect\"",
+        "sub": "title · builder",
+        "text": "ARCHITECT"
+      },
+      "title-ghost": {
+        "name": "\"Ghost of the Net\"",
+        "sub": "title · stealth",
+        "text": "GHOST OF THE NET"
+      },
+      "title-overdrive": {
+        "name": "\"Overdrive\"",
+        "sub": "title · mastery",
+        "text": "OVERDRIVE"
+      },
+      "title-zeroday": {
+        "name": "\"Zero-Day\"",
+        "sub": "title · mythic",
+        "text": "ZERO-DAY"
+      },
+      "crate-larva": {
+        "name": "Larva",
+        "sub": "avatar · parasite"
+      },
+      "crate-null": {
+        "name": "\"Null\"",
+        "sub": "title · anonymous",
+        "text": "NULL"
+      },
+      "crate-static": {
+        "name": "Static",
+        "sub": "banner · jamming"
+      },
+      "crate-wraith": {
+        "name": "Wraith",
+        "sub": "avatar · mask"
+      },
+      "crate-glacier": {
+        "name": "\"Glacier\"",
+        "sub": "title · cold-blooded",
+        "text": "GLACIER"
+      },
+      "crate-blackout": {
+        "name": "Blackout",
+        "sub": "banner · outage"
+      },
+      "crate-nemesis": {
+        "name": "Nemesis",
+        "sub": "avatar · contamination"
+      },
+      "crate-omega": {
+        "name": "\"Omega\"",
+        "sub": "title · terminal",
+        "text": "OMEGA"
+      },
+      "crate-obsidian": {
+        "name": "Obsidian",
+        "sub": "theme · crate-exclusive"
+      },
+      "crate-voidsurge": {
+        "name": "Void Surge",
+        "sub": "banner · singularity"
+      },
+      "corrupt-glitch": {
+        "name": "“Corrupted”",
+        "sub": "title · corruption",
+        "text": "CORRUPTED"
+      },
+      "cor-fracture": {
+        "name": "“Fracture”",
+        "sub": "title · corrupted path",
+        "text": "FRACTURE"
+      },
+      "cor-aberration": {
+        "name": "Aberration",
+        "sub": "banner · corrupted path"
+      },
+      "cor-surtension": {
+        "name": "Surge",
+        "sub": "avatar · corrupted path"
+      },
+      "cor-0xdead": {
+        "name": "“0xDEAD”",
+        "sub": "title · corrupted path",
+        "text": "0xDEAD"
+      }
     }
   },
   "corruption": {
@@ -345,7 +462,12 @@
     "foundValue": "EMBRACING THE CORRUPTION",
     "path": {
       "header": "NETWORK OVERLOAD",
-      "phase": { "stable": "STABLE", "tension": "TENSION", "critique": "CRITICAL", "krach": "CRASH" },
+      "phase": {
+        "stable": "STABLE",
+        "tension": "TENSION",
+        "critique": "CRITICAL",
+        "krach": "CRASH"
+      },
       "dopage": "BOOST",
       "level": "OVERLOAD {{value}}%",
       "trace": "INSTABILITY TRACE",
@@ -370,8 +492,15 @@
         "nextHint": "next unlock in {{value}} V"
       }
     },
-    "intrusion": { "corrupted": "SIGNAL CORRUPTED — INTRUSION", "active": "CORRUPTION ACTIVE", "purged": "SIGNAL PURGED" },
-    "glitch": { "lossOfControl": "LOSS OF CONTROL", "injection": "injecting foreign signal" },
+    "intrusion": {
+      "corrupted": "SIGNAL CORRUPTED — INTRUSION",
+      "active": "CORRUPTION ACTIVE",
+      "purged": "SIGNAL PURGED"
+    },
+    "glitch": {
+      "lossOfControl": "LOSS OF CONTROL",
+      "injection": "injecting foreign signal"
+    },
     "source": "UNKNOWN SOURCE",
     "entity": "THE_GLITCH",
     "hailTitle": "YOU THOUGHT YOU'D SEEN IT ALL.",
@@ -455,10 +584,22 @@
     "insufficientHint": "+{{n}}/s next",
     "hint": "Hammer HACK to bootstrap · compile a daemon to automate production",
     "generators": {
-      "scraper": { "name": "SCRAPER-01", "role": "Passive mining node" },
-      "sifter": { "name": "SIFTER-07", "role": "Packet filter" },
-      "wraith": { "name": "WRAITH-2X", "role": "Stealth injector" },
-      "oracle": { "name": "ORACLE-00", "role": "Encrypted signal" }
+      "scraper": {
+        "name": "SCRAPER-01",
+        "role": "Passive mining node"
+      },
+      "sifter": {
+        "name": "SIFTER-07",
+        "role": "Packet filter"
+      },
+      "wraith": {
+        "name": "WRAITH-2X",
+        "role": "Stealth injector"
+      },
+      "oracle": {
+        "name": "ORACLE-00",
+        "role": "Encrypted signal"
+      }
     },
     "upgrade": {
       "label": "Upgrade",
@@ -502,15 +643,42 @@
       "requiresGenerator": "Requires {{count}}× {{name}}",
       "requiresNode": "Requires {{name}}",
       "nodes": {
-        "overclock": { "name": "OVERCLOCK", "effect": "+25% on global cycle production." },
-        "parallelism": { "name": "PARALLELISM", "effect": "+50% on data production." },
-        "cryo-cache": { "name": "CRYO-CACHE", "effect": "+40% on data production." },
-        "ghost-protocol": { "name": "GHOST://ROGUE.AI", "effect": "A dormant AI stirs in the network. ×3 on data production, invisible until now." },
-        "breach-market": { "name": "MARKET RELAY", "effect": "Opens an encrypted channel to the crypto market. Unlocks data→crypto conversion and its branch." },
-        "arbitrage-auto": { "name": "AUTO ARBITRAGE", "effect": "+15% on global cycle production." },
-        "rate-floor": { "name": "RATE FLOOR", "effect": "The rate never drops below 1.40 CR / 1,000 data." },
-        "ghost-laundry": { "name": "GHOST LAUNDRY", "effect": "+18% on global cycle production." },
-        "dark-pool": { "name": "CARTEL://DARK.POOL", "effect": "A hidden pool is manipulating the rate. Containing it stabilizes the market — floor raised to 1.80 CR / 1,000 data." }
+        "overclock": {
+          "name": "OVERCLOCK",
+          "effect": "+25% on global cycle production."
+        },
+        "parallelism": {
+          "name": "PARALLELISM",
+          "effect": "+50% on data production."
+        },
+        "cryo-cache": {
+          "name": "CRYO-CACHE",
+          "effect": "+40% on data production."
+        },
+        "ghost-protocol": {
+          "name": "GHOST://ROGUE.AI",
+          "effect": "A dormant AI stirs in the network. ×3 on data production, invisible until now."
+        },
+        "breach-market": {
+          "name": "MARKET RELAY",
+          "effect": "Opens an encrypted channel to the crypto market. Unlocks data→crypto conversion and its branch."
+        },
+        "arbitrage-auto": {
+          "name": "AUTO ARBITRAGE",
+          "effect": "+15% on global cycle production."
+        },
+        "rate-floor": {
+          "name": "RATE FLOOR",
+          "effect": "The rate never drops below 1.40 CR / 1,000 data."
+        },
+        "ghost-laundry": {
+          "name": "GHOST LAUNDRY",
+          "effect": "+18% on global cycle production."
+        },
+        "dark-pool": {
+          "name": "CARTEL://DARK.POOL",
+          "effect": "A hidden pool is manipulating the rate. Containing it stabilizes the market — floor raised to 1.80 CR / 1,000 data."
+        }
       },
       "reveal": {
         "banner": "Anomaly detected · unlisted intrusion",
@@ -555,11 +723,31 @@
       "protocolShort": "short protocol · {{min}} min",
       "phaseLabel": "PHASE {{n}}/{{total}} · {{name}}",
       "phases": {
-        "priming": { "name": "PRIMING", "short": "PRIME", "sub": "opening the streams" },
-        "indexing": { "name": "INDEXING", "short": "INDEX", "sub": "mapping the nodes" },
-        "correlation": { "name": "CORRELATION", "short": "CORREL", "sub": "cross-checking signals" },
-        "synthesis": { "name": "SYNTHESIS", "short": "SYNTH", "sub": "aggregating the data" },
-        "extraction": { "name": "EXTRACTION", "short": "EXTR", "sub": "consolidation ×2" }
+        "priming": {
+          "name": "PRIMING",
+          "short": "PRIME",
+          "sub": "opening the streams"
+        },
+        "indexing": {
+          "name": "INDEXING",
+          "short": "INDEX",
+          "sub": "mapping the nodes"
+        },
+        "correlation": {
+          "name": "CORRELATION",
+          "short": "CORREL",
+          "sub": "cross-checking signals"
+        },
+        "synthesis": {
+          "name": "SYNTHESIS",
+          "short": "SYNTH",
+          "sub": "aggregating the data"
+        },
+        "extraction": {
+          "name": "EXTRACTION",
+          "short": "EXTR",
+          "sub": "consolidation ×2"
+        }
       },
       "rewardTitle": "OVERDRIVE · {{res}} ×{{mult}}",
       "rewardReady": "ready at {{pct}}%",
@@ -709,5 +897,45 @@
         "close": "Close"
       }
     }
+  },
+  "showcase": {
+    "kicker": "NETRUNNER://PROFILE/DISPLAY",
+    "title": "TROPHY ROOM",
+    "subtitle": "Compose your display. What you exhibit is worth its substance, not its volume.",
+    "masterpiece": "MASTERPIECE ON DISPLAY",
+    "masterpieceNone": "TO COMPOSE",
+    "slotsOpen": "SLOTS OPEN",
+    "nextTier": "Next at {{at}} milestones · {{count}} reached",
+    "allOpen": "All slots are open",
+    "slotTag": "SLOT {{n}}",
+    "empty": {
+      "action": "Pin a trophy"
+    },
+    "locked": {
+      "label": "LOCKED",
+      "req": "Reach {{n}} milestones",
+      "reqUnknown": "Upcoming tier"
+    },
+    "slot": {
+      "replace": "Replace",
+      "remove": "Remove"
+    },
+    "rule": "Slots open at milestone tiers. The display never shows the size of your collection.",
+    "picker": {
+      "kicker": "SLOT {{n}} · STAGING",
+      "title": "PIN A TROPHY",
+      "subtitle": "Sorted by descending rarity. Pieces already on display don't appear.",
+      "filterAll": "ALL",
+      "empty": "NO PIECE AVAILABLE FOR THIS FILTER.",
+      "pin": "PIN",
+      "close": "Close"
+    },
+    "toast": {
+      "title": "NEW DISPLAY SLOT",
+      "body": "{{n}}-milestone tier reached. One more stand to stage.",
+      "pin": "PIN",
+      "close": "Close"
+    },
+    "cta": "Trophy Room"
   }
 }

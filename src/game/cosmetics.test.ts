@@ -165,3 +165,11 @@ describe('sélecteurs', () => {
     expect(isEquipped(core, 'cryo')).toBe(false)
   })
 })
+
+describe('tradeable (taxonomie de statut, US-038 / #043)', () => {
+  it('aucun cosmétique du catalogue n\'est échangeable', () => {
+    for (const c of COSMETICS) {
+      expect(c.tradeable).toBe(false)
+    }
+  })
+})

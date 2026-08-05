@@ -49,7 +49,22 @@ export interface Cosmetic {
    * à `source` défini ne tombe jamais de la voie déterministe (jalons).
    */
   source?: 'crate' | 'corruption'
+  /**
+   * Objet de statut **non échangeable** (US-038 / benchmark IA #043) : toujours
+   * `false`, jamais `true`. Le **type littéral** interdit qu'un cosmétique devienne
+   * vendable — la richesse se gagne, ne s'achète ni ne se revend (« vendre un objet
+   * de statut détruit le statut »). Rempli à la construction du catalogue (voir
+   * `COSMETICS`), pas dupliqué sur chaque entrée. Taxonomie **préventive** posée
+   * AVANT toute production de contenu supplémentaire (rétro-classer = crise garantie).
+   */
+  tradeable: false
 }
+
+/**
+ * Spécification d'une entrée de catalogue : un cosmétique **sans** le marqueur de
+ * statut `tradeable`, ajouté uniformément à la construction (voir `COSMETICS`).
+ */
+type CosmeticSpec = Omit<Cosmetic, 'tradeable'>
 
 /**
  * Catalogue des cosmétiques de départ (H4, repris de la maquette `wardrobe`).
@@ -57,7 +72,7 @@ export interface Cosmetic {
  * entrée** (patron `GENERATORS`/`ACCELERATORS`). Tout est débloqué au départ ;
  * le déblocage par mérite/caisses viendra en US-033/US-034.
  */
-export const COSMETICS: readonly Cosmetic[] = [
+const COSMETIC_SPECS = [
   // -- Thèmes (l'id = clé `data-cosmetic-theme`) --
   { id: 'nightwire', type: 'theme', rarity: 'common' },
   { id: 'cryo', type: 'theme', rarity: 'rare' },
@@ -113,7 +128,17 @@ export const COSMETICS: readonly Cosmetic[] = [
   { id: 'cor-aberration', type: 'banner', rarity: 'epic', icon: 'waves', source: 'corruption' },
   { id: 'cor-surtension', type: 'avatar', rarity: 'legendary', icon: 'zap', source: 'corruption' },
   { id: 'cor-0xdead', type: 'title', rarity: 'legendary', source: 'corruption' },
-] as const
+] as const satisfies readonly CosmeticSpec[]
+
+/**
+ * Catalogue exposé : chaque spécification reçoit `tradeable: false` (#043) à la
+ * construction — le marqueur de statut est posé **une fois**, jamais dupliqué sur
+ * les entrées, et le type littéral garantit qu'aucun cosmétique n'est vendable.
+ */
+export const COSMETICS: readonly Cosmetic[] = COSMETIC_SPECS.map((c) => ({
+  ...c,
+  tradeable: false as const,
+}))
 
 /** Index du catalogue par `id`. */
 export const COSMETIC_BY_ID: Record<string, Cosmetic> = Object.fromEntries(

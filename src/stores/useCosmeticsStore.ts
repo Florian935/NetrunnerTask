@@ -15,6 +15,12 @@ import {
   type CrateQuality,
 } from '../game/crates'
 import { pathRewardsFor } from '../game/corruption'
+import {
+  pinSlot,
+  reconcileShowcase,
+  unpinSlot,
+  type ShowcaseSlot,
+} from '../game/showcase'
 import { DEFAULT_CALLSIGN, normalizeCallsign } from '../game/profile'
 import { newlyTriggeredReveals, type RevealContext } from '../game/reveals'
 import { applyCosmeticTheme, mirrorCosmeticTheme } from '../features/cosmetics/theme'
@@ -57,6 +63,8 @@ interface CosmeticsStoreState extends CosmeticsCore {
   corruptionArmedAt: number | null
   /** Voltage de voie sécurisé cumulé (US-037) — débloque les cosmétiques de voie. */
   securedVoltage: number
+  /** Présentoir de la Salle des trophées (US-038) — composition choisie par le joueur. */
+  showcase: ShowcaseSlot[]
   loaded: boolean
   load: () => Promise<void>
   /** Équipe le cosmétique `id` (no-op si inconnu/non possédé/déjà équipé). */
@@ -105,13 +113,22 @@ interface CosmeticsStoreState extends CosmeticsCore {
    * persiste. No-op si `gain ≤ 0`.
    */
   bankVoltage: (gain: number) => void
+  /**
+   * Épingle le cosmétique `ref` dans l'emplacement `slot` de la Salle des trophées
+   * (US-038) : délègue à `game/showcase.ts` `pinSlot` (valide possédé + unicité par
+   * `ref` + bornes), persiste. No-op si le tirage est refusé. **Ne touche jamais
+   * `equipped`** (épingler ≠ équiper).
+   */
+  pinTrophy: (slot: number, ref: string) => void
+  /** Retire le trophée de l'emplacement `slot` (US-038) ; persiste. No-op si vide. */
+  unpinTrophy: (slot: number) => void
 }
 
 export const useCosmeticsStore = create<CosmeticsStoreState>((set, get) => {
   /** Persiste l'état courant (owned + equipped + callsign + crates + US-035/036) en base. */
   function persist(): void {
     const { owned, equipped, callsign, crates, fragments, pity } = get()
-    const { discoveredReveals, corruption, corruptionArmedAt, securedVoltage } = get()
+    const { discoveredReveals, corruption, corruptionArmedAt, securedVoltage, showcase } = get()
     void cosmeticsRepo.save({
       owned,
       equipped,
@@ -123,6 +140,7 @@ export const useCosmeticsStore = create<CosmeticsStoreState>((set, get) => {
       corruption,
       corruptionArmedAt,
       securedVoltage,
+      showcase,
     })
   }
 
@@ -137,6 +155,7 @@ export const useCosmeticsStore = create<CosmeticsStoreState>((set, get) => {
     corruption: 'dormant',
     corruptionArmedAt: null,
     securedVoltage: 0,
+    showcase: [],
     loaded: false,
 
     load: async () => {
@@ -151,6 +170,9 @@ export const useCosmeticsStore = create<CosmeticsStoreState>((set, get) => {
       const corruption = state?.corruption ?? 'dormant'
       const corruptionArmedAt = state?.corruptionArmedAt ?? null
       const securedVoltage = state?.securedVoltage ?? 0
+      // US-038 : réconcilie le présentoir avec l'inventaire possédé (filet de
+      // sécurité — vide les emplacements orphelins/en doublon, plafonne la taille).
+      const showcase = reconcileShowcase(state?.showcase ?? [], owned)
       set({
         owned,
         equipped,
@@ -162,6 +184,7 @@ export const useCosmeticsStore = create<CosmeticsStoreState>((set, get) => {
         corruption,
         corruptionArmedAt,
         securedVoltage,
+        showcase,
         loaded: true,
       })
       applyCosmeticTheme(equipped.theme)
@@ -289,6 +312,20 @@ export const useCosmeticsStore = create<CosmeticsStoreState>((set, get) => {
       const granted = get().grant(pathRewardsFor(prev, next)) // idempotent + persiste owned
       for (const cid of granted) useFeedbackStore.getState().triggerCosmeticUnlock(cid)
       persist() // garantit l'écriture de securedVoltage (grant no-op si aucun palier)
+    },
+
+    pinTrophy: (slot, ref) => {
+      const next = pinSlot(get().showcase, slot, ref, get().owned)
+      if (next === get().showcase) return // refusé (non possédé / doublon / bornes) → no-op
+      set({ showcase: next })
+      persist()
+    },
+
+    unpinTrophy: (slot) => {
+      const next = unpinSlot(get().showcase, slot)
+      if (next === get().showcase) return // déjà vide / hors bornes → no-op
+      set({ showcase: next })
+      persist()
     },
   }
 })

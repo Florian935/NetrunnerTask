@@ -1100,3 +1100,25 @@ Recette du 19/07/2026. Critères d'acceptation de `us/US-012-reputation-factions
 > et la revue du câblage `load()` / `useCompleteContract`.
 
 **Verdict : recette US-012 validée (9/9 critères + vérifs annexes).**
+
+## US-038 — Socle Salle des trophées (Phase A5)
+
+| # | Critère (action → résultat attendu) | Vérification | Statut | Date |
+|---|-------------------------------------|--------------|--------|------|
+| C1 | Ouvrir la Salle des trophées depuis la nav → écran + présentoir (emplacements ouverts + verrouillés) | Route `/showcase` + `NavRail` (icône `trophy`) ; grille 7 emplacements (3 ouverts / 4 verrouillés) ; live PO | validé | 05/08/2026 |
+| C2 | Épingler un cosmétique possédé dans un emplacement vide → mis en scène avec sa rareté | `pinTrophy` + `TrophySlot` (cadre teinté rareté + `RarityBadge` + `CosmeticPreview`) ; live PO | validé | 05/08/2026 |
+| C3 | Retirer / remplacer un trophée épinglé → emplacement mis à jour | `unpinTrophy` / réouverture `TrophyPicker` ; actions focus-within ; live PO | validé | 05/08/2026 |
+| C4 | Un cosmétique non possédé n'est pas épinglable | `TrophyPicker` liste `owned` uniquement ; live PO | validé | 05/08/2026 |
+| C5 | Épingler n'a aucun effet mécanique (équipement inchangé) | `showcase` jamais lié à `equipped` ; live PO (Garde-robe inchangée) | validé | 05/08/2026 |
+| C6 | Un même type peut occuper plusieurs emplacements | `pinSlot` unicité par `ref` (pas par type) ; **test unit.** + live PO | validé | 05/08/2026 |
+| C7 | Franchir un palier de jalons ouvre un emplacement + feedback + deep-link | `notifyShowcaseSlots` (live) → file `showcaseSlots` → `SlotUnlockToast` → `/showcase?pin=1` ; live PO (HACK 2→3) | validé | 05/08/2026 |
+| C8 | Recharger → composition + emplacements conservés | `showcase` persisté (Dexie v24) + relu au `load()` ; live PO (F5) | validé | 05/08/2026 |
+| C9 | Après renaissance → présentoir + emplacements survivent | `showcase`/`securedVoltage` sur le singleton d'identité (hors reset `prestige()`) ; live PO (`prestigeCount` injecté) | validé | 05/08/2026 |
+| C10 | Aucune quantité brute exposée comme richesse | En-tête = rareté maîtresse (`topExposedRarity`) + emplacements/jalons ; note de règle ; live PO | validé | 05/08/2026 |
+| C11 | `prefers-reduced-motion` respecté | `showcase.css` sous garde + classes globales `nw-*` ; live PO (émulation DevTools) | validé | 05/08/2026 |
+| — | `unlockedSlots`/`slotProgress`/`slotRequirement`/`topExposedRarity`/`pin`/`unpin`/`reconcile` couverts | `game/showcase.test.ts` (**25 blocs**) | validé | 05/08/2026 |
+| — | Taxonomie `tradeable: false` (#043) sur tout le catalogue | `cosmetics.test.ts` (aucun cosmétique échangeable) | validé | 05/08/2026 |
+| — | Migration Dexie **v24** : `showcase = []` rétro-rempli, survit à la renaissance | upgrade v24 (backfill) + revue | validé | 05/08/2026 |
+| — | `typecheck` (`tsc -b`) + `lint` (oxlint) + `build`/PWA + `test` (**330/330**, +26) | exécution | validé | 05/08/2026 |
+
+**Verdict : recette US-038 validée (11/11 critères + vérifs annexes). Aucun bug produit détecté.**
